@@ -5,12 +5,6 @@ import pandas as pd
 import scanpy as sc
 import anndata as ad
 from anndata import AnnData
-# import SEACells
-# from SEACells import core
-# from SEACells import genescores
-# import SEACells_1 as SEACells
-# from SEACells_1 import core
-# from SEACells_1 import genescores
 import scanpy.external as sce
 
 from copy import deepcopy
@@ -31,11 +25,8 @@ import warnings
 
 import palantir 
 import phenograph
-# import harmony
 
 import sys
-# import build_graph
-# import metacells_ad
 from tqdm.notebook import tqdm
 
 import csv
@@ -47,7 +38,6 @@ import sklearn
 from optparse import OptionParser
 from sklearn.linear_model import LinearRegression, ElasticNet
 from sklearn.svm import SVR, SVC
-# from scipy.misc import logsumexp
 from sklearn.base import BaseEstimator, _pprint
 from sklearn.utils import check_array, check_random_state
 from sklearn.utils.validation import check_is_fitted
@@ -3443,15 +3433,13 @@ class _Base2_correlation5(_Base2_correlation3):
 		if (save_mode>0) and (output_file_path!=''):
 			filename_annot_save = '%s_%s'%(thresh_corr_1,thresh_corr_2)
 			output_filename_1 = '%s/%s.%s.subset1.txt'%(output_file_path,filename_prefix_save,filename_annot_save)
-			df_query_1.index = np.asarray(df_query_1['gene_id'])
-			
+			df_query_1.index = np.asarray(df_query_1['gene_id'])		
 			output_filename_2 = '%s/%s.%s.subset2.txt'%(output_file_path,filename_prefix_save,filename_annot_save)
 			df_query_2.index = np.asarray(df_query_2['gene_id'])
 			df_query_2.to_csv(output_filename_2,sep='\t',float_format='%.5f')
 			print('df_query_1', df_query_1.shape)
 			print('df_query_2', df_query_2.shape)
 
-		# return df_query_1, df_query_2
 		return df_gene_peak_query_pre1, query_id_1, query_id_2
 
 	## parameter configuration for feature score computation
@@ -3833,8 +3821,6 @@ class _Base2_correlation5(_Base2_correlation3):
 					thresh_gene_tf_corr_peak, thresh_gene_tf_corr_ = thresh_gene_tf_corr_compare[0:2]
 
 				output_file_path = input_file_path2
-				# filename_save_annot = '%s.%d'%(filename_save_annot_2,type_id_1)
-				# filename_prefix_save = '%s.%s'%(filename_prefix_save_pre2,filename_save_annot)
 				input_filename_1 = ''
 				# query_id_1: the link to keep; query_id_2: the link with difference between gene_tf_corr_peak and gene_tf_corr_ above threshold
 				df_gene_peak_query_pre1, query_id_1, query_id_2 = self.test_gene_peak_tf_query_compare_1(input_filename=input_filename_1,
