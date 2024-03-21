@@ -16,11 +16,26 @@ python test_reunion_1.py [Options]
 
 
 ReDiscover
-
+Re
 The command to use ReDiscover to perform TF binding prediction is as follows:
 
 python test_reunion_2.py [Options]
 
+The options:
+
+- -p, --root_path : root directory of the data files
+
+- -r, --run_id : experiment id, default = 0
+
+--method_type_group",default="MiniBatchKMeans.50",help="method_type_group")
+
+- -t, --method_mode : 
+
+- -i, --initial_weight : initial weight for initial parameters, default = 0.1
+
+- -j, --initial_magnitude : initial magnitude for initial parameters, default = 2
+
+- -s, --version : dataset version, default = 1
 
 ************************************************************************************
 # Required pre-installed packages
