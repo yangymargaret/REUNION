@@ -25,11 +25,9 @@ The options:
 
 - -p, --root_path : root directory of the data files
 
-- -r, --run_id : experiment id, default = 0
-
 - -b, --cell : cell type, default = 0
   
-  cell type 0 represents PBMC data
+    cell type 0 represents PBMC data
 
 - --data_file_type: the cell type or dataset annotation, default = 'PBMC'
 
@@ -52,6 +50,12 @@ The options:
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
   By default we use the peak-TF associations predicted by Unify as input. ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
+
+- --input_link: the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF
+
+  Please provide the file as tab-delmited .txt file which contain at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: bound, 0: not bound; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
+
+  Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'
 
 - --method_type_group: the method for peak clustering, default = phenograph.20.
 
