@@ -47,11 +47,9 @@ The options:
 
   ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
 
-- --method_type_group : the method for peak clustering, default = phenograph.20,
+- --method_type_group : the method for peak clustering, default = phenograph.20. The default parameter represents using PhenoGraph algorithm for clustering with the number of neighbors = 20
   
-  phenograph.20 represents using PhenoGraph algorithm for clusetering with the number of neighbors = 20
-  
-  To use PhenoGraph clustering with specific number of neibhors, please use: phenogrph.$num, which represents the number of neighbors = $num
+  To use PhenoGraph clustering with a specific number of neibhors, please use: phenogrph.$num, which represents the number of neighbors = $num
 
 - --thresh_size_group : the threshold on peak cluster size, default = 15
   
