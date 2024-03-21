@@ -9,9 +9,17 @@ Unify performs regulatory association estimation utilizing the single-cell multi
 ReDiscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and ReDiscover supports each other within one framework.
 
 Unify
+
 The command to use Unify to infer peak-TF-gene associations is as follows:
 
 python test_reunion_1.py [Options]
+
+
+ReDiscover
+
+The command to use ReDiscover to perform TF binding prediction is as follows:
+
+python test_reunion_2.py [Options]
 
 
 ************************************************************************************
