@@ -63,23 +63,14 @@ The options:
 
 - --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'LogisticRegression', 'XGBoostClassifier'}. ReDiscover supports using the logistric regression model or the XGBoost classifier as the prediction model. 
 
-- --ratio_1
+- --ratio_1: the ratio of the number of pseudo negative training samples selected from the peaks with motif of a given TF detected but without TF binding predicted by Unify or the method specified in 'method_type_feature_link' (noted as N_neg,1) compared to the number of pseudo positive training samples selected (noted as N_pos), default = 0.25. We have N_neg,1 = N_pos*$ratio_1.
 
-- --ratio_2
+- --ratio_2: the ratio of the number of pseudo negative training samples selected from the peaks with the given TF motif detected (noted as N_neg,2) compared to the number of pseudo positive training samples selected (N_pos), default = 1.25. We have N_neg,2 = N_pos*$ratio_2.
 
-- --flag_group
+- --thresh_score: the thresholds for the normalized peak-TF scores used to select pseudo positive training samples from the paired peak group with or without enrichment of peaks predicted to be bound by a given TF by Unify or the specified method (noted as predicted TF-binding peaks), default = '0.25,0.75'
 
-- --flag_select_1
+    thresh_score has the format 'thresh1,thresh2'. thresh1 or thresh 2 represent the threshold used to selected pseudo postivie training samples from the peak goru with or without enrichment of the predicted TF-binidng peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
 
-- --flag_select_2
-
-- --thresh_score
-
-- --q_id1
-
-- --q_id2
-
-- --config_id
 
 ************************************************************************************
 # Required pre-installed packages
