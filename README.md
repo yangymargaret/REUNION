@@ -53,9 +53,9 @@ The options:
 
 - --input_link: the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF
 
-  Please provide the file as tab-delmited .txt file which contain at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: bound, 0: not bound; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
+  Please provide the file as a tab-delmited .txt file which contains at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: bound, 0: not bound; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
 
-  Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'
+  Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'.
 
 - --method_type_group: the method for peak clustering, default = phenograph.20.
 
