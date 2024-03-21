@@ -53,7 +53,7 @@ The options:
 
 - --thresh_size_group: the threshold on peak cluster size, default = 15
   
-- --component: the number of components to keep when applying SVD to the accessiblity feature matrix and the peak-motif feature matrix of the peaks, default = 100
+- --component: the number of components to keep when applying SVD to the accessiblity feature matrix and the sequence feature matrix of the peaks, default = 100
 
 - --component2: the number of feature dimensions to use when building the feature matrix of the peaks in the accessibility feature space and the sequence feature space, default = 50. Please note that $component2 <= $component. The total number of feature dimensions for a peak is d=2*$component2, as we concatenate the accessibility feature vector and the sequence feature vector for the peak.
 
