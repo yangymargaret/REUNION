@@ -47,15 +47,15 @@ The options:
 
   ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
 
-- --method_type_group : the method for peak clustering, default = phenograph.20. The default parameter represents using PhenoGraph algorithm for clustering with the number of neighbors = 20
+- --method_type_group: the method for peak clustering, default = phenograph.20. The default parameter represents using PhenoGraph algorithm for clustering with the number of neighbors = 20
   
   To use PhenoGraph clustering with a specific number of neibhors, please use: phenogrph.$num, which represents the number of neighbors = $num
 
-- --thresh_size_group : the threshold on peak cluster size, default = 15
+- --thresh_size_group: the threshold on peak cluster size, default = 15
   
-- --component
+- --component: the number of components to keep when applying SVD to the accessiblity feature matrix and the peak-motif feature matrix of the peaks, default = 100
 
-- --component2
+- --component2: the number of feature dimensions to use when building the feature matrix of the peaks in the accessibility feature space and the sequence feature space, default = 50. Please note that component2 <= component. The total number of feature dimensions for a peak is d=2*$component2.
 
 - --neighbor
 
