@@ -27,9 +27,9 @@ The options:
 
 - -r, --run_id : experiment id, default = 0
 
---method_type_group: the method for peak clustering, default=phenograph.20,
+- -method_type_group: the method for peak clustering, default=phenograph.20,
 
--thresh_size_group: the threshold on peak cluster size, defaulot_
+- -thresh_size_group: the threshold on peak cluster size, defaulot_
 
 - -i, --initial_weight : initial weight for initial parameters, default = 0.1
 
