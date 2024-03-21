@@ -55,13 +55,13 @@ The options:
   
 - --component: the number of components to keep when applying SVD to the accessiblity feature matrix and the peak-motif feature matrix of the peaks, default = 100
 
-- --component2: the number of feature dimensions to use when building the feature matrix of the peaks in the accessibility feature space and the sequence feature space, default = 50. Please note that component2 <= component. The total number of feature dimensions for a peak is d=2*$component2.
+- --component2: the number of feature dimensions to use when building the feature matrix of the peaks in the accessibility feature space and the sequence feature space, default = 50. Please note that $component2 <= $component. The total number of feature dimensions for a peak is d=2*$component2, as we concatenate the accessibility feature vector and the sequence feature vector for the peak.
 
-- --neighbor
+- --neighbor: the number of K nearest neighbors (KNN) estimated for each peak in the accessibility or sequence feature space, default = 100
 
-- --neighbor_sel
+- --neighbor_sel: the number of nearest neighbors used for each peak when performing the pseudo training sample selection, default = 30. Please note that $neighbor_sel<=$neighbor.
 
-- --model_type
+- --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'XGBoostClassifier','LogisticRegression'}. ReDiscover supports using the logistric regression model or the XGBoost classifier as the prediction model. 
 
 - --ratio_1
 
