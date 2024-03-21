@@ -26,12 +26,24 @@ The options:
 - -p, --root_path : root directory of the data files
 
 - -r, --run_id : experiment id, default = 0
+- 
+- -b, --cell : cell type, default = 0
+  
+  cell type 0 represents PBMC data
 
 - --method_type_group : the method for peak clustering, default = phenograph.20,
+  
+  phenograph.20 represents using PhenoGraph algorithm for clusetering with the number of neighbors = 20
+  
+  To use PhenoGraph clustering with specific number of neibhors, please use: phenogrph.$num, which represents the number of neighbors = $num
 
 - --thresh_size_group : the threshold on peak cluster size, default = 15
 
-- --method_type_feature_link
+- --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'
+
+  The default parameter represents using the peak-TF associations predicted by Unify as input
+
+  ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes use the name of the correspoind method
 
 - --component
 
