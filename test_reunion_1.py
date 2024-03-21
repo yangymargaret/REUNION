@@ -250,7 +250,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 		return select_config
 
-## update field query
+	## update field query
 	def test_field_query_pre1(self,field_query=[],query_value=[],select_config={}):
 		# query_num1 = len(query_value)
 		for (field_id,query_value) in zip(field_query,query_value):
