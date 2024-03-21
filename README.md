@@ -61,7 +61,7 @@ The options:
 
 - --neighbor_sel: the number of nearest neighbors used for each peak when performing the pseudo training sample selection, default = 30. Please note that $neighbor_sel<=$neighbor.
 
-- --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'XGBoostClassifier','LogisticRegression'}. ReDiscover supports using the logistric regression model or the XGBoost classifier as the prediction model. 
+- --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'LogisticRegression', 'XGBoostClassifier'}. ReDiscover supports using the logistric regression model or the XGBoost classifier as the prediction model. 
 
 - --ratio_1
 
