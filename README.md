@@ -35,7 +35,7 @@ The options:
 
     Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter as shown above.
 
-    'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv; (3) the compressed tsv, txt or csv files in the gzip format, extension=tsv.gz, txt.gz, csv.gz
+    'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
 
 - --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1. If this parameter is specified, ReDiscover will not the 'path_save' parameter as shown above to locate the ATAC-seq data of the metacells.
 
