@@ -30,4 +30,5 @@ REUNION requires the following packages to be installed:
 - NumPy 
 - SciPy
 - Scanpy
+- Pandas
   
