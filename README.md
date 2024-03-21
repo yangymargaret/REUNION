@@ -7,3 +7,19 @@ REUNION is an integrative computational framework which utilizes the single cell
 REUNION unites two functionally cooperative methods Unify and ReDiscover. 
 Unify performs regulatory association estimation utilizing the single-cell multi-omics data.
 ReDiscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and ReDiscover supports each other within one framework.
+
+Unify
+The command to use Unify to infer peak-TF-gene associations is as follows:
+
+python test_reunion_1.py [Options]
+
+
+************************************************************************************
+# Required pre-installed packages
+REUNION requires the following packages to be installed:
+- Python 
+- scikit-learn
+- NumPy 
+- SciPy
+- Scanpy
+  
