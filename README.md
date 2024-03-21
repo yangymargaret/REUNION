@@ -27,9 +27,9 @@ The options:
 
 - -r, --run_id : experiment id, default = 0
 
---method_type_group",default="MiniBatchKMeans.50",help="method_type_group")
+--method_type_group: the method for peak clustering, default=phenograph.20,
 
-- -t, --method_mode : 
+-thresh_size_group: the threshold on peak cluster size, defaulot_
 
 - -i, --initial_weight : initial weight for initial parameters, default = 0.1
 
