@@ -71,8 +71,6 @@ The options:
 
 - --flag_group
 
-- --flag_group
-
 - --flag_select_1
 
 - --flag_select_2
