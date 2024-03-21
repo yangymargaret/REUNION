@@ -51,11 +51,17 @@ The options:
 
 - --input_link: the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF
 
-  Please provide the file as a tab-delmited .txt file which contains at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: bound, 0: not bound; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
+  Please provide the file as a tab-delmited .txt file which contains at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
 
   Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'.
 
-- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = '.'
+- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
+
+  The default parameter represents ReDiscover creates a file folder named 'output_file' in the directory of the code and save the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
+
+- --output_filename: the filename of the peak-TF associations predicted by ReDiscover, default = -1
+
+  If the dedult parameter is used, ReDiscover will save output to the file named $filename_prefix.pred2.txt, where $filename_prefix is inferred from $input_link by keeping the part before the '.txt' extention. 
   
 - --method_type_group: the method for peak clustering, default = phenograph.20.
 
@@ -85,6 +91,9 @@ The options:
 
     thresh_score has the format 'thresh1,thresh2'. thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binidng peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
 
+The output:
+
+The output of ReDiscover is a file containing the peak-TF associations for the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in the directory as specified by 'output_dir'. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred' represents the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba' represents predicted TF binding probability of the give TF in the corresponding peak. 
 
 ************************************************************************************
 # Required pre-installed packages
