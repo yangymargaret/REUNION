@@ -31,19 +31,19 @@ The options:
   
   cell type 0 represents PBMC data
 
-- --path_save: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'                                                                                                                                                                                                    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of data.
+- --path_save: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
+
+    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of data.
 
     Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter as shown above.
 
     'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
 
-- --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1. If this parameter is specified, ReDiscover will not the 'path_save' parameter as shown above to locate the ATAC-seq data of the metacells.
+- --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1. If this parameter is specified, ReDiscover will not use the 'path_save' parameter as shown above to locate the ATAC-seq data of the metacells.
 
-- --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1. If this parameter is specified, ReDiscover will not the 'path_save' parameter as shown above to locate the RNA-seq data of the metacells.
+- --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1. If this parameter is specified, ReDiscover will not use the 'path_save' parameter as shown above to locate the RNA-seq data of the metacells.
   
-- --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'
-
-  The default parameter represents using the peak-TF associations predicted by Unify as input.
+- --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'. The default parameter represents using the peak-TF associations predicted by Unify as input.
 
   ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
 
