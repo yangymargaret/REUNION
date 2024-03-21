@@ -23,15 +23,13 @@ python test_reunion_2.py [Options]
 
 The options:
 
-- -p, --root_path : root directory of the data files
-
 - -b, --cell : cell type, default = 0
   
     cell type 0 represents PBMC data
 
 - --data_file_type: the cell type or dataset annotation, default = 'PBMC'
 
-- --path_save: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
+- --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
 
     The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
 
@@ -41,11 +39,11 @@ The options:
 
 - --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'path_save' parameter to locate the ATAC-seq data of the metacells.
+  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data of the metacells.
 
 - --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'path_save' parameter to locate the RNA-seq data of the metacells.
+  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
   
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
@@ -57,6 +55,8 @@ The options:
 
   Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'.
 
+- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = '.'
+  
 - --method_type_group: the method for peak clustering, default = phenograph.20.
 
   By default we use PhenoGraph algorithm for clustering with the number of neighbors = 20. To use PhenoGraph clustering with a specific number of neighbors, please use: phenogrph.$num, which represents the number of neighbors = $num
