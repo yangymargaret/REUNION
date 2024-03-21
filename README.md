@@ -27,15 +27,41 @@ The options:
 
 - -r, --run_id : experiment id, default = 0
 
-- -method_type_group: the method for peak clustering, default=phenograph.20,
+- --method_type_group : the method for peak clustering, default = phenograph.20,
 
-- -thresh_size_group: the threshold on peak cluster size, defaulot_
+- --thresh_size_group : the threshold on peak cluster size, default = 15
 
-- -i, --initial_weight : initial weight for initial parameters, default = 0.1
+- --method_type_feature_link
 
-- -j, --initial_magnitude : initial magnitude for initial parameters, default = 2
+- --component
 
-- -s, --version : dataset version, default = 1
+- --component2
+
+- --neighbor
+
+- --neighbor_sel
+
+- --model_type
+
+- --ratio_1
+
+- --ratio_2
+
+- --flag_group
+
+- --flag_group
+
+- --flag_select_1
+
+- --flag_select_2
+
+- --thresh_score
+
+- --q_id1
+
+- --q_id2
+
+- --config_id
 
 ************************************************************************************
 # Required pre-installed packages
