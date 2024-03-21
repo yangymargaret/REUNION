@@ -26,7 +26,7 @@ The options:
 - -p, --root_path : root directory of the data files
 
 - -r, --run_id : experiment id, default = 0
-- 
+
 - -b, --cell : cell type, default = 0
   
   cell type 0 represents PBMC data
