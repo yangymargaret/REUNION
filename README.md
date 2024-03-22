@@ -55,6 +55,10 @@ python test_reunion_2.py [Options]
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
 
   By default Unify creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it.
+
+The output:
+
+The output of Unify includes a file containing the estimated peak-TF-gene associations saved in the directory specified by 'output_dir'. 
   
 ReDiscover
 
