@@ -94,6 +94,8 @@ The options:
 
   By default we use the peak-TF associations predicted by Unify as input. ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
 
+- --tf: the name of the TF for which to predict peak-TF links, for example, EBF1; or a file containing the names of the TFs to query, with one TF per line, default = -1
+
 - --input_link: the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF
 
   Please provide the file as a tab-delmited .txt file which contains at least two columns: ['pred','score'] and with the peak positions are rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
