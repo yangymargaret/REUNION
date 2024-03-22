@@ -12,7 +12,7 @@ Unify
 
 The command to use Unify to infer peak-TF-gene associations is as follows:
 
-python test_reunion_1.py [Options]
+python test_rediscover_compute_3.py [Options]
 
 
 ReDiscover
