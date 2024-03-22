@@ -40,7 +40,7 @@ python test_reunion_2.py [Options]
 
 - --rna_data: the filename of the RNA-seq data of the single cells, default = -1.
 
-  If atac_data or rna_data is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells respectively.
+  If atac_data or rna_data is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
 
 - --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
 
