@@ -24,26 +24,22 @@ python test_reunion_2.py [Options]
 
     The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
 
-    Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
+    Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format: single cells: atac_$data_file_type.extension, , atac_$data_file_type.extension; metacells: atac_meta_$data_file_type.extension, rna_meta_$data_file_type. $data_file_type was specified using the 'data_file_type' parameter.
 
-    'extension' represents the file format. For the count matrices of the metacells, Unify supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz. For the count matrices of the single cells, Unify supports the anndata format.
+    'extension' represents the file format. For the count matrices of the metacells, Unify supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz. For the data of single cells, Unify supports the anndata format.
 
 - --atac_data: the filename of the ATAC-seq data of the single cells, default = -1.
 
 - --rna_data: the filename of the RNA-seq data of the single cells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
+  If atac_data or rna_data is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells respectively.
 
 - --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data of the metacells.
-
 - --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
-
-  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
   
-
-
+  If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
+  
 ReDiscover
 
 The command to use ReDiscover to perform TF binding prediction is as follows:
@@ -120,7 +116,7 @@ The options:
 
 The output:
 
-The output of ReDiscover is a file containing the peak-TF associations for the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in the directory as specified by 'output_dir'. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred' represents the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba' represents predicted TF binding probability of the give TF in the corresponding peak. 
+The output of ReDiscover is a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in the directory specified by 'output_dir'. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak. 
 
 ************************************************************************************
 # Required pre-installed packages
