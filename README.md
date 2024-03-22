@@ -12,14 +12,43 @@ Unify
 
 The command to use Unify to infer peak-TF-gene associations is as follows:
 
-python test_rediscover_compute_3.py [Options]
+python test_reunion_2.py [Options]
+
+- -b, --cell : cell type, default = 0
+  
+    cell type 0 represents PBMC data
+
+- --data_file_type: the cell type or dataset annotation, default = 'PBMC'
+
+- --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the single cells and the metacells are saved, default = '.'
+
+    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
+
+    Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
+
+    'extension' represents the file format. For the count matrices of the metacells, Unify supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz. For the count matrices of the single cells, Unify supports the anndata format.
+
+- --atac_data: the filename of the ATAC-seq data of the single cells, default = -1.
+
+- --rna_data: the filename of the RNA-seq data of the single cells, default = -1.
+
+  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
+
+- --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
+
+  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data of the metacells.
+
+- --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
+
+  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
+  
 
 
 ReDiscover
 
 The command to use ReDiscover to perform TF binding prediction is as follows:
 
-python test_reunion_2.py [Options]
+python test_rediscover_compute_3.py [Options]
 
 The options:
 
@@ -39,11 +68,9 @@ The options:
 
 - --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data of the metacells.
-
 - --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
 
-  If this parameter is specified, ReDiscover will not use the 'input_dir' parameter to locate the RNA-seq data of the metacells.
+  If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
   
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
@@ -57,7 +84,7 @@ The options:
 
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
 
-  The default parameter represents ReDiscover creates a file folder named 'output_file' in the directory of the code and save the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
+  By default ReDiscover creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
 
 - --output_filename: the filename of the peak-TF associations predicted by ReDiscover, default = -1
 
