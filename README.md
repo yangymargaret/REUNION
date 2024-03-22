@@ -142,10 +142,10 @@ REUNION requires the following packages to be installed for both Unify and ReDis
 - NumPy 
 - SciPy
 - Pandas
-- pyranges
 
 Unify additionally requires the following packages to be installed:
 - Scanpy
+- pyranges
 - pingouin
 
 ReDiscover additionally requires the following packages to be installed:
