@@ -24,9 +24,17 @@ python test_reunion_2.py [Options]
 
     The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
 
-    Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format: single cells: atac_$data_file_type.extension, , atac_$data_file_type.extension; metacells: atac_meta_$data_file_type.extension, rna_meta_$data_file_type. $data_file_type was specified using the 'data_file_type' parameter.
+    Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format:
 
-    'extension' represents the file format. For the count matrices of the metacells, Unify supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz. For the data of single cells, Unify supports the anndata format.
+    single cells: atac_$data_file_type.extension, atac_$data_file_type.extension;
+
+    metacells: atac_meta_$data_file_type.extension, rna_meta_$data_file_type.extension;
+
+    $data_file_type was specified using the 'data_file_type' parameter. 'extension' represents the file format.
+
+    For the count matrices of the metacells, Unify supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz.
+
+    For the data of single cells, Unify supports the anndata format.
 
 - --atac_data: the filename of the ATAC-seq data of the single cells, default = -1.
 
