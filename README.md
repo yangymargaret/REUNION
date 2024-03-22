@@ -126,7 +126,7 @@ The options:
 
 - --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'LogisticRegression', 'XGBoostClassifier'}.
 
-  ReDiscover supports using the logistic regression model or the XGBoost classifier as the prediction model. 
+  ReDiscover supports using the logistic regression model or the XGBoost classifier as the prediction model. By default we use the logistic regression model.
 
 - --ratio_1: the ratio of the number of pseudo negative training samples selected from the peaks with motif of a given TF detected but without TF binding predicted by Unify or the method specified in 'method_type_feature_link' (noted as N_neg,1) compared to the number of pseudo positive training samples selected (noted as N_pos), default = 0.25. We have N_neg,1 = N_pos*$ratio_1.
 
