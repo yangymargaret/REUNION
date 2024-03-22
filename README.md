@@ -20,9 +20,9 @@ python test_reunion_2.py [Options]
 
 - --data_file_type: the cell type or dataset annotation, default = 'PBMC'
 
-- --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the single cells and the metacells are saved, default = '.'
+- --input_dir: the directory where the ATAC-seq and RNA-seq data of the single cells, or the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
 
-    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
+    The default parameter represents the data are saved in the same directory of the code. Please change this parameter to the directory of the data.
 
     Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format:
 
