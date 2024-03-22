@@ -47,6 +47,14 @@ python test_reunion_2.py [Options]
 - --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
   
   If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
+
+- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1.
+
+- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1.
+
+- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
+
+  By default Unify creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it.
   
 ReDiscover
 
