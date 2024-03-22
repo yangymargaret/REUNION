@@ -136,11 +136,19 @@ The output of ReDiscover is a file containing the peak-TF associations between t
 
 ************************************************************************************
 # Required pre-installed packages
-REUNION requires the following packages to be installed:
+REUNION requires the following packages to be installed for both Unify and ReDiscover:
 - Python 
 - scikit-learn
 - NumPy 
 - SciPy
-- Scanpy
 - Pandas
+- pyranges
+
+Unify additionally requires the following packages to be installed:
+- Scanpy
+- pingouin
+
+ReDiscover additionally requires the following packages to be installed:
+- phenograph
+
   
