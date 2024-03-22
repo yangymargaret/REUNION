@@ -70,9 +70,9 @@ python test_rediscover_compute_3.py [Options]
 
 The options:
 
-- -b, --cell : cell type, default = 0
+- -b, --cell : cell type, default = 1
   
-    cell type 0 represents PBMC data
+    cell type 1 represents PBMC data
 
 - --data_file_type: the cell type or dataset annotation, default = 'PBMC'
 
