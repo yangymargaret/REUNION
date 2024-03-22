@@ -36,15 +36,15 @@ python test_reunion_2.py [Options]
 
     For the data of single cells, Unify supports the anndata format.
 
-- --atac_data: the filename of the ATAC-seq data of the single cells, default = -1.
+- --atac_data: the file path of the ATAC-seq data of the single cells, default = -1.
 
-- --rna_data: the filename of the RNA-seq data of the single cells, default = -1.
+- --rna_data: the file path of the RNA-seq data of the single cells, default = -1.
 
   If atac_data or rna_data is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
 
-- --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
+- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1.
 
-- --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
+- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
   
   If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
@@ -84,9 +84,9 @@ The options:
 
     'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
 
-- --atac_meta: the filename of the ATAC-seq read count matrix of the metacells, default = -1.
+- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1.
 
-- --rna_meta: the filename of the RNA-seq read count matrix of the metacells, default = -1.
+- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
 
   If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
   
