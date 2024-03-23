@@ -52,16 +52,15 @@ python test_reunion_2.py [Options]
 
 - --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1.
 
-- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
+- --output_dir: the directory where the output of Unify will be saved, including the predicted peak-TF-gene associations and other associated files, default = 'output_file'
 
-  By default Unify creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it.
+  By default Unify creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it. Unify will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF-gene associations. 
 
 The output:
 
-The output of Unify includes a file containing the estimated peak-TF-gene associations saved in the directory specified by 'output_dir'. 
+The output of Unify includes a file containing the estimated peak-TF-gene associations saved in the directory $output_dir/file_link. 
 
 
-  
 ReDiscover
 
 The command to use ReDiscover to perform TF binding prediction is as follows:
@@ -78,7 +77,7 @@ The options:
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
 
-    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the same directory of the code. Please change this parameter to the directory of the data.
+    The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the current directory. Please change this parameter to the directory of the data.
 
     Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
 
@@ -116,9 +115,9 @@ The options:
 
   columns_1 has the format 'column1,column2' or 'column1,column2,column_motif_score', where column1, column2 represent the columns containing the binary peak-TF link predictions and the estimated peak-TF association scores, respectively, and optionally column_motif_score represents the column containing the motif scores from motif scanning results.
   
-- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
+- --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TFs and other associated files, default = 'output_file'
 
-  By default ReDiscover creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
+  By default ReDiscover creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it. ReDiscover will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF associations. 
 
 - --output_filename: the file to save the peak-TF associations predicted by ReDiscover, default = -1
 
@@ -156,7 +155,7 @@ The options:
 
 The output:
 
-The output of ReDiscover is a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in the directory specified by $output_dir. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak locus.
+The output of ReDiscover includes a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in $output_dir/file_link. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak locus.
 
 ************************************************************************************
 # Required pre-installed packages
