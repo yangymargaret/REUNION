@@ -98,7 +98,7 @@ The options:
 
   If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line
 
-- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default: the same as $data_file_type
+- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = $data_file_type
   
 - --input_link: the directory where the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF is saved
 
@@ -108,6 +108,10 @@ The options:
 
   If there are multiple TFs to query, as specified by the argument 'tf', please prepare a peak-TF association file as described above for each TF. Please placed the files into one directory, and use the path of the directory to specify 'input_link'.
 
+- --columns_1: the columns in the peak-TF association file which correspond to the binary prediction and the estimated peak-TF association score by Unify (or other methods), default = 'pred,score'
+
+  columns_1 has the format 'column1,column2', where column1, column2 
+  
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
 
   By default ReDiscover creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
@@ -144,7 +148,7 @@ The options:
 
 - --thresh_score: the thresholds for the normalized peak-TF scores to select pseudo positive training samples from the paired peak group with or without enrichment of peaks predicted to be bound by a given TF by Unify or the specified method (noted as predicted TF-binding peaks), default = '0.25,0.75'
 
-    thresh_score has the format 'thresh1,thresh2'. thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binidng peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
+    thresh_score has the format 'thresh1,thresh2', where thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binding peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
 
 The output:
 
