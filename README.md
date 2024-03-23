@@ -92,7 +92,7 @@ The options:
   
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
-  By default we use the peak-TF associations predicted by Unify as input. ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, pleaes provide the name of the corresponding method.
+  By default we use the peak-TF associations predicted by Unify as input. ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, please provide the name of the corresponding method.
 
 - --tf: the name of the TF for which to predict peak-TF links, for example, ATF3; or a file containing the names of the TFs to query, with one TF name per line, default = -1
 
