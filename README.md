@@ -100,7 +100,9 @@ The options:
 
 - --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = $data_file_type
 
-- --filename_annotation: the annotation as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = '1'
+- --filename_annot: the annotation as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = '1'
+
+  If filename_annot='', filename_annot will not be used in the corresponding filename.
   
 - --input_link: the directory where the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF is saved
 
