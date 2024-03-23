@@ -97,7 +97,7 @@ The options:
 
   If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line.
 
-- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = $data_file_type
+- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or the method specified in 'method_type_feature_link' ) or ReDiscover, default = $data_file_type
 
 - --filename_annot: the annotation as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = '1'
 
@@ -145,7 +145,7 @@ The options:
 
   ReDiscover supports using the logistic regression model or the XGBoost classifier as the prediction model. By default we use the logistic regression model.
 
-- --ratio_1: the ratio of the number of pseudo negative training samples selected from the peaks with motif of a given TF detected but without TF binding predicted by Unify or the method specified in 'method_type_feature_link' (noted as N_neg,1) compared to the number of pseudo positive training samples selected (noted as N_pos), default = 0.25. We have N_neg,1 = N_pos*$ratio_1.
+- --ratio_1: the ratio of the number of pseudo negative training samples selected from the peaks with motif of a given TF detected but without TF binding predicted by Unify or other methods (noted as N_neg,1) compared to the number of pseudo positive training samples selected (noted as N_pos), default = 0.25. We have N_neg,1 = N_pos*$ratio_1.
 
 - --ratio_2: the ratio of the number of pseudo negative training samples selected from the peaks with the given TF motif detected (noted as N_neg,2) compared to the number of pseudo positive training samples selected (N_pos), default = 1.25. We have N_neg,2 = N_pos*$ratio_2.
 
