@@ -149,7 +149,7 @@ The options:
 
 - --ratio_2: the ratio of the number of pseudo negative training samples selected from the peaks with the given TF motif detected (noted as N_neg,2) compared to the number of pseudo positive training samples selected (N_pos), default = 1.25. We have N_neg,2 = N_pos*$ratio_2.
 
-- --thresh_score: the thresholds on the normalized peak-TF scores to select pseudo positive training samples from the paired peak group with or without enrichment of peaks predicted to be bound by a given TF by Unify or other methods (noted as predicted TF-binding peaks), default = '0.25,0.75'
+- --thresh_score: the thresholds on the normalized peak-TF scores to select pseudo positive training samples from the paired peak groups with or without enrichment of peaks predicted to be bound by a given TF by Unify or other methods (noted as predicted TF-binding peaks), default = '0.25,0.75'
 
     thresh_score has the format 'thresh1,thresh2', where thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binding peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
 
