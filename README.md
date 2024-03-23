@@ -98,7 +98,7 @@ The options:
 
   If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line
 
-- --input_link: the path of the directory where the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF is saved
+- --input_link: the directory where the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF is saved
 
   Please provide the file as a tab-delmited .txt file named $TF_name.link.txt containing at least two columns: ['pred','score'], with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
 
