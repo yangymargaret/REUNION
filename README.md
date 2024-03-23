@@ -18,7 +18,7 @@ python test_reunion_2.py [Options]
   
     cell type 0 represents PBMC data
 
-- --data_file_type: the cell type or dataset annotation, default = 'PBMC'
+- --data_file_type: the cell type or dataset annotation, default = 'pbmc'
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq data of the single cells, or the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
 
