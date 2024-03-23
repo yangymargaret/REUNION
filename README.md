@@ -96,7 +96,7 @@ The options:
 
 - --tf: the name of the TF for which to predict peak-TF links, for example, ATF3; or a file containing the names of the TFs to query, with one TF name per line, default = -1
 
-  If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line
+  If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line.
 
 - --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = $data_file_type
   
@@ -104,13 +104,13 @@ The options:
 
   Please provide the file as a tab-delmited .txt file named $filename_prefix.$TF_name.link.txt containing at least two columns: ['pred','score'], with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
 
-  Optionally, if the motif scores of the given TF in each peak locus based on motif scanning are available, please include them using an addtional column named 'motif_score'.
+  Optionally, if the motif scores of the given TF in each peak locus based on motif scanning are available, please include them using an additional column named 'motif_score'.
 
   If there are multiple TFs to query, as specified by the argument 'tf', please prepare a peak-TF association file as described above for each TF. Please placed the files into one directory, and use the path of the directory to specify 'input_link'.
 
 - --columns_1: the columns in the peak-TF association file which correspond to the binary prediction and the estimated peak-TF association score by Unify (or other methods), default = 'pred,score'
 
-  columns_1 has the format 'column1,column2', where column1, column2 
+  columns_1 has the format 'column1,column2', where column1, column2 represent the columns containing the binary peak-TF link predictions and the estimated peak-TF association scores, respectively.
   
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
 
