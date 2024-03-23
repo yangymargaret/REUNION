@@ -121,7 +121,7 @@ The options:
 
 - --output_filename: the file to save the peak-TF associations predicted by ReDiscover, default = -1
 
-  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.$filename_annot.pred2.txt and save the files to the directory specified by 'output_dir'.
+  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.$filename_annot.pred2.txt and save the files to the directory $output_dir/file_link.
 
   If 'output_filename' is specified and there are multiple TFs to query, ReDiscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
   
@@ -129,13 +129,13 @@ The options:
 
   By default we use PhenoGraph algorithm for clustering with the number of neighbors = 20. To use PhenoGraph clustering with a specific number of neighbors, please use: phenogrph.$num, which represents the number of neighbors = $num
 
-- --thresh_size_group: the threshold on peak cluster size, default = 15
+- --thresh_size_group: the threshold on peak cluster size, default = 1
   
 - --component: the number of components to keep when applying SVD to the accessiblity feature matrix and the sequence feature matrix of the peaks, default = 100
 
 - --component2: the number of feature dimensions to use when building the feature matrix of the peaks in the accessibility feature space and the sequence feature space, default = 50. Please note that $component2 <= $component.
 
-  The total number of feature dimensions for a peak is d=2*$component2, as we concatenate the accessibility feature vector and the sequence feature vector for the peak.
+  The total number of feature dimensions for a peak is d=2*$component2, as we concatenate the accessibility feature vector and the sequence feature vector for each peak.
 
 - --neighbor: the number of K nearest neighbors (KNN) estimated for each peak in the accessibility or sequence feature space, default = 100
 
