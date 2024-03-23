@@ -110,9 +110,11 @@ The options:
 
   By default ReDiscover creates a file folder named 'output_file' in the directory of the code and saves the output in the folder. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it.
 
-- --output_filename: the filename of the peak-TF associations predicted by ReDiscover, default = -1
+- --output_filename: the file to save the peak-TF associations predicted by ReDiscover, default = -1
 
-  If the dedult parameter is used, ReDiscover will save output to the file named $filename_prefix.pred2.txt, where $filename_prefix is inferred from $input_link by keeping the part before the '.txt' extention. 
+  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $TF_name.link.pred2.txt and save the files to the directory specified by 'output_dir'.
+
+  If 'output_filename' is specified and there are multiple TFs to query, ReDiscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
   
 - --method_type_group: the method for peak clustering, default = phenograph.20.
 
