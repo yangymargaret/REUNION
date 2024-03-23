@@ -122,7 +122,7 @@ The options:
 
 - --output_filename: the file to save the peak-TF associations predicted by ReDiscover, default = -1
 
-  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.link.2.txt and save the files to the directory specified by 'output_dir'.
+  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.$filename_annot.pred2.txt and save the files to the directory specified by 'output_dir'.
 
   If 'output_filename' is specified and there are multiple TFs to query, ReDiscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
   
