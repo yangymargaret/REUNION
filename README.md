@@ -40,13 +40,13 @@ python test_reunion_2.py [Options]
 
 - --rna_data: the file path of the RNA-seq data of the single cells, default = -1.
 
-  If atac_data or rna_data is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
+  If atac_data or rna_data is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
 
 - --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1.
 
 - --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
   
-  If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
+  If atac_meta or rna_meta is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
 - --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1.
 
