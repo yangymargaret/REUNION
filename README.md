@@ -98,13 +98,13 @@ The options:
 
   If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line
 
-- --input_link: the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF
+- --input_link: the path of the directory where the file containing the peak-TF associations predicted by Unify or the specified external method for a given TF is saved
 
-  Please provide the file as a tab-delmited .txt file which contains at least two columns: ['pred','score'], with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
+  Please provide the file as a tab-delmited .txt file named $TF_name.link.txt containing at least two columns: ['pred','score'], with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the external method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the external method. If the association scores are inavailable, please leave this column blank.
 
-  Optionally, if the motif scores of the given TF in each peak based on motif scanning results are available, please include them using an addtional column named 'motif_score'.
+  Optionally, if the motif scores of the given TF in each peak locus based on motif scanning are available, please include them using an addtional column named 'motif_score'.
 
-  If there are multiple TFs to query, as specified by the argument 'tf', please prepare a peak-TF association file as described above for each TF with the file name: $TF_name.link.txt and placed the files into one directory, and use the path of the directory to specify 'input_link'.
+  If there are multiple TFs to query, as specified by the argument 'tf', please prepare a peak-TF association file as described above for each TF. Please placed the files into one directory, and use the path of the directory to specify 'input_link'.
 
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TF, default = 'output_file'
 
