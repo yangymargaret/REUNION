@@ -14,6 +14,8 @@ The command to use Unify to infer peak-TF-gene associations is as follows:
 
 python test_reunion_2.py [Options]
 
+The options:
+
 - -b, --cell : cell type, default = 0
   
     cell type 0 represents PBMC data
