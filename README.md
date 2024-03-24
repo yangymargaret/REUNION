@@ -90,6 +90,10 @@ The options:
 - --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
 
   If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
+
+- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1.
+
+- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1.
   
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
