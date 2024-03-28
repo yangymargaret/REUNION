@@ -158,6 +158,60 @@ class _Base2_2(_Base2_1):
 
 		return select_config
 
+	# ## motif-peak estimate: load meta_exprs and peak_read
+	# def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,select_config={}):
+
+	# 	input_file_path1 = self.save_path_1
+	# 	# data_file_type = 'CD34_bonemarrow'
+	# 	# input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
+	# 	data_file_type = select_config['data_file_type']
+	# 	# input_file_path = select_config['data_path']
+	# 	# filename_save_annot_1 = select_config['filename_save_annot_1']
+		
+	# 	input_filename_1, input_filename_2 = select_config['filename_rna'],select_config['filename_atac']
+	# 	input_filename_3 = select_config['filename_rna_exprs_1']
+	# 	# rna_meta_ad = sc.read_h5ad(input_filename_1)
+	# 	# atac_meta_ad = sc.read_h5ad(input_filename_2)
+	# 	rna_meta_ad = sc.read(input_filename_1)
+	# 	atac_meta_ad = sc.read(input_filename_2)
+	# 	meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
+	# 	print(input_filename_1,input_filename_2)
+	# 	print('rna_meta_ad\n', rna_meta_ad)
+	# 	print('atac_meta_ad\n', atac_meta_ad)
+
+	# 	# atac_meta_ad = self.atac_meta_ad
+	# 	# meta_scaled_exprs = self.meta_scaled_exprs
+	# 	if flag_format==True:
+	# 		meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
+	# 		rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
+	# 		rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
+
+	# 	self.rna_meta_ad = rna_meta_ad
+	# 	sample_id = rna_meta_ad.obs_names
+	# 	sample_id1 = meta_scaled_exprs.index
+	# 	assert list(sample_id)==list(atac_meta_ad.obs_names)
+	# 	assert list(sample_id)==list(sample_id1)
+	# 	atac_meta_ad = atac_meta_ad[sample_id,:]
+	# 	self.atac_meta_ad = atac_meta_ad
+
+	# 	meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+	# 	self.meta_scaled_exprs = meta_scaled_exprs
+	# 	print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
+
+	# 	peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
+	# 	meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
+	# 	self.meta_exprs_2 = meta_exprs_2
+
+	# 	vec1 = utility_1.test_stat_1(np.mean(atac_meta_ad.X.toarray(),axis=0))
+	# 	vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
+	# 	vec3 = utility_1.test_stat_1(np.mean(meta_exprs_2,axis=0))
+
+	# 	print('atac_meta_ad mean values ',atac_meta_ad.shape,vec1)
+	# 	print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
+	# 	print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
+
+	# 	return peak_read, meta_scaled_exprs, meta_exprs_2
+
 	## motif-peak estimate: load meta_exprs and peak_read
 	def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,select_config={}):
 
@@ -168,13 +222,14 @@ class _Base2_2(_Base2_1):
 		# input_file_path = select_config['data_path']
 		# filename_save_annot_1 = select_config['filename_save_annot_1']
 		
-		input_filename_1, input_filename_2 = select_config['filename_rna'],select_config['filename_atac']
-		input_filename_3 = select_config['filename_rna_exprs_1']
-		# rna_meta_ad = sc.read_h5ad(input_filename_1)
-		# atac_meta_ad = sc.read_h5ad(input_filename_2)
-		rna_meta_ad = sc.read(input_filename_1)
-		atac_meta_ad = sc.read(input_filename_2)
-		meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
+		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
+		print('input_filename_1 ',input_filename_1)
+		print('input_filename_2 ',input_filename_2)
+		rna_meta_ad = sc.read_h5ad(input_filename_1)
+		atac_meta_ad = sc.read_h5ad(input_filename_2)
+
+		# rna_meta_ad = sc.read(input_filename_1)
+		# atac_meta_ad = sc.read(input_filename_2)
 		print(input_filename_1,input_filename_2)
 		print('rna_meta_ad\n', rna_meta_ad)
 		print('atac_meta_ad\n', atac_meta_ad)
@@ -182,210 +237,1194 @@ class _Base2_2(_Base2_1):
 		# atac_meta_ad = self.atac_meta_ad
 		# meta_scaled_exprs = self.meta_scaled_exprs
 		if flag_format==True:
-			meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
 			rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
 			rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
+		
+		column_1 = 'filename_rna_exprs_1'
+		meta_scaled_exprs = []
+		if column_1 in select_config:
+			input_filename_3 = select_config['filename_rna_exprs_1']
+			meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
+
+			if flag_format==True:
+				meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
+		
+			meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+			# self.meta_scaled_exprs = meta_scaled_exprs
+			# print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
+
+			vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
+			print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
 
 		self.rna_meta_ad = rna_meta_ad
 		sample_id = rna_meta_ad.obs_names
-		sample_id1 = meta_scaled_exprs.index
 		assert list(sample_id)==list(atac_meta_ad.obs_names)
-		assert list(sample_id)==list(sample_id1)
+
+		if len(meta_scaled_exprs)>0:
+			sample_id1 = meta_scaled_exprs.index
+			assert list(sample_id)==list(sample_id1)
+
 		atac_meta_ad = atac_meta_ad[sample_id,:]
 		self.atac_meta_ad = atac_meta_ad
 
-		meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
-		self.meta_scaled_exprs = meta_scaled_exprs
-		print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
-
 		peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
 		meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
+		self.peak_read = peak_read
 		self.meta_exprs_2 = meta_exprs_2
+		self.meta_scaled_exprs = meta_scaled_exprs
 
 		vec1 = utility_1.test_stat_1(np.mean(atac_meta_ad.X.toarray(),axis=0))
-		vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
 		vec3 = utility_1.test_stat_1(np.mean(meta_exprs_2,axis=0))
 
 		print('atac_meta_ad mean values ',atac_meta_ad.shape,vec1)
-		print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
-		print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
+		# print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
+		print('rna_meta_ad mean values ',meta_exprs_2.shape,vec3)
 
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
+	## score query for performance comparison
+	# def test_query_motif_filename_pre1
+	def test_query_motif_filename_pre1(self,data=[],data_file_type_query='',thresh_motif=5e-05,thresh_motif_annot='',retrieve_mode=0,save_mode=1,verbose=0,select_config={}):
+
+		flag_query1 = 1
+		if flag_query1>0:
+			data_file_query_motif = data_file_type_query
+			thresh_vec_1 = [5e-05,1e-04,0.001,-1,0.01]
+			annot_vec_1 = ['5e-05','1e-04','0.001',-1,'0.01']
+			thresh_num1 = len(thresh_vec_1)
+			thresh_idvec_1 = np.arange(1,thresh_num1+1)
+			dict_1 = dict(zip(thresh_vec_1,thresh_idvec_1))
+			dict_2 = dict(zip(thresh_vec_1,annot_vec_1))
+
+			if retrieve_mode==0:
+				select_config_1 = select_config # update field in the original
+			else:
+				select_config_1 = dict()
+			
+			thresh_motif_id = dict_1[thresh_motif]
+			thresh_motif_annot = dict_2[thresh_motif]
+			print('thresh_motif, thresh_motif_id: ',thresh_motif,thresh_motif_id)
+			select_config_1.update({'dict_motif_thresh_annot':dict_2})
+
+			# root_path_1 = select_config['root_path_1']
+			# data_file_type_annot = select_config['data_file_type_annot']
+			# path_id = select_config['path_id']
+
+			data_path_save_motif = select_config['data_path_save_motif']
+			filename_prefix = select_config['filename_prefix']
+			filename_annot_1 = select_config['filename_annot_1']
+
+			motif_filename1 = '%s/test_motif_data.%s.h5ad'%(data_path_save_motif,filename_annot_1)
+			motif_filename2 = '%s/test_motif_data_score.%s.h5ad'%(data_path_save_motif,filename_annot_1)
+
+			file_format = 'csv'
+			if format_type==0:
+				filename_annot1 = '1.2'
+				filename_annot2 = '1'
+				input_filename_1 = '%s/%s_motif.1.2.%s'%(data_path_save_motif,filename_prefix,file_format)
+				input_filename_2 = '%s/%s_motif_scores.1.%s'%(data_path_save_motif,filename_prefix,file_format)
+				filename_chromvar_score = '%s/%s_chromvar_scores.1.csv'%(data_path_save_motif,filename_prefix)
+			else:
+				filename_annot1 = thresh_motif_annot_2
+				input_filename_1 = '%s/%s.motif.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot1,file_format)
+				input_filename_2 = '%s/%s.motif_scores.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot1,file_format)
+				filename_chromvar_score = '%s/%s.chromvar_scores.%s.csv'%(data_path_save_motif,filename_prefix,filename_annot1)
+
+			file_path_2 = '%s/TFBS'%(data_path_save_motif)
+			if (os.path.exists(file_path_2)==False):
+				print('the directory does not exist: %s'%(file_path_2))
+				os.makedirs(file_path_2,exist_ok=True)
+
+			input_filename_annot = '%s/translationTable.csv'%(file_path_2)
+			column_motif = 'motif_id'
+			# column_motif = 'tf'
+
+			select_config_1.update({'data_path_save_motif':data_path_save_motif})
+
+			select_config_1.update({'input_filename_motif_annot':input_filename_annot,'filename_translation':input_filename_annot,
+									'column_motif':column_motif})
+			
+			select_config_1.update({'motif_filename_1':input_filename_1,'motif_filename_2':input_filename_2,
+									'filename_chromvar_score':filename_chromvar_score,
+									'motif_filename1':motif_filename1,'motif_filename2':motif_filename2})
+
+			# data_file_query_motif = data_file_type_query
+			# motif_filename1 = '%s/test_motif_data.%s.1.h5ad'%(data_path_save_motif,data_file_query_motif)
+			# motif_filename2 = '%s/test_motif_data_score.%s.1.h5ad'%(data_path_save_motif,data_file_query_motif)
+			# select_config.update({'motif_filename1':motif_filename1,'motif_filename2':motif_filename2})
+
+			filename_save_annot_1 = data_file_type_query
+			select_config.update({'filename_save_annot_pre1':filename_save_annot_1})
+			field_query_1 = ['input_filename_motif_annot','filename_translation','motif_filename_1','motif_filename_2',
+								'filename_chromvar_score','motif_filename1','motif_filename2']
+			for field_id in field_query_1:
+				value = select_config_1[field_id]
+				print('field, value: ',field_id,value)
+
+			return select_config_1
+
+	## query motif data
+	def test_query_motif_data_pre1_1(self,data=[],method_type_vec=[],thresh_motif=5e-05,retrieve_mode=0,default_mode=0,save_mode=1,verbose=0,select_config={}):
+
+		flag_config_1 = 1
+		data_file_type_query = select_config['data_file_type']
+		method_type_feature_link = select_config['method_type_feature_link']
+		if flag_config_1>0:
+			# root_path_1 = select_config['root_path_1']
+			# root_path_2 = select_config['root_path_2']	
+			method_type_vec_pre1 = method_type_vec.copy()
+			if len(method_type_vec)==0:
+				method_type_vec_pre1 = [method_type_feature_link]
+			select_config = self.test_query_config_pre1_1(data_file_type_query=data_file_type_query,method_type_vec=method_type_vec_pre1,flag_config_1=flag_config_1,select_config=select_config)
+
+		file_save_path_1 = select_config['file_path_peak_tf']
+
+		if data_file_type_query in ['pbmc']:
+			dict_file_annot1 = select_config['dict_file_annot1']
+
+		thresh_vec_1 = [5e-05,1e-04,0.001,-1,0.01]
+		annot_vec_1 = ['5e-05','1e-04','0.001',-1,'0.01']
+		# thresh_num1 = len(thresh_vec_1)
+
+		data_file_type_query = select_config['data_file_type']
+		# thresh_motif = 5e-05
+		select_config_1 = self.test_query_motif_filename_pre1(data_file_type_query=data_file_type_query,thresh_motif=thresh_motif,
+																retrieve_mode=retrieve_mode,save_mode=1,verbose=0,select_config=select_config)
+
+		if retrieve_mode==0:
+			select_config = select_config_1  # update the original select_config
+		else:
+			motif_config = select_config_1
+			annot_str1 = select_config_1['dict_motif_thresh_annot'][thresh_motif]
+			field_id = 'motif_thresh%s'%(annot_str1)
+			print('field of motif data filename: ',field_id)
+			# print(motif_config)
+			select_config.update({field_id:motif_config})
+
+		flag_motif_data_load = 1
+		# flag_motif_data_load = 0
+		# method_type_feature_link = select_config['method_type_feature_link']
+		motif_data = []
+		motif_data_score = []
+		# method_type_vec = []
+		if flag_motif_data_load>0:
+			print('load motif data')
+			# method_type_vec_query = ['insilico_0.1']+[method_type_feature_link]
+			# method_type_1, method_type_2 = method_type_vec_query[0:2]
+			method_type_vec_query = method_type_vec
+			if len(method_type_vec)==0:
+				method_type_vec_query = [method_type_feature_link]
+
+			# method_type_2 = method_type_vec_query[0]
+			# motif_filename_list1 = [motif_filename1,motif_filename2]
+			# select_config.update({'motif_filename_list1':motif_filename_list1})
+			# motif_filename_list1 = select_config['motif_filename_list1']
+			motif_filename1, motif_filename2 = select_config_1['motif_filename1'], select_config_1['motif_filename2']
+			motif_filename_list1 = [motif_filename1,motif_filename2]
+			
+			select_config.update({'motif_filename_list1':motif_filename_list1})
+			dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,select_config=select_config)
+
+			key_vec_1 = list(dict_motif_data.keys())
+			print('dict_motif_data: ',key_vec_1)
+			# print(dict_motif_data)
+
+			# method_type_query = method_type_feature_link
+			method_type_query = method_type_vec_query[0]
+			print('method_type_query: ',method_type_query)
+			motif_data_query1 = dict_motif_data[method_type_query]['motif_data']
+			motif_data_score_query1 = dict_motif_data[method_type_query]['motif_data_score']
+			
+			peak_loc_ori = motif_data_query1.index
+			print('motif_data_query1: ',motif_data_query1.shape)
+			print(motif_data_query1[0:2])
+			if len(motif_data_score_query1)>0:
+				print('motif_data_score_query1: ',motif_data_score_query1.shape)
+				print(motif_data_score_query1[0:2])
+			# print('motif_data_query1, motif_data_score_query1: ',motif_data_query1.shape,motif_data_score_query1.shape)
+			
+			if default_mode>0:
+				# motif_data = motif_data_query1
+				# motif_data_score = motif_data_score_query1
+				self.dict_motif_data = dict_motif_data
+
+			return dict_motif_data, select_config
+
 	## load motif data
-	def test_load_motif_data_1(self,method_type_vec=[],select_config={}):
+	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,verbose=0,select_config={}):
 		
 		flag_query1=1
 		method_type_num = len(method_type_vec)
 		dict_motif_data = dict()
-		flag_query1=1
-		motif_data_pre1, motif_data_score_pre1 = [], []
 		data_file_type = select_config['data_file_type']
+		
 		for i1 in range(method_type_num):
 			# method_type = method_type_vec[method_type_id]
 			method_type = method_type_vec[i1]
-			data_path = select_config['input_file_path_query'][method_type]
-			input_file_path = data_path
-			print('data_path_save: ',data_path)
+			
+			# data_path = select_config['input_file_path_query'][method_type]
+			# input_file_path = data_path
+			# print('data_path_save: ',data_path)
+			motif_data_pre1, motif_data_score_pre1 = [], []
 
-			if (method_type.find('insilico')>-1) or (method_type.find('joint_score')>-1):
+			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
+			# flag_1 = False
+			flag_1 = self.test_query_method_type_motif_1(method_type=method_type,method_annot_vec=method_annot_vec,select_config=select_config)
+			
+			if flag_1>0:
 				if (len(motif_data_pre1)==0) and (len(motif_data_score_pre1)==0):
-					input_file_path_2 = select_config['file_path_motif']
-					data_file_type_query = select_config['data_file_type']
-
-					if 'motif_filename_list1' in select_config:
-						input_filename_list1 = select_config['motif_filename_list1']
+					input_filename1 = select_config['filename_motif_data']
+					input_filename2 = select_config['filename_motif_data_score']
+					b1 = input_filename1.find('.h5ad')
+					b2 = input_filename1.find('.ad')
+					if (b1>=0) or (b2>=0):
+						input_filename_list1 = [input_filename1,input_filename2]	# read from the anndata
 						input_filename_list2 = []
 					else:
-						input_filename1 = '%s/test_motif_data.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
-						input_filename2 = '%s/test_motif_data_score.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
-
-						if os.path.exists(input_filename1)==False:
-							print('the file does not exist: %s'%(input_filename1))
-							input_filename1 = '%s/test_motif_data.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
-							input_filename2 = '%s/test_motif_data_score.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
-
-						input_filename_list1 = [input_filename1,input_filename2]
-						input_filename_list2 = []
+						# b3 = input_filename.find('.csv')
+						input_filename_list1 = []
+						input_filename_list2 = [input_filename1,input_filename2]	# read from the .csv data
 
 					print('motif_filename_list1: ',input_filename_list1)
+
 					save_file_path = ''
 					flag_query2 = 1
 					# load motif data
-					motif_data, motif_data_score = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
-																						input_filename_list2=input_filename_list2,
-																						flag_query1=1,flag_query2=flag_query2,
-																						input_file_path=input_file_path,
-																						save_file_path=save_file_path,type_id=1,
-																						select_config=select_config)
-					dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-					flag_query1=0
+					motif_data, motif_data_score, df_annot, type_id_query = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
+																											input_filename_list2=input_filename_list2,
+																											flag_query1=1,flag_query2=flag_query2,
+																											input_file_path=input_file_path,
+																											save_file_path=save_file_path,
+																											type_id_1=0,type_id_2=1,
+																											select_config=select_config)
+					
+					# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
+					# flag_query1=0
 					motif_data_pre1 = motif_data
 					motif_data_score_pre1 = motif_data_score
 				else:
 					motif_data, motif_data_score = motif_data_pre1, motif_data_score_pre1
 					print('motif_data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
-					dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-			
-			# else:
-			# 	dict_file_query = select_config['filename_motif_data'][method_type]
-			# 	key_vec = list(dict_file_query.keys()) # key_vec: ['motif_data','motif_data_score']
-			# 	dict_query = dict()
-			# 	for key_query in key_vec:
-			# 		input_filename = dict_file_query[key_query]
-			# 		motif_data = []
-			# 		flag_matrix=0
-			# 		if input_filename!='':
-			# 			if (os.path.exists(input_filename)==True):
-			# 				print('load motif data: %s'%(input_filename))
-			# 				b = input_filename.find('.gz')
-			# 				if b>-1:
-			# 					motif_data = pd.read_csv(input_filename,compression='gzip',index_col=0,sep='\t')
-			# 				else:
-			# 					b = input_filename.find('.matrix')
-			# 					if b>-1:
-			# 						print('load matrix market format data ',method_type)
-			# 						motif_data = scipy.io.mmread(input_filename)
-			# 						motif_data = motif_data.toarray()
-			# 						flag_matrix=1	
-			# 					else:
-			# 						motif_data = pd.read_csv(input_filename,index_col=0,sep='\t')
-			# 				print('motif_data ',motif_data.shape)
-			# 				print(motif_data[0:5])	
-			# 			else:
-			# 				print('the file does not exist ',input_filename)
-			# 				continue
-			# 		else:
-			# 			print('please provide motif data file name ')
+					# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
 
-			# 		if (method_type in ['GRaNIE','Pando','TRIPOD']) and (len(motif_data)>0):
-			# 			input_filename_annot = '%s/TFBS/translationTable.csv'%(input_file_path)
-			# 			if method_type in ['TRIPOD']:
-			# 				pre_config = select_config['config_query'][method_type]
-			# 				type_id_query = pre_config['type_id_query']
-			# 				input_filename_annot = '%s/TFBS/translationTable%d.csv'%(input_file_path,type_id_query)
-			# 				if type_id_query==0:
-			# 					input_filename_annot = '%s/TFBS/translationTable%d_pre.csv'%(input_file_path,type_id_query) # temporary: MA0091.1	TAL1	TAL1; MA0091.1	TAL1::TCF3	TAL1::TCF3
-			# 			if method_type in ['GRaNIE']:
-			# 				df_annot1 = pd.read_csv(input_filename_annot,index_col=0,sep=' ')
-			# 				df_annot1.loc[:,'tf'] = np.asarray(df_annot1.index)
-			# 				df_annot1.index = np.asarray(df_annot1['HOCOID'])
-			# 				print('df_annot1 ',df_annot1.shape,method_type)
-			# 				print(df_annot1[0:2])
-			# 			else:
-			# 				df_annot1 = pd.read_csv(input_filename_annot,index_col=0,header=None,sep='\t')
-			# 				if len(df_annot1.columns)==1:
-			# 					df_annot1.columns = ['tf_ori']
-			# 					tf_id_ori = df_annot1['tf_ori']
-			# 					tf_id = pd.Index(tf_id_ori).str.split('(').str.get(0)
-			# 					df_annot1.loc[:,'tf'] = tf_id
-			# 				else:
-			# 					df_annot1.columns = ['tf_ori','tf']
-			# 				print('df_annot1 ',df_annot1.shape,method_type)
-			# 				# print(df_annot1[0:2])
-			# 				if method_type in ['Pando']:
-			# 					pre_config = select_config['config_query'][method_type]
-			# 					run_id = pre_config['run_id']
-			# 					metacell_num = pre_config['metacell_num']
-			# 					exclude_exons = pre_config['exclude_exons']
-			# 					type_id_region = pre_config['type_id_region']
-			# 					data_file_type_annot = data_file_type.lower()
-			# 					input_file_path2 = '%s/%s/metacell_%d/run%d'%(input_file_path,data_file_type_annot,metacell_num,run_id)
-			# 					input_filename = '%s/test_region.%d.%d.bed'%(input_file_path2,exclude_exons,type_id_region)
-			# 					flag_region_query=((exclude_exons==True)|(type_id_region>0))
-			# 					if os.path.exists(input_filename)==True:
-			# 						df_region = pd.read_csv(input_filename,index_col=False,sep='\t')
-			# 						df_region.index = np.asarray(df_region['id'])
-			# 						# pre_config.update({'df_region':df_region})
-			# 						df_region_ori = df_region.copy()
-			# 						df_region = df_region.sort_values(by=['overlap'],ascending=False)
-			# 						df_region = df_region.loc[~df_region.index.duplicated(keep='first'),:]
-			# 						df_region = df_region.sort_values(by=['region_id'],ascending=True)
-			# 						output_file_path = input_file_path2
-			# 						output_filename = '%s/test_region.%d.%d.2.bed'%(output_file_path,exclude_exons,type_id_region)
-			# 						df_region.to_csv(output_filename,sep='\t')
-			# 						select_config['config_query'][method_type].update({'df_region':df_region})
-			# 					else:
-			# 						print('the file does not exist ',input_filename)
-
-			# 					if flag_matrix==1:
-			# 						## the motif data is loaded from MM format file and the rownames and colnames to be added
-			# 						motif_idvec_ori = df_annot1.index
-			# 						# motif_data.columns = motif_idvec_ori
-			# 						# motif_data.index = df_region.index
-			# 						motif_data = pd.DataFrame(index=df_region.index,columns=motif_idvec_ori,data=np.asarray(motif_data))
-			# 						# print('motif_data ',motif_data.shape,method_type)
-			# 						# print(motif_data[0:5])
-							
-			# 					if flag_region_query>0:
-			# 						region_id = motif_data.index
-			# 						motif_data_ori = motif_data.copy()
-			# 						motif_data.loc[:,'peak_id'] = df_region.loc[region_id,'peak_loc']
-			# 						motif_data = motif_data.groupby('peak_id').max()
-			# 						print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-			# 						dict_query.update({'%s.ori'%(key_query):motif_data_ori})
-
-			# 			# motif_idvec_1= df_annot1.index
-			# 			motif_idvec = motif_data.columns.intersection(df_annot1.index,sort=False)
-			# 			motif_data = motif_data.loc[:,motif_idvec]
-			# 			motif_data_ori = motif_data.copy()
-			# 			motif_data1 = motif_data.T
-			# 			motif_idvec = motif_data1.index
-			# 			motif_data1.loc[:,'tf'] = df_annot1.loc[motif_idvec,'tf']
-			# 			motif_data1 = motif_data1.groupby('tf').max()
-			# 			motif_data = motif_data1.T
-			# 			print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-			# 			print(motif_data[0:5])
-			# 			field_id = '%s.ori'%(key_query)
-			# 			if not (field_id in dict_query):
-			# 				dict_query.update({'%s.ori'%(key_query):motif_data_ori})
-
-			# 		dict_query.update({key_query:motif_data})
+				print('perform motif name conversion ')
+				motif_data = self.test_query_motif_name_conversion_1(motif_data)
+				
+				if len(motif_data_score)>0:
+					motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
+				
+				dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
 			
 			dict_motif_data[method_type] = dict_query
+			# print('dict_query: ',dict_query,method_type)
 
 		return dict_motif_data, select_config
 
+	## prepare translationTable
+	def test_translationTable_pre1(self,motif_data=[],
+										motif_data_score=[],
+										df_gene_annot=[],
+										meta_scaled_exprs=[],
+										save_mode=1,
+										save_file_path='',
+										output_filename='',
+										flag_cisbp_motif=1,
+										flag_expr=0,
+										select_config={}):
+
+		# motif_name_1 = motif_data.columns
+		motif_name_ori = motif_data.columns
+		if flag_cisbp_motif>0:
+			# motif name correction for the name conversion in R
+			# t_vec_str = motif_name_ori.str.split('_').str
+			# motif_name = motif_name_ori.str.split('_').str.get(2)	# gene name
+			# gene_id = motif_name_ori.str.split('_').str.get(0)	# ENSEMBL id
+			motif_num = len(motif_name_ori)
+			motif_name = np.array(motif_name_ori)
+			gene_id = motif_name.copy()
+			for i1 in range(motif_num):
+				motif_id = motif_name_ori[i1]
+				t_vec_str1 = pd.Index(motif_id.split('_'))
+				b1 = t_vec_str1.str.find('LINE')
+				b2 = np.where(b1>=0)[0]
+				loc_id = b2[-1]+1
+				# if loc_id>2:
+				# 	print(t_vec_str1)
+				# 	print(loc_id)
+				motif_name[i1] = t_vec_str1[loc_id] # gene name
+				gene_id[i1] = t_vec_str1[0] # ENSEMBL id
+
+			# motif_data.columns = motif_name
+			str_vec_1 = ['NKX2','NKX1','NKX3','NKX6']
+			str_vec_2 = ['NKX2-','NKX1-','NKX3-','NKX6-']
+			str_vec_1 = str_vec_1 + ['Nkx2','Nkx1','Nkx3','Nkx6']
+			str_vec_2 = str_vec_2 + ['Nkx2-','Nkx1-','Nkx3-','Nkx6-']
+			# motif_name_1 = motif_data.columns.str.replace('Nkx2','Nkx2-')
+			query_num1 = len(str_vec_1)		
+			# motif_name_1 = motif_data.columns
+			motif_name_1 = pd.Index(motif_name)
+			for i1 in range(query_num1):
+				motif_name_1 = pd.Index(motif_name_1).str.replace(str_vec_1[i1],str_vec_2[i1])
+
+			# motif_data.columns = motif_name_1
+			# if len(motif_data_score)>0:
+			# 	motif_data_score.columns = motif_name_1
+
+			df1 = pd.DataFrame.from_dict(data={'motif_id':motif_name_ori,'tf':motif_name_1},orient='columns')
+
+			# meta_scaled_exprs = self.meta_scaled_exprs
+			# motif_query_ori = motif_data.columns.str.upper()
+			# gene_name_query_ori = meta_scaled_exprs.columns.str.upper()
+			# # print('motif_query_ori ',motif_query_ori)
+			# # print('gene_name_query_ori ',gene_name_query_ori)
+			# motif_query_name_expr = motif_query_ori.intersection(gene_name_query_ori,sort=False)
+			# # self.motif_data_expr = self.motif_data.loc[:,motif_query_name_expr]
+			# # print('motif_data, motif_data_score, motif_data_expr ', motif_data.shape, motif_data_score.shape, self.motif_data_expr.shape)
+			# print('motif_data, motif_data_score, motif_query_name_expr ',motif_data.shape,motif_data_score.shape,len(motif_query_name_expr))
+
+			# df1['gene_id'] = df1['motif_id'].str.split('_').str.get(0) # ENSEMBL id
+			df1['gene_id'] = np.asarray(gene_id)
+			df1.index = np.asarray(df1['gene_id'].str.upper())
+			# df1 = df1.rename(columns={'gene_id':'ENSEMBL'})
+			
+			# if len(df_gene_annot)==0:
+			# 	df_gene_annot = self.df_gene_annot_ori
+			# if len(df_gene_annot_expr)==0:
+			# 	df_gene_annot_expr = self.df_gene_annot_expr
+
+			gene_id_1 = df_gene_annot['gene_id'].str.upper()
+			df_gene_annot.index = np.asarray(gene_id_1)
+			motif_query_id = df1.index.intersection(gene_id_1,sort=False)
+
+			df1.loc[:,'tf_ori'] = df1.loc[:,'tf'].copy()
+			df1.loc[motif_query_id,'tf'] = df_gene_annot.loc[motif_query_id,'gene_name']
+			tf_name = np.asarray(df1['tf'])
+			
+			b1 = np.where(tf_name=='Pit1')[0]
+			tf_name[b1] = 'Pou1f1'
+			df1['tf'] = tf_name
+			# tf_name = df1['tf']
+			if flag_expr>0:
+				# meta_scaled_exprs = self.meta_scaled_exprs
+				# gene_name_expr = meta_scaled_exprs.columns
+				df_var = self.rna_meta_ad.var
+				if flag_expr>1:
+					# motif name query by gene id
+					# df_var = self.rna_meta_ad.var
+					if 'gene_id' in df_var.columns:
+						gene_id_2 = df_var['gene_id'].str.upper()
+						motif_query_id_expr = df1.index.intersection(gene_id_2,sort=False)
+						df1.loc[motif_query_id_expr,'tf_expr'] = 1
+						df_var['gene_name'] = df_var.index.copy()
+						df_var.index = np.asarray(df_var['gene_id'])
+						df1.loc[motif_query_id_expr,'tf'] = df_var.loc[motif_query_id_expr,'gene_name']
+						df_var.index = np.asarray(df_var['gene_name']) # reset the index
+						motif_query_name_expr = np.asarray(df1.loc[motif_query_id_expr,'tf'])
+					else:
+						flag_expr = 1
+
+				if flag_expr==1:
+					# motif name query by gene name
+					# df_var = self.rna_meta_ad.var
+					gene_name_expr = self.rna_meta_ad.var_names
+					output_file_path = select_config['data_path_save']
+					output_filename_2 = '%s/test_rna_meta_ad.df_var.query1.txt'%(output_file_path)
+					df_var.to_csv(output_filename_2,sep='\t')
+					motif_query_name_expr = pd.Index(tf_name).intersection(gene_name_expr,sort=False)
+					df1.index = np.asarray(df1['tf'])
+					df1.loc[motif_query_name_expr,'tf_expr'] = 1
+					
+				df1.index = np.asarray(df1['gene_id'])
+				self.motif_query_name_expr = motif_query_name_expr
+
+				# print('motif_query_id_expr ',len(motif_query_id_expr))
+				# df1.loc[motif_query_id_expr,'tf_expr'] = 1
+				print('motif_query_name_expr ',len(motif_query_name_expr))
+
+			# df.loc[:,'tf_ori'] = df.loc[:,'tf'].copy()
+			# df1.loc[motif_query_id_expr,'tf'] = df_gene_annot_expr.loc[motif_query_id_expr,'gene_name']
+			# df1.index = np.asarray(df1['tf'])
+			if save_mode>0:
+				if output_filename=='':
+					output_filename = '%s/translationTable.csv'%(save_file_path)
+				df1.to_csv(output_filename,sep='\t')
+
+		return df1
+
+	## load motif data
+	def test_load_motif_data_pre1(self,input_filename_list1=[],
+										input_filename_list2=[],
+										flag_query1=1,
+										flag_query2=1,
+										overwrite=True,
+										input_file_path='',
+										save_mode=1,
+										save_file_path='',
+										type_id_1=0,
+										type_id_2=1,
+										select_config={}):
+		
+		# if input_file_path=='':
+		# 	input_file_path = select_config['data_path']
+
+		flag_pre1=0
+		motif_data, motif_data_score = [], []
+		type_id_query = type_id_1
+		df_annot = []
+
+		if len(input_filename_list1)>0:
+			## load from the processed anndata
+			input_filename1, input_filename2 = input_filename_list1
+			if (os.path.exists(input_filename1)==True) and (os.path.exists(input_filename2)==True):
+				motif_data_ad = sc.read(input_filename1)
+				try:
+					motif_data = pd.DataFrame(index=motif_data_ad.obs_names,columns=motif_data_ad.var_names,data=np.asarray(motif_data_ad.X.toarray()))
+				except Exception as error:
+					print('error! ',error)
+					motif_data = pd.DataFrame(index=motif_data_ad.obs_names,columns=motif_data_ad.var_names,data=np.asarray(motif_data_ad.X))
+
+				motif_data_score_ad = sc.read(input_filename2)
+				try:
+					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X.toarray()),dtype=np.float32)
+				except Exception as error:
+					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X))
+			
+				# print('motif_data ', motif_data)
+				# print('motif_data_score ', motif_data_score)
+				print('motif_data ', motif_data.shape)
+				print('motif_data_score ', motif_data_score.shape)
+				print(motif_data[0:2])
+				print(motif_data_score[0:2])
+				# motif_data_query, motif_data_score_query = motif_data, motif_data_score
+				flag_pre1 = 1
+
+		# load from the original motif data
+		if flag_pre1==0:
+			print('load the motif data')
+			input_filename1, input_filename2 = input_filename_list2[0:2]
+
+			print('input_filename1 ',input_filename1)
+			print('input_filename2 ',input_filename2)
+
+			# motif_data, motif_data_score = [], []
+			if os.path.exists(input_filename1)==False:
+				print('the file does not exist: %s'%(input_filename1))
+			else:
+				motif_data = pd.read_csv(input_filename1,index_col=0)
+				print('motif_data ',motif_data.shape)
+				print(motif_data[0:2])
+			
+			if os.path.exists(input_filename2)==False:
+				print('the file does not exist: %s'%(input_filename2))
+			else:
+				motif_data_score = pd.read_csv(input_filename2,index_col=0)
+				print('motif_data_score ',motif_data_score.shape)
+				print(motif_data_score[0:2])
+
+			if len(motif_data)==0:
+				if len(motif_data_score)>0:
+					# motif_data = (motif_data_score>0)
+					motif_data = (motif_data_score.abs()>0)
+				else:
+					print('please provide motif data')
+					return
+			else:
+				if len(motif_data_score)>0:
+					motif_data_2 = (motif_data_score.abs()>0)*1.0
+					# difference = np.abs(motif_data-motif_data_1)
+					difference = np.abs(motif_data-motif_data_2)
+					assert np.max(np.max(difference))==0
+
+					## motif name query
+					motif_name_ori = motif_data.columns
+					motif_name_score_ori = motif_data_score.columns
+					peak_loc = motif_data.index
+					peak_loc_1 = motif_data_score.index
+
+					assert list(motif_name_ori)==list(motif_name_score_ori)
+					assert list(peak_loc)==list(peak_loc_1)
+					
+					# print('load motif data', input_filename1, input_filename2, motif_data.shape, motif_data_score.shape)
+					# print('motif_data ', motif_data)
+					# print('motif_data_score ', motif_data_score)
+					print('motif_data ', input_filename1, motif_data.shape)
+					print('motif_data_score ', input_filename2, motif_data_score.shape)
+
+			# motif name conversion
+			input_filename_translation = select_config['filename_translation']
+			df_annot = []
+			type_id_query = 1
+			# overwrite = 0
+			# flag_query1 = 1
+			if os.path.exists(input_filename_translation)==False:
+				print('the file does not exist: %s'%(input_filename_translation))
+
+				# if flag_query1>0:
+				output_filename = input_filename_translation
+				# meta_scaled_exprs = self.meta_scaled_exprs
+				# df_gene_annot = []
+				df_gene_annot = self.df_gene_annot_ori
+				df_annot = self.test_translationTable_pre1(motif_data=motif_data,
+																df_gene_annot=df_gene_annot,
+																save_mode=1,
+																save_file_path=save_file_path,
+																output_filename=output_filename,
+																select_config=select_config)
+			else:
+				print('load TF motif name mapping file')
+				df_annot = pd.read_csv(input_filename_translation,index_col=0,sep='\t')
+
+			## motif name correction for the conversion in R
+			print('perform TF motif name mapping')
+			df_annot.index = np.asarray(df_annot['motif_id'])
+			motif_name_ori = motif_data.columns
+			motif_name_query = np.asarray(df_annot.loc[motif_name_ori,'tf'])
+
+			# motif_data.columns = motif_name_query # TODO: should update
+			column_id = 'tf'
+			motif_data, motif_data_ori = self.test_load_motif_data_pre2(motif_data=motif_data,
+																			df_annot=df_annot,
+																			column_id=column_id,
+																			select_config=select_config)
+
+			print('motif_data ',motif_data.shape)
+			print(motif_data[0:2])
+
+			print('motif_data_ori ',motif_data_ori.shape)
+			print(motif_data_ori[0:2])
+
+			if len(motif_data_score)>0:
+				# motif_data_score.columns = motif_name_query # TODO: should update
+				motif_data_score, motif_data_score_ori = self.test_load_motif_data_pre2(motif_data=motif_data_score,
+																						df_annot=df_annot,
+																						column_id=column_id,
+																						select_config=select_config)
+
+				print('motif_data_score ',motif_data_score.shape)
+				print(motif_data_score[0:2])
+
+				print('motif_data_score_ori ',motif_data_score_ori.shape)
+				print(motif_data_score_ori[0:2])
+
+			if save_mode>0:
+				# output_filename_list = input_filename_list1
+				column_1 = 'filename_list_save_motif'
+				# the filename to save the motif data
+				if column_1 in select_config:
+					output_filename_list = select_config[column_1]
+				else:
+					data_file_type = select_config['data_file_type']
+					if save_file_path=='':
+						# save_file_path = select_config['file_save_path_1']
+						save_file_path = select_config['file_path_motif']
+
+					output_file_path = save_file_path
+					output_filename1 = '%s/test_motif_data.%s.h5ad'%(output_file_path,data_file_type)
+					output_filename2 = '%s/test_motif_data_score.%s.h5ad'%(output_file_path,data_file_type)
+					output_filename_list = [output_filename1,output_filename2]
+
+				output_filename1, output_filename2 = output_filename_list
+
+				motif_data_ad = utility_1.test_save_anndata(motif_data,sparse_format='csr',obs_names=None,var_names=None,dtype=motif_data.values.dtype)
+
+				# if os.path.exists(output_filename1)==False:
+				# 	motif_data_ad.write(output_filename1)
+				# else:
+				# 	print('the file exists ', output_filename1)
+				if os.path.exists(output_filename1)==True:
+					print('the file exists ', output_filename1)
+
+				if (os.path.exists(output_filename1)==False) or (overwrite==True):
+					motif_data_ad.write(output_filename1)
+					print('save motif data ',motif_data_ad)
+					print(output_filename1)
+
+				if len(motif_data_score)>0:
+					motif_data_score_ad = utility_1.test_save_anndata(motif_data_score,sparse_format='csr',obs_names=None,var_names=None,dtype=motif_data_score.values.dtype)
+
+					if (os.path.exists(output_filename2)==False) or (overwrite==True):
+						motif_data_score_ad.write(output_filename2)
+						print('save motif_data_score',motif_data_score_ad)
+						print(output_filename2)
+
+		flag_query2=0
+		if flag_query2>0:
+			df1 = (motif_data_score<0)
+			id2 = motif_data_score.columns[df1.sum(axis=0)>0]
+			if len(id2)>0:
+				motif_data_score_ori = motif_data_score.copy()
+				count1 = np.sum(np.sum(df1))
+				print('there are negative motif scores ',id2,count1)
+				df_1 = (motif_data_score>0)
+				motif_data_score_1 = motif_data_score[df_1]
+				# print('motif_data_score_1 ',motif_data_score_1)
+				t_value_min = np.min(motif_data_score_1,axis=0)
+				# df_value_min = np.outer(np.ones(motif_data_score.shape[0]),np.asarray(t_value_min))
+				# df2 = pd.DataFrame(index=motif_data_score.index,columns=motif_data_score.columns,data=np.asarray(df_value_min),dtype=np.float32)
+				# id1 = df1
+				# motif_data_score[id1] = df2[id1]
+				# peak_loc_ori = motif_data_score.index
+				# peak_id2 = peak_loc_ori[motif_data_score_ori.loc[:,id2].min(axis=1)<0]
+				# print(motif_data_score_ori.loc[peak_id2,id2])
+				# print(motif_data_score.loc[peak_id2,id2])
+				# print(t_value_min)
+				# print(t_value_min[id2])
+
+		return motif_data, motif_data_score, df_annot, type_id_query
+
+	## load motif data
+	# merge multiple columns that correspond to one TF to one column
+	def test_load_motif_data_pre2(self,motif_data,df_annot,column_id='tf',select_config={}):
+
+		# motif_idvec_1= df_annot1.index
+		motif_idvec = motif_data.columns.intersection(df_annot.index,sort=False)
+		motif_data = motif_data.loc[:,motif_idvec]
+		motif_data_ori = motif_data.copy()
+		motif_data1 = motif_data.T
+		motif_idvec = motif_data1.index  # original motif id
+		motif_data1.loc[:,'tf'] = df_annot.loc[motif_idvec,column_id]
+		motif_data1 = motif_data1.groupby('tf').max()
+		motif_data = motif_data1.T
+		# print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
+		print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape)
+		
+		query_idvec = np.asarray(df_annot['motif_id'])
+		query_num1 = len(query_idvec)
+		t_vec_1 = np.random.randint(query_num1,size=5)
+		for iter_id1 in t_vec_1:
+			# column_1 = 'ENSG00000196843_LINE52_ARID5A_I'
+			# column_2 = 'ARID5A'
+			motif_id_query = query_idvec[iter_id1]
+			column_1 = motif_id_query
+			column_2 = np.asarray(df_annot.loc[df_annot['motif_id']==motif_id_query,'tf'])[0]
+			# print('column_1, column_2 ',column_1,column_2,iter_id1)
+
+			difference = (motif_data_ori[column_1].astype(int)-motif_data[column_2].astype(int)).abs().max()
+			print('difference ',column_1,column_2,difference,iter_id1)
+			assert difference<1E-07
+
+		# print(motif_data[0:5])
+		# field_id = '%s.ori'%(key_query)
+		# if not (field_id in dict_query):
+		# 	dict_query.update({'%s.ori'%(key_query):motif_data_ori})
+		return motif_data, motif_data_ori
+
+	## query motif data and motif score data
+	def test_motif_data_query(self,input_file_path='',save_file_path='',type_id_1=0,flag_chromvar_score=0,select_config={}):
+
+		## load motif data and motif score data
+		flag_motif_data_load = 1
+		motif_data, motif_data_score = [], []
+		self.motif_data = motif_data
+		self.motif_data_score = motif_data_score
+		data_file_type = select_config['data_file_type']
+		filename_save_annot_1 = self.select_config['filename_save_annot_pre1']
+		if flag_motif_data_load>0:
+			print('load motif data and motif score data')
+			input_filename1 = select_config['motif_filename1']
+			input_filename2 = select_config['motif_filename2']
+			input_filename_list1 = [input_filename1,input_filename2]
+			input_filename_list2 = []
+			# 	input_filename_1 = '%s/test_peak_read.%s.normalize.1_motif.1.2.csv'%(input_file_path,filename_save_annot_1)
+			# 	input_filename_2 = '%s/test_peak_read.%s.normalize.1_motif_scores.1.csv'%(input_file_path,filename_save_annot_1)
+			input_filename_1 = ''
+			input_filename_2 = ''
+			if 'motif_filename_1' in select_config:
+				input_filename_1 = select_config['motif_filename_1']
+			if 'motif_filename_2' in select_config:
+				input_filename_2 = select_config['motif_filename_2']
+			input_filename_list2 = [input_filename_1,input_filename_2]
+
+			## the motif name was changed to TF name
+			# should update; there may be multiple motif names for one TF
+			type_id_1 = 0
+			motif_data, motif_data_score, df_annot, type_id_query = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
+																									input_filename_list2=input_filename_list2,
+																									flag_query1=1,
+																									flag_query2=1,
+																									input_file_path=input_file_path,
+																									save_file_path=save_file_path,
+																									type_id_1=type_id_1,
+																									type_id_2=1,
+																									select_config=select_config)
+
+			if type_id_query>0:
+				column_id = 'tf'
+				motif_data, motif_data_ori = self.test_load_motif_data_pre2(motif_data=motif_data,
+																			df_annot=df_annot,
+																			column_id=column_id,
+																			select_config=select_config)
+
+				motif_data_score, motif_data_score_ori = self.test_load_motif_data_pre2(motif_data=motif_data_score,
+																						df_annot=df_annot,
+																						column_id=column_id,
+																						select_config=select_config)
+				b = input_filename1.find('.h5ad')
+				output_filename1 = input_filename1[0:b]+'.1.h5ad'
+				motif_data_ad = sc.AnnData(motif_data,dtype=motif_data.values.dtype)
+				motif_data_ad.X = csr_matrix(motif_data_ad.X)
+				motif_data_ad.write(output_filename1)
+
+				b = input_filename2.find('.h5ad')
+				output_filename2 = input_filename2[0:b]+'.1.h5ad'
+				motif_data_score_ad = sc.AnnData(motif_data_score,dtype=motif_data_score.values.dtype)
+				motif_data_score_ad.X = csr_matrix(motif_data_score_ad.X)
+				motif_data_score_ad.write(output_filename2)
+
+			self.motif_data = motif_data
+			self.motif_data_score = motif_data_score
+			# motif_query_ori = motif_data.columns.str.upper()
+			motif_query_ori = motif_data.columns
+			gene_name_query_ori = self.rna_meta_ad.var_names
+			# gene_name_query_ori = meta_scaled_exprs.columns.str.upper()
+			# print('motif_query_ori ',motif_query_ori)
+			# print('gene_name_query_ori ',gene_name_query_ori)
+			motif_query_name_expr = motif_query_ori.intersection(gene_name_query_ori,sort=False)
+			self.motif_query_name_expr = motif_query_name_expr
+			self.df_motif_translation = df_annot
+			# self.motif_data_expr = self.motif_data.loc[:,motif_query_name_expr]
+			# print('motif_data, motif_data_score, motif_data_expr ', motif_data.shape, motif_data_score.shape, self.motif_data_expr.shape)
+			print('motif_data, motif_data_score, motif_query_name_expr ', motif_data.shape, motif_data_score.shape, len(motif_query_name_expr))
+
+			# if data_file_type_id1==0:
+			# if self.species_id in ['hg38']:
+			if flag_chromvar_score>0:
+				# input_filename = '%s/test_motif_query_name.1.txt'%(input_file_path)
+				# input_filename = '%s/test_motif_query_name.1.copy1.txt'%(input_file_path)
+				# input_filename = '%s/test_motif_query_name.1.copy2.txt'%(input_file_path)
+				# input_filename = '%s/translationTable.csv'%(input_file_path)
+				if flag_motif_data_load>0:
+					df1 = df_annot
+				else:
+					if 'filename_translation' in select_config:
+						input_filename = select_config['filename_translation']
+					else:
+						print('please provide motif name translation file')
+						return
+					df1 = pd.read_csv(input_filename,index_col=0,sep='\t')
+
+				# df1.index = np.asarray(df1['motif_name'].str.upper())
+				# df1['tf_expr'] = 0
+				# df1.loc[motif_query_name_expr,'tf_expr'] = 1
+				# id_pre1 = (df1['tf_expr']>0)&(df1['tf_expr_1']>0)
+				# df1_subset = df1.loc[id_pre1,:]
+				# output_file_path = input_file_path
+				# output_filename = '%s/test_motif_query_name_expr.1.copy2.txt'%(output_file_path)
+				# df1_subset.to_csv(output_filename,sep='\t')
+
+				# df1['gene_id'] = df1['motif_name_ori'].str.split('_').str.get(0)
+				# df1.index = np.asarray(df1['gene_id'].str.upper())
+				# gene_id_1 = df_gene_annot_expr['gene_id'].str.upper()
+				# motif_query_id_expr = df1.index.intersection(gene_id_1,sort=False)
+				# print('motif_query_id_expr ',len(motif_query_id_expr))
+
+				# df_gene_annot_expr.index = np.asarray(gene_id_1)
+				# df1['tf_expr_1'] = 0
+				# df1.loc[motif_query_id_expr,'tf_expr_1'] = 1
+				# df1.loc[motif_query_id_expr,'motif_name_1'] = df_gene_annot_expr.loc[motif_query_id_expr,'gene_name']
+				# # output_filename = '%s/test_motif_query_name.1.copy1.txt'%(save_file_path1)
+				# output_filename = '%s/test_motif_query_name.1.copy2.txt'%(save_file_path1)
+				# # df1.index = np.asarray(df1['motif_name_ori'])
+				# # df1.index = np.asarray(df1['motif_name'])
+				# # df1.to_csv(output_filename,sep='\t')
+				# df2 = df1.loc[(df1['tf_expr_1']-df1['tf_expr'])!=0]
+				# print('df2 ',df2)
+				# df1['motif_name_ori_1'] = df1['motif_name'].copy()
+				# id1 = (df1['tf_expr_1']==1)&(df1['tf_expr']==0)
+				# df1.loc[id1,'motif_name']=df1.loc[id1,'motif_name_1']
+				# df1.index = np.asarray(df1['motif_name'])
+				# df1.to_csv(output_filename,sep='\t')
+
+				column_id1 = 'motif_name_ori'
+				# df1.index = np.asarray(df1['motif_name_ori'])
+				df1.index = np.asarray(df1[column_id1])
+				# input_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.1_chromvar_scores.1.csv'%(input_file_path)
+				# input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,data_file_type)
+				input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,filename_save_annot_1)
+
+				## query correlation and mutual information between chromvar score and TF expression
+				# output_file_path = input_file_path
+				output_file_path = save_file_path
+				df_query_1 = df1
+				data_file_type = select_config['data_file_type']
+				if data_file_type in ['CD34_bonemarrow']:
+					type_id_query = 0
+				else:
+					type_id_query = 1
+
+				filename_save_annot_1 = select_config['filename_save_annot_pre1']
+				df_2 = self.test_chromvar_score_query_1(input_filename=input_filename,
+														motif_query_name_expr=motif_query_name_expr,
+														df_query=df_query_1,
+														output_file_path=output_file_path,
+														filename_prefix_save=filename_save_annot_1,
+														type_id_query=type_id_query,
+														select_config=select_config)
+
+				# return
+
+			# return motif_data, motif_data_score, motif_query_name_expr, df_annot
+			return motif_data, motif_data_score
+
+	## chromvar score query: chromvar score comparison with TF expression
+	# query correlation and mutual information between chromvar score and TF expression
+	def test_chromvar_score_query_1(self,input_filename,
+											motif_query_name_expr,
+											filename_prefix_save='',
+											output_file_path='',
+											output_filename='',
+											df_query=[],
+											type_id_query=0,
+											select_config={}):
+
+		df1 = df_query
+		# df1.index = np.asarray(df1['motif_name_ori'])
+		df1.index = np.asarray(df1['motif_id'])
+		# input_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.1_chromvar_scores.1.csv'%(input_file_path)
+		# input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,data_file_type)
+		chromvar_score = pd.read_csv(input_filename,index_col=0,sep=',')
+		print('chromvar_score ', chromvar_score.shape)
+		sample_id1 = chromvar_score.columns
+		motif_id1 = chromvar_score.index
+		# chromvar_score.index = df1.loc[motif_id1,'motif_name']
+		chromvar_score.index = df1.loc[motif_id1,'tf']
+		if type_id_query==0:
+			## for CD34_bonemarrow
+			str_vec_1 = sample_id1.str.split('.')
+			# str_query1, str_query2, str_query3 = str_vec_1.str.get(0),str_vec_1.str.get(1),str_vec_1.str.get(2)
+			str_query_list = [str_vec_1.str.get(i1) for i1 in range(3)]
+			str_query1, str_query2, str_query3 = str_query_list
+			query_num2 = len(str_query1)
+			chromvar_score.columns = ['%s#%s-%s'%(str_query1[i2],str_query2[i2],str_query3[i2]) for i2 in range(query_num2)]
+		elif type_id_query==1:
+			## for pbmc
+			str_vec_1 = sample_id1.str.split('.')
+			str_query_list = [str_vec_1.str.get(i1) for i1 in range(2)]
+			str_query1, str_query2 = str_query_list
+			query_num2 = len(str_query1)
+			chromvar_score.columns = ['%s-%s'%(str_query1[i2],str_query2[i2]) for i2 in range(query_num2)]
+		else:
+			print('chromvar_score: use the loaded columns')
+		
+		rna_ad = self.rna_meta_ad
+		meta_scaled_exprs = self.meta_scaled_exprs
+		assert list(chromvar_score.columns)==list(rna_ad.obs_names)
+		assert list(chromvar_score.columns)==list(meta_scaled_exprs.index)
+		if output_file_path=='':
+			output_file_path = input_file_path
+		# output_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.1_chromvar_scores.1.copy1.csv'%(output_file_path)
+		# output_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.copy1.csv'%(output_file_path,data_file_type)
+		# output_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.copy1.csv'%(output_file_path,filename_prefix_save)
+		if output_filename=='':
+			b = input_filename.find('.csv')
+			output_filename = input_filename[0:b]+'copy1.csv'
+		chromvar_score.to_csv(output_filename)
+		print('chromvar_score ',chromvar_score.shape,chromvar_score)
+
+		chromvar_score = chromvar_score.T
+		sample_id = meta_scaled_exprs.index
+		chromvar_score = chromvar_score.loc[sample_id,:]
+
+		motif_query_vec = motif_query_name_expr
+		motif_query_num = len(motif_query_vec)
+		print('motif_query_vec ',motif_query_num)
+		field_query_1 = ['spearmanr','pval1','pearsonr','pval2','mutual_info']
+		df_1 = pd.DataFrame(index=motif_query_vec,columns=field_query_1)
+		for i1 in range(motif_query_num):
+			motif_query1 = motif_query_vec[i1]
+			tf_expr_1 = np.asarray(meta_scaled_exprs[motif_query1])
+			tf_score_1 = np.asarray(chromvar_score[motif_query1])
+			# corr_value, pvalue = spearmanr(meta_scaled_exprs[motif_query1],chromvar_score[motif_query1])
+			corr_value_1, pval1 = spearmanr(tf_expr_1,tf_score_1)
+			corr_value_2, pval2 = pearsonr(tf_expr_1,tf_score_1)
+			t_mutual_info = mutual_info_regression(tf_expr_1[:,np.newaxis], tf_score_1, discrete_features=False, n_neighbors=5, copy=True, random_state=0)
+			t_mutual_info = t_mutual_info[0]
+			df_1.loc[motif_query1,:] = [corr_value_1,pval1,corr_value_2,pval2,t_mutual_info]
+
+		# df_1 = df_1.sort_values(by=['spearmanr','pval1','pearsonr','pval2','mutual_info'],ascending=[False,True,False,True,False])
+		df_1 = df_1.sort_values(by=field_query_1,ascending=[False,True,False,True,False])
+		# output_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path)
+		# output_filename = '%s/test_peak_read.%s.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path,data_file_type)
+		# output_filename = '%s/test_peak_read.%s.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path,filename_prefix_save)
+		
+		filename = output_filename
+		b = filename.find('.csv')
+		output_filename = '%s.copy2.txt'%(filename[0:b])
+		field_query_2 = ['highly_variable','means','dispersions','dispersions_norm']
+		df_gene_annot_expr = self.df_gene_annot_expr
+		df_gene_annot_expr.index = np.asarray(df_gene_annot_expr['gene_name'])
+		motif_id1 = df_1.index
+		df_1.loc[:,field_query_2] = df_gene_annot_expr.loc[motif_id1,field_query_2]
+		df_1.to_csv(output_filename,sep='\t',float_format='%.6E')
+		mean_value = df_1.mean(axis=0)
+		median_value = df_1.median(axis=0)
+		print('df_1, mean_value, median_value ',df_1.shape,mean_value,median_value)
+
+		df_2 = df_1.sort_values(by=['highly_variable','dispersions_norm','means','spearmanr','pval1','pearsonr','pval2','mutual_info'],ascending=[False,False,False,False,True,False,True,False])
+		# output_filename = '%s/test_peak_read.%s.normalize.chromvar_scores.tf_expr.query1.sort2.1.txt'%(output_file_path,filename_prefix_save)
+		df_2.to_csv(output_filename,sep='\t',float_format='%.6E')
+		id1 = (df_2['highly_variable']==True)
+		motif_id2 = df_2.index
+		motif_query_2 = motif_id2[id1]
+		motif_query_num2 = len(motif_query_2)
+		motif_query_3 = motif_id2[~id1]
+		motif_query_num3 = len(motif_query_3)
+		mean_value = df_2.loc[id1,:].mean(axis=0)
+		median_value = df_2.loc[id1,:].median(axis=0)
+		mean_value_2 = df_2.loc[(~id1),:].mean(axis=0)
+		median_value_2 = df_2.loc[(~id1),:].median(axis=0)
+		print('highly_variable tf expr, mean_value, median_value ',motif_query_num2,mean_value,median_value)
+		print('group 2 tf expr, mean_value, median_value ',motif_query_num3,mean_value_2,median_value_2)
+
+		return df_2
+
+	## motif_name conversion
+	def test_query_motif_name_conversion_1(self,data=[],select_config={}):
+
+		motif_data = data
+		dict1 = {'ENSG00000142539':'SPIB',
+					'ENSG00000229544':'NKX1-2',
+					'TBXT':'T',
+					'AC0125311':'HOXC5',
+					'AC2261502':'ANHX',
+					'AC0021266':'BORCS8-MEF2B',
+					'CCDC169-SOHLH2':'C13orf38SOHLH2',
+					'LINE4118':'ZNF75C',
+					'LINE11277':'DUX1',
+					'LINE11282':'DUX3'}
+
+		motif_data = motif_data.rename(columns=dict1)
+		return motif_data
+
+	## query the method type based on the motif data used
+	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],data=[],select_config={}):
+
+		if len(method_annot_vec)==0:
+			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
+
+		flag_1 = False
+		for method_annot_1 in method_annot_vec:
+			flag_1 = (flag_1|(method_type.find(method_annot_1)>-1))
+
+		return flag_1
+
+	## load motif data
+	# def test_load_motif_data_1_pre1(self,method_type_vec=[],select_config={}):
+
+	# 	flag_query1=1
+	# 	method_type_num = len(method_type_vec)
+	# 	dict_motif_data = dict()
+	# 	flag_query1=1
+	# 	data_file_type = select_config['data_file_type']
+	# 	for i1 in range(method_type_num):
+	# 		# method_type = method_type_vec[method_type_id]
+	# 		method_type = method_type_vec[i1]
+	# 		data_path = select_config['input_file_path_query'][method_type]
+	# 		input_file_path = data_path
+	# 		print('data_path_save: ',data_path)
+
+	# 		motif_data_pre1, motif_data_score_pre1 = [], []
+
+	# 		method_annot_vec = ['insilico','joint_score','CIS-BP','CIS_BP'] # the method type which share motif scanning results
+	# 		# flag_1 = False
+	# 		# query_num = len(method_annot_vec)
+	# 		# for method_annot_1 in method_annot_vec:
+	# 		# 	flag_1 = (flag_1|(method_type.find(method_annot_1)>-1))
+	# 		flag_1 = self.test_query_method_type_motif_1(method_type=method_type,method_annot_vec=method_annot_vec,select_config=select_config)
+			
+	# 		# if (method_type in ['insilico','insilico_1']) or (method_type.find('joint_score')>-1):
+	# 		# if (method_type.find('insilico')>-1) or (method_type.find('joint_score')>-1) of (method_type.find(method_annot_1)>-1):
+	# 		if flag_1>0:
+	# 		# if method_type_id in [0,1]:
+	# 			# data_path = select_config['data_path']
+	# 			# data_path = select_config['input_file_path_query'][method_type_id]
+	# 			# input_file_path = data_path
+
+	# 			motif_data, motif_data_score = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
+	# 																					input_filename_list2=input_filename_list2,
+	# 																					flag_query1=1,flag_query2=flag_query2,
+	# 																					input_file_path=input_file_path,
+	# 																					save_file_path=save_file_path,type_id=1,
+	# 																					select_config=select_config)
+					
+	# 			# if (len(motif_data_pre1)==0) and (len(motif_data_score_pre1)==0):
+	# 			# 	# input_filename1 = '%s/test_motif_data.1.h5ad'%(input_file_path)
+	# 			# 	# input_filename2 = '%s/test_motif_data_score.1.h5ad'%(input_file_path)
+	# 			# 	input_file_path_2 = '%s/peak_local/run1_1'%(input_file_path)
+	# 			# 	data_file_type_query = select_config['data_file_type']
+
+	# 			# 	if 'motif_filename_list1' in select_config:
+	# 			# 		input_filename_list1 = select_config['motif_filename_list1']
+	# 			# 		input_filename_list2 = []
+	# 			# 	else:
+	# 			# 		input_filename1 = '%s/test_motif_data.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
+	# 			# 		input_filename2 = '%s/test_motif_data_score.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
+
+	# 			# 		if os.path.exists(input_filename1)==False:
+	# 			# 			print('the file does not exist: %s'%(input_filename1))
+	# 			# 			input_filename1 = '%s/test_motif_data.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
+	# 			# 			input_filename2 = '%s/test_motif_data_score.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
+
+	# 			# 		input_filename_list1 = [input_filename1,input_filename2]
+	# 			# 		input_filename_list2 = []
+
+	# 			# 	print('motif_filename_list1: ',input_filename_list1)
+	# 			# 	# input_file_path2 = '%s/peak_local'%(data_path)
+	# 			# 	# output_file_path = input_file_path2
+	# 			# 	# save_file_path = output_file_path
+	# 			# 	save_file_path = ''
+	# 			# 	flag_query2 = 1
+	# 			# 	# # load motif data
+	# 			# 	motif_data, motif_data_score = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
+	# 			# 																		input_filename_list2=input_filename_list2,
+	# 			# 																		flag_query1=1,flag_query2=flag_query2,
+	# 			# 																		input_file_path=input_file_path,
+	# 			# 																		save_file_path=save_file_path,type_id=1,
+	# 			# 																		select_config=select_config)
+					
+	# 			# 	# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
+	# 			# 	flag_query1=0
+	# 			# 	# motif_data_pre1 = motif_data
+	# 			# 	# motif_data_score_pre1 = motif_data_score
+	# 			# else:
+	# 			# 	motif_data, motif_data_score = motif_data_pre1, motif_data_score_pre1
+	# 			# 	print('motif_data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
+	# 			# 	# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
+
+	# 			print('perform motif name conversion ')
+	# 			motif_data = self.test_query_motif_name_conversion_1(motif_data)
+	# 			if len(motif_data_score)>0:
+	# 				motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
+	# 			dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
+			
+	# 		else:
+	# 			# motif_data = pd.read_csv('google-us-data.csv.gz', compression='gzip', header=0,    sep=' ', quotechar='"', error_bad_lines=False)
+	# 			# scipy.io.mmread("sparse_from_file")
+	# 			# input_filename1 = select_config['filename_motif_data'][method_type]['motif_data']
+	# 			# input_filename2 = select_config['filename_motif_data'][method_type]['motif_data_score']
+	# 			# input_filename = 'df_peak_tf_overlap.pearsonr.CD34_bonemarrow.normalize0.tsv.gz'
+	# 			dict_file_query = select_config['filename_motif_data'][method_type]
+	# 			key_vec = list(dict_file_query.keys()) # key_vec: ['motif_data','motif_data_score']
+	# 			dict_query = dict()
+	# 			for key_query in key_vec:
+	# 				input_filename = dict_file_query[key_query]
+	# 				motif_data = []
+	# 				flag_matrix=0
+	# 				if input_filename!='':
+	# 					if (os.path.exists(input_filename)==True):
+	# 						print('load motif data: %s'%(input_filename))
+	# 						b = input_filename.find('.gz')
+	# 						if b>-1:
+	# 							motif_data = pd.read_csv(input_filename,compression='gzip',index_col=0,sep='\t')
+	# 						else:
+	# 							b = input_filename.find('.matrix')
+	# 							if b>-1:
+	# 								print('load matrix market format data ',method_type)
+	# 								motif_data = scipy.io.mmread(input_filename)
+	# 								motif_data = motif_data.toarray()
+	# 								flag_matrix=1	
+	# 							else:
+	# 								motif_data = pd.read_csv(input_filename,index_col=0,sep='\t')
+	# 						print('motif_data ',motif_data.shape)
+	# 						print(motif_data[0:5])	
+	# 					else:
+	# 						print('the file does not exist ',input_filename)
+	# 						continue
+	# 				else:
+	# 					print('please provide motif data file name ')
+
+	# 				if (method_type in ['GRaNIE','Pando','TRIPOD']) and (len(motif_data)>0):
+	# 					# x = 1
+	# 					# input_file_path = select_config[]
+	# 					# input_file_path = select_config['input_file_path_query'][method_type]
+	# 					input_filename_annot = '%s/TFBS/translationTable.csv'%(input_file_path)
+	# 					if method_type in ['TRIPOD']:
+	# 						pre_config = select_config['config_query'][method_type]
+	# 						type_id_query = pre_config['type_id_query']
+	# 						input_filename_annot = '%s/TFBS/translationTable%d.csv'%(input_file_path,type_id_query)
+	# 						if type_id_query==0:
+	# 							input_filename_annot = '%s/TFBS/translationTable%d_pre.csv'%(input_file_path,type_id_query) # temporary: MA0091.1	TAL1	TAL1; MA0091.1	TAL1::TCF3	TAL1::TCF3
+	# 					if method_type in ['GRaNIE']:
+	# 						df_annot1 = pd.read_csv(input_filename_annot,index_col=0,sep=' ')
+	# 						df_annot1.loc[:,'tf'] = np.asarray(df_annot1.index)
+	# 						df_annot1.index = np.asarray(df_annot1['HOCOID'])
+	# 						print('df_annot1 ',df_annot1.shape,method_type)
+	# 						print(df_annot1[0:2])
+	# 					else:
+	# 						df_annot1 = pd.read_csv(input_filename_annot,index_col=0,header=None,sep='\t')
+	# 						if len(df_annot1.columns)==1:
+	# 							df_annot1.columns = ['tf_ori']
+	# 							tf_id_ori = df_annot1['tf_ori']
+	# 							tf_id = pd.Index(tf_id_ori).str.split('(').str.get(0)
+	# 							df_annot1.loc[:,'tf'] = tf_id
+	# 						else:
+	# 							df_annot1.columns = ['tf_ori','tf']
+	# 						print('df_annot1 ',df_annot1.shape,method_type)
+	# 						print(df_annot1[0:2])
+	# 						if method_type in ['Pando']:
+	# 							pre_config = select_config['config_query'][method_type]
+	# 							run_id = pre_config['run_id']
+	# 							metacell_num = pre_config['metacell_num']
+	# 							exclude_exons = pre_config['exclude_exons']
+	# 							type_id_region = pre_config['type_id_region']
+	# 							data_file_type_annot = data_file_type.lower()
+	# 							input_file_path2 = '%s/%s/metacell_%d/run%d'%(input_file_path,data_file_type_annot,metacell_num,run_id)
+	# 							input_filename = '%s/test_region.%d.%d.bed'%(input_file_path2,exclude_exons,type_id_region)
+	# 							flag_region_query=((exclude_exons==True)|(type_id_region>0))
+	# 							if os.path.exists(input_filename)==True:
+	# 								df_region = pd.read_csv(input_filename,index_col=False,sep='\t')
+	# 								df_region.index = np.asarray(df_region['id'])
+	# 								# pre_config.update({'df_region':df_region})
+	# 								df_region_ori = df_region.copy()
+	# 								df_region = df_region.sort_values(by=['overlap'],ascending=False)
+	# 								df_region = df_region.loc[~df_region.index.duplicated(keep='first'),:]
+	# 								df_region = df_region.sort_values(by=['region_id'],ascending=True)
+	# 								output_file_path = input_file_path2
+	# 								output_filename = '%s/test_region.%d.%d.2.bed'%(output_file_path,exclude_exons,type_id_region)
+	# 								df_region.to_csv(output_filename,sep='\t')
+	# 								select_config['config_query'][method_type].update({'df_region':df_region})
+	# 							else:
+	# 								print('the file does not exist ',input_filename)
+
+	# 							if flag_matrix==1:
+	# 								## the motif data is loaded from MM format file and the rownames and colnames to be added
+	# 								motif_idvec_ori = df_annot1.index
+	# 								# motif_data.columns = motif_idvec_ori
+	# 								# motif_data.index = df_region.index
+	# 								motif_data = pd.DataFrame(index=df_region.index,columns=motif_idvec_ori,data=np.asarray(motif_data))
+	# 								# print('motif_data ',motif_data.shape,method_type)
+	# 								# print(motif_data[0:5])
+							
+	# 							if flag_region_query>0:
+	# 								region_id = motif_data.index
+	# 								motif_data_ori = motif_data.copy()
+	# 								motif_data.loc[:,'peak_id'] = df_region.loc[region_id,'peak_loc']
+	# 								motif_data = motif_data.groupby('peak_id').max()
+	# 								print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
+	# 								dict_query.update({'%s.ori'%(key_query):motif_data_ori})
+
+	# 					# motif_idvec_1= df_annot1.index
+	# 					motif_idvec = motif_data.columns.intersection(df_annot1.index,sort=False)
+	# 					motif_data = motif_data.loc[:,motif_idvec]
+	# 					motif_data_ori = motif_data.copy()
+	# 					motif_data1 = motif_data.T
+	# 					motif_idvec = motif_data1.index
+	# 					motif_data1.loc[:,'tf'] = df_annot1.loc[motif_idvec,'tf']
+	# 					motif_data1 = motif_data1.groupby('tf').max()
+	# 					motif_data = motif_data1.T
+	# 					print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
+	# 					print(motif_data[0:5])
+	# 					field_id = '%s.ori'%(key_query)
+	# 					if not (field_id in dict_query):
+	# 						dict_query.update({'%s.ori'%(key_query):motif_data_ori})
+
+	# 				dict_query.update({key_query:motif_data})
+	# 		dict_motif_data[method_type] = dict_query
+	# 		# print('dict_query: ',dict_query,method_type)
+
+	# 	return dict_motif_data, select_config
+
+	
 	## query file save path
 	# query the filename of the estimated peak-TF-gene link query
 	def test_query_file_path_1(self,data_file_type='',save_mode=1,verbose=0,select_config={}):
@@ -528,23 +1567,33 @@ class _Base2_2(_Base2_1):
 	## feature query for TF and peak loci
 	def test_query_feature_pre1_2(self,peak_query_vec=[],gene_query_vec=[],motif_data=[],motif_data_score=[],motif_group=[],method_type_vec=['SVD','SVD','SVD'],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],n_components=50,sub_sample=-1,flag_shuffle=False,float_format='%.6f',input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
 
-		motif_query_vec = motif_data.columns.intersection(rna_exprs.columns,sort=False)
-		if len(gene_query_vec)==0:
-			# gene_query_vec = motif_query_vec
-			annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
-		else:
-			# gene_query_vec = pd.Index(gene_query_vec).union(motif_query_vec,sort=False)
-			annot_str_vec = ['peak_gene','peak_motif','peak_motif_ori']
+		motif_query_vec = motif_data.columns.intersection(rna_exprs.columns,sort=False) # tf with expression
+		motif_query_num = len(motif_query_vec)
+		print('motif_query_vec (with expression) ',motif_query_num)
+		
+		column_1 = 'flag_peak_tf_combine'
+		# flag_peak_tf_combine=1: combine peak accessibility and TF expression matrix to perform dimension reduction
+		flag_peak_tf_combine = 0
+		if column_1 in select_config:
+			flag_peak_tf_combine = select_config[column_1]
 
-		sample_id = rna_exprs_unscaled.index
-		peak_read = peak_read.loc[sample_id,:]
-		
-		feature_expr_query1 = rna_exprs_unscaled.loc[:,gene_query_vec].T # tf expression, shape: (tf_num,cell_num)
+		flag_annot1 = 0
+		if flag_peak_tf_combine>0:
+			sample_id = rna_exprs_unscaled.index
+			peak_read = peak_read.loc[sample_id,:]
+
+			if len(gene_query_vec)==0:
+				gene_query_vec = motif_query_vec
+				# annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
+				flag_annot1 = 1  # tf query as gene query
+			# else:
+			# 	# gene_query_vec = pd.Index(gene_query_vec).union(motif_query_vec,sort=False)
+			# 	annot_str_vec = ['peak_gene','peak_motif','peak_motif_ori']
+			
 		feature_mtx_query1 = peak_read.loc[:,peak_query_vec].T  # peak matrix, shape: (peak_num,cell_num)
-		
 		feature_motif_query1 = motif_data.loc[peak_query_vec,motif_query_vec] # motif matrix of peak, shape: (peak_num,motif_num)
 		feature_motif_query2 = motif_data.loc[peak_query_vec,:] # motif matrix of peak, shape: (peak_num,motif_num)
-					
+
 		# feature_query_2 = df_1.loc[peak_query_1,['signal',column_motif]+field_query_2]
 		# print('feature_query_2: ',feature_query_2.shape,group_id)
 		# print(feature_query_2[0:2])
@@ -565,20 +1614,27 @@ class _Base2_2(_Base2_1):
 			feature_motif_query_2 = motif_group.loc[peak_query_vec,:] # (peak_num,group_num)
 			list1 = list1 + [feature_motif_query_2]
 
-		feature_mtx_1 = pd.concat([feature_expr_query1,feature_mtx_query1],axis=0,join='outer',ignore_index=False)
+		dict_query1 = dict()
+		dict_query1.update({'df_peak':feature_mtx_query1,
+							'df_peak_motif':feature_motif_query1,'df_peak_motif_ori':feature_motif_query2})
+
+		if flag_peak_tf_combine>0:
+			feature_expr_query1 = rna_exprs_unscaled.loc[:,gene_query_vec].T # tf expression, shape: (tf_num,cell_num)
+			feature_mtx_1 = pd.concat([feature_mtx_query1,feature_expr_query1],axis=0,join='outer',ignore_index=False)
+			dict_query1.update({'df_exprs_1':feature_expr_query1})
+		else:
+			feature_mtx_1 = feature_mtx_query1
+		
 		feature_mtx_2 = feature_motif_query1
 		feature_mtx_2_ori = feature_motif_query2
 
 		list_pre1 = [feature_mtx_1,feature_mtx_2,feature_mtx_2_ori]
-		# method_type_vec = ['SVD','SVD']
-
 		query_num1 = len(list_pre1)
-		dict_query1 = dict()
-		dict_query1.update({'df_exprs_1':feature_expr_query1,'df_peak':feature_mtx_query1,
-							'df_peak_motif':feature_motif_query1,'df_peak_motif_ori':feature_motif_query2})
+		
+		annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
 
 		# flag_shuffle = False
-		annot_str_vec_2 = annot_str_vec[0:1]+['motif','motif_ori']
+		# annot_str_vec_2 = annot_str_vec[0:1]+['motif','motif_ori']
 		for i1 in range(query_num1):
 			feature_mtx_query = list_pre1[i1]
 			annot_str1 = annot_str_vec[i1]
@@ -609,40 +1665,69 @@ class _Base2_2(_Base2_1):
 			df_component = df_component.T
 			df_component = pd.DataFrame(index=feature_vec_2,columns=feature_dim_vec,data=df_component)
 			
+			print('df_latent: ',df_latent.shape,annot_str1)
+			print(df_latent[0:2])
+
 			if i1==0:
-				df_latent_peak = df_latent.loc[peak_query_vec,:]
-				df_latent_tf = df_latent.loc[motif_query_vec,:]
-				df_latent_gene = df_latent.loc[gene_query_vec,:]
+				if flag_peak_tf_combine>0:
+					feature_query_vec = list(peak_query_vec)+list(gene_query_vec)
+					df_latent = df_latent.loc[feature_query_vec,:]
+
+					if flag_annot1>0:
+						df_latent_tf = df_latent.loc[motif_query_vec,:]
+						print('df_latent_tf: ',df_latent_tf.shape)
+						print(df_latent_tf[0:2])
+						dict_query1.update({'latent_tf':df_latent_tf})
+					else:
+						df_latent_gene = df_latent.loc[gene_query_vec,:]
+						print('df_latent_gene: ',df_latent_gene.shape)
+						print(df_latent_gene[0:2])
+						dict_query1.update({'latent_gene':df_latent_gene})
+					df_latent_peak = df_latent.loc[peak_query_vec,:]
+				else:
+					df_latent = df_latent.loc[peak_query_vec,:]
+					df_latent_peak = df_latent
+
+				# df_latent_peak = df_latent.loc[peak_query_vec,:]
 				print('df_latent_peak: ',df_latent_peak.shape,annot_str1)
 				print(df_latent_peak[0:2])
-				print('df_latent_tf: ',df_latent_tf.shape)
-				print(df_latent_tf[0:2])
-				print('df_latent_gene: ',df_latent_gene.shape)
-				print(df_latent_gene[0:2])
-				dict_query1.update({'dimension_model_1':dimension_model}) # dimension reduction model for peak accessibility and TF expression
-				# dict_query1.update({'latent_peak':df_latent_peak,'latent_tf':df_latent_tf,'latent_gene':df_latent_gene})
-				dict_query1.update({'latent_peak':df_latent_peak,'latent_gene':df_latent_gene,
-									'component_mtx':df_component})
+				df_latent_query = df_latent
+
+				# dict_query1.update({'dimension_model_1':dimension_model}) # dimension reduction model for peak accessibility and TF expression
+				# dict_query1.update({'latent_peak_tf':df_latent,
+				# 					'component_mtx':df_component})
+				
+				# dict_query1.update({'dimension_model_1':dimension_model}) # dimension reduction model for peak accessibility and TF expression
+				# # dict_query1.update({'latent_peak':df_latent_peak,'latent_tf':df_latent_tf,'latent_gene':df_latent_gene})
+				# dict_query1.update({'latent_peak':df_latent_peak,'latent_gene':df_latent_gene,
+				# 					'component_mtx':df_component})
+
 			else:
-				print('df_latent: ',df_latent.shape,annot_str1)
-				print(df_latent[0:2])
 				df_latent_peak_motif = df_latent.loc[peak_query_vec,:]
+				df_latent_query = df_latent_peak_motif
+				
 				print('df_latent_peak_motif: ',df_latent_peak_motif.shape)
 				print('df_component: ',df_component.shape)
 				# print(df_latent_peak_motif[0:2])
-				annot_str2 = annot_str_vec_2[i1]
+				# annot_str2 = annot_str_vec_2[i1]
+				# annot_str2 = annot_str_vec[i1]
 				# dict_query1.update({'dimension_model_motif':dimension_model}) # dimension reduction model for motif feature of peak query
 				# dict_query1.update({'latent_peak_motif':df_latent_peak_motif,'component_peak_motif':df_component})
 
-				dict_query1.update({'dimension_model_%s'%(annot_str2):dimension_model}) # dimension reduction model for motif feature of peak query
-				dict_query1.update({'latent_%s'%(annot_str1):df_latent_peak_motif,'component_%s'%(annot_str1):df_component})
+				# dict_query1.update({'dimension_model_%s'%(annot_str2):dimension_model}) # dimension reduction model for motif feature of peak query
+				# dict_query1.update({'latent_%s'%(annot_str1):df_latent_peak_motif,'component_%s'%(annot_str1):df_component})
+
+			# annot_str2 = annot_str_vec_2[i1]
+			annot_str2 = annot_str_vec[i1]
+			dict_query1.update({'dimension_model_%s'%(annot_str2):dimension_model}) # dimension reduction model for motif feature of peak query
+			dict_query1.update({'latent_%s'%(annot_str1):df_latent_query,'component_%s'%(annot_str1):df_component})
 
 			if save_mode>0:
 				filename_save_annot_2 = '%s_%s'%(method_type,n_components_query)
 				output_filename_1 = '%s/%s.dimension_model.%s.%s.1.h5'%(output_file_path,filename_prefix_save,annot_str1,filename_save_annot_2)
 				pickle.dump(dimension_model, open(output_filename_1, 'wb'))
 
-				list_query2 = [df_latent,df_component]
+				list_query2 = [df_latent_query,df_component]
 				field_query_2 = ['df_latent','df_component']
 				for (field_id,df_query) in zip(field_query_2,list_query2):
 					filename_prefix_save_2 = '%s.%s'%(filename_prefix_save,field_id)
@@ -1030,10 +2115,77 @@ class _Base2_2(_Base2_1):
 	# 	motif_query_num = len(motif_query_vec) # TF with motif and with expression 
 	# 	print('motif_query_vec: ',motif_query_num)
 
-	# compute feature embedding
-	def test_query_feature_mtx_1(self,feature_query_vec=[],feature_type_vec=[],method_type_vec_dimension=[],n_components=50,type_id_group=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=1,select_config={}):
+	## query motif data by motif scanning and query motif
+	# query motif data and motif data score of given peak loci
+	# query TFs with expressions
+	def test_query_motif_data_annotation_1(self,data=[],data_file_type='',gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
 
-		# dict_query1: {'latent_peak','latent_tf','latent_peak_motif'}
+		flag_query1 = 1
+		if flag_query1>0:
+			dict_motif_data_ori = data
+			method_type_query = method_type
+			print(method_type_query)
+
+			if method_type_query in dict_motif_data_ori:
+				dict_motif_data = dict_motif_data_ori[method_type_query]
+			else:
+				dict_motif_data = dict_motif_data_ori
+
+			peak_loc_1 = feature_query_vec
+			motif_data_query1 = dict_motif_data['motif_data']
+			flag_1 = (len(feature_query_vec)>0) # query motif data of the given peak loci;
+			if flag_1==0:
+				if len(peak_read)>0:
+					flag_1 = 1
+					peak_loc_1 = peak_read.columns
+
+			if flag_1>0:
+				motif_data_query1 = motif_data_query1.loc[peak_loc_1,:]
+			print('motif_data')
+			print(motif_data_query1[0:2])
+			
+			if 'motif_data_score' in dict_motif_data:
+				motif_data_score_query1 = dict_motif_data['motif_data_score']
+				if flag_1>0:
+					motif_data_score_query1 = motif_data_score_query1.loc[peak_loc_1,:]
+				print('motif_data_score')
+				print(motif_data_score_query1[0:2])
+			else:
+				motif_data_score_query1 = motif_data_query1
+
+			# query TFs with expressions
+			motif_query_vec = self.test_query_motif_annotation_1(data=motif_data_query1,data_file_type=data_file_type,
+																	gene_query_vec=gene_query_vec,feature_query_vec=[],
+																	method_type='',peak_read=peak_read,rna_exprs=rna_exprs,
+																	save_mode=0,verbose=0,select_config=select_config)
+
+			return motif_data_query1, motif_data_score_query1, motif_query_vec
+
+	## query motif data by motif scanning and query motif
+	# query TFs with expressions
+	def test_query_motif_annotation_1(self,data=[],data_file_type='',gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
+
+		motif_data_query1 = data
+		motif_name_ori = motif_data_query1.columns
+		if len(gene_query_vec)==0:
+			if len(rna_exprs)>0:
+				gene_name_expr_ori = rna_exprs.columns
+				gene_query_vec = gene_name_expr_ori
+				# motif_query_name_expr = pd.Index(motif_name_ori).intersection(gene_name_expr_ori,sort=False)
+
+		if len(gene_query_vec)>0:
+			motif_query_vec = pd.Index(motif_name_ori).intersection(gene_query_vec,sort=False)
+			print('motif_query_vec (with expression): ',len(motif_query_vec))
+		else:
+			motif_query_vec = motif_name_ori
+
+		return motif_query_vec
+
+	# compute feature embedding
+	def test_query_feature_mtx_1(self,feature_query_vec=[],feature_type_vec=[],gene_query_vec=[],method_type_vec_dimension=[],n_components=50,type_id_group=0,
+										motif_data=[],motif_data_score=[],motif_group=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
+										load_mode=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=1,select_config={}):
+
 		if len(method_type_vec_dimension)==0:
 			method_type_vec_dimension = ['SVD','SVD','SVD']
 		
@@ -1045,144 +2197,180 @@ class _Base2_2(_Base2_1):
 
 		# type_id_group_2 = select_config['type_id_group_2']
 		# load_mode_2 = type_id_group_2
-
 		# load_mode_2 = select_config['type_group_load_mode']
 		# # field_query = ['latent_peak', 'latent_gene', 'latent_peak_motif']
 		# field_query = ['latent_peak', 'latent_gene', 'latent_peak_motif','latent_peak_motif_ori']
 		# field_query_pre2 = ['latent_peak_tf_link']
+		# if len(field_query)==0:
+		# 	field_query = ['latent_peak','latent_peak_motif','latent_peak_motif_ori']
 
 		latent_peak = []
 		latent_peak_motif,latent_peak_motif_ori = [], []
 		latent_peak_tf_link = []
+		peak_query_vec_pre1 = feature_query_vec
+		flag_shuffle = False
 		load_mode_2 = load_mode
 
 		if load_mode_2==0:
-			dict_query1 = self.test_query_feature_pre1_2(peak_query_vec=peak_query_vec_pre1,gene_query_vec=motif_query_vec,
-															motif_data=motif_data_query1,motif_data_score=motif_data_score_query1,motif_group=motif_group,
+			# dict_query1: {'latent_peak','latent_tf','latent_peak_motif'}
+			# dict_query1: {'latent_peak_tf','latent_gene','latent_peak_motif','latent_peak_motif_ori'}
+			dict_query1 = self.test_query_feature_pre1_2(peak_query_vec=peak_query_vec_pre1,gene_query_vec=gene_query_vec,
+															motif_data=motif_data,motif_data_score=motif_data_score,motif_group=motif_group,
 															method_type_vec=method_type_vec_dimension,
 															peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-															n_components=n_components,sub_sample=-1,flag_shuffle=False,float_format=float_format,
+															n_components=n_components,sub_sample=-1,flag_shuffle=flag_shuffle,float_format=float_format,
 															input_file_path=input_file_path,save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,output_filename='',verbose=verbose,select_config=select_config)
 
 		elif load_mode_2==1:
 			input_file_path_query = output_file_path
-			annot_str_vec = ['peak_gene','peak_motif','peak_motif_ori']
+			# annot_str_vec = ['peak_gene','peak_motif','peak_motif_ori']
+			# annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
+			# field_query = ['peak_motif','peak_tf']
+			annot_str_vec = ['peak_motif','peak_tf']
 			field_query_2 = ['df_latent','df_component']
 			dict_query1 = dict()
 
 			# field_num = len(field_query)
 			query_num = len(annot_str_vec)
+			
 			for i2 in range(query_num):
 				method_type_dimension = method_type_vec_dimension[i2]
 				filename_save_annot_2 = '%s_%s'%(method_type_dimension,n_components)
 
 				annot_str1 = annot_str_vec[i2]
 				field_id1 = 'df_latent'
+				
 				filename_prefix_save_query = '%s.%s'%(filename_prefix_save_2,field_id1)
+				# input_filename = 'pbmc.pre1.0.df_latent.peak_tf.SVD_100.1.txt'
 				input_filename = '%s/%s.%s.%s.1.txt'%(input_file_path_query,filename_prefix_save_query,annot_str1,filename_save_annot_2)
 				df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 				print('df_query: ',df_query.shape,annot_str1)
 				print(df_query[0:2])
 
 				if i2==0:
-					feature_query_pre1 = df_query.index
-					feature_query_1 = feature_query_pre1.difference(motif_query_vec,sort=False)
-					feature_query_2 = pd.Index(peak_query_vec_pre1).intersection(feature_query_1,sort=False)
-					feature_query_3 = pd.Index(peak_query_vec_pre1).difference(feature_query_1,sort=False)
-					print('feature_query_2: ',len(feature_query_2))
-					print('feature_query_3: ',len(feature_query_3))
-
-					latent_peak = df_query.loc[peak_query_vec_pre1,:]
-					latent_gene = df_query.loc[motif_query_vec,:]
-					print('latent_peak: ',latent_peak.shape)
-					print(latent_peak[0:2])
-					print('latent_gene: ',latent_gene.shape)
-					print(latent_gene[0:2])
-					dict_query1.update({'latent_peak':latent_peak,'latent_gene':latent_gene})
+					peak_query_vec_pre1 = df_query.index
+					# field_id2 = field_query[i2+1]
+					field_id2 = 'latent_%s'%(annot_str1)
+					dict_query1.update({field_id2:df_query})
 				else:
-					field_id2 = field_query[i2+1]
+					feature_query_pre1 = df_query.index
+					feature_vec_2 = pd.Index(peak_query_vec_pre1).intersection(feature_query_pre1,sort=False)
+					feature_vec_3 = pd.Index(feature_query_pre1).difference(peak_query_vec_pre1,sort=False)
+
+					# latent_peak = df_query.loc[peak_query_vec_pre1,:]
+					feature_query_pre2 = list(feature_vec_2)+list(feature_vec_3)
+					feature_query_pre2 = pd.Index(feature_query_pre2)
+					
+					df_query = df_query.loc[feature_query_pre2,:]
+					field_id2 = 'latent_%s'%(annot_str1)
 					dict_query1.update({field_id2:df_query})
 
-		elif load_mode_2==2:
-			feature_type_vec_query = ['motif','peak']
-			column_id_query = 'peak_id'
-			column_value = 'peak_tf_corr'
-			column_vec = [column_id3,column_id2]
-			flag_binary = 1
-			thresh_value = -0.1
-			# n_components = 50
-			flag_unduplicate = 0
-			method_type_vec_dimension = ['SVD']
-			df_feature_link_query = df_peak_tf_query1
-			input_file_path_query = select_config['file_path_motif_score_2']
-			input_filename = '%s/test_motif_score_normalize_insilico.%s.1.txt'%(input_file_path_query,data_file_type_query)
+					motif_query_vec = gene_query_vec
+					if len(motif_query_vec)==0:
+						motif_query_vec = feature_vec_3
+					
+					if len(motif_query_vec)>0:
+						feature_query_1 = feature_query_pre1.difference(motif_query_vec,sort=False)
+						feature_query_2 = pd.Index(peak_query_vec_pre1).intersection(feature_query_1,sort=False)
+						feature_query_3 = pd.Index(peak_query_vec_pre1).difference(feature_query_1,sort=False)
+						print('feature_query_2: ',len(feature_query_2))
+						print('feature_query_3: ',len(feature_query_3))
+
+						latent_peak = df_query.loc[peak_query_vec_pre1,:]
+						print('latent_peak: ',latent_peak.shape)
+						print(latent_peak[0:2])
+						dict_query1.update({'latent_peak':latent_peak})
+						
+						motif_query_2 = pd.Index(motif_query_vec).intersection(feature_query_pre1,sort=False)
+						if len(motif_query_2)>0:
+							latent_gene = df_query.loc[motif_query_2,:]
+							print('latent_gene: ',latent_gene.shape)
+							print(latent_gene[0:2])
+							# dict_query1.update({'latent_peak':latent_peak,'latent_gene':latent_gene})
+							dict_query1.update({'latent_gene':latent_gene})
+
+		# elif load_mode_2==2:
+		# 	feature_type_vec_query = ['motif','peak']
+		# 	column_id_query = 'peak_id'
+		# 	column_value = 'peak_tf_corr'
+		# 	column_vec = [column_id3,column_id2]
+		# 	flag_binary = 1
+		# 	thresh_value = -0.1
+		# 	# n_components = 50
+		# 	flag_unduplicate = 0
+		# 	method_type_vec_dimension = ['SVD']
+		# 	df_feature_link_query = df_peak_tf_query1
+		# 	input_file_path_query = select_config['file_path_motif_score_2']
+		# 	input_filename = '%s/test_motif_score_normalize_insilico.%s.1.txt'%(input_file_path_query,data_file_type_query)
 			
-			if os.path.exists(input_filename)==False:
-				print('the file does not exist: %s'%(input_filename))
-				input_filename = '%s/test_motif_score_normalize_insilico.%s.thresh1.1.txt'%(input_file_path_query,data_file_type_query)
+		# 	if os.path.exists(input_filename)==False:
+		# 		print('the file does not exist: %s'%(input_filename))
+		# 		input_filename = '%s/test_motif_score_normalize_insilico.%s.thresh1.1.txt'%(input_file_path_query,data_file_type_query)
 
-			df_annot = pd.read_csv(input_filename,index_col=0,sep='\t')
-			df_annot['motif_id'] = np.asarray(df_annot.index)
+		# 	df_annot = pd.read_csv(input_filename,index_col=0,sep='\t')
+		# 	df_annot['motif_id'] = np.asarray(df_annot.index)
 			
-			print('df_feature_link_query: ',df_feature_link_query.shape)
-			print(df_feature_link_query.columns)
-			print(df_feature_link_query[0:2])
+		# 	print('df_feature_link_query: ',df_feature_link_query.shape)
+		# 	print(df_feature_link_query.columns)
+		# 	print(df_feature_link_query[0:2])
 			
-			print('df_annot: ',df_annot.shape)
-			print(df_annot.columns)
-			print(df_annot[0:2])
-			df_annot = df_annot.drop_duplicates(subset=[column_id3,column_id2])
-			peak_query_1 = df_feature_link_query[column_id2].unique()
-			feature_query_vec = pd.Index(peak_query_vec_pre1).intersection(peak_query_1,sort=False)
-			print('peak_query_1, feature_query_vec: ',len(peak_query_1),len(feature_query_vec))
-			# df_annot.index = utility_1.test_query_index(df_annot,column_vec=column_vec)
-			dict_query1 = self.test_query_feature_pre1_3(df_feature_link=df_feature_link_query,df_annot=df_annot,feature_query_vec=feature_query_vec,column_id_query=column_id_query,
-															column_vec=column_vec,column_value=column_value,feature_type_vec=feature_type_vec_query,
-															peak_query_vec=feature_query_vec,gene_query_vec=[],motif_data=motif_data,motif_data_score=motif_data_score,motif_group=[],
-															method_type_vec=method_type_vec_dimension,peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-															n_components=n_components,sub_sample=-1,flag_shuffle=False,flag_binary=flag_binary,thresh_value=thresh_value,
-															float_format=float_format,flag_unduplicate=flag_unduplicate,input_file_path=input_file_path,
-															save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,output_filename='',verbose=verbose,select_config=select_config)
+		# 	print('df_annot: ',df_annot.shape)
+		# 	print(df_annot.columns)
+		# 	print(df_annot[0:2])
+		# 	df_annot = df_annot.drop_duplicates(subset=[column_id3,column_id2])
+		# 	peak_query_1 = df_feature_link_query[column_id2].unique()
+		# 	feature_query_vec = pd.Index(peak_query_vec_pre1).intersection(peak_query_1,sort=False)
+		# 	print('peak_query_1, feature_query_vec: ',len(peak_query_1),len(feature_query_vec))
+		# 	# df_annot.index = utility_1.test_query_index(df_annot,column_vec=column_vec)
+		# 	dict_query1 = self.test_query_feature_pre1_3(df_feature_link=df_feature_link_query,df_annot=df_annot,feature_query_vec=feature_query_vec,column_id_query=column_id_query,
+		# 													column_vec=column_vec,column_value=column_value,feature_type_vec=feature_type_vec_query,
+		# 													peak_query_vec=feature_query_vec,gene_query_vec=[],motif_data=motif_data,motif_data_score=motif_data_score,motif_group=[],
+		# 													method_type_vec=method_type_vec_dimension,peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
+		# 													n_components=n_components,sub_sample=-1,flag_shuffle=False,flag_binary=flag_binary,thresh_value=thresh_value,
+		# 													float_format=float_format,flag_unduplicate=flag_unduplicate,input_file_path=input_file_path,
+		# 													save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,output_filename='',verbose=verbose,select_config=select_config)
 
-		elif load_mode_2==3:
-			input_file_path_query = output_file_path
-			annot_str_vec = ['peak_tf_link']
-			field_query_2 = ['df_latent','df_component']
-			dict_query1 = dict()
+		# elif load_mode_2==3:
+		# 	input_file_path_query = output_file_path
+		# 	annot_str_vec = ['peak_tf_link']
+		# 	field_query_2 = ['df_latent','df_component']
+		# 	dict_query1 = dict()
 
-			method_type_vec_dimension = ['SVD']
-			# field_num = len(field_query)
-			query_num = len(annot_str_vec)
-			for i2 in range(query_num):
-				method_type_dimension = method_type_vec_dimension[i2]
-				filename_save_annot_2 = '%s_%s'%(method_type_dimension,n_components)
+		# 	method_type_vec_dimension = ['SVD']
+		# 	# field_num = len(field_query)
+		# 	query_num = len(annot_str_vec)
+		# 	for i2 in range(query_num):
+		# 		method_type_dimension = method_type_vec_dimension[i2]
+		# 		filename_save_annot_2 = '%s_%s'%(method_type_dimension,n_components)
 
-				annot_str1 = annot_str_vec[i2]
-				field_id1 = 'df_latent'
-				filename_prefix_save_query = '%s.%s'%(filename_prefix_save_2,field_id1)
-				input_filename = '%s/%s.%s.%s.1.txt'%(input_file_path_query,filename_prefix_save_query,annot_str1,filename_save_annot_2)
-				df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-				print('df_query: ',df_query.shape,annot_str1)
-				print(df_query[0:2])
+		# 		annot_str1 = annot_str_vec[i2]
+		# 		field_id1 = 'df_latent'
+		# 		filename_prefix_save_query = '%s.%s'%(filename_prefix_save_2,field_id1)
+		# 		input_filename = '%s/%s.%s.%s.1.txt'%(input_file_path_query,filename_prefix_save_query,annot_str1,filename_save_annot_2)
+		# 		df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
+		# 		print('df_query: ',df_query.shape,annot_str1)
+		# 		print(df_query[0:2])
 
-				field_id2 = field_query_pre2[i2]
-				dict_query1.update({field_id2:df_query})
+		# 		field_id2 = field_query_pre2[i2]
+		# 		dict_query1.update({field_id2:df_query})
 
-		if load_mode_2 in [0,1]:
-			list1 = [dict_query1[field_id] for field_id in field_query]
-			latent_peak, latent_gene, latent_peak_motif, latent_peak_motif_ori = list1
-			latent_tf = latent_gene.loc[motif_query_vec,:]
-			print('latent_peak, latent_tf, latent_peak_motif, latent_peak_motif_ori: ',latent_peak.shape,latent_tf.shape,latent_peak_motif.shape,latent_peak_motif_ori.shape)
-			print(latent_peak[0:2])
-			print(latent_tf[0:2])
-			print(latent_peak_motif[0:2])
-			print(latent_peak_motif_ori[0:2])
+		# if load_mode_2 in [0,1]:
+		# 	list1 = [dict_query1[field_id] for field_id in field_query]
+		# 	latent_peak, latent_gene, latent_peak_motif, latent_peak_motif_ori = list1
+		# 	latent_tf = latent_gene.loc[motif_query_vec,:]
+		# 	print('latent_peak, latent_tf, latent_peak_motif, latent_peak_motif_ori: ',latent_peak.shape,latent_tf.shape,latent_peak_motif.shape,latent_peak_motif_ori.shape)
+		# 	print(latent_peak[0:2])
+		# 	print(latent_tf[0:2])
+		# 	print(latent_peak_motif[0:2])
+		# 	print(latent_peak_motif_ori[0:2])
 
-		elif load_mode_2 in [2,3]:
-			list1 = [dict_query1[field_id] for field_id in field_query_pre2]
-			latent_peak_tf_link = list1[0]
-			print('latent_peak_tf_link: ',latent_peak_tf_link.shape)
-			print(latent_peak_tf_link[0:2])
+		# elif load_mode_2 in [2,3]:
+		# 	list1 = [dict_query1[field_id] for field_id in field_query_pre2]
+		# 	latent_peak_tf_link = list1[0]
+		# 	print('latent_peak_tf_link: ',latent_peak_tf_link.shape)
+		# 	print(latent_peak_tf_link[0:2])
+
+		return dict_query1
 
 	## query neighbors of feature
 	# query neighbors of peak loci
@@ -1494,6 +2682,7 @@ class _Base2_2(_Base2_1):
 						peak_query_pre1_2 = peak_loc_ori[id1&(~id2)]
 						# df_pre1.loc[peak_query_pre1_2,column_pred_2] = 1
 						df_pre1.loc[peak_query_pre1,column_pred_2] = 1
+
 
 						flag_neighbor_pre2 = 1
 						if flag_neighbor_pre2>0:
@@ -2354,23 +3543,27 @@ class _Base2_2(_Base2_1):
 
 		df_query1 = data
 		peak_loc_pre1 = df_query1.index
-		try:
-			id_motif = (df_query1[column_motif].abs()>0)
-		except Exception as error:
-			print('error! ',error)
-			id_motif = (df_query1[column_motif].isin(['True',True,1,'1']))
 
 		if len(id_query)>0:
 			id_pred1 = id_query
 		else:
 			id_pred1 = (df_query1[column_pred1]>0)
-		id_pred2 = (~id_pred1)
-		id_pred2_1 = (~id_pred1)&(id_motif)
-		id_pred2_2 = (~id_pred1)&(~id_motif)
 
+		id_pred2 = (~id_pred1)
 		peak_vec_2_ori = np.asarray(peak_loc_pre1[id_pred2])
-		peak_vec_2_1_ori = np.asarray(peak_loc_pre1[id_pred2_1])
-		peak_vec_2_2_ori = np.asarray(peak_loc_pre1[id_pred2_2])
+
+		if column_motif in df_query1.columns:
+			try:
+				id_motif = (df_query1[column_motif].abs()>0)
+			except Exception as error:
+				print('error! ',error)
+				id_motif = (df_query1[column_motif].isin(['True',True,1,'1']))
+
+			id_pred2_1 = (~id_pred1)&(id_motif)
+			id_pred2_2 = (~id_pred1)&(~id_motif)
+
+			peak_vec_2_1_ori = np.asarray(peak_loc_pre1[id_pred2_1])
+			peak_vec_2_2_ori = np.asarray(peak_loc_pre1[id_pred2_2])
 
 		peak_vec_2 = []
 		# flag_sample = 0
@@ -2879,7 +4072,7 @@ class _Base2_2(_Base2_1):
 		return df_pre1
 	
 	## load data and query configuration parameters
-	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,save_mode=1,verbose=0,select_config={}):
+	def test_query_load_pre1_ori(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,save_mode=1,verbose=0,select_config={}):
 
 		# flag_config_1=1
 		if flag_config_1>0:
@@ -2924,6 +4117,74 @@ class _Base2_2(_Base2_1):
 			self.rna_exprs = rna_exprs
 			# peak_loc_ori = peak_read.columns
 
+		return select_config
+
+	## load data and query configuration parameters
+	# load motif data; load ATAC-seq and RNA-seq data of the metacells
+	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		# flag_config_1=1
+		# if flag_config_1>0:
+		# 	root_path_1 = select_config['root_path_1']
+		# 	root_path_2 = select_config['root_path_2']
+
+		# 	data_file_type_query = select_config['data_file_type']
+		# 	method_type_feature_link = select_config['method_type_feature_link']
+		# 	# method_type_vec = ['insilico_0.1']+[method_type_feature_link]
+		# 	# method_type_vec = list(pd.Index(method_type_vec).unique())
+		# 	method_type_vec = [method_type_feature_link]
+		# 	select_config = self.test_query_config_pre1_1(data_file_type_query=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
+
+		# flag_motif_data_load_1 = 1
+		# load motif data
+		method_type_feature_link = select_config['method_type_feature_link']
+		if flag_motif_data_load_1>0:
+			print('load motif data')
+			if len(method_type_vec_query)==0:
+				# method_type_vec_query = ['insilico_0.1']+[method_type_feature_link]
+				# method_type_vec_query = list(pd.Index(method_type_vec_query).unique())
+				method_type_vec_query = [method_type_feature_link]
+
+			# load motif data
+			dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+																			select_config=select_config)
+
+			self.dict_motif_data = dict_motif_data
+
+		# flag_load_1 = 1
+		# load the ATAC-seq data and RNA-seq data of the metacells
+		if flag_load_1>0:
+			print('load peak accessiblity and gene expression data')
+			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
+			start = time.time()
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(meta_exprs=[],peak_read=[],flag_format=False,select_config=select_config)
+
+			# sample_id = meta_scaled_exprs.index
+			# peak_read = peak_read.loc[sample_id,:]
+			sample_id = peak_read.index
+			meta_exprs_2 = meta_exprs_2.loc[sample_id,:]
+			if len(meta_scaled_exprs)>0:
+				meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+				rna_exprs = meta_scaled_exprs	# scaled RNA-seq data
+			else:
+				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
+			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
+
+			print('ATAC-seq count matrx: ',peak_read.shape)
+			print(peak_read[0:2])
+
+			print('RNA-seq count matrx: ',rna_exprs.shape)
+			print(rna_exprs[0:2])
+
+			self.peak_read = peak_read
+			self.meta_scaled_exprs = meta_scaled_exprs
+			self.meta_exprs_2 = meta_exprs_2
+			self.rna_exprs = rna_exprs
+			# peak_loc_ori = peak_read.columns
+
+			stop = time.time()
+			print('load peak accessiblity and gene expression data used %.2fs'%(stop-start))
+			
 		return select_config
 
 	## file annotation query

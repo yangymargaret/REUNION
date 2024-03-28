@@ -21,7 +21,8 @@ import seaborn as sns
 import os
 import os.path
 from optparse import OptionParser
-from test_reunion_compute_pre2 import _Base2_2
+# from test_reunion_compute_pre2 import _Base2_2
+from test_rediscover_compute_1 import _Base2_2
 from test_group_1 import _Base2_group1
 
 from scipy import stats
