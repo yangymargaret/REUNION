@@ -113,7 +113,7 @@ The options:
   
 - --input_link: the directory where the file containing the peak-TF associations predicted by Unify (or other methods) for a given TF is saved, default = -1
 
-  Please provide the file as a tab-delmited .txt file named $filename_prefix.$TF_name.$filename_annot.txt containing at least two columns: ['pred','score'] (the column names can be specified by the parameter 'columns_1' as shown below), with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the specific method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the method. If the association scores are unavailable, please leave this column blank.
+  Please provide the file for the given TF as a tab-delmited .txt file named $filename_prefix.$TF_name.$filename_annot.txt containing at least two columns: ['pred','score'] (the column names can be specified by the parameter 'columns_1' as shown below), with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the specific method. 'pred' represents binary prediction: 1: peak contains binding site, 0: without binding site; 'score' represents the association score of the peak-TF link estimated by the method. If the association scores are unavailable, please leave this column blank.
 
   Optionally, if the motif scores of the given TF in each peak locus based on motif scanning are available, please include them using an additional column named 'motif_score' or $column_motif_score as specified by part of $columns_1 as shown below.
 
