@@ -2785,10 +2785,11 @@ class _Base2_2(_Base2_1):
 		return df_pre1
 
 	## select training sample
-	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id1='',method_type_feature_link='',dict_thresh=[],thresh_vec=[],input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
+	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id='',method_type_feature_link='',dict_thresh=[],thresh_vec=[],input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
 
 		flag_select_1=1
-		column_pred1 = '%s.pred'%(method_type_feature_link)
+		# column_pred1 = '%s.pred'%(method_type_feature_link)
+		column_pred1 = select_config['column_pred1']
 		df_query1 = data
 		id_pred1 = (df_query1[column_pred1]>0)
 		peak_loc_pre1 = df_query1.index
@@ -2879,11 +2880,14 @@ class _Base2_2(_Base2_1):
 				print(df_quantile_1[0:5])
 
 				# iter_id1 = 0
-				filename_save_annot_query_1 = '%s.%d'%(data_file_type_query,config_id_load)
-				filename_save_annot_query1 = '%s.neighbor%d'%(method_type_group,n_neighbors)
+				# filename_save_annot_query_1 = '%s.%d'%(data_file_type_query,config_id_load)
+				# filename_save_annot_query1 = '%s.neighbor%d'%(method_type_group,n_neighbors)
 				# filename_save_annot = '%s.%s.%s'%(filename_save_annot_query,motif_id1,filename_save_annot_1)
 				# output_filename = '%s/test_query_quantile.%s.2.txt'%(output_file_path,group_type)
-				output_filename = '%s/test_query_quantile.%s.%s.%s.%s.2.txt'%(output_file_path,filename_save_annot_query1,group_type,motif_id1,filename_save_annot_query_1)
+				# output_filename = '%s/test_query_quantile.%s.%s.%s.%s.2.txt'%(output_file_path,filename_save_annot_query1,group_type,motif_id1,filename_save_annot_query_1)
+				
+				filename_link_annot = select_config['filename_annot']
+				output_filename = '%s/test_query_quantile.%s.%s.txt'%(output_file_path,motif_id,filename_link_annot)
 				df_quantile_1.to_csv(output_filename,sep='\t')
 
 			group_vec_query1_1, group_vec_query2_1 = dict_query1[group_type_1]
@@ -3391,15 +3395,18 @@ class _Base2_2(_Base2_1):
 			peak_loc_ori = df_query1.index
 			# df_pre1 = df_pre1.loc[peak_loc_ori,:]
 			# df_query1 = df_query1.loc[peak_loc_ori,:]
-			column_motif = '%s.motif'%(method_type_feature_link)
-			column_pred1 = '%s.pred'%(method_type_feature_link)
+			# column_motif = '%s.motif'%(method_type_feature_link)
+			# column_pred1 = '%s.pred'%(method_type_feature_link)
+			column_motif = select_config['column_motif']
+			column_pred1 = select_config['column_pred1']
 
-			motif_score = df_query1[column_motif]
-			id_motif = (df_query1[column_motif].abs()>0)
-			df_query1_motif = df_query1.loc[id_motif,:]	# the peak loci with binding motif identified
-			peak_loc_motif = df_query1_motif.index
-			peak_num_motif = len(peak_loc_motif)
-			print('motif_num: ',peak_num_motif)
+			if (column_motif!='-1'):
+				motif_score = df_query1[column_motif]
+				id_motif = (df_query1[column_motif].abs()>0)
+				df_query1_motif = df_query1.loc[id_motif,:]	# the peak loci with binding motif identified
+				peak_loc_motif = df_query1_motif.index
+				peak_num_motif = len(peak_loc_motif)
+				print('motif_num: ',peak_num_motif)
 
 			id_pred1 = (df_query1[column_pred1]>0)
 			# id_pred2 = (df_query1[column_pred2]>0)
@@ -3412,8 +3419,10 @@ class _Base2_2(_Base2_1):
 			print('peak_loc_query_group2_2_ori: ',peak_num_group2_2_ori)
 
 			# config_id_2 = 0
-			config_id_2 = select_config['config_id_2_query']
+			# config_id_2 = select_config['config_id_2_query']
+			config_id_2 = select_config['config_id_2']
 			column_query_pre1 = column_vec_query_pre2
+			
 			print('config_id_2,motif_id_query: ',config_id_2,motif_id_query)
 			if config_id_2%2==0:
 				column_query_pre2 = column_vec_query_pre2
@@ -3820,12 +3829,21 @@ class _Base2_2(_Base2_1):
 
 				column_signal = 'signal'
 				method_type_feature_link = select_config['method_type_feature_link']
-				column_motif = '%s.motif'%(method_type_feature_link)
+				# column_motif = '%s.motif'%(method_type_feature_link)
+				column_motif = select_config['column_motif']
+				field_query_1 = [motif_id_query]
+				if column_motif in df_pre1.columns:
+					field_query_1 = [column_motif,motif_id_query]
+
 				if column_signal in df_pre1.columns:
-					# print(df_pre1.loc[peak_vec_1,['signal',column_motif,motif_id_query]])
-					print(df_pre1.loc[peak_vec_1,[column_signal,column_motif,motif_id_query]])
-				else:
-					print(df_pre1.loc[peak_vec_1,[column_motif,motif_id_query]])
+					field_query_1 = [column_signal] + field_query_1
+
+				# if column_signal in df_pre1.columns:
+				# 	# print(df_pre1.loc[peak_vec_1,['signal',column_motif,motif_id_query]])
+				# 	print(df_pre1.loc[peak_vec_1,[column_signal,column_motif,motif_id_query]])
+				# else:
+				# 	print(df_pre1.loc[peak_vec_1,[column_motif,motif_id_query]])
+				print(df_pre1.loc[peak_vec_1,field_query_1])
 
 				# feature_type_vec_query = ['latent_peak_motif','latent_peak_tf']
 				feature_type_vec_query = feature_type_vec
@@ -3841,7 +3859,9 @@ class _Base2_2(_Base2_1):
 
 				feature_type_query_vec_2 = np.asarray(list(dict_feature.keys()))
 				feature_type_num1 = len(feature_type_query_vec_2)
-				file_path_query1 = select_config['file_path_query_1']
+				# file_path_query1 = select_config['file_path_query_1']
+				file_path_query1 = select_config['file_path_save_link']
+				
 				print('file_path_query1: ',file_path_query1)
 				dict_feature_query = dict_feature
 				for i2 in range(feature_type_num1):
