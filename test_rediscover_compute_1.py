@@ -158,69 +158,17 @@ class _Base2_2(_Base2_1):
 
 		return select_config
 
-	# ## motif-peak estimate: load meta_exprs and peak_read
+	## motif-peak estimate: load meta_exprs and peak_read
 	# def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,select_config={}):
 
 	# 	input_file_path1 = self.save_path_1
-	# 	# data_file_type = 'CD34_bonemarrow'
-	# 	# input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
 	# 	data_file_type = select_config['data_file_type']
-	# 	# input_file_path = select_config['data_path']
-	# 	# filename_save_annot_1 = select_config['filename_save_annot_1']
-		
-	# 	input_filename_1, input_filename_2 = select_config['filename_rna'],select_config['filename_atac']
-	# 	input_filename_3 = select_config['filename_rna_exprs_1']
-	# 	# rna_meta_ad = sc.read_h5ad(input_filename_1)
-	# 	# atac_meta_ad = sc.read_h5ad(input_filename_2)
-	# 	rna_meta_ad = sc.read(input_filename_1)
-	# 	atac_meta_ad = sc.read(input_filename_2)
-	# 	meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
-	# 	print(input_filename_1,input_filename_2)
-	# 	print('rna_meta_ad\n', rna_meta_ad)
-	# 	print('atac_meta_ad\n', atac_meta_ad)
-
-	# 	# atac_meta_ad = self.atac_meta_ad
-	# 	# meta_scaled_exprs = self.meta_scaled_exprs
-	# 	if flag_format==True:
-	# 		meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
-	# 		rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
-	# 		rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
-
-	# 	self.rna_meta_ad = rna_meta_ad
-	# 	sample_id = rna_meta_ad.obs_names
-	# 	sample_id1 = meta_scaled_exprs.index
-	# 	assert list(sample_id)==list(atac_meta_ad.obs_names)
-	# 	assert list(sample_id)==list(sample_id1)
-	# 	atac_meta_ad = atac_meta_ad[sample_id,:]
-	# 	self.atac_meta_ad = atac_meta_ad
-
-	# 	meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
-	# 	self.meta_scaled_exprs = meta_scaled_exprs
-	# 	print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
-
-	# 	peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
-	# 	meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
-	# 	self.meta_exprs_2 = meta_exprs_2
-
-	# 	vec1 = utility_1.test_stat_1(np.mean(atac_meta_ad.X.toarray(),axis=0))
-	# 	vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
-	# 	vec3 = utility_1.test_stat_1(np.mean(meta_exprs_2,axis=0))
-
-	# 	print('atac_meta_ad mean values ',atac_meta_ad.shape,vec1)
-	# 	print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
-	# 	print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
-
-	# 	return peak_read, meta_scaled_exprs, meta_exprs_2
 
 	## motif-peak estimate: load meta_exprs and peak_read
 	def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,select_config={}):
 
 		input_file_path1 = self.save_path_1
-		# data_file_type = 'CD34_bonemarrow'
-		# input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
 		data_file_type = select_config['data_file_type']
-		# input_file_path = select_config['data_path']
-		# filename_save_annot_1 = select_config['filename_save_annot_1']
 		
 		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
 		print('input_filename_1 ',input_filename_1)
@@ -306,10 +254,6 @@ class _Base2_2(_Base2_1):
 			print('thresh_motif, thresh_motif_id: ',thresh_motif,thresh_motif_id)
 			select_config_1.update({'dict_motif_thresh_annot':dict_2})
 
-			# root_path_1 = select_config['root_path_1']
-			# data_file_type_annot = select_config['data_file_type_annot']
-			# path_id = select_config['path_id']
-
 			data_path_save_motif = select_config['data_path_save_motif']
 			filename_prefix = select_config['filename_prefix']
 			filename_annot_1 = select_config['filename_annot_1']
@@ -347,11 +291,6 @@ class _Base2_2(_Base2_1):
 			select_config_1.update({'motif_filename_1':input_filename_1,'motif_filename_2':input_filename_2,
 									'filename_chromvar_score':filename_chromvar_score,
 									'motif_filename1':motif_filename1,'motif_filename2':motif_filename2})
-
-			# data_file_query_motif = data_file_type_query
-			# motif_filename1 = '%s/test_motif_data.%s.1.h5ad'%(data_path_save_motif,data_file_query_motif)
-			# motif_filename2 = '%s/test_motif_data_score.%s.1.h5ad'%(data_path_save_motif,data_file_query_motif)
-			# select_config.update({'motif_filename1':motif_filename1,'motif_filename2':motif_filename2})
 
 			filename_save_annot_1 = data_file_type_query
 			select_config.update({'filename_save_annot_pre1':filename_save_annot_1})
@@ -1090,8 +1029,6 @@ class _Base2_2(_Base2_1):
 		df1 = df_query
 		# df1.index = np.asarray(df1['motif_name_ori'])
 		df1.index = np.asarray(df1['motif_id'])
-		# input_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.1_chromvar_scores.1.csv'%(input_file_path)
-		# input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,data_file_type)
 		chromvar_score = pd.read_csv(input_filename,index_col=0,sep=',')
 		print('chromvar_score ', chromvar_score.shape)
 		sample_id1 = chromvar_score.columns
@@ -1153,9 +1090,6 @@ class _Base2_2(_Base2_1):
 
 		# df_1 = df_1.sort_values(by=['spearmanr','pval1','pearsonr','pval2','mutual_info'],ascending=[False,True,False,True,False])
 		df_1 = df_1.sort_values(by=field_query_1,ascending=[False,True,False,True,False])
-		# output_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path)
-		# output_filename = '%s/test_peak_read.%s.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path,data_file_type)
-		# output_filename = '%s/test_peak_read.%s.normalize.chromvar_scores.tf_expr.query1.1.txt'%(output_file_path,filename_prefix_save)
 		
 		filename = output_filename
 		b = filename.find('.csv')
@@ -1217,223 +1151,6 @@ class _Base2_2(_Base2_1):
 			flag_1 = (flag_1|(method_type.find(method_annot_1)>-1))
 
 		return flag_1
-
-	## load motif data
-	# def test_load_motif_data_1_pre1(self,method_type_vec=[],select_config={}):
-
-	# 	flag_query1=1
-	# 	method_type_num = len(method_type_vec)
-	# 	dict_motif_data = dict()
-	# 	flag_query1=1
-	# 	data_file_type = select_config['data_file_type']
-	# 	for i1 in range(method_type_num):
-	# 		# method_type = method_type_vec[method_type_id]
-	# 		method_type = method_type_vec[i1]
-	# 		data_path = select_config['input_file_path_query'][method_type]
-	# 		input_file_path = data_path
-	# 		print('data_path_save: ',data_path)
-
-	# 		motif_data_pre1, motif_data_score_pre1 = [], []
-
-	# 		method_annot_vec = ['insilico','joint_score','CIS-BP','CIS_BP'] # the method type which share motif scanning results
-	# 		# flag_1 = False
-	# 		# query_num = len(method_annot_vec)
-	# 		# for method_annot_1 in method_annot_vec:
-	# 		# 	flag_1 = (flag_1|(method_type.find(method_annot_1)>-1))
-	# 		flag_1 = self.test_query_method_type_motif_1(method_type=method_type,method_annot_vec=method_annot_vec,select_config=select_config)
-			
-	# 		# if (method_type in ['insilico','insilico_1']) or (method_type.find('joint_score')>-1):
-	# 		# if (method_type.find('insilico')>-1) or (method_type.find('joint_score')>-1) of (method_type.find(method_annot_1)>-1):
-	# 		if flag_1>0:
-	# 		# if method_type_id in [0,1]:
-	# 			# data_path = select_config['data_path']
-	# 			# data_path = select_config['input_file_path_query'][method_type_id]
-	# 			# input_file_path = data_path
-
-	# 			motif_data, motif_data_score = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
-	# 																					input_filename_list2=input_filename_list2,
-	# 																					flag_query1=1,flag_query2=flag_query2,
-	# 																					input_file_path=input_file_path,
-	# 																					save_file_path=save_file_path,type_id=1,
-	# 																					select_config=select_config)
-					
-	# 			# if (len(motif_data_pre1)==0) and (len(motif_data_score_pre1)==0):
-	# 			# 	# input_filename1 = '%s/test_motif_data.1.h5ad'%(input_file_path)
-	# 			# 	# input_filename2 = '%s/test_motif_data_score.1.h5ad'%(input_file_path)
-	# 			# 	input_file_path_2 = '%s/peak_local/run1_1'%(input_file_path)
-	# 			# 	data_file_type_query = select_config['data_file_type']
-
-	# 			# 	if 'motif_filename_list1' in select_config:
-	# 			# 		input_filename_list1 = select_config['motif_filename_list1']
-	# 			# 		input_filename_list2 = []
-	# 			# 	else:
-	# 			# 		input_filename1 = '%s/test_motif_data.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
-	# 			# 		input_filename2 = '%s/test_motif_data_score.%s.1.thresh1.h5ad'%(input_file_path_2,data_file_type_query)
-
-	# 			# 		if os.path.exists(input_filename1)==False:
-	# 			# 			print('the file does not exist: %s'%(input_filename1))
-	# 			# 			input_filename1 = '%s/test_motif_data.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
-	# 			# 			input_filename2 = '%s/test_motif_data_score.%s.1.h5ad'%(input_file_path_2,data_file_type_query)
-
-	# 			# 		input_filename_list1 = [input_filename1,input_filename2]
-	# 			# 		input_filename_list2 = []
-
-	# 			# 	print('motif_filename_list1: ',input_filename_list1)
-	# 			# 	# input_file_path2 = '%s/peak_local'%(data_path)
-	# 			# 	# output_file_path = input_file_path2
-	# 			# 	# save_file_path = output_file_path
-	# 			# 	save_file_path = ''
-	# 			# 	flag_query2 = 1
-	# 			# 	# # load motif data
-	# 			# 	motif_data, motif_data_score = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
-	# 			# 																		input_filename_list2=input_filename_list2,
-	# 			# 																		flag_query1=1,flag_query2=flag_query2,
-	# 			# 																		input_file_path=input_file_path,
-	# 			# 																		save_file_path=save_file_path,type_id=1,
-	# 			# 																		select_config=select_config)
-					
-	# 			# 	# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-	# 			# 	flag_query1=0
-	# 			# 	# motif_data_pre1 = motif_data
-	# 			# 	# motif_data_score_pre1 = motif_data_score
-	# 			# else:
-	# 			# 	motif_data, motif_data_score = motif_data_pre1, motif_data_score_pre1
-	# 			# 	print('motif_data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
-	# 			# 	# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-
-	# 			print('perform motif name conversion ')
-	# 			motif_data = self.test_query_motif_name_conversion_1(motif_data)
-	# 			if len(motif_data_score)>0:
-	# 				motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
-	# 			dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-			
-	# 		else:
-	# 			# motif_data = pd.read_csv('google-us-data.csv.gz', compression='gzip', header=0,    sep=' ', quotechar='"', error_bad_lines=False)
-	# 			# scipy.io.mmread("sparse_from_file")
-	# 			# input_filename1 = select_config['filename_motif_data'][method_type]['motif_data']
-	# 			# input_filename2 = select_config['filename_motif_data'][method_type]['motif_data_score']
-	# 			# input_filename = 'df_peak_tf_overlap.pearsonr.CD34_bonemarrow.normalize0.tsv.gz'
-	# 			dict_file_query = select_config['filename_motif_data'][method_type]
-	# 			key_vec = list(dict_file_query.keys()) # key_vec: ['motif_data','motif_data_score']
-	# 			dict_query = dict()
-	# 			for key_query in key_vec:
-	# 				input_filename = dict_file_query[key_query]
-	# 				motif_data = []
-	# 				flag_matrix=0
-	# 				if input_filename!='':
-	# 					if (os.path.exists(input_filename)==True):
-	# 						print('load motif data: %s'%(input_filename))
-	# 						b = input_filename.find('.gz')
-	# 						if b>-1:
-	# 							motif_data = pd.read_csv(input_filename,compression='gzip',index_col=0,sep='\t')
-	# 						else:
-	# 							b = input_filename.find('.matrix')
-	# 							if b>-1:
-	# 								print('load matrix market format data ',method_type)
-	# 								motif_data = scipy.io.mmread(input_filename)
-	# 								motif_data = motif_data.toarray()
-	# 								flag_matrix=1	
-	# 							else:
-	# 								motif_data = pd.read_csv(input_filename,index_col=0,sep='\t')
-	# 						print('motif_data ',motif_data.shape)
-	# 						print(motif_data[0:5])	
-	# 					else:
-	# 						print('the file does not exist ',input_filename)
-	# 						continue
-	# 				else:
-	# 					print('please provide motif data file name ')
-
-	# 				if (method_type in ['GRaNIE','Pando','TRIPOD']) and (len(motif_data)>0):
-	# 					# x = 1
-	# 					# input_file_path = select_config[]
-	# 					# input_file_path = select_config['input_file_path_query'][method_type]
-	# 					input_filename_annot = '%s/TFBS/translationTable.csv'%(input_file_path)
-	# 					if method_type in ['TRIPOD']:
-	# 						pre_config = select_config['config_query'][method_type]
-	# 						type_id_query = pre_config['type_id_query']
-	# 						input_filename_annot = '%s/TFBS/translationTable%d.csv'%(input_file_path,type_id_query)
-	# 						if type_id_query==0:
-	# 							input_filename_annot = '%s/TFBS/translationTable%d_pre.csv'%(input_file_path,type_id_query) # temporary: MA0091.1	TAL1	TAL1; MA0091.1	TAL1::TCF3	TAL1::TCF3
-	# 					if method_type in ['GRaNIE']:
-	# 						df_annot1 = pd.read_csv(input_filename_annot,index_col=0,sep=' ')
-	# 						df_annot1.loc[:,'tf'] = np.asarray(df_annot1.index)
-	# 						df_annot1.index = np.asarray(df_annot1['HOCOID'])
-	# 						print('df_annot1 ',df_annot1.shape,method_type)
-	# 						print(df_annot1[0:2])
-	# 					else:
-	# 						df_annot1 = pd.read_csv(input_filename_annot,index_col=0,header=None,sep='\t')
-	# 						if len(df_annot1.columns)==1:
-	# 							df_annot1.columns = ['tf_ori']
-	# 							tf_id_ori = df_annot1['tf_ori']
-	# 							tf_id = pd.Index(tf_id_ori).str.split('(').str.get(0)
-	# 							df_annot1.loc[:,'tf'] = tf_id
-	# 						else:
-	# 							df_annot1.columns = ['tf_ori','tf']
-	# 						print('df_annot1 ',df_annot1.shape,method_type)
-	# 						print(df_annot1[0:2])
-	# 						if method_type in ['Pando']:
-	# 							pre_config = select_config['config_query'][method_type]
-	# 							run_id = pre_config['run_id']
-	# 							metacell_num = pre_config['metacell_num']
-	# 							exclude_exons = pre_config['exclude_exons']
-	# 							type_id_region = pre_config['type_id_region']
-	# 							data_file_type_annot = data_file_type.lower()
-	# 							input_file_path2 = '%s/%s/metacell_%d/run%d'%(input_file_path,data_file_type_annot,metacell_num,run_id)
-	# 							input_filename = '%s/test_region.%d.%d.bed'%(input_file_path2,exclude_exons,type_id_region)
-	# 							flag_region_query=((exclude_exons==True)|(type_id_region>0))
-	# 							if os.path.exists(input_filename)==True:
-	# 								df_region = pd.read_csv(input_filename,index_col=False,sep='\t')
-	# 								df_region.index = np.asarray(df_region['id'])
-	# 								# pre_config.update({'df_region':df_region})
-	# 								df_region_ori = df_region.copy()
-	# 								df_region = df_region.sort_values(by=['overlap'],ascending=False)
-	# 								df_region = df_region.loc[~df_region.index.duplicated(keep='first'),:]
-	# 								df_region = df_region.sort_values(by=['region_id'],ascending=True)
-	# 								output_file_path = input_file_path2
-	# 								output_filename = '%s/test_region.%d.%d.2.bed'%(output_file_path,exclude_exons,type_id_region)
-	# 								df_region.to_csv(output_filename,sep='\t')
-	# 								select_config['config_query'][method_type].update({'df_region':df_region})
-	# 							else:
-	# 								print('the file does not exist ',input_filename)
-
-	# 							if flag_matrix==1:
-	# 								## the motif data is loaded from MM format file and the rownames and colnames to be added
-	# 								motif_idvec_ori = df_annot1.index
-	# 								# motif_data.columns = motif_idvec_ori
-	# 								# motif_data.index = df_region.index
-	# 								motif_data = pd.DataFrame(index=df_region.index,columns=motif_idvec_ori,data=np.asarray(motif_data))
-	# 								# print('motif_data ',motif_data.shape,method_type)
-	# 								# print(motif_data[0:5])
-							
-	# 							if flag_region_query>0:
-	# 								region_id = motif_data.index
-	# 								motif_data_ori = motif_data.copy()
-	# 								motif_data.loc[:,'peak_id'] = df_region.loc[region_id,'peak_loc']
-	# 								motif_data = motif_data.groupby('peak_id').max()
-	# 								print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-	# 								dict_query.update({'%s.ori'%(key_query):motif_data_ori})
-
-	# 					# motif_idvec_1= df_annot1.index
-	# 					motif_idvec = motif_data.columns.intersection(df_annot1.index,sort=False)
-	# 					motif_data = motif_data.loc[:,motif_idvec]
-	# 					motif_data_ori = motif_data.copy()
-	# 					motif_data1 = motif_data.T
-	# 					motif_idvec = motif_data1.index
-	# 					motif_data1.loc[:,'tf'] = df_annot1.loc[motif_idvec,'tf']
-	# 					motif_data1 = motif_data1.groupby('tf').max()
-	# 					motif_data = motif_data1.T
-	# 					print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-	# 					print(motif_data[0:5])
-	# 					field_id = '%s.ori'%(key_query)
-	# 					if not (field_id in dict_query):
-	# 						dict_query.update({'%s.ori'%(key_query):motif_data_ori})
-
-	# 				dict_query.update({key_query:motif_data})
-	# 		dict_motif_data[method_type] = dict_query
-	# 		# print('dict_query: ',dict_query,method_type)
-
-	# 	return dict_motif_data, select_config
-
 	
 	## query file save path
 	# query the filename of the estimated peak-TF-gene link query
@@ -1445,62 +1162,9 @@ class _Base2_2(_Base2_1):
 			data_file_type_query = data_file_type
 
 		dict_file_query = dict()
-		# if len(dict_file_query)==0:
-		# 	file_path_motif_score = select_config['file_path_motif_score_2']
-		# 	input_file_path_query = file_path_motif_score
-			
-		# 	# input_filename_1 = '%s/test_query_gene_peak.CD34_bonemarrow.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_2)
-		# 	# input_filename_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.txt.gz'%(input_file_path_query,data_file_type_query)
-		# 	input_filename_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-		# 	# input_filename_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_2,data_file_type_query)
-		# 	# input_filename_3 = '%s/test_query_gene_peak.%s.2.pre1.link_query.2_1.combine.100_0.01.500_-0.05.1.3.2.2.txt.gz'%(input_file_path_2,data_file_type_query)
-		# 	# input_filename_2 = 'test_query_gene_peak.CD34_bonemarrow.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'
-		# 	input_filename_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-		# 	input_filename_3 = '%s/test_query_gene_peak.%s.2.pre1.link_query.2_1.combine.100_0.01.500_-0.05.1.3.2.2.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-					
-		# 	# input_filename_pre1_1 = '%s/test_motif_score_normalize_insilico.CD34_bonemarrow.thresh1.1.txt'%(input_file_path_query)
-		# 	# input_filename_pre1_2 = '%s/test_motif_score_normalize_insilico.CD34_bonemarrow.thresh1.1.thresh0.1.txt'%(input_file_path_query)
-		# 	input_filename_pre1_1 = '%s/test_motif_score_normalize_insilico.%s.txt'%(input_file_path_query,data_file_type_query)
-		# 	input_filename_pre1_2 = '%s/test_motif_score_normalize_insilico.%s.thresh0.1.txt'%(input_file_path_query,data_file_type_query)
-		# 	input_filename_pre2_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.copy2_1.txt.gz'%(input_file_path_query,data_file_type_query)
-		# 	input_filename_pre2_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.copy2_1.txt.gz'%(input_file_path_query,data_file_type_query)
-
-		# 	filename_list2 = [input_filename_1,input_filename_2,input_filename_3]+[input_filename_pre1_1,input_filename_pre1_2,input_filename_pre2_1,input_filename_pre2_2]
-		# 	method_type_annot = ['joint_score_1','joint_score_2','joint_score_3']+['insilico','insilico_0.1','joint_score_pre1','joint_score_pre2']
-
-		# 	# filename_list2 = [input_filename_1,input_filename_2,input_filename_3]+[input_filename_pre1_2,input_filename_pre1_2,input_filename_pre2_2]
-		# 	# method_type_annot = ['joint_score_1','joint_score_2','joint_score_3']+['insilico','joint_score_pre1','joint_score_pre2']
-
-		# 	dict_file_query = dict(zip(method_type_annot,filename_list2))
-		# 	# query_num2 = len(filename_list2)
 
 		if len(dict_file_query)==0:
-			if data_file_type_query in ['CD34_bonemarrow']:
-				file_path_motif_score = select_config['file_path_motif_score_2']
-				input_file_path_query = file_path_motif_score
-
-				# input_filename_1 = '%s/test_query_gene_peak.CD34_bonemarrow.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_2)
-				# input_filename_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.txt.gz'%(input_file_path_query,data_file_type_query)
-				input_filename_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-				# input_filename_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_2,data_file_type_query)
-				# input_filename_3 = '%s/test_query_gene_peak.%s.2.pre1.link_query.2_1.combine.100_0.01.500_-0.05.1.3.2.2.txt.gz'%(input_file_path_2,data_file_type_query)
-				# input_filename_2 = 'test_query_gene_peak.CD34_bonemarrow.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'
-				input_filename_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-				input_filename_3 = '%s/test_query_gene_peak.%s.2.pre1.link_query.2_1.combine.100_0.01.500_-0.05.1.3.2.2.copy1.txt.gz'%(input_file_path_query,data_file_type_query)
-						
-				# input_filename_pre1_1 = '%s/test_motif_score_normalize_insilico.CD34_bonemarrow.thresh1.1.txt'%(input_file_path_query)
-				# input_filename_pre1_2 = '%s/test_motif_score_normalize_insilico.CD34_bonemarrow.thresh1.1.thresh0.1.txt'%(input_file_path_query)
-				input_filename_pre1_1 = '%s/test_motif_score_normalize_insilico.%s.1.txt'%(input_file_path_query,data_file_type_query)
-				input_filename_pre1_2 = '%s/test_motif_score_normalize_insilico.%s.thresh0.1.txt'%(input_file_path_query,data_file_type_query)
-				input_filename_pre2_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.txt.gz'%(input_file_path_query,data_file_type_query)
-				input_filename_pre2_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_query,data_file_type_query)
-
-				filename_list2 = [input_filename_1,input_filename_2,input_filename_3]+[input_filename_pre1_1,input_filename_pre1_2,input_filename_pre2_1,input_filename_pre2_2]
-				method_type_annot = ['joint_score_1','joint_score_2','joint_score_3']+['insilico','insilico_1','joint_score_pre1','joint_score_pre2']
-				dict_file_query = dict(zip(method_type_annot,filename_list2))
-				# query_num2 = len(filename_list2)
-
-			elif data_file_type_query in ['pbmc']:
+			if data_file_type_query in ['pbmc']:
 				file_path_motif_score = select_config['file_path_motif_score_2']
 				input_file_path_query = file_path_motif_score
 
@@ -1604,16 +1268,6 @@ class _Base2_2(_Base2_1):
 		feature_motif_query1 = motif_data.loc[peak_query_vec,motif_query_vec] # motif matrix of peak, shape: (peak_num,motif_num)
 		feature_motif_query2 = motif_data.loc[peak_query_vec,:] # motif matrix of peak, shape: (peak_num,motif_num)
 
-		# feature_query_2 = df_1.loc[peak_query_1,['signal',column_motif]+field_query_2]
-		# print('feature_query_2: ',feature_query_2.shape,group_id)
-		# print(feature_query_2[0:2])
-					
-		# feature_motif_query1 = motif_data.loc[peak_query_1,[motif_id_query]] # (peak_num,motif_num)
-		# feature_motif_query2 = motif_data_score_query1.loc[peak_query_1,[motif_id_query]] # (peak_num,motif_num)
-		# feature_motif_query2 = feature_motif_query2.rename(columns={motif_id_query:column_1})
-		# list2 = [feature_mtx_query1,feature_motif_query1,feature_motif_query2,feature_query_2]
-		# list1 = [feature_mtx_query1,feature_motif_query1]
-
 		flag_group = 0
 		if len(motif_group)>0:
 			flag_group = 1
@@ -1702,31 +1356,13 @@ class _Base2_2(_Base2_1):
 				print('df_latent_peak: ',df_latent_peak.shape,annot_str1)
 				print(df_latent_peak[0:2])
 				df_latent_query = df_latent
-
-				# dict_query1.update({'dimension_model_1':dimension_model}) # dimension reduction model for peak accessibility and TF expression
-				# dict_query1.update({'latent_peak_tf':df_latent,
-				# 					'component_mtx':df_component})
-				
-				# dict_query1.update({'dimension_model_1':dimension_model}) # dimension reduction model for peak accessibility and TF expression
-				# # dict_query1.update({'latent_peak':df_latent_peak,'latent_tf':df_latent_tf,'latent_gene':df_latent_gene})
-				# dict_query1.update({'latent_peak':df_latent_peak,'latent_gene':df_latent_gene,
-				# 					'component_mtx':df_component})
-
 			else:
 				df_latent_peak_motif = df_latent.loc[peak_query_vec,:]
 				df_latent_query = df_latent_peak_motif
 				
 				print('df_latent_peak_motif: ',df_latent_peak_motif.shape)
 				print('df_component: ',df_component.shape)
-				# print(df_latent_peak_motif[0:2])
-				# annot_str2 = annot_str_vec_2[i1]
-				# annot_str2 = annot_str_vec[i1]
-				# dict_query1.update({'dimension_model_motif':dimension_model}) # dimension reduction model for motif feature of peak query
-				# dict_query1.update({'latent_peak_motif':df_latent_peak_motif,'component_peak_motif':df_component})
-
-				# dict_query1.update({'dimension_model_%s'%(annot_str2):dimension_model}) # dimension reduction model for motif feature of peak query
-				# dict_query1.update({'latent_%s'%(annot_str1):df_latent_peak_motif,'component_%s'%(annot_str1):df_component})
-
+				
 			# annot_str2 = annot_str_vec_2[i1]
 			annot_str2 = annot_str_vec[i1]
 			dict_query1.update({'dimension_model_%s'%(annot_str2):dimension_model}) # dimension reduction model for motif feature of peak query
@@ -1909,79 +1545,19 @@ class _Base2_2(_Base2_1):
 		data_file_type_query = select_config['data_file_type']
 		run_id1 = select_config['run_id']
 		# thresh_num1 = 5
-		# method_type_vec = ['insilico_1','TRIPOD','GRaNIE','Pando']+['joint_score.thresh%d'%(i1+1) for i1 in range(thresh_num1)]+['joint_score_2.thresh3']
-		# method_type_vec = ['insilico_1','GRaNIE','joint_score.thresh1']
-		# method_type_vec = ['GRaNIE']
-		# method_type_vec = ['insilico_1','joint_score.thresh1','joint_score.thresh2','joint_score.thresh3']
 		if len(method_type_vec)==0:
-			# method_type_vec = ['insilico_1','TRIPOD','GRaNIE','Pando']+['joint_score_2.thresh3']
 			method_type_vec = ['insilico_0.1','TRIPOD','GRaNIE','Pando']+['joint_score_pre1.thresh3','joint_score_pre1.thresh22']
-
-		# root_path_1 = select_config['root_path_1']
-		# root_path_2 = select_config['root_path_2']
-		# method_type_vec_query = method_type_vec
-		# if data_file_type_query in ['CD34_bonemarrow']:
-		# 	input_file_path = '%s/peak1'%(root_path_2)
-		# elif data_file_type_query in ['pbmc']:
-		# 	input_file_path = '%s/peak2'%(root_path_2)
-
-		# peak_distance_thresh = 100
-		# filename_prefix_1 = 'test_motif_query_binding_compare'
-		# file_save_path_1 = input_file_path
 
 		method_query_num1 = len(method_type_vec)
 		method_type_idvec = np.arange(method_query_num1)
 		dict_method_type = dict(zip(method_type_vec,method_type_idvec))
 		select_config.update({'dict_method_type':dict_method_type})
 
-		# file_path_query1 = '%s/vbak2_6'%(input_file_path)
-		# file_path_query1 = '%s/vbak2_6_5_0.1_0_0.1_0.1_0.25_0.1'%(input_file_path)
-		# file_path_query1 = '%s/vbak2_6_7_0.1_0_0.1_0.1_0.25_0.1_0.01'%(input_file_path)
-		# input_file_path = file_path_query1
-		# output_file_path = file_path_query1
-		# method_type_vec_query = method_type_vec
-		# input_file_path_query = '/data/peer/yangy4/data1/data_pre2/cd34_bonemarrow/data_1/run0/'
-		# root_path_1 = select_config['root_path_1']
-
-		# if data_file_type_query in ['CD34_bonemarrow']:
-		# 	data_file_type_annot = data_file_type_query.lower()
-		# 	run_id_1 = 0
-		# 	input_file_path2 = '%s/data_pre2/%s/peak_local'%(root_path_1,data_file_type_annot)
-		# 	input_file_path_query1 = '%s/data_pre2/%s/data_1/run%d/peak_local'%(root_path_1,data_file_type_annot,run_id_1)
-		# 	input_file_path_query = '%s/seacell_1'%(input_file_path_query1)
-
-		# 	filename_1 = '%s/test_rna_meta_ad.%s.log_normalize.2.h5ad'%(input_file_path_query,data_file_type_query)
-		# 	filename_2 = '%s/test_atac_meta_ad.%s.log_normalize.2.h5ad'%(input_file_path_query,data_file_type_query)
-		# 	filename_3_ori = '%s/test_query.%s.meta_scaled_exprs.2.txt'%(input_file_path_query,data_file_type_query)
-		# 	# filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path_query,data_file_type_query)
-		
-		# elif data_file_type_query in ['pbmc']:
-		# 	data_file_type_annot = '10x_pbmc'
-		# 	# run_id_1 = 0
-		# 	input_file_path2 = '%s/data_pre2/%s/peak_local'%(root_path_1,data_file_type_annot)
-		# 	# input_file_path_query1 = '%s/data_pre2/%s/data_1/run%d/peak_local'%(root_path_1,data_file_type_annot,run_id_1)
-		# 	input_file_path_query1 = '%s/data_pre2/%s/data_1/data1_vbak1/peak_local'%(root_path_1,data_file_type_annot)
-		# 	input_file_path_query = '%s/seacell_1'%(input_file_path_query1)
-
-		# 	type_id_feature = 0
-		# 	run_id1 = 1
-		# 	filename_save_annot = '%s.%d.%d'%(data_file_type_query,type_id_feature,run_id1)
-		# 	filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(input_file_path_query,filename_save_annot)
-		# 	filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(input_file_path_query,filename_save_annot)
-		# 	# filename_3_ori = '%s/test_query.%s.meta_scaled_exprs.2.txt'%(input_file_path_query,data_file_type_query)
-		# 	# filename_3_ori = '%s/test_rna_meta_ad.pbmc.0.1.meta_scaled_exprs.2.txt'%(input_file_path_query,data_file_type_query)
-		# 	filename_3_ori = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path_query,filename_save_annot)
-			
-		# select_config.update({'filename_rna':filename_1,'filename_atac':filename_2,
-		# 						'filename_rna_exprs_1':filename_3_ori})
-
 		# flag_config_1=0
 		if flag_config_1>0:
 			# root_path_1 = select_config['root_path_1']
 			# root_path_2 = select_config['root_path_2']
 			# data_file_type_query = select_config['data_file_type']
-			# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh3','joint_score_pre2.thresh3','joint_score_pre1.thresh22','joint_score_pre2.thresh6']
-			# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh3','joint_score_pre1.thresh22']
 			select_config = self.test_query_config_pre1_1(data_file_type_query=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
 
 		if flag_load_1>0:
@@ -2018,112 +1594,6 @@ class _Base2_2(_Base2_1):
 			print('load motif data used %.2fs'%(stop-start))
 
 		return (peak_read, meta_scaled_exprs, meta_exprs_2), dict_motif_data, select_config
-
-	## compare TF binding prediction
-	# compute feature embedding of peak and TF
-	# perform clustering of peak and TF
-	# def test_query_compare_binding_pre1_5(self,data=[],motif_id_query='',motif_id='',method_type_vec=[],method_type_vec_query=[],peak_read=[],rna_exprs=[],peak_distance_thresh=100,flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-	# 	data_file_type_query = select_config['data_file_type']
-	# 	run_id1 = select_config['run_id']
-	# 	# thresh_num1 = 5
-
-	# 	method_type_query1 = 'insilico_0.1'
-	# 	method_type_feature_link_1 = 'joint_score_pre1'
-	# 	method_type_feature_link = select_config['method_type_feature_link']
-	# 	method_type_query2 = method_type_feature_link
-	# 	method_type_vec = [method_type_feature_link]
-
-	# 	flag_config_1 = 1
-	# 	if flag_config_1>0:
-	# 		root_path_1 = select_config['root_path_1']
-	# 		root_path_2 = select_config['root_path_2']
-	# 		# data_file_type_query = select_config['data_file_type']
-	# 		# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh3','joint_score_pre2.thresh3','joint_score_pre1.thresh22','joint_score_pre2.thresh6']
-	# 		# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh3','joint_score_pre1.thresh22']
-	# 		select_config = self.test_query_config_pre1_1(data_file_type_query=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
-
-	# 	root_path_1 = select_config['root_path_1']
-	# 	root_path_2 = select_config['root_path_2']
-	# 	if data_file_type_query in ['CD34_bonemarrow']:
-	# 		input_file_path = '%s/peak1'%(root_path_2)
-	# 	elif data_file_type_query in ['pbmc']:
-	# 		input_file_path = '%s/peak2'%(root_path_2)
-
-	# 	peak_distance_thresh = 100
-	# 	filename_prefix_1 = 'test_motif_query_binding_compare'
-
-	# 	filename_prefix_save = '%s.pre1'%(data_file_type_query)
-	# 	filename_save_annot = '1'
-	# 	file_save_path = input_file_path
-	# 	output_file_path = '%s/group1'%(file_save_path)
-
-	# 	if os.path.exists(output_file_path)==False:
-	# 		print('the directory does not exist: %s'%(output_file_path))
-	# 		os.makedirs(output_file_path,exist_ok=True)
-
-	# 	# query peak_read, rna_exprs and motif data information
-	# 	load_mode_query = 1
-	# 	if load_mode_query>0:
-	# 		flag_config_query = 0
-	# 		flag_load_1 = 1  # load pead_read and rna_exprs data
-	# 		flag_load_2 = 1  # load motif scanning and motif score data
-	# 		data_vec_1, dict_motif_data, select_config = self.test_query_feature_load_basic_1(data=[],method_type_vec=method_type_vec,peak_read=[],rna_exprs=[],peak_distance_thresh=peak_distance_thresh,
-	# 																							flag_config_1=flag_config_query,flag_load_1=1,flag_load_2=1,load_mode=0,input_file_path='',
-	# 																							save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
-
-	# 		peak_read, meta_scaled_exprs, meta_exprs_2 = data_vec_1[0:3]
-	# 		print('peak_read, meta_scaled_exprs, meta_exprs_2: ',peak_read.shape, meta_scaled_exprs.shape, meta_exprs_2.shape)
-	# 		print(peak_read[0:2])
-	# 		print(meta_scaled_exprs[0:2])
-	# 		print(meta_exprs_2[0:2])
-
-	# 		rna_exprs = meta_scaled_exprs
-	# 		rna_exprs_unscaled = meta_exprs_2
-
-	# 		key_vec_1 = list(dict_motif_data.keys())
-	# 		print('dict_motif_data: ',key_vec_1)
-
-	# 		self.data_vec_1 = data_vec_1
-	# 		self.dict_motif_data = dict_motif_data
-
-	# 	# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-	# 	# method_type_query1 = 'insilico_1'
-	# 	# method_type_query1 = 'insilico_0.1'
-	# 	# method_type_query2 = 'joint_score.thresh2'
-	# 	# method_type_query2 = 'joint_score_2.thresh3'
-	# 	# method_type_query2 = 'joint_score_pre2.thresh3'
-	# 	# method_type_query2 = method_type_feature_link
-	# 	method_type_query = method_type_feature_link
-
-	# 	dict_1 = dict_motif_data[method_type_query]
-	# 	motif_data_query1 = dict_1['motif_data']
-	# 	motif_data_query1 = motif_data_query1.astype(float)
-	# 	motif_data_score_query1 = dict_1['motif_data_score']
-		
-	# 	motif_data_query1 = motif_data_query1.fillna(0)
-	# 	motif_data_score_query1 = motif_data_score_query1.fillna(0)
-	# 	print('motif_data_query1, motif_data_score_query1: ',motif_data_query1.shape,motif_data_score_query1.shape)
-	# 	print(motif_data_query1[0:2])
-	# 	print(motif_data_score_query1[0:2])
-
-	# 	column_idvec = ['motif_id','peak_id','gene_id']
-	# 	column_id3, column_id2, column_id1 = column_idvec[0:3]
-
-	# 	sample_id = peak_read.index
-	# 	motif_data = motif_data_query1
-	# 	motif_data_score = motif_data_score_query1
-	# 	peak_loc_ori = motif_data.index
-	# 	print('peak_loc_ori: ',len(peak_loc_ori))
-
-	# 	motif_query_ori = motif_data.columns
-	# 	peak_query_vec_1 = peak_loc_ori
-	# 	motif_group = []
-
-	# 	gene_query_vec_ori = rna_exprs.columns
-	# 	motif_query_vec = pd.Index(motif_query_ori).intersection(gene_query_vec_ori,sort=False)
-	# 	motif_query_num = len(motif_query_vec) # TF with motif and with expression 
-	# 	print('motif_query_vec: ',motif_query_num)
 
 	## query motif data by motif scanning and query motif
 	# query motif data and motif data score of given peak loci
@@ -2204,15 +1674,6 @@ class _Base2_2(_Base2_1):
 		# print('peak_query_vec_pre1: ',len(peak_query_vec_pre1))
 		# perform feature dimension reduction
 		filename_prefix_save_2 = '%s.%d'%(filename_prefix_save,type_id_group)
-
-		# type_id_group_2 = select_config['type_id_group_2']
-		# load_mode_2 = type_id_group_2
-		# load_mode_2 = select_config['type_group_load_mode']
-		# # field_query = ['latent_peak', 'latent_gene', 'latent_peak_motif']
-		# field_query = ['latent_peak', 'latent_gene', 'latent_peak_motif','latent_peak_motif_ori']
-		# field_query_pre2 = ['latent_peak_tf_link']
-		# if len(field_query)==0:
-		# 	field_query = ['latent_peak','latent_peak_motif','latent_peak_motif_ori']
 
 		latent_peak = []
 		latent_peak_motif,latent_peak_motif_ori = [], []
@@ -2299,121 +1760,7 @@ class _Base2_2(_Base2_1):
 							# dict_query1.update({'latent_peak':latent_peak,'latent_gene':latent_gene})
 							dict_query1.update({'latent_gene':latent_gene})
 
-		# elif load_mode_2==2:
-		# 	feature_type_vec_query = ['motif','peak']
-		# 	column_id_query = 'peak_id'
-		# 	column_value = 'peak_tf_corr'
-		# 	column_vec = [column_id3,column_id2]
-		# 	flag_binary = 1
-		# 	thresh_value = -0.1
-		# 	# n_components = 50
-		# 	flag_unduplicate = 0
-		# 	method_type_vec_dimension = ['SVD']
-		# 	df_feature_link_query = df_peak_tf_query1
-		# 	input_file_path_query = select_config['file_path_motif_score_2']
-		# 	input_filename = '%s/test_motif_score_normalize_insilico.%s.1.txt'%(input_file_path_query,data_file_type_query)
-			
-		# 	if os.path.exists(input_filename)==False:
-		# 		print('the file does not exist: %s'%(input_filename))
-		# 		input_filename = '%s/test_motif_score_normalize_insilico.%s.thresh1.1.txt'%(input_file_path_query,data_file_type_query)
-
-		# 	df_annot = pd.read_csv(input_filename,index_col=0,sep='\t')
-		# 	df_annot['motif_id'] = np.asarray(df_annot.index)
-			
-		# 	print('df_feature_link_query: ',df_feature_link_query.shape)
-		# 	print(df_feature_link_query.columns)
-		# 	print(df_feature_link_query[0:2])
-			
-		# 	print('df_annot: ',df_annot.shape)
-		# 	print(df_annot.columns)
-		# 	print(df_annot[0:2])
-		# 	df_annot = df_annot.drop_duplicates(subset=[column_id3,column_id2])
-		# 	peak_query_1 = df_feature_link_query[column_id2].unique()
-		# 	feature_query_vec = pd.Index(peak_query_vec_pre1).intersection(peak_query_1,sort=False)
-		# 	print('peak_query_1, feature_query_vec: ',len(peak_query_1),len(feature_query_vec))
-		# 	# df_annot.index = utility_1.test_query_index(df_annot,column_vec=column_vec)
-		# 	dict_query1 = self.test_query_feature_pre1_3(df_feature_link=df_feature_link_query,df_annot=df_annot,feature_query_vec=feature_query_vec,column_id_query=column_id_query,
-		# 													column_vec=column_vec,column_value=column_value,feature_type_vec=feature_type_vec_query,
-		# 													peak_query_vec=feature_query_vec,gene_query_vec=[],motif_data=motif_data,motif_data_score=motif_data_score,motif_group=[],
-		# 													method_type_vec=method_type_vec_dimension,peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-		# 													n_components=n_components,sub_sample=-1,flag_shuffle=False,flag_binary=flag_binary,thresh_value=thresh_value,
-		# 													float_format=float_format,flag_unduplicate=flag_unduplicate,input_file_path=input_file_path,
-		# 													save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,output_filename='',verbose=verbose,select_config=select_config)
-
-		# elif load_mode_2==3:
-		# 	input_file_path_query = output_file_path
-		# 	annot_str_vec = ['peak_tf_link']
-		# 	field_query_2 = ['df_latent','df_component']
-		# 	dict_query1 = dict()
-
-		# 	method_type_vec_dimension = ['SVD']
-		# 	# field_num = len(field_query)
-		# 	query_num = len(annot_str_vec)
-		# 	for i2 in range(query_num):
-		# 		method_type_dimension = method_type_vec_dimension[i2]
-		# 		filename_save_annot_2 = '%s_%s'%(method_type_dimension,n_components)
-
-		# 		annot_str1 = annot_str_vec[i2]
-		# 		field_id1 = 'df_latent'
-		# 		filename_prefix_save_query = '%s.%s'%(filename_prefix_save_2,field_id1)
-		# 		input_filename = '%s/%s.%s.%s.1.txt'%(input_file_path_query,filename_prefix_save_query,annot_str1,filename_save_annot_2)
-		# 		df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-		# 		print('df_query: ',df_query.shape,annot_str1)
-		# 		print(df_query[0:2])
-
-		# 		field_id2 = field_query_pre2[i2]
-		# 		dict_query1.update({field_id2:df_query})
-
-		# if load_mode_2 in [0,1]:
-		# 	list1 = [dict_query1[field_id] for field_id in field_query]
-		# 	latent_peak, latent_gene, latent_peak_motif, latent_peak_motif_ori = list1
-		# 	latent_tf = latent_gene.loc[motif_query_vec,:]
-		# 	print('latent_peak, latent_tf, latent_peak_motif, latent_peak_motif_ori: ',latent_peak.shape,latent_tf.shape,latent_peak_motif.shape,latent_peak_motif_ori.shape)
-		# 	print(latent_peak[0:2])
-		# 	print(latent_tf[0:2])
-		# 	print(latent_peak_motif[0:2])
-		# 	print(latent_peak_motif_ori[0:2])
-
-		# elif load_mode_2 in [2,3]:
-		# 	list1 = [dict_query1[field_id] for field_id in field_query_pre2]
-		# 	latent_peak_tf_link = list1[0]
-		# 	print('latent_peak_tf_link: ',latent_peak_tf_link.shape)
-		# 	print(latent_peak_tf_link[0:2])
-
 		return dict_query1
-
-	## query neighbors of feature
-	# query neighbors of peak loci
-	# def test_query_feature_neighbor_pre1_1(self,data=[],n_neighbors=20,return_distance=True,save_mode=1,verbose=0,select_config={}):
-
-	# 	from sklearn.neighbors import NearestNeighbors
-	# 	from scipy.stats import poisson, multinomial
-
-	# 	# Effective genome length for background computaiton
-	# 	# eff_genome_length = atac_meta_ad.shape[1] * 5000
-	# 	# bin_size = 500
-	# 	# eff_genome_length = atac_meta_ad.shape[1] * bin_size
-
-	# 	# Metacell neighbors
-	# 	# peak feature neighbors
-	# 	# nbrs = NearestNeighbors(n_neighbors=n_neighbors, radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2, metric_params=None, n_jobs=None)
-	# 	nbrs = NearestNeighbors(n_neighbors=n_neighbors,radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2)
-	# 	# nbrs.fit(atac_meta_ad.obsm[low_dim_embedding])
-	# 	# meta_nbrs = pd.DataFrame(atac_meta_ad.obs_names.values[nbrs.kneighbors(atac_meta_ad.obsm[low_dim_embedding])[1]],
-	# 	# 						 index=atac_meta_ad.obs_names)
-	# 	# select_config.update({'meta_nbrs_atac':meta_nbrs})
-	# 	feature_mtx = data
-	# 	nbrs.fit(feature_mtx)
-	# 	# sample_id = feature_mtx.index
-	# 	query_id_1 = feature_mtx.index
-	# 	neighbor_dist, neighbor_id = nbrs.kneighbors(feature_mtx)
-	# 	column_vec = ['neighbor%d'%(id1) for id1 in np.arange(n_neighbors)]
-	# 	feature_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=query_id_1.values[neighbor_id])
-	# 	dist_nbrs = []
-	# 	if return_distance>0:
-	# 		dist_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=neighbor_dist)
-
-	# 	return feature_nbrs, dist_nbrs
 
 	## query feature enrichment
 	# query the enrichment of predicted peak loci in one type of group
@@ -2670,7 +2017,6 @@ class _Base2_2(_Base2_1):
 			
 			parallel = 0
 			# cnt1=0
-			# for (group_id_1,group_id_2) in group_vec_query:
 			for group_id_1 in group_vec_1:
 				start = time.time()
 				id1 = (df_group1['group1']==group_id_1)
@@ -2889,13 +2235,6 @@ class _Base2_2(_Base2_1):
 				print('df_quantile_1: ',df_quantile_1.shape)
 				print(df_quantile_1[0:5])
 
-				# iter_id1 = 0
-				# filename_save_annot_query_1 = '%s.%d'%(data_file_type_query,config_id_load)
-				# filename_save_annot_query1 = '%s.neighbor%d'%(method_type_group,n_neighbors)
-				# filename_save_annot = '%s.%s.%s'%(filename_save_annot_query,motif_id1,filename_save_annot_1)
-				# output_filename = '%s/test_query_quantile.%s.2.txt'%(output_file_path,group_type)
-				# output_filename = '%s/test_query_quantile.%s.%s.%s.%s.2.txt'%(output_file_path,filename_save_annot_query1,group_type,motif_id1,filename_save_annot_query_1)
-				
 				filename_link_annot = select_config['filename_annot']
 				output_filename = '%s/test_query_quantile.%s.%s.txt'%(output_file_path,motif_id,filename_link_annot)
 				df_quantile_1.to_csv(output_filename,sep='\t')
@@ -3288,80 +2627,6 @@ class _Base2_2(_Base2_1):
 		feature_query_vec_1 = peak_loc_query_group2_1
 
 		return feature_query_vec_1
-
-	## select training sample in class 2: the previous selection method
-	# def test_query_training_select_group2_ori(self,data=[],save_mode=1,verbose=0,select_config={}):
-
-	# 	flag_thresh1 = 0
-	# 	# select positive and negative group
-	# 	if flag_thresh1>0:
-	# 		# select peak query based on score threshold
-	# 		# the previous selection threshold
-	# 		flag_thresh1_1=0
-	# 		if flag_thresh1_1>0:
-	# 			thresh_score_query_pre1 = 0.15
-	# 			thresh_score_query_1 = 0.15
-	# 			# thresh_score_query_1 = 0.20
-	# 			column_1 = 'thresh_score_group_1'
-	# 			if column_1 in select_config:
-	# 				thresh_score_group_1 = select_config[column_1]
-	# 				thresh_score_query_1 = thresh_score_group_1
-
-	# 				column_score_query1 = '%s.score'%(method_type_feature_link)
-	# 				id_score_query1 = (df_pre1[column_score_query1]>thresh_score_query_1)
-	# 				id_score_query1 = (id_score_query1)&(df_pre1[column_corr_1]>thresh_corr_2)
-	# 				df_query1_2 = df_pre1.loc[(id_pred1&id_score_query1),:]
-
-	# 			peak_loc_query_group2_1 = df_query1_2.index 	# the peak loci with prediction and with score above threshold
-	# 			peak_num_group2_1 = len(peak_loc_query_group2_1)
-	# 			print('peak_loc_query_group2_1: ',peak_num_group2_1)
-
-	# 			df_query2_2 = df_pre1.loc[(~id_pred1)&id_motif,:]
-	# 			peak_loc_query_group2_2_ori = df_query2_2.index  # the peak loci without prediction and with motif
-	# 			peak_num_group2_2_ori = len(peak_loc_query_group2_2_ori)
-	# 			print('peak_loc_query_group2_2_ori: ',peak_num_group2_2_ori)
-
-	# 			id_score_query2 = (df_pre1[column_corr_1]>thresh_corr_1)&(df_pre1[column_pval]<thresh_pval_1)
-	# 			id_group = (df_pre1['motif_group_1']>0)
-	# 			id_score_query3_1 = (df_pre1[column_corr_1].abs()<thresh_corr_2)
-	# 			id_score_query3_2 = (~id_group)&(df_pre1[column_corr_1].abs()<thresh_corr_3)
-
-	# 			df_pre1.loc[id_score_query2,'group_correlation'] = 1
-	# 			id_pre2_1 = (id_score_query3_1)&(~id_pred1)&(id_motif) # the peak loci without prediction and with motif and with peak-TF correlation below threshold
-	# 			id_pre2_2 = (id_score_query3_2)&(~id_motif) # the peak loci without motif and with peak-TF correlation below threshold
-								
-	# 			list_query2 = [id_pre2_1,id_pre2_2]
-	# 			list_query2_2 = []
-	# 			column_corr_abs_1 = '%s_abs'%(column_corr_1)
-	# 			column_corr_abs_1 = '%s_abs'%(column_corr_1)
-	# 			for i2 in range(2):
-	# 				id_query = list_query2[i2]
-	# 				df_pre2 = df_pre1.loc[id_query,[column_corr_1,column_pval]].copy()
-	# 				df_pre2[column_corr_abs_1] = df_pre2[column_corr_1].abs()
-	# 				df_pre2 = df_pre2.sort_values(by=[column_corr_abs_1,column_pval],ascending=[True,False])
-	# 				peak_query_pre2 = df_pre2.index
-	# 				list_query2_2.append(peak_query_pre2)
-
-	# 				peak_vec_2_1_ori, peak_vec_2_2_ori = list_query2_2[0:2]
-	# 				peak_num_2_1_ori = len(peak_vec_2_1_ori)
-	# 				peak_num_2_2_ori = len(peak_vec_2_2_ori)
-	# 				print('peak_vec_2_1_ori, peak_vec_2_2_ori: ',peak_num_2_1_ori,peak_num_2_2_ori)
-
-	# 			# peak_num_group2_1 = len(peak_loc_query_group2_1)
-	# 			# print('peak_loc_query_group2_1: ',peak_num_group2_1)
-
-	# 			# ratio_1, ratio_2 = 1.5, 1.0
-	# 			# ratio_1, ratio_2 = 1.0, 1.0
-	# 			# ratio_1, ratio_2 = 0.5, 1.0
-	# 			ratio_1, ratio_2 = 0.5, 1.5
-	# 			# ratio_1, ratio_2 = 0.25, 1.75
-	# 			peak_num_2_1 = np.min([int(peak_num_group2_1*ratio_1),peak_num_2_1_ori])
-	# 			peak_vec_2_1 = peak_vec_2_1_ori[0:peak_num_2_1]
-
-	# 			peak_num_2_2 = np.min([int(peak_num_group2_1*ratio_2),peak_num_2_2_ori])
-	# 			peak_vec_2_2 = peak_vec_2_2_ori[0:peak_num_2_2]
-
-	# 		return peak_vec_2_1, peak_vec_2_2
 
 	## select training sample from peak class 2
 	def test_query_training_select_group2(self,data=[],motif_id_query='',peak_query_vec_1=[],feature_type_vec=[],peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
@@ -4172,12 +3437,7 @@ class _Base2_2(_Base2_1):
 		# 	root_path_2 = select_config['root_path_2']
 
 		# 	data_file_type_query = select_config['data_file_type']
-		# 	method_type_feature_link = select_config['method_type_feature_link']
-		# 	# method_type_vec = ['insilico_0.1']+[method_type_feature_link]
-		# 	# method_type_vec = list(pd.Index(method_type_vec).unique())
-		# 	method_type_vec = [method_type_feature_link]
-		# 	select_config = self.test_query_config_pre1_1(data_file_type_query=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
-
+	
 		# flag_motif_data_load_1 = 1
 		# load motif data
 		method_type_feature_link = select_config['method_type_feature_link']
