@@ -22,130 +22,45 @@ import seaborn as sns
 # import xgboost
 # import xgbfir
 
-from pandas import read_excel
-
 import pyranges as pr
 import warnings
 
-import palantir 
+# import palantir 
 import phenograph
-# import harmony
 
 import sys
-# import build_graph
-# import metacells_ad
 from tqdm.notebook import tqdm
 
 import csv
 import os
 import os.path
 import shutil
-import sklearn
-
 from optparse import OptionParser
+
+import sklearn
 from sklearn.linear_model import LinearRegression, ElasticNet
-from sklearn.svm import SVR, SVC
-# from scipy.misc import logsumexp
 from sklearn.base import BaseEstimator, _pprint
 from sklearn.utils import check_array, check_random_state
 from sklearn.utils.validation import check_is_fitted
 from sklearn.neighbors import NearestNeighbors
 
-from sklearn.manifold import LocallyLinearEmbedding, MDS, Isomap, TSNE
-from sklearn.decomposition import PCA,IncrementalPCA,KernelPCA,SparsePCA,TruncatedSVD
-from sklearn.decomposition import FastICA, NMF, MiniBatchDictionaryLearning
-from sklearn.decomposition import FactorAnalysis
-from sklearn.random_projection import GaussianRandomProjection, SparseRandomProjection
-from sklearn.model_selection import KFold, StratifiedKFold, GroupKFold, train_test_split
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.utils.fixes import loguniform
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform
-from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, OneHotEncoder, LabelEncoder
 from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
+from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, OneHotEncoder, LabelEncoder, KBinsDiscretizer
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import Normalizer
-# import cvxpy as cp
-# from factor_analyzer import FactorAnalyzer
-# from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity
-# from factor_analyzer.factor_analyzer import calculate_kmo
-
-from sklearn.metrics import average_precision_score,precision_score,recall_score,f1_score
-from sklearn.metrics import roc_auc_score,accuracy_score,matthews_corrcoef
-from sklearn.metrics import mean_squared_error, explained_variance_score, mean_absolute_error, median_absolute_error, r2_score
-from sklearn.metrics import pairwise_distances
-# from processSeq import load_seq_1, kmer_dict, load_signal_1, load_seq_2, load_seq_2_kmer, load_seq_altfeature_1
-from sklearn import linear_model
-from sklearn.linear_model import LinearRegression, LogisticRegression, Lasso, LassoCV
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.neighbors import NearestNeighbors
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.datasets import make_regression
-from sklearn.model_selection import train_test_split, KFold
-from sklearn.feature_selection import SelectKBest, SelectPercentile
-from sklearn.feature_selection import f_classif, mutual_info_classif, f_regression, mutual_info_regression
-from sklearn.feature_selection import chi2, SelectFpr, SelectFdr, SelectFwe, GenericUnivariateSelect
-from sklearn.feature_selection import SelectFromModel,RFE,RFECV,VarianceThreshold
-# from sklearn.feature_selection import SequentialFeatureSelector
-
-from sklearn.inspection import permutation_importance
-from sklearn.cluster import AffinityPropagation,SpectralClustering,AgglomerativeClustering,DBSCAN,OPTICS,cluster_optics_dbscan
-from sklearn.cluster import MiniBatchKMeans,KMeans,MeanShift,estimate_bandwidth,Birch
-
-from sklearn.linear_model import Ridge
-from sklearn.metrics import r2_score
-from sklearn.metrics import make_scorer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-# import groupyr as gpr
-
-# from group_lasso import GroupLasso
-# from group_lasso.utils import extract_ohe_groups
-# from group_lasso import LogisticGroupLasso
-# import asgl
 
 from scipy import stats
 from scipy.stats import multivariate_normal, skew, pearsonr, spearmanr
-# from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact, barnard_exact, boschloo_exact
-from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact
-from scipy.stats import chi2_contingency
+from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact, chi2_contingency
 from scipy.stats.contingency import expected_freq
-from scipy.stats import gaussian_kde, zscore
-from scipy.stats import poisson, multinomial
-from scipy.stats import norm
-from scipy.stats import rankdata
+from scipy.stats import gaussian_kde, zscore, poisson, multinomial, norm, rankdata
 import scipy.sparse
-from scipy.sparse import spmatrix
-from scipy.sparse import hstack, csr_matrix, csc_matrix, issparse, vstack
+from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse, hstack, vstack
 from scipy import signal
-from scipy.signal import find_peaks, find_peaks_cwt, peak_prominences
 from scipy.optimize import minimize
-# import pywt
+from scipy.cluster.hierarchy import dendrogram, linkage
 from statsmodels.stats.multitest import multipletests
 import statsmodels.api as sm
-import pingouin as pg
-# import lowess
-import shap
-import networkx as nx
-
-from sklearn.datasets import make_biclusters
-from sklearn.cluster import SpectralCoclustering
-from sklearn.metrics import consensus_score
-from sklearn.preprocessing import KBinsDiscretizer
-# import pypairix
-
-from scipy.cluster.hierarchy import dendrogram, linkage
-# import pymc3 as pm
-# import npeet
-# from npeet import entropy_estimators as ee
-# import NPEET_LNC.lnc
-# from NPEET_LNC.lnc import MI
-
-# import tensorflow as tf
-# import keras
-# from keras.callbacks import EarlyStopping, ModelCheckpoint
-# from keras.models import Model, clone_model, Sequential
-
 import gc
 from joblib import Parallel, delayed
 
@@ -153,92 +68,20 @@ import time
 from timeit import default_timer as timer
 
 import utility_1
-from utility_1 import log_transform, pyranges_from_strings, plot_cell_types, plot_gene_expression
-from utility_1 import _dot_func, impute_data, density_2d, test_query_index
-# from utility_1 import _broadcast_concatenate, _get_mwu_z
-from utility_1 import score_function, test_file_merge_1, _pyranges_to_strings, test_save_anndata
-from test_annotation_2 import spearman_corr, pearson_corr
+# from utility_1 import pyranges_from_strings, test_file_merge_1
+from utility_1 import spearman_corr, pearson_corr
+import test_rediscover_compute_1
+from test_rediscover_compute_1 import _Base2_2
 import h5py
 import json
 import pickle
 
-# import rpy2
-# import rpy2.robjects as robjects
-# import rpy2.robjects.packages as rpackages
-# from rpy2.robjects.vectors import StrVector
-# from rpy2.robjects.packages import importr
-# from rpy2.robjects import pandas2ri
-# from rpy2.robjects import numpy2ri
 import itertools
 from itertools import combinations
 
-# import anndata2ri
-# utils = rpackages.importr('utils')
-# utils.chooseCRANmirror(ind=1)
-# pandas2ri.activate()
-# # anndata2ri.activate()
-# numpy2ri.activate()
-# import mifs
-from scipy import signal
-# packnames=('praznik')
-# utils.install_packages(StrVector(packnames))
-# praznik = importr('praznik')
-# ppcor = importr('ppcor')
-# presidual = importr('PResiduals')
-
-# import train_pre1
-# from train_pre1 import _Base2_train1
-import train_pre1_1
-from train_pre1_1 import _Base2_train1
-# from annotation_1_2_copy5_1 import _Base2_pre1
-# from annotation_1_2_copy5_2 import _Base2_pre2
-# from test_group_5 import _Base2_pre5
-# from test_group_2 import _Base2_train2
-# import test_pre2_3
-
-# get_ipython().run_line_magic('matplotlib', 'inline')
-sc.settings.verbosity = 3             # verbosity: errors (0), warnings (1), info (2), hints (3)
-sc.logging.print_header()
-sc.settings.set_figure_params(dpi=80, facecolor='white')
-
-# %matplotlib inline
-sns.set_style('ticks')
-# matplotlib.rcParams['figure.figsize'] = [5, 5]
-matplotlib.rcParams['figure.dpi'] = 100
-matplotlib.rcParams['image.cmap'] = 'Spectral_r'
-warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
-
-matplotlib.rc('xtick', labelsize=10)
-matplotlib.rc('ytick', labelsize=10)
-# matplotlib.rc('xlabel', labelsize=12)
-# matplotlib.rc('ylabel', labelsize=12)
-plt.rcParams['axes.labelsize'] = 12
-plt.rcParams['axes.titlesize'] = 15
-# plt.rcParams["figure.autolayout"] = True
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
-
-
 class _Base2_pre1(BaseEstimator):
-	"""Base class for Hidden Markov Models.
+	"""Feature association estimation.
 	"""
-	# def __init__(self, n_components=1, run_id=0,
-	#            startprob_prior=1.0, transmat_prior=1.0,
-	#            algorithm="viterbi", random_state=None,
-	#            n_iter=10, tol=1e-2, verbose=False,
-	#            params=string.ascii_letters,
-	#            init_params=string.ascii_letters):
-	#   self.n_components = n_components
-	#   self.params = params
-	#   self.init_params = init_params
-	#   self.startprob_prior = startprob_prior
-	#   self.transmat_prior = transmat_prior
-	#   self.algorithm = algorithm
-	#   self.random_state = random_state
-	#   self.n_iter = n_iter
-	#   self.tol = tol
-	#   self.verbose = verbose
-	#   self.run_id = run_id
-
 	def __init__(self,file_path,run_id=1,species_id=1,cell='ES', 
 					generate=1,
 					chromvec=[1],
@@ -1000,7 +843,7 @@ class _Base2_pre1(BaseEstimator):
 			return pre_meta_ad
 
 	## metacell data scaing
-	def test_metacell_compute_unit_2(self,pre_meta_ad,save_mode=1,output_file_path='',filename_prefix='test_meta_ad',select_config={}):
+	def test_metacell_compute_unit_2(self,pre_meta_ad,save_mode=1,output_file_path='',filename_prefix='test_meta_ad',output_filename='',verbose=0,select_config={}):
 
 		flag_query1 = 1
 		if flag_query1>0:
@@ -1071,22 +914,30 @@ class _Base2_pre1(BaseEstimator):
 															columns=pre_meta_ad.var_names,
 															dtype=np.float32)
 
-				pre_meta_scaled_read = csr_matrix(pre_meta_scaled_read)
+				pre_meta_scaled_read_1 = csr_matrix(pre_meta_scaled_read)
 				# pre_meta_ad_scaled = sc.AnnData(pre_meta_scaled_read)
 				# pre_meta_ad_scaled.X = csr_matrix(pre_meta_ad_scaled.X)
-				pre_meta_ad_scaled = sc.AnnData(pre_meta_scaled_read)
+				pre_meta_ad_scaled = sc.AnnData(pre_meta_scaled_read_1)
 				pre_meta_ad_scaled.obs_names, pre_meta_ad_scaled.var_names = pre_meta_ad.obs_names, pre_meta_ad.var_names
 				warnings.filterwarnings('default')
-				# print('atac meta ad',np.max(atac_read_1),np.min(atac_read_1),np.median(atac_read_1))
-				# output_filename = '%s/%s.normalize.log%d_scale%d.1.%s.h5ad'%(save_file_path1,filename_prefix,log_type_id,scale_type_id,filename_annot_1)
-				# if (save_mode==1) and (os.path.exists(output_filename)==False):
-				if (save_mode==1) and (output_file_path!=''):
+
+				if save_mode>0:
 					# if output_file_path=='':
 					# 	output_file_path = self.save_path_1
-					output_filename = '%s/%s.scale%d.1.h5ad'%(output_file_path,filename_prefix,scale_type_id)
-					# pre_meta_atac_ad.write(output_filename)
-					pre_meta_ad_scaled.write(output_filename)
-					# pre_meta_read = pre_meta_scaled_read
+					# if (output_filename==''):
+					# 	if (output_file_path!=''):
+					# 		output_filename = '%s/%s.scale%d.1.h5ad'%(output_file_path,filename_prefix,scale_type_id)
+					# 		# pre_meta_atac_ad.write(output_filename)
+					# 		pre_meta_ad_scaled.write(output_filename)
+					# 		# pre_meta_read = pre_meta_scaled_read
+					if (output_filename!=''):
+						b = output_filename.find('txt')
+						if b>=0:
+							float_format = '%.6E'
+							pre_meta_scaled_read.to_csv(output_filename,sep='\t',float_format=float_format)	# save txt file
+						else:
+							pre_meta_ad_scaled.write(output_filename)	# save anndata
+
 				elif save_mode==2:
 					pre_meta_ad.layers['scale_%d'%(scale_type_id)] = pre_meta_scaled_read
 			# else:
@@ -1095,23 +946,6 @@ class _Base2_pre1(BaseEstimator):
 				# 							columns=pre_meta_ad.var_names,
 				# 							data=np.asarray(pre_meta_ad.X.todense()),
 				# 							dtype=np.float32)
-
-			# if save_mode==1:
-			# 	if output_file_path=='':
-			# 		output_file_path = self.save_path_1
-			# 	log_type_id=1
-			# 	filename_annot_1='1'
-			# 	# output_filename = '%s/%s.normalize.log%d.1.h5ad'%(save_file_path1,filename_prefix,log_type_id)
-			# 	output_filename = '%s/%s.normalize.log%d.1.%s.h5ad'%(output_file_path,filename_prefix,log_type_id,filename_annot_1)
-			# 	pre_meta_ad.write(output_filename)
-
-			# 	# output_filename = '%s/%s.normalize.log%d.df_obs.txt'%(save_file_path1,filename_prefix,log_type_id)
-			# 	output_filename = '%s/%s.normalize.log%d.df_obs.%s.txt'%(output_file_path,filename_prefix,log_type_id,filename_annot_1)
-			# 	pre_meta_ad.obs.to_csv(output_filename,sep='\t')
-
-			# 	# output_filename = '%s/%s.normalize.log%d.df_var.txt'%(save_file_path1,filename_prefix,log_type_id)
-			# 	output_filename = '%s/%s.normalize.log%d.df_var.%s.txt'%(output_file_path,filename_prefix,log_type_id,filename_annot_1)
-			# 	pre_meta_ad.var.to_csv(output_filename,sep='\t')
 
 		# return pre_ad, pre_meta_read, pre_meta_ad, pre_meta_ad_scaled
 		return pre_meta_ad, pre_meta_ad_scaled
@@ -1402,32 +1236,21 @@ class _Base2_pre1(BaseEstimator):
 			data_list1 = data_list
 			data_list1_ori = data_list1.copy()
 			feature_num = len(feature_type_vec)
-			# for data_timepoint in [data_timepoint1]:
+
 			for query_id in query_idvec:
-				# dict_query1[data_timepoint] = dict()
 				dict_query1[query_id] = dict()
 				for i1 in range(feature_num):
 					feature_type = feature_type_vec[i1]
-					# data_type_query = '%s#Multiome'%(data_timepoint)
+
 					pre_ad = data_list1_ori[i1]
-					# id1 = (pre_ad.obs['DataTimepoint']==data_type_query)
+
 					id1 = (pre_ad.obs[column_id_query]==query_id)
-					# id2 = (pre_ad.obs['Datatype']=='Multiome')&(pre_ad.obs['Timepoint']==data_timepoint)
+					
 					sample_id2 = pre_ad.obs_names[id1]
-					 #sample_id_2 = pre_ad.obs_names[id2]
-					# raw_ad = sc.AnnData(pre_ad.raw.X)
-					# raw_ad.X = csr_matrix(raw_ad.X)
-					# raw_ad.obs_names = pre_ad.obs_names
-					# raw_ad.var_names = pre_ad.var_names
-					# pre_ad.raw = raw_ad
 					pre_ad2 = pre_ad[sample_id2,:]
-					# pre_ad_2 = pre_ad[sample_id_2,:]
-					# pre_ad2.raw = pre_ad.raw[sample_id2]
-					# pre_ad_2.raw = pre_ad.raw[sample_id_2]
 					if verbose>0:
 						print('pre_ad2 ',pre_ad2.shape)
-						# print('pre_ad_2 ',pre_ad_2.shape)
-
+						
 					if pre_ad.raw!=None:
 						raw_ad = sc.AnnData(pre_ad2.raw.X)
 						raw_ad.X = csr_matrix(raw_ad.X)
@@ -1440,28 +1263,7 @@ class _Base2_pre1(BaseEstimator):
 							# print(pre_ad.raw.X)
 							print(pre_ad.raw.X[0:5,0:5])
 							print('pre_ad2_raw ',pre_ad2.raw,pre_ad2.raw.shape,pre_ad2.raw.X.shape)
-
-						# raw_ad = sc.AnnData(pre_ad_2.raw.X)
-						# raw_ad.X = csr_matrix(raw_ad.X)
-						# raw_ad.obs_names = pre_ad_2.obs_names
-						# raw_ad.var_names = pre_ad_2.var_names
-						# pre_ad_2.raw = raw_ad
-						# print('pre_ad_2_raw ',pre_ad_2.raw,pre_ad_2.raw.shape,pre_ad_2.raw.X.shape)
-
-						# print('pre_ad2_raw ',pre_ad2.raw.X.shape)
-						# print('pre_ad_2_raw ',pre_ad_2.raw.X.shape)s
-						# print('pre_ad2_raw ',pre_ad2.raw.shape)
-						# print('pre_ad_2_raw ',pre_ad_2.raw.shape)
-
-					# output_filename = '%s/test_%s_df_obs.%s.%s.txt'%(output_file_path,feature_type,data_file_type,data_timepoint)
-					# pre_ad2.obs.to_csv(output_filename,sep='\t')
-					# output_filename = '%s/test_%s_df_var.%s.%s.txt'%(output_file_path,feature_type,data_file_type,data_timepoint)
-					# pre_ad2.var.to_csv(output_filename,sep='\t')
-
-					# output_filename = '%s/test_%s_df_obs.%s.%s.copy1.txt'%(output_file_path,feature_type,data_file_type,data_timepoint)
-					# pre_ad_2.obs.to_csv(output_filename,sep='\t')
-					# output_filename = '%s/test_%s_df_var.%s.%s.copy1.txt'%(output_file_path,feature_type,data_file_type,data_timepoint)
-					# pre_ad_2.var.to_csv(output_filename,sep='\t')
+					
 					if (i1==0) and (print_mode>0):
 						output_filename = '%s/test_%s_df_obs.%s.1.ori.txt'%(output_file_path,feature_type,query_id)
 						pre_ad.obs.to_csv(output_filename,sep='\t')
@@ -1479,21 +1281,7 @@ class _Base2_pre1(BaseEstimator):
 						# 	print('error! ',error)
 					# dict_query1[data_timepoint].update({feature_type:pre_ad2})
 					dict_query1[query_id].update({feature_type:pre_ad2})
-				# rna_ad_ori = rna_ad.copy()
 				
-			# id1 = (rna_ad.obs['Datatype']=='Multiome') # the combination of two time points
-			# sample_id1 = rna_ad.obs_names[id1]
-			# rna_ad_1 = rna_ad[sample_id1,:].copy()
-			# print('rna_ad_1 ',rna_ad_1.shape)
-			# print('dict_query1 ',dict_query1)
-
-			# data_timepoint = select_config['data_timepoint']
-			# data_type_query = '%s#Multiome'%(data_timepoint)
-			# rna_ad = dict_query1[data_timepoint]['rna']
-			# atac_ad = dict_query1[data_timepoint]['atac']
-			# rna_ad = dict_query1[query_id_1]['rna']
-			# atac_ad = dict_query1[query_id_1]['atac']
-			# data_list1 = [rna_ad,atac_ad]
 			data_list2 = [dict_query1[query_id_1][feature_type_query] for feature_type_query in feature_type_vec]
 			# if verbose>0:
 			# 	print('rna_ad, atac_ad ',rna_ad.shape,atac_ad.shape)
@@ -1676,97 +1464,6 @@ class _Base2_pre1(BaseEstimator):
 		# rna_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_rna.h5ad')
 		# atac_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_atac.h5ad')
 		data_file_type = select_config['data_file_type']
-		# # data_file_type = 'pbmc'
-		# # data_file_type = 'CD34_bonemarrow'
-		# # data_file_type = 'CD34_bonemarrow_no_bcells'
-		# flag_SEACell_estimate=0
-		# if 'flag_SEACell_estimate' in select_config:
-		# 	flag_SEACell_estimate = select_config['flag_SEACell_estimate']
-		# flag_summarize=0
-		# if ('flag_summarize' in select_config):
-		# 	flag_summarize = select_config['flag_summarize']
-		# print_mode=1
-		# if data_file_type == 'pbmc':
-		# 	# input_file_path = '%s/data_pre2/10x_pbmc/10x_pbmc'%(input_file_path1)
-		# 	# output_file_path = '%s/data_pre2/10x_pbmc/10x_pbmc'%(input_file_path1)
-		# 	# input_filename_1 = '%s/adata_rna.h5ad'%(input_file_path)
-		# 	# # input_filename_1 = '%s/adata_rna.copy1.h5ad'%(input_file_path)
-		# 	# input_filename_2 = '%s/adata_atac.h5ad'%(input_file_path)
-		# 	input_file_path_ori = '%s/data_pre2/10x_pbmc/data_1/vbak1'%(input_file_path1)	# the previous file folder
-		# 	run_id = select_config['run_id']
-		# 	input_file_path = '%s/data_pre2/10x_pbmc/data_1'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/10x_pbmc/data_1'%(input_file_path1)
-		# 	input_filename_1 = '%s/pbmc_multiome_rna.h5ad'%(input_file_path_ori)
-		# 	# input_filename_2 = '%s/pbmc_multiome_atac.h5ad'%(input_file_path_ori)
-		# 	# input_filename_1 = '%s/pbmc_multiome_rna.copy1.h5ad'%(input_file_path)
-		# 	input_filename_2 = '%s/pbmc_multiome_atac.copy1.h5ad'%(input_file_path_ori)
-		# 	# input_filename_1 = '%s/pbmc_multiome_rna.%d.copy1.h5ad'%(input_file_path,run_id)
-		# 	# input_filename_2 = '%s/pbmc_multiome_atac.%d.copy1.h5ad'%(input_file_path,run_id)
-		# 	if (flag_SEACell_estimate==0) and (flag_summarize>0):
-		# 		data_path_save = '%s/run%d'%(input_file_path,run_id)
-		# 		feature_type = select_config['feature_type_1']
-		# 		input_filename_load1 = '%s/pbmc_multiome_%s.%d.copy1.h5ad'%(data_path_save,feature_type,run_id)
-		# 		# print_mode=0
-		# 		if feature_type=='rna':
-		# 			input_filename_1 = input_filename_load1
-		# 		else:
-		# 			input_filename_2 = input_filename_load1
-		# 		print('input_filename_1, input_filename_2 ',input_filename_1,input_filename_2)
-		# elif data_file_type == 'CD34_bonemarrow':
-		# 	# input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
-		# 	# output_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
-		# 	# input_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	# input_filename_1 = '%s/adata_rna.h5ad'%(input_file_path)
-		# 	# input_file_path_ori = '%s/data_pre2/cd34_bonemarrow/data_1/vbak1'%(input_file_path1)	# the previous file folder
-		# 	input_file_path = '%s/data_pre2/cd34_bonemarrow/data_1'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/cd34_bonemarrow/data_1'%(input_file_path1)
-		# 	input_file_path_ori = '%s/vbak1'%(input_file_path)	# the previous file folder
-		# 	input_filename_1 = '%s/cd34_multiome_rna.h5ad'%(input_file_path_ori)
-		# 	input_filename_2 = '%s/cd34_multiome_atac.h5ad'%(input_file_path_ori)
-		# 	# input_filename_1 = '%s/cd34_multiome_rna.copy1.h5ad'%(input_file_path)
-		# 	# input_filename_2 = '%s/cd34_multiome_atac.copy1.h5ad'%(input_file_path)
-		# 	if (flag_SEACell_estimate==0) and (flag_summarize>0):
-		# 		data_path_save = '%s/run%d'%(input_file_path,run_id)
-		# 		feature_type = select_config['feature_type_1']
-		# 		input_filename_load1 = '%s/cd34_multiome_%s.%d.copy1.h5ad'%(data_path_save,feature_type,run_id)
-		# 		if feature_type=='rna':
-		# 			input_filename_1 = input_filename_load1
-		# 		else:
-		# 			input_filename_2 = input_filename_load1
-
-		# elif data_file_type == 'CD34_bonemarrow_no_bcells':
-		# 	input_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	input_filename_1 = '%s/cd34_multiome_rna_no_bcells.h5ad'%(input_file_path)
-		# 	input_filename_2 = '%s/cd34_multiome_atac_no_bcells.h5ad'%(input_file_path)
-
-		# elif data_file_type == 'bonemarrow_Tcell':
-		# 	# input_file_path_ori = '%s/data_pre2/cd34_bonemarrow/data_1/vbak1'%(input_file_path1)	# the previous file folder
-		# 	input_file_path = '%s/data_pre2/bonemarrow_Tcell/data_1'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/bonemarrow_Tcell/data_1'%(input_file_path1)
-		# 	input_file_path_ori = '%s/vbak1'%(input_file_path)	# the previous file folder
-		# 	input_filename_1 = '%s/bm_multiome_rna.h5ad'%(input_file_path_ori)
-		# 	# input_filename_2 = '%s/bm_multiome_atac.h5ad'%(input_file_path_ori)
-		# 	input_filename_2 = '%s/bm_multiome_atac.copy1.h5ad'%(input_file_path_ori)
-		# 	# input_filename_1 = '%s/cd34_multiome_rna.copy1.h5ad'%(input_file_path)
-		# 	# input_filename_2 = '%s/cd34_multiome_atac.copy1.h5ad'%(input_file_path)
-		# 	if (flag_SEACell_estimate==0) and (flag_summarize>0):
-		# 		data_path_save = '%s/run%d'%(input_file_path,run_id)
-		# 		feature_type = select_config['feature_type_1']
-		# 		input_filename_load1 = '%s/bm_multiome_%s.%d.copy1.h5ad'%(data_path_save,feature_type,run_id)
-		# 		if feature_type=='rna':
-		# 			input_filename_1 = input_filename_load1
-		# 		else:
-		# 			input_filename_2 = input_filename_load1
-
-		# elif data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-		# 	input_file_path = '%s/data_pre2/mouse_endoderm'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/mouse_endoderm'%(input_file_path1)
-		# 	input_filename_1 = '%s/E8.75_E9.25_rna_endoderm_with_scrna.2.h5ad'%(input_file_path1)
-		# 	input_filename_2 = '%s/E8.75_E9.25_atac_endoderm_with_scatac.2.h5ad'%(input_file_path1)
-		# else:
-		# 	print('please input data file type ')
-		# 	return
 
 		# if flag_path_query>0:
 		# 	# select_config.update({'data_file_type':data_file_type})
@@ -1803,493 +1500,25 @@ class _Base2_pre1(BaseEstimator):
 		input_filename_2 = select_config['input_filename_atac']	# the file_path of ATAC-seq data
 		input_filename_list = [input_filename_1,input_filename_2]
 		select_config.update({'data_path_save':output_file_path})
+		
 		rna_ad = sc.read_h5ad(input_filename_1)
-		# if verbose>0:
-		# 	print('input_filename_1 ',input_filename_1)
-		# 	print('rna_ad\n',rna_ad)
-		# 	print(rna_ad.X)
-		# 	print('rna_ad.raw\n',rna_ad.raw)
-		# try:
-		# 	print(rna_ad.raw.X)
-		# except Exception as error:
-		# 	print('error! ',error)
-		# try:
-		# 	# print('rna_ad.raw\n',rna_ad.raw.X)
-		# 	rna_read_raw = rna_ad.raw.X
-		# 	read_count1_1 = rna_read_raw.sum(axis=1)
-		# 	print(np.max(read_count1_1),np.min(read_count1_1),np.median(read_count1_1),np.mean(read_count1_1))
-		# except Exception as error:
-		# 	print('error! ',error)
-
-		# input_filename_2 = '%s/adata_atac.h5ad'%(input_file_path)
-		# input_filename_2 = '%s/cd34_multiome_atac.h5ad'%(input_file_path)
-		# input_filename_2 = '%s/cd34_multiome_atac.copy1.h5ad'%(input_file_path)
-		# input_filename_2 = '%s/cd34_multiome_atac.h5ad'%(input_file_path)
-		# print('input_filename_2 ',input_filename_2)
 		atac_ad = sc.read_h5ad(input_filename_2)
-		# if verbose>0:
-		# 	print('input_filename_2 ',input_filename_2)
-		# 	print('atac_ad\n',atac_ad)
-		# 	# print(atac_ad.X)
-		# 	print(atac_ad.X[0:5,0:5])
-		# 	print(atac_ad.raw)
-		# 	print(atac_ad.raw==None)
-		# try:
-		# 	print('atac_ad.raw\n',atac_ad.raw.X[0:5,0:5])
-		# 	x0 = atac_ad.X
-		# 	x1 = atac_ad.raw.X
-		# 	difference_1=x0-x1
-		# 	t1 = np.max(np.max(np.abs(difference_1)))
-		# 	# print('difference (1)',t1)
-		# 	print('difference (atac_ad)',t1)
-		# except Exception as error:
-		# 	print('error! ',error)
-		# sc.pl.scatter(atac_ad, basis='umap', color='celltype', frameon=False)
-
+		
 		data_list1 = [rna_ad,atac_ad]
 		feature_type_vec = ['rna','atac']
 		feature_num = len(feature_type_vec)
 		data_list_1 = []
-		if data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-			for i1 in range(feature_num):
-				pre_ad_ori = data_list1[i1]
-				id1 = (pre_ad_ori.obs['Datatype']=='Multiome') # the combination of two time points
-				sample_id1 = pre_ad_ori.obs_names[id1]
-				pre_ad_1 = pre_ad_ori[sample_id1,:].copy()
-				data_list_1.append(pre_ad_1)
-			rna_ad_1, atac_ad_1 = data_list_1
-			if verbose>0:
-				print('rna_ad_1 ',rna_ad_1.shape)
-				print('atac_ad_1 ',atac_ad_1.shape)
-			
-			data_timepoint = select_config['data_timepoint']
-			data_type_query = '%s#Multiome'%(data_timepoint)
-			# rna_ad = dict_query1[data_timepoint]['rna']
-			# atac_ad = dict_query1[data_timepoint]['atac']
 
-			data_timepoint_vec = ['E8.75','E9.25']
-			data_type_query_vec = ['%s#Multiome'%(data_timepoint_1) for data_timepoint_1 in data_timepoint_vec]
-			query_idvec = data_type_query_vec
-			query_id_1 = data_type_query
-			column_id_query = 'DataTimepoint'
-			data_list1, dict_query1 = self.test_query_data_load_1(feature_type_vec=feature_type_vec,data_list=data_list1,
-																	query_idvec=query_idvec,query_id_1=query_id_1,column_id_query=column_id_query,
-																	print_mode=1,save_mode=1,output_file_path=output_file_path_1,
-																	verbose=verbose,select_config=select_config)
-			rna_ad, atac_ad = data_list1[0:2]
-			if verbose>0:
-				print('rna_ad, atac_ad ',rna_ad.shape,atac_ad.shape)
-				print('dict_query1 ',dict_query1)
-
-			diffusion_estimate = select_config['diffusion_estimate']
-			if diffusion_estimate>0:
-				print('run diffusion maps ')
-				data_timepoint_1 = '%s#Multiome'%(data_timepoint)
-				if diffusion_estimate==2:
-					pre_ad1 = rna_ad
-					# dm_res = palantir.utils.run_diffusion_maps(rna_ad.obsp['AugAff'], n_components=20)
-					# ms_data = palantir.utils.determine_multiscale_space(dm_res, n_eigs=10)
-					# ms_data.index = rna_ad.obs_names
-					# print('ms_data ',ms_data.shape)
-					# # e875_data = ms_data.loc[rna_ad.obs['DataTimepoint'] == 'E8.75#Multiome', :]
-					# # e875_ad = rna_ad[e875_data.index, :]
-					# # e875_ad.obsm['X_pca'] = e875_data.values
-					# # print('ms_data ',ms_data.shape)
-					# # print(ms_data)
-					# # print(rna_ad.obs['DataTimepoint'])
-					# pre_data = ms_data.loc[rna_ad.obs['DataTimepoint']==data_timepoint_1, :]
-				else:
-					pre_ad1 = rna_ad_1
-
-				dm_res = palantir.utils.run_diffusion_maps(pre_ad1.obsp['AugAff'], n_components=20)
-				ms_data = palantir.utils.determine_multiscale_space(dm_res, n_eigs=10)
-				ms_data.index = pre_ad1.obs_names
-				print('ms_data ',ms_data.shape)
-				pre_data = ms_data.loc[pre_ad1.obs['DataTimepoint']==data_timepoint_1,:]
-
-				sample_id_query = rna_ad.obs_names
-				pre_data = pre_data.loc[sample_id_query, :]
-				# pre_data = ms_data
-				# pre_ad = rna_ad[pre_data.index, :]
-				rna_ad.obsm['X_pca'] = pre_data.values
-				print('pre_data ',pre_data.shape)
-
-			feature_id = 'FDL_Harmony'
-			# feature_id = 'umap'
-			column_id1 = 'CellType'
-			color_id = column_id1
-			if data_file_type in ['mouse_endoderm']:
-				filename_save_annot2 = '%s.%s'%(data_file_type,data_timepoint)
-			else:
-				filename_save_annot2 = data_file_type
-		else:
-			feature_id = 'umap'
-			column_id1 = 'celltype'
-			color_id = column_id1
-			filename_save_annot2 = data_file_type
-		# return
-
-		# output_file_path = self.save_path_1
-		# output_file_path = '%s/data_pre2/10x_pbmc/10x_pbmc'%(input_file_path1)
-		# output_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# output_filename = '%s/test_umap_rna_%s.png'%(output_file_path,data_file_type)
-		# output_filename = '%s/test_umap_rna_%s.copy1.png'%(output_file_path,data_file_type)
-		# output_filename = '%s/test_umap_rna_%s.2.png'%(output_file_path,data_file_type)
-
-		# feature_id = 'umap'
-		# color_id = 'celltype'
-		# try:
-		# 	# sc.pl.scatter(rna_ad, basis='umap', color='celltype', legend_fontsize=7, frameon=False)
-		# 	sc.pl.scatter(rna_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
-		# 	# output_filename = '%s/test_umap_rna_%s.adata.1.png'%(output_file_path,data_file_type)
-		# 	# output_filename = '%s/test_umap_rna_%s.adata.1.1.png'%(output_file_path,data_file_type)
-		# 	# output_filename = '%s/test_%s_rna_%s.adata.1.1.png'%(output_file_path,feature_id,data_file_type)
-		# 	output_filename = '%s/test_%s_rna_%s.adata.1.1.png'%(output_file_path_1,feature_id,filename_save_annot2)
-		# 	plt.savefig(output_filename,format='png')
-		# except Exception as error:
-		# 	print('error! ',error)
-		# res_rna = utils.run_diffusion_maps(pd.DataFrame(rna_ad.obsm['X_pca']), knn = 30)
-		
-		# try:
-		# 	print(rna_ad.raw.X)
-		# 	rna_read_raw = rna_ad.raw.X
-		# 	read_count1_1 = rna_read_raw.sum(axis=1)
-		# 	print(np.max(read_count1_1),np.min(read_count1_1),np.median(read_count1_1),np.mean(read_count1_1))
-		# except Exception as error:
-		# 	print('error! ',error)
-
-		# try:
-		# 	sc.pl.scatter(atac_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
-		# 	output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path_1,feature_id,filename_save_annot2)
-		# 	plt.savefig(output_filename,format='png')
-		# except Exception as error:
-		# 	print('error! ',error)
-		# return
+		feature_id = 'umap'
+		column_id1 = 'celltype'
+		color_id = column_id1
+		filename_save_annot2 = data_file_type
 
 		# print_mode=1
 		data_list1 = self.test_query_attribute_1(data_list=data_list1,input_filename_list=input_filename_list,feature_type_vec=feature_type_vec,
 													feature_id=feature_id,column_id_query=column_id1,flag_plot=1,flag_query_1=1,flag_query_2=2,
 													save_mode=1,filename_save_annot=filename_save_annot2,output_file_path=output_file_path_1,
 													print_mode=1,verbose=verbose,select_config=select_config)
-
-		# for i1 in range(feature_num):
-		# 	# celltype_query_1 = rna_ad.obs['celltype']
-		# 	pre_ad = data_list1[i1]
-		# 	feature_type_query = feature_type_vec[i1]
-		# 	if print_mode>0:
-		# 		# write the obs and var annotations to file
-		# 		if column_id1 in pre_ad.obs:
-		# 			celltype_query_1 = pre_ad.obs[column_id1]
-		# 			celltype_vec_1= celltype_query_1.unique()
-		# 			celltype_num1 = len(celltype_vec_1)
-		# 			print('celltype_vec_1 ',celltype_num1,celltype_vec_1)
-		# 			# df_1 = rna_ad.obs.loc[:,['celltype']]
-		# 			df_1 = rna_ad.obs.loc[:,[column_id1]]
-		# 			df_1['count'] = 1
-		# 			# df1 = df_1.groupby(by=['celltype']).sum()
-		# 			df1 = df_1.groupby(by=[column_id1]).sum()
-		# 			# output_filename = '%s/test_rna_celltype_query.%s.1.txt'%(output_file_path,data_file_type)
-		# 			output_filename = '%s/test_%s_celltype_query.%s.1.txt'%(output_file_path_1,feature_type_query,filename_save_annot2)
-		# 			df1.to_csv(output_filename,sep='\t')
-		# 		else:
-		# 			print('the column %s not include'%(column_id1))
-		# 		# output_filename = '%s/test_rna_df_obs.%s.1.txt'%(output_file_path,data_file_type)
-		# 		output_filename = '%s/test_%s_df_obs.%s.1.txt'%(output_file_path_1,feature_type_query,filename_save_annot2)
-		# 		pre_ad.obs.to_csv(output_filename,sep='\t')
-		# 		# output_filename = '%s/test_rna_df_var.%s.1.txt'%(output_file_path,data_file_type)
-		# 		output_filename = '%s/test_%s_df_var.%s.1.txt'%(output_file_path_1,feature_type_query,filename_save_annot2)
-		# 		pre_ad.var.to_csv(output_filename,sep='\t')
-		# 		# print(rna_ad.X)
-		# 		read_count = pre_ad.X
-		# 		read_count_1 = read_count.sum(axis=1)
-		# 		print(np.max(read_count_1),np.min(read_count_1),np.median(read_count_1),np.mean(read_count_1))
-			
-		# 		# raw_counts = rna_ad.layers['raw_counts']
-		# 		# print('raw_counts ',raw_counts.shape)
-		# 		# print('raw_counts ',raw_counts)
-		# 		# print(raw_counts[0:10])
-		# 		# read_count1_1 = raw_counts.sum(axis=1)
-		# 		# print(np.max(read_count1_1),np.min(read_count1_1),np.median(read_count1_1),np.mean(read_count1_1))
-
-		# 		# log_counts = rna_ad.layers['log']
-		# 		# print('log_counts ',log_counts.shape)
-		# 		# print('log_counts ',log_counts)
-		# 		# read_count_log_1 = log_counts.sum(axis=1)
-		# 		# print(np.max(read_count_log_1),np.min(read_count_log_1),np.median(read_count_log_1),np.mean(read_count_log_1))
-
-		# 		# median_counts = rna_ad.layers['median']
-		# 		# print('median_counts ',median_counts[0:1])
-		# 		# print(median_counts.shape)
-
-		# 		if 'celltype_colors' in atac_ad.uns:
-		# 			celltype_color_vec = atac_ad.uns['celltype_colors']
-		# 			print('atac_ad ',celltype_color_vec,len(celltype_color_vec))
-		# 			# print(len(celltype_color_vec))
-		# 		# output_filename = '%s/test_umap_atac_%s.png'%(output_file_path,data_file_type)
-		# 		try:
-		# 			 #sc.pl.scatter(atac_ad, basis='umap', color='celltype', legend_fontsize='xx-small', frameon=False)
-		# 			sc.pl.scatter(atac_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
-		# 			# output_filename = '%s/test_umap_atac_%s.adata.1.png'%(output_file_path,data_file_type)
-		# 			# output_filename = '%s/test_umap_atac_%s.adata.1.1.png'%(output_file_path,data_file_type)
-		# 			# output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path,feature_id,data_file_type)
-		# 			output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path_1,feature_id,filename_save_annot2)
-		# 			plt.savefig(output_filename,format='png')
-		# 		except Exception as error:
-		# 			print('error! ',error)
-
-		# 		if pre_ad.raw!=None:
-		# 			pre_ad_raw = pre_ad.raw.X
-		# 			read_count1 = pre_ad_raw.sum(axis=1)
-		# 			print(np.max(read_count1),np.min(read_count1),np.median(read_count1),np.mean(read_count1))
-		# 		else:
-		# 			raw_ad = sc.AnnData(pre_ad.X)
-		# 			raw_ad.obs_names, raw_ad.var_names = pre_ad.obs_names, pre_ad.var_names
-		# 			pre_ad.raw = pre_ad
-		# 			# sample_id1 = atac_ad.obs_names
-		# 			# sample_id2 = sample_id1.str.split('#').str.get(1)
-		# 			# atac_ad.obs_names = sample_id2
-		# 			x0 = pre_ad.X
-		# 			x1 = pre_ad.raw.X
-		# 			difference_1=x0-x1
-		# 			t1 = np.max(np.max(np.abs(difference_1)))
-		# 			if verbose>0:
-		# 				print('pre_ad.raw\n')
-		# 				print(pre_ad.raw)
-		# 				print(pre_ad.raw.X[0:5,0:5])
-		# 				print('difference (1)',t1)
-		# 			# output_file_path_1 = input_file_path
-		# 			input_filename = input_filename_list[i1]
-		# 			b = input_filename.find('.h5ad')
-		# 			# output_filename = '%s/pbmc_multiome_atac.copy1.h5ad'%(output_file_path_1) # save the atac-seq data with raw counts
-		# 			output_filename = input_filename[0:b]+'.copy1.h5ad' # save the atac-seq data with raw counts
-		# 			if os.path.exists(output_filename)==False:
-		# 				pre_ad.write(output_filename)
-		# 				print('pre_ad\n',pre_ad)
-		# 			else:
-		# 				print('the file exists ',output_filename)
-		# 				input_filename=output_filename
-		# 				pre_ad_2 = sc.read_h5ad(input_filename)
-		# 				# x0 = atac_ad.X
-		# 				# x1 = atac_ad.raw.X
-		# 				x2 = pre_ad_2.raw.X
-		# 				# atac_ad.write(output_filename)
-		# 				# difference_1=x0-x2
-		# 				difference_2=x1-x2
-		# 				# t1 = np.max(np.max(np.abs(difference_1)))
-		# 				t2 = np.max(np.max(np.abs(difference_2)))
-		# 				if verbose>0:
-		# 					print('pre_ad_2.raw\n')
-		# 					print(pre_ad_2.raw)
-		# 					print(pre_ad_2.raw.X[0:5,0:5])
-		# 					print('difference (2)',t2)
-
-		# 		column_id_1 = 'SEACell'
-		# 		if not (column_id_1 in pre_ad.obs):
-		# 			column_id_1 = 'Metacell'
-		# 		if column_id_1 in pre_ad.obs:	
-		# 			SEACell_vec_1 = pre_ad.obs[column_id_1].unique() # the previously estimated SEACells
-		# 			SEACell_num1 = len(SEACell_vec_1)
-		# 			print('SEACell_num1 ',SEACell_num1)
-
-		# 		if 'celltype_colors' in pre_ad.uns:
-		# 			celltype_color_vec = pre_ad.uns['celltype_colors']
-		# 			print('atac_ad ',celltype_color_vec,len(celltype_color_vec))
-		# 			# print(len(celltype_color_vec))
-		# 		# output_filename = '%s/test_umap_atac_%s.png'%(output_file_path,data_file_type)
-		# 		try:
-		# 			 #sc.pl.scatter(atac_ad, basis='umap', color='celltype', legend_fontsize='xx-small', frameon=False)
-		# 			sc.pl.scatter(pre_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
-		# 			# output_filename = '%s/test_umap_atac_%s.adata.1.png'%(output_file_path,data_file_type)
-		# 			# output_filename = '%s/test_umap_atac_%s.adata.1.1.png'%(output_file_path,data_file_type)
-		# 			# output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path,feature_id,data_file_type)
-		# 			output_filename = '%s/test_%s_%s_%s.adata.1.1.png'%(output_file_path_1,feature_id,feature_type_query,filename_save_annot2)
-		# 			plt.savefig(output_filename,format='png')
-		# 		except Exception as error:
-		# 			print('error! ',error)
-					
-				# try:
-				# 	# print(atac_ad.raw.X)
-				# 	# atac_read = pd.DataFrame(index=atac_ad.obs_names,columns=atac_ad.var_names,data=atac_ad.X.toarray(),dtype=np.float32)
-				# 	atac_read_raw = atac_ad.raw.X
-				# 	read_count1_2 = atac_read_raw.sum(axis=1)
-				# 	print(np.max(read_count1_2),np.min(read_count1_2),np.median(read_count1_2),np.mean(read_count1_2))		
-				# except Exception as error:
-				# 	print('error! ',error)
-				# 	raw_ad = sc.AnnData(atac_ad.X)
-				# 	raw_ad.obs_names, raw_ad.var_names = atac_ad.obs_names, atac_ad.var_names
-				# 	atac_ad.raw = raw_ad
-				# 	print('atat_ad.raw\n')
-				# 	print(atac_ad.raw)
-				# 	print(atac_ad.raw.X)
-				# 	# sample_id1 = atac_ad.obs_names
-				# 	# sample_id2 = sample_id1.str.split('#').str.get(1)
-				# 	# atac_ad.obs_names = sample_id2
-				# 	x0 = atac_ad.X
-				# 	x1 = atac_ad.raw.X
-				# 	difference_1=x0-x1
-				# 	t1 = np.max(np.max(np.abs(difference_1)))
-				# 	print('difference (1)',t1)
-				# 	output_file_path_1 = input_file_path
-				# 	b = input_filename_2.find('.h5ad')
-				# 	# output_filename = '%s/pbmc_multiome_atac.copy1.h5ad'%(output_file_path_1) # save the atac-seq data with raw counts
-				# 	output_filename = input_filename_2[0:b]+'.copy1.h5ad' # save the atac-seq data with raw counts
-				# 	if os.path.exists(output_filename)==False:
-				# 		atac_ad.write(output_filename)
-				# 		print('atac_ad\n',atac_ad)
-				# 	else:
-				# 		print('the file exists ',output_filename)
-				# 		input_filename=output_filename
-				# 		atac_ad_2 = sc.read_h5ad(input_filename)
-				# 		# x0 = atac_ad.X
-				# 		# x1 = atac_ad.raw.X
-				# 		x2 = atac_ad_2.raw.X
-				# 		print('atac_ad_2.raw\n')
-				# 		print(atac_ad_2.raw)
-				# 		print(atac_ad_2.raw.X)
-				# 		# atac_ad.write(output_filename)
-				# 		# difference_1=x0-x2
-				# 		difference_2=x1-x2
-				# 		# t1 = np.max(np.max(np.abs(difference_1)))
-				# 		t2 = np.max(np.max(np.abs(difference_2)))
-				# 		print('difference (2)',t2)
-				# 	# print('atac_ad\n',atac_ad)
-
-			# column_id_1 = 'SEACell'
-			# if not (column_id_1 in pre_ad.obs):
-			# 	column_id_1 = 'Metacell'
-			# if column_id_1 in pre_ad.obs:	
-			# 	SEACell_vec_1 = pre_ad.obs[column_id_1].unique() # the previously estimated SEACells
-			# 	SEACell_num1 = len(SEACell_vec_1)
-			# 	print('SEACell_num1 ',SEACell_num1)
-			# if 'SEACell_1' in pre_ad.obs:
-			# 	SEACell_vec_pre1 = pre_ad.obs['SEACell_1'].unique()
-			# 	SEACell_num_pre1 = len(SEACell_vec_pre1)
-			# 	print('SEACell_num_pre1 ',SEACell_num_pre1)
-
-		# # input_filename_2 = '%s/adata_atac.h5ad'%(input_file_path)
-		# # input_filename_2 = '%s/cd34_multiome_atac.h5ad'%(input_file_path)
-		# # input_filename_2 = '%s/cd34_multiome_atac.copy1.h5ad'%(input_file_path)
-		# # input_filename_2 = '%s/cd34_multiome_atac.h5ad'%(input_file_path)
-		# atac_ad = sc.read_h5ad(input_filename_2)
-		# print('input_filename_2 ',input_filename_2)
-		# print(atac_ad)
-		# print(atac_ad.raw)
-		# # sc.pl.scatter(atac_ad, basis='umap', color='celltype', frameon=False)
-		# if 'celltype_colors' in atac_ad.uns:
-		# 	celltype_color_vec = atac_ad.uns['celltype_colors']
-		# 	print('atac_ad ',celltype_color_vec,len(celltype_color_vec))
-		# 	# print(len(celltype_color_vec))
-		# # output_filename = '%s/test_umap_atac_%s.png'%(output_file_path,data_file_type)
-		# try:
-		# 	 #sc.pl.scatter(atac_ad, basis='umap', color='celltype', legend_fontsize='xx-small', frameon=False)
-		# 	sc.pl.scatter(atac_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
-		# 	# output_filename = '%s/test_umap_atac_%s.adata.1.png'%(output_file_path,data_file_type)
-		# 	# output_filename = '%s/test_umap_atac_%s.adata.1.1.png'%(output_file_path,data_file_type)
-		# 	# output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path,feature_id,data_file_type)
-		# 	output_filename = '%s/test_%s_atac_%s.adata.1.1.png'%(output_file_path_1,feature_id,filename_save_annot2)
-		# 	plt.savefig(output_filename,format='png')
-		# except Exception as error:
-		# 	print('error! ',error)
-		
-		# try:
-		# 	# print(atac_ad.raw.X)
-		# 	# atac_read = pd.DataFrame(index=atac_ad.obs_names,columns=atac_ad.var_names,data=atac_ad.X.toarray(),dtype=np.float32)
-		# 	atac_read_raw = atac_ad.raw.X
-		# 	read_count1_2 = atac_read_raw.sum(axis=1)
-		# 	print(np.max(read_count1_2),np.min(read_count1_2),np.median(read_count1_2),np.mean(read_count1_2))		
-		# except Exception as error:
-		# 	print('error! ',error)
-		# 	raw_ad = sc.AnnData(atac_ad.X)
-		# 	raw_ad.obs_names, raw_ad.var_names = atac_ad.obs_names, atac_ad.var_names
-		# 	atac_ad.raw = raw_ad
-		# 	print('atat_ad.raw\n')
-		# 	print(atac_ad.raw)
-		# 	print(atac_ad.raw.X)
-		# 	# sample_id1 = atac_ad.obs_names
-		# 	# sample_id2 = sample_id1.str.split('#').str.get(1)
-		# 	# atac_ad.obs_names = sample_id2
-		# 	x0 = atac_ad.X
-		# 	x1 = atac_ad.raw.X
-		# 	difference_1=x0-x1
-		# 	t1 = np.max(np.max(np.abs(difference_1)))
-		# 	print('difference (1)',t1)
-		# 	output_file_path_1 = input_file_path
-		# 	b = input_filename_2.find('.h5ad')
-		# 	# output_filename = '%s/pbmc_multiome_atac.copy1.h5ad'%(output_file_path_1) # save the atac-seq data with raw counts
-		# 	output_filename = input_filename_2[0:b]+'.copy1.h5ad' # save the atac-seq data with raw counts
-		# 	if os.path.exists(output_filename)==False:
-		# 		atac_ad.write(output_filename)
-		# 		print('atac_ad\n',atac_ad)
-		# 	else:
-		# 		print('the file exists ',output_filename)
-		# 		input_filename=output_filename
-		# 		atac_ad_2 = sc.read_h5ad(input_filename)
-		# 		# x0 = atac_ad.X
-		# 		# x1 = atac_ad.raw.X
-		# 		x2 = atac_ad_2.raw.X
-		# 		print('atac_ad_2.raw\n')
-		# 		print(atac_ad_2.raw)
-		# 		print(atac_ad_2.raw.X)
-		# 		# atac_ad.write(output_filename)
-		# 		# difference_1=x0-x2
-		# 		difference_2=x1-x2
-		# 		# t1 = np.max(np.max(np.abs(difference_1)))
-		# 		t2 = np.max(np.max(np.abs(difference_2)))
-		# 		print('difference (2)',t2)
-			# print('atac_ad\n',atac_ad)
-
-		# common_cells = atac_ad.obs_names.intersection(rna_ad.obs_names)
-		# if len(common_cells) != atac_ad.shape[0]:
-		# 	print('Warning: The number of cells in RNA and ATAC objects are different. Only the common cells will be used.')
-		# print('common_cells ',len(common_cells))
-		# return
-
-		# celltype_query_2 = atac_ad.obs['celltype']
-		# print_mode=1
-		# if print_mode>0:
-		# 	celltype_query_2 = atac_ad.obs[column_id1]
-		# 	celltype_vec_2= celltype_query_2.unique()
-		# 	celltype_num2 = len(celltype_vec_2)
-		# 	print('celltype_vec_2 ',celltype_num2,celltype_vec_2)
-		# 	# df1 = pd.DataFrame(index=celltype_vec_2,columns=['num'])
-		# 	# df_1 = atac_ad.obs.loc[:,['celltype']]
-		# 	df_1 = atac_ad.obs.loc[:,[column_id1]]
-		# 	df_1['count'] = 1
-		# 	# df1 = df_1.groupby(by=['celltype']).sum()
-		# 	df1 = df_1.groupby(by=[column_id1]).sum()
-		# 	output_filename = '%s/test_atac_celltype_query.%s.1.txt'%(output_file_path_1,data_file_type)
-		# 	df1.to_csv(output_filename,sep='\t')
-		# 	output_filename = '%s/test_atac_df_obs.%s.1.txt'%(output_file_path_1,data_file_type)
-		# 	atac_ad.obs.to_csv(output_filename,sep='\t')
-		# 	output_filename = '%s/test_atac_df_var.%s.1.txt'%(output_file_path_1,data_file_type)
-		# 	atac_ad.var.to_csv(output_filename,sep='\t')
-		# 	# print(atac_ad.X)
-		# 	atac_read = atac_ad.X
-		# 	read_count_2 = atac_read.sum(axis=1)
-		# 	print(np.max(read_count_2),np.min(read_count_2),np.median(read_count_2),np.mean(read_count_2))
-			
-			# sample_id1 = atac_ad.obs_names
-			# sample_id2 = sample_id1.str.split('#').str.get(1)
-			# atac_ad.obs_names = sample_id2
-			# output_file_path_1 = input_file_path
-			# output_filename = '%s/pbmc_multiome_atac.copy1.h5ad'%(output_file_path_1) # obs_names renamed
-			# if os.path.exists(output_filename)==False:
-			# 	atac_ad.write(output_filename)
-			# print('atac_ad\n',atac_ad)
-
-		# res_atac = utils.run_diffusion_maps(pd.DataFrame(adata_atac.obsm['X_svd']), knn = 30, metric='cosine')
-		# column_id_1 = 'SEACell'
-		# if not (column_id_1 in atac_ad.obs):
-		# 	column_id_1 = 'Metacell'
-		# 	if column_id_1 in atac_ad.obs:
-		# 		# SEACell_vec_2 = atac_ad.obs['SEACell'].unique()
-		# 		SEACell_vec_2 = atac_ad.obs[column_id_1].unique()
-		# 		SEACell_num2 = len(SEACell_vec_2)
-		# 		print('SEACell_num2 ',SEACell_num2)
-		# if 'SEACell_1' in atac_ad.obs:
-		# 	SEACell_vec_2_atac = atac_ad.obs['SEACell_1'].unique()
-		# 	SEACell_num2_atac = len(SEACell_vec_2_atac)
-		# 	print('SEACell_num2_atac ',SEACell_num2_atac)
 
 		## retain the cells in both modalities
 		rna_ad, atac_ad = data_list1[0:2]
@@ -2312,41 +1541,9 @@ class _Base2_pre1(BaseEstimator):
 		if flag_query_pre>0:
 			return
 
-		# atac_feature_id = atac_ad.var_names
-		# rna_feature_id = rna_ad.var_names
-		# # print(atac_ad[0:10,atac_feature_id[0:10]])
-		# # print(rna_ad[0:10,rna_feature_id[0:10]])
-		# print(atac_ad.X[0:10,0:10])
-		# print(rna_ad.X[0:10,0:10])
-		# print(atac_ad_1.X[0:10,0:10])
-		# print(rna_ad_1.X[0:10,0:10])
-		# df1 = pd.DataFrame(index=rna_ad.obs_names,columns=rna_ad.var_names,data=rna_ad.raw.X.toarray(),dtype=np.float32)
-		# df2= pd.DataFrame(index=atac_ad.obs_names,columns=atac_ad.var_names,data=atac_ad.raw.X.toarray(),dtype=np.float32)
-		# df1_1 = pd.DataFrame(index=rna_ad_1.obs_names,columns=rna_ad_1.var_names,data=rna_ad_1.raw.X.toarray(),dtype=np.float32)
-		# df2_1 = pd.DataFrame(index=atac_ad_1.obs_names,columns=atac_ad_1.var_names,data=atac_ad_1.raw.X.toarray(),dtype=np.float32)
-
-		# output_filename_1 = '%s/df_%s_rna.subset1.txt'%(output_file_path,data_file_type)
-		# output_filename_2 = '%s/df_%s_atac.subset1.txt'%(output_file_path,data_file_type)
-		# output_filename1_1 = '%s/df_%s_rna.common.subset1.txt'%(output_file_path,data_file_type)
-		# output_filename1_2 = '%s/df_%s_atac.common.subset1.txt'%(output_file_path,data_file_type)
-
-		# sel_num1=1000
-		# output_filename_list = [output_filename_1,output_filename_2,output_filename1_1,output_filename1_2]
-		# df_list1 = [df1,df2,df1_1,df2_1]
-		
-		# query_num1 = len(df_list1)
-		# for i1 in range(query_num1):
-		# 	output_filename = output_filename_list[i1]
-		# 	df_query1 = df_list1[i1]
-		# 	df_subset1 = df_query1.loc[:,df_query1.columns[0:sel_num1]]
-		# 	df_subset1.to_csv(output_filename,sep='\t',float_format='%.2f')
-		# return
-
 		field_query = ['n_SEACells', 'obsm_build_kernel_rna', 'obsm_build_kernel_atac','num_components','n_waypoint_eigs','waypoint_proportion']
 		# n_SEACells = 150
 		# n_SEACells = 500
-		# n_SEACells = 280
-		# n_SEACells = 600
 		n_SEACells = select_config['metacell_num']
 		# default_param = [500,'X_pca','X_svd',50,10]
 		default_param = [n_SEACells,'X_pca','X_svd',50,10,1.0]
@@ -2363,7 +1560,6 @@ class _Base2_pre1(BaseEstimator):
 		print(n_SEACells,obsm_build_kernel_rna,obsm_build_kernel_atac,num_components,n_waypoint_eigs,waypoint_proportion)
 
 		# flag_SEACell_estimate=1
-		# flag_SEACell_estimate=0
 		# if 'flag_SEACell_estimate' in select_config:
 		# 	flag_SEACell_estimate = select_config['flag_SEACell_estimate']
 		# normalize, pca_compute = True, 1
@@ -2374,52 +1570,11 @@ class _Base2_pre1(BaseEstimator):
 		type_id_feature = select_config['type_id_feature']
 		# type_id_1=0
 		type_id_1=type_id_feature
-		# filename_prefix_1 = '%s.%s'%(data_file_type,feature_type)
-		if data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-			data_timepoint = select_config['data_timepoint']
-			filename_prefix_1 = '%s.%s.%d'%(data_timepoint,feature_type,run_id)
-			 #filename_prefix_save = '%s_multiome_%s.%d'%(data_timepoint,feature_type,run_id)
-			filename_prefix_save = '%s_multiome.%s.%d'%(data_timepoint,feature_type,run_id)
-			filename_save_annot_1 = '%s.%d.%d'%(data_timepoint,type_id_1,run_id)
-			print('data_file_type, data_timepoint, feature_type ',data_file_type,data_timepoint,feature_type)
 
-			# diffusion_estimate = select_config['diffusion_estimate']
-			# if diffusion_estimate>0:
-			# 	print('run diffusion maps ')
-			# 	data_timepoint_1 = '%s#Multiome'%(data_timepoint)
-			# 	if diffusion_estimate==2:
-			# 		pre_ad1 = rna_ad
-			# 		# dm_res = palantir.utils.run_diffusion_maps(rna_ad.obsp['AugAff'], n_components=20)
-			# 		# ms_data = palantir.utils.determine_multiscale_space(dm_res, n_eigs=10)
-			# 		# ms_data.index = rna_ad.obs_names
-			# 		# print('ms_data ',ms_data.shape)
-			# 		# # e875_data = ms_data.loc[rna_ad.obs['DataTimepoint'] == 'E8.75#Multiome', :]
-			# 		# # e875_ad = rna_ad[e875_data.index, :]
-			# 		# # e875_ad.obsm['X_pca'] = e875_data.values
-			# 		# # print('ms_data ',ms_data.shape)
-			# 		# # print(ms_data)
-			# 		# # print(rna_ad.obs['DataTimepoint'])
-			# 		# pre_data = ms_data.loc[rna_ad.obs['DataTimepoint']==data_timepoint_1, :]
-			# 	else:
-			# 		pre_ad1 = rna_ad_1
-
-			# 	dm_res = palantir.utils.run_diffusion_maps(pre_ad1.obsp['AugAff'], n_components=20)
-			# 	ms_data = palantir.utils.determine_multiscale_space(dm_res, n_eigs=10)
-			# 	ms_data.index = pre_ad1.obs_names
-			# 	print('ms_data ',ms_data.shape)
-			# 	pre_data = ms_data.loc[pre_ad1.obs['DataTimepoint']==data_timepoint_1,:]
-
-			# 	sample_id_query = rna_ad.obs_names
-			# 	pre_data = pre_data.loc[sample_id_query, :]
-			# 	# pre_data = ms_data
-			# 	# pre_ad = rna_ad[pre_data.index, :]
-			# 	rna_ad.obsm['X_pca'] = pre_data.values
-			# 	print('pre_data ',pre_data.shape)
-		else:
-			filename_prefix_1 = '%s.%s.%d'%(data_file_type,feature_type,run_id)
-			# filename_prefix_save = '%s_multiome_%s.%d'%(data_file_type,feature_type,run_id)
-			filename_prefix_save = '%s_multiome.%s.%d'%(data_file_type,feature_type,run_id)
-			filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_1,run_id)
+		filename_prefix_1 = '%s.%s.%d'%(data_file_type,feature_type,run_id)
+		# filename_prefix_save = '%s_multiome_%s.%d'%(data_file_type,feature_type,run_id)
+		filename_prefix_save = '%s_multiome.%s.%d'%(data_file_type,feature_type,run_id)
+		filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_1,run_id)
 
 		select_config.update({'filename_prefix_1':filename_prefix_1,
 								'filename_prefix_save':filename_prefix_save,
@@ -2437,12 +1592,14 @@ class _Base2_pre1(BaseEstimator):
 		# 	if overwrite==0:
 		# 		return
 		# select_config.update({'data_path_save':output_file_path})
+		
 		output_file_path = select_config['data_path_save']
 		print('output_file_path ',output_file_path)
 		if flag_SEACell_estimate>0:
 			min_iter=10
 			max_iter=200
 			select_config.update({'min_iter':min_iter,'max_iter':max_iter})
+			
 			# feature_type = 'rna'
 			# feature_type = 'atac'
 			# feature_type = select_config['feature_type_1']
@@ -2450,7 +1607,7 @@ class _Base2_pre1(BaseEstimator):
 			# filename_prefix_1 = '%s.%s'%(data_file_type,feature_type)
 			# select_config.update({'filename_prefix_1':filename_prefix_1})
 			print('data_file_type, feature_type ',data_file_type,feature_type)
-			# filename_prefix_save = '%s_multiome_%s.%d'%(data_file_type,feature_type,run_id)
+			
 			np.random.seed(0)
 			if feature_type=='rna':
 				if 'SEACell' in rna_ad.obs:
@@ -2532,8 +1689,10 @@ class _Base2_pre1(BaseEstimator):
 				atac_ad_1.obs['SEACell'] = rna_ad_1.obs['SEACell'].copy()
 			else:
 				rna_ad_1.obs['SEACell'] = atac_ad_1.obs['SEACell'].copy()
+			
 			# rna_ad_1.obs['celltype_1'] = atac_ad_1.obs['celltype'].copy()
 			rna_ad_1.obs['%s_1'%(column_id1)] = atac_ad_1.obs[column_id1].copy()
+			
 			# summarize_layer_type_1 = 'raw_counts'	# rna data
 			summarize_layer_type_1 = 'raw'	# rna data
 			if atac_ad.raw==None:
@@ -2558,10 +1717,8 @@ class _Base2_pre1(BaseEstimator):
 			# output_file_path = input_file_path
 			output_file_path = select_config['data_path_save']
 			run_id = select_config['run_id']
-			# if data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-			# 	filename_save_annot_1 = '%s.%d.%d'%(data_timepoint,type_id_1,run_id)
-			# else:
-			# 	filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_1,run_id)
+			filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_1,run_id)
+			
 			if save_mode>0:
 				# if output_file_path=='':
 				# 	output_file_path = self.save_path_1
@@ -2607,73 +1764,15 @@ class _Base2_pre1(BaseEstimator):
 			return atac_meta_ad, rna_meta_ad
 
 	# metacell estimation
-	def test_metacell_compute_pre2(self,flag_path_query=0,save_mode=1,output_file_path='',select_config={}):
-
-		input_file_path1 = self.save_path_1
-		# rna_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_rna.h5ad')
-		# atac_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_atac.h5ad')
-		data_file_type = select_config['data_file_type']
-		# # data_file_type = 'pbmc'
-		# # data_file_type = 'CD34_bonemarrow'
-		# # data_file_type = 'CD34_bonemarrow_no_bcells'
-		# if data_file_type == 'pbmc':
-		# 	# input_file_path = '%s/data_pre2/10x_pbmc/10x_pbmc'%(input_file_path1)
-		# 	# output_file_path = '%s/data_pre2/10x_pbmc/10x_pbmc'%(input_file_path1)
-		# 	# input_filename_1 = '%s/adata_rna.h5ad'%(input_file_path)
-		# 	# # input_filename_1 = '%s/adata_rna.copy1.h5ad'%(input_file_path)
-		# 	# input_filename_2 = '%s/adata_atac.h5ad'%(input_file_path)
-		# 	input_file_path = '%s/data_pre2/10x_pbmc/data_1'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/10x_pbmc/data_1'%(input_file_path1)
-		# 	# input_filename_1 = '%s/pbmc_multiome_rna.h5ad'%(input_file_path)
-		# 	# input_filename_2 = '%s/pbmc_multiome_atac.h5ad'%(input_file_path)
-		# 	# input_filename_1 = '%s/pbmc_multiome_rna.copy1.h5ad'%(input_file_path)
-		# 	run_id = select_config['run_id']
-		# 	input_filename_1 = '%s/pbmc_multiome_rna.%d.copy1.h5ad'%(input_file_path,run_id)
-		# 	# input_filename_2 = '%s/pbmc_multiome_atac.copy1.h5ad'%(input_file_path)
-		# 	input_filename_2 = '%s/pbmc_multiome_atac.%d.copy1.h5ad'%(input_file_path,run_id)
-		# elif data_file_type == 'CD34_bonemarrow':
-		# 	input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
-		# 	# input_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	# input_filename_1 = '%s/adata_rna.h5ad'%(input_file_path)
-		# 	# input_filename_1 = '%s/cd34_multiome_rna.h5ad'%(input_file_path)
-		# 	input_filename_1 = '%s/cd34_multiome_rna.copy1.h5ad'%(input_file_path)
-		# 	input_filename_2 = '%s/cd34_multiome_atac.copy1.h5ad'%(input_file_path)
-		# elif data_file_type == 'CD34_bonemarrow_no_bcells':
-		# 	input_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/cd34_bonemarrow_2'%(input_file_path1)
-		# 	input_filename_1 = '%s/cd34_multiome_rna_no_bcells.h5ad'%(input_file_path)
-		# 	input_filename_2 = '%s/cd34_multiome_atac_no_bcells.h5ad'%(input_file_path)
-		# elif data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-		# 	input_file_path = '%s/data_pre2/mouse_endoderm'%(input_file_path1)
-		# 	output_file_path = '%s/data_pre2/mouse_endoderm'%(input_file_path1)
-		# 	input_filename_1 = '%s/E8.75_E9.25_rna_endoderm_with_scrna.2.h5ad'%(input_file_path1)
-		# 	input_filename_2 = '%s/E8.75_E9.25_atac_endoderm_with_scatac.2.h5ad'%(input_file_path1)
-
-		# 	data_timepoint = select_config['data_timepoint']
-		# 	# input_filename_pre1 = '%s/test_rna_meta_ad.%s.0.1.h5ad'%(input_file_path,data_timepoint)
-		# 	# input_filename_pre2 = '%s/test_atac_meta_ad.%s.0.1.h5ad'%(input_file_path,data_timepoint)
-
-		# 	input_filename_pre1 = '%s/run1/test_rna_meta_ad.%s.0.1.h5ad'%(input_file_path,data_timepoint)
-		# 	input_filename_pre2 = '%s/run1/test_atac_meta_ad.%s.0.1.h5ad'%(input_file_path,data_timepoint)
-		# else:
-		# 	print('please input data file type ')
-		# 	return
-		# select_config.update({'data_file_type':data_file_type})
-		# select_config.update({'data_path':input_file_path})
+	def test_metacell_compute_pre2(self,data_timepoint='',feature_id='',flag_path_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+		
 		if flag_path_query>0:
 			select_config = self.test_file_path_query_2(select_config=select_config)
 
-		input_file_path = select_config['data_path']
-		print('input_file_path ',input_file_path)
-		# filename_prefix_1 = data_file_type
-		# select_config.update({'filename_prefix_1':filename_prefix_1})
-
-		# input_filename_list1 = [input_filename_1,input_filename_2]
-		# input_filename_list2 = [input_filename_pre1,input_filename_pre2]
 		feature_type_vec = ['rna','atac']
 		input_filename_list1 = [select_config['input_filename_%s'%(feature_type_query)] for feature_type_query in feature_type_vec] # filename for origiinal single cell data
 		input_filename_list2 = [select_config['filename_%s'%(feature_type_query)] for feature_type_query in feature_type_vec] # filename for metacell data
+		
 		input_filename_2 = input_filename_list2[0]
 		print('input_filename_2 ',input_filename_2)
 		pre_meta_ad = sc.read_h5ad(input_filename_2)
@@ -2682,9 +1781,9 @@ class _Base2_pre1(BaseEstimator):
 		print('pre_meta_ad ',pre_meta_ad.shape)
 		print(pre_meta_ad)
 		print('metacell_num ',metacell_num)
-		data_timepoint = select_config['data_timepoint']
-		# filename_save_annot2 = 'diffusion'
-		filename_save_annot2 = 'PCA'
+		
+		# data_timepoint = select_config['data_timepoint']
+		filename_save_annot2 = filename_save_annot
 		for i1 in range(1):
 			input_filename_1 = input_filename_list1[i1]
 			feature_type = feature_type_vec[i1]
@@ -2698,10 +1797,16 @@ class _Base2_pre1(BaseEstimator):
 			# except Exception as error:
 			# 	print('error! ',error)
 
-			pre_ad = pre_ad_ori[pre_ad_ori.obs['DataTimepoint']=='%s#Multiome'%(data_timepoint),:]
+			# pre_ad = pre_ad_ori[pre_ad_ori.obs['DataTimepoint']=='%s#Multiome'%(data_timepoint),:]
+			if data_timepoint!='':
+				pre_ad = pre_ad_ori[pre_ad_ori.obs['DataTimepoint']=='%s#Multiome'%(data_timepoint),:]
+			else:
+				pre_ad = pre_ad_ori
 			print(pre_ad)
-			feature_id = 'X_FDL_Harmony'
-			save_filename = '%s/test_%s_%s_metacell_plot.%s.1.png'%(output_file_path,feature_type,data_timepoint,filename_save_annot2)
+			# feature_id = 'X_FDL_Harmony'
+			save_filename = output_filename
+			if output_filename=='':
+				save_filename = '%s/test_%s_%s_metacell_plot.%s.1.png'%(output_file_path,feature_type,filename_prefix_save,filename_save_annot2)
 			sample_query_id = metacell_id
 			self.plot_1(pre_ad,plot_basis=feature_id,sample_query_id=sample_query_id,save_as=save_filename,show=True)
 
@@ -2714,9 +1819,7 @@ class _Base2_pre1(BaseEstimator):
 		# rna_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_rna.h5ad')
 		# atac_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_atac.h5ad')
 		data_file_type = select_config['data_file_type']
-		# data_file_type = 'pbmc'
-		# data_file_type = 'CD34_bonemarrow'
-		# data_file_type = 'CD34_bonemarrow_no_bcells'
+
 		select_config = self.test_file_path_query_2(select_config=select_config)
 		flag_SEACell_estimate=0
 		if 'flag_SEACell_estimate' in select_config:
@@ -2724,6 +1827,7 @@ class _Base2_pre1(BaseEstimator):
 		flag_summarize=0
 		if ('flag_summarize' in select_config):
 			flag_summarize = select_config['flag_summarize']
+		
 		# print_mode=1
 		data_path = select_config['data_path']
 		run_id = select_config['run_id']
@@ -2746,11 +1850,7 @@ class _Base2_pre1(BaseEstimator):
 		for i1 in range(2):
 			# type_id_feature = i1
 			feature_type_query = feature_type_vec[i1]
-			# input_filename_1 = '%s/test_%s_meta_ad.pbmc.0.3.h5ad'%(data_path_save,feature_type,filename_save_annot,type_id_feature)
-			# input_filename_1 = 'test_atac_df_obs.CD34_bonemarrow.1.txt'
-			
 			## combine the annotation from single cell data and the annotation from the metacell data
-			# input_filename_1 = '%s/test_%s_df_obs.%s.1.txt'%(input_file_path,feature_type_query,data_file_type)
 			input_filename_1 = '%s/test_%s_ad.%s.df_obs.txt'%(input_file_path,feature_type_query,data_file_type)
 			# the annotation from metacell data
 			input_filename = '%s/test_%s_meta_ad.%s.h5ad'%(data_path_save,feature_type_query,filename_save_annot2)
@@ -2818,9 +1918,6 @@ class _Base2_pre1(BaseEstimator):
 				df1.loc[:,'ratio'] = df1['count']/df1['count_ori']
 
 				output_file_path_1 = output_file_path
-				# output_filename = '%s/test_rna_celltype_query.%s.1.txt'%(output_file_path,data_file_type)
-				# output_filename = '%s/test_rna_meta_ad_celltype_query.%s.1.txt'%(output_file_path_1,filename_save_annot2)
-				# output_filename = '%s/test_%s_meta_ad_celltype_query.%s.1.txt'%(output_file_path_1,feature_type_1,filename_save_annot2)
 				output_filename = '%s/test_%s_meta_ad.%s.celltype_query.1.txt'%(output_file_path_1,feature_type_1,filename_save_annot2)
 				# df1.to_csv(output_filename,sep='\t')
 
@@ -2892,31 +1989,22 @@ class _Base2_pre1(BaseEstimator):
 				dict1.update({feature_type_query:df_value})
 				dict_query1.update({run_id_load:dict1})
 
-	# 	return dict_query1
+		return dict_query1
 
 	# metacell estimation
-	def test_metacell_compute_pre1_query2(self,save_mode=1,output_file_path='',flag_path_query=0,select_config={}):
+	def test_metacell_compute_pre1_query2(self,run_idvec=[1],save_mode=1,output_file_path='',flag_path_query=0,select_config={}):
 
-		input_file_path1 = self.save_path_1
-		# rna_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_rna.h5ad')
-		# atac_ad = sc.read_h5ad('/Users/sharmar1/Dropbox/multiome_jamboree/10x_pbmc/adata_atac.h5ad')
+		# input_file_path1 = self.save_path_1
+		# rna_ad = sc.read_h5ad('adata_rna.h5ad')
+		# atac_ad = sc.read_h5ad('adata_atac.h5ad')
+		
 		data_file_type = select_config['data_file_type']
 		if flag_path_query>0:
 			select_config = self.test_file_path_query_2(select_config=select_config)
+		
 		run_id_ori = select_config['run_id']
 		feature_type_1 = select_config['feature_type_1']
-		if feature_type_1=='rna':
-			run_idvec = [1,2,3,5,6,7,8,9,10]
-			run_idvec_2 = [101,111,103,113,105,115,107,117,109,119]
-			# run_idvec = [1]
-			if data_file_type=='CD34_bonemarrow':
-				run_idvec = run_idvec+[21,23]+run_idvec_2
-				# run_idvec = run_idvec+run_idvec_2
-			if data_file_type=='pbmc':
-				run_idvec = run_idvec+run_idvec_2
-				run_idvec_pre1 = [111,113,115,117,119]
-		else:
-			run_idvec = [11,12,15]
+		
 		query_num1 = len(run_idvec)
 		flag_id_query1 = 1
 		select_config.update({'flag_id_query1':flag_id_query1})
@@ -2929,8 +2017,7 @@ class _Base2_pre1(BaseEstimator):
 			for i1 in range(query_num1):
 			# for i1 in range(1):
 				run_id1 = run_idvec[i1]
-				select_config.update({'run_id':run_id1})
-				select_config.update({'run_id_load':run_id1})
+				select_config.update({'run_id':run_id1,'run_id_load':run_id1})
 				print('run_id1 ',run_id1)
 				dict_query1 = self.test_metacell_compute_pre1_query1(select_config=select_config)
 
@@ -2975,43 +2062,30 @@ class _Base2_pre1(BaseEstimator):
 																		flag_annot=flag_annot,
 																		select_config=select_config)
 
-	# 	return df_query1
+		return df_query1
 
 	## prepare peak accessibility and gene expression matrix
-	def test_gene_peak_query_correlation_gene_pre1_2_ori(self,gene_query_vec=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],filename_prefix_save='',output_filename='',save_file_path='',annot_mode=1,save_mode=1,select_config={}):
+	def test_gene_peak_query_correlation_gene_pre1_2_ori(self,gene_query_vec=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],normalize_type_vec=[0,1,2],filename_prefix_save='',output_filename='',save_file_path='',annot_mode=1,save_mode=1,select_config={}):
 
 		# file_path1 = self.save_path_1
-		input_file_path1 = self.save_path_1
-		# if save_file_path=='':
-		# 	save_file_path = '%s/data_pre2/peak_corr_2'%(self.save_path_1)
-		# if os.path.exists(save_file_path)==False:
-		# 	print('the file directory does not exist ', save_file_path)
-		# 	os.mkdir(save_file_path)
-
-		# select_config = self.test_file_path_query_1(select_config=select_config)	
-		# select_config = self.test_file_path_query_2(select_config=select_config)
+		# input_file_path1 = self.save_path_1
+		
 		data_file_type = select_config['data_file_type']
 		data_path = select_config['data_path']
 		run_id = select_config['run_id']
 		input_file_path = data_path
+		
 		data_path_save = '%s/run%d'%(input_file_path,run_id)
 		# input_file_path2 = '%s/peak_local'%(input_file_path)
 		input_file_path2 = '%s/peak_local'%(data_path_save)
-		# output_file_path = input_file_path2
-		# input_file_path = select_config['data_path']
-		# data_file_type = select_config['data_file_type']
-		# if data_file_type in ['pbmc']:
-		# 	filename_save_annot1 = 'pbmc.0.1'
-		# else:
-		# 	filename_save_annot1 = 'CD34_bonemarrow'
-		# input_filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot1)
-		# input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot1)
-
+		
 		filename_annot_vec = ['rna','atac']
 		type_id_feature = select_config['type_id_feature']
+
 		filename_save_annot1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
 		input_filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(data_path_save,filename_save_annot1)
 		input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(data_path_save,filename_save_annot1)
+		
 		output_file_path = data_path_save
 		flag_query_count=flag_count
 		# normalize_type=1
@@ -3022,16 +2096,17 @@ class _Base2_pre1(BaseEstimator):
 			# filename_annot_vec = ['rna','atac']
 			filename_annot_vec = file_type_vec
 			query_num1 = len(filename_annot_vec)
+
 			# index_name_vec = ['geneID','peakID']
 			index_name_vec = ['ENSEMBL','peakID']
 			normalize_type_annot = ['raw_count','log_normalize','normalize']
-			for normalize_type in [0,1,2]:
+
+			# for normalize_type in [0,1,2]:
 			# for normalize_type in [2]:
+			for normalize_type in normalize_type_vec:
 				for i1 in range(query_num1):
-				# for i1 in range(1):
 					input_filename = input_filename_list[i1]
 					feature_type_query = filename_annot_vec[i1]
-					# adata = sc.read_h5ad()
 					adata = sc.read_h5ad(input_filename)
 					print(input_filename)
 					print(adata)
@@ -3039,21 +2114,19 @@ class _Base2_pre1(BaseEstimator):
 					print(adata.raw)
 					print(adata.raw.X[0:10])
 					if normalize_type==0:
-						# df_corr_1 = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=adata.raw.X.toarray())
 						df_count = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=adata.raw.X.toarray())
 					elif normalize_type==1:
 						df_count = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=adata.X.toarray(),dtype=np.float32)
 					else:
-						# x = 1
 						# pre_meta_ad = adata.raw
 						# pre_meta_ad.X = csr_matrix(pre_meta_ad.X)
-						pre_meta_ad = sc.AnnData(adata.raw.X)
 						# raw_count = pre_meta_ad.X
-						raw_count = adata.raw.X
 						# raw_count = adata.layers['raw']
 						# raw_count = adata.raw.X.toarray()
 						# pre_meta_ad = sc.AnnData(raw_count)
 						# pre_meta_ad.X = csr_matrix(pre_meta_ad.X)
+						pre_meta_ad = sc.AnnData(adata.raw.X)
+						raw_count = adata.raw.X
 						pre_meta_ad.obs_names, pre_meta_ad.var_names = adata.raw.obs_names, adata.raw.var_names
 						# pre_meta_ad.obs['n_counts'] = pre_meta_ad.X.sum(axis=1)
 						print('pre_meta_ad, normalize_type ',pre_meta_ad,normalize_type)
@@ -3070,7 +2143,9 @@ class _Base2_pre1(BaseEstimator):
 						# if i1==0:
 						if feature_type_query=='rna':
 							# input_filename_annot = '%s/Homo_sapiens.GRCh38.108.1.txt'%(self.save_path_1)
-							input_filename_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path)
+							# input_filename_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path)
+							input_filename_annot = select_config['filename_gene_annot']
+
 							df_gene_annot_ori = pd.read_csv(input_filename_annot,index_col=False,sep='\t')
 							df_gene_annot_ori = df_gene_annot_ori.sort_values(by=['length'],ascending=False)
 							df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
@@ -3321,7 +2396,8 @@ class _Base2_pre1(BaseEstimator):
 			data_file_type = select_config['data_file_type']
 			# input_file_path = data_path_1
 			flag_query=1
-			if (data_file_type in ['mouse_endoderm','E8.75','E9.25']) or (self.species_id=='mm10'):
+			# if (data_file_type in ['mouse_endoderm','E8.75','E9.25']) or (self.species_id=='mm10'):
+			if (self.species_id=='mm10'):
 				if input_filename_gene_annot=='':
 					filename_prefix_1 = 'Mus_musculus.GRCm38.102'
 					# input_filename = 'test_Mus_musculus.GRCm38.102.annotations_mm38.gene_annot_pre1.1.txt'
@@ -3339,7 +2415,8 @@ class _Base2_pre1(BaseEstimator):
 				# print('df_gene_annot_expr ',df_gene_annot_expr.shape)
 				# self.df_gene_annot_ori = df_gene_annot_ori	# gene annotation
 				# self.df_gene_annot_expr = df_gene_annot_expr   # gene query with expression
-			elif self.species_id=='hg38':
+			
+			elif (self.species_id=='hg38'):
 				input_file_path = data_path_1
 				if input_filename_gene_annot=='':
 					# filename_prefix_1 = 'hg38'
@@ -3576,7 +2653,7 @@ class _Base2_pre1(BaseEstimator):
 		return df_gene_annot, df_gene_annot_expr, df_gene_annot_expr_2
 
 	## motif-peak estimate: load meta_exprs and peak_read
-	def test_motif_peak_estimate_control_load_pre1_ori(self,dict_feature=[],meta_exprs=[],peak_read=[],flag_scale=0,flag_format=False,save_mode=0,filename_prefix_save='',output_file_path='',verbose=0,select_config={}):
+	def test_motif_peak_estimate_control_load_pre1_ori_1(self,dict_feature=[],meta_exprs=[],peak_read=[],flag_scale=0,flag_format=False,save_mode=0,filename_prefix_save='',output_file_path='',verbose=0,select_config={}):
 
 		input_file_path1 = self.save_path_1
 		flag_load = 0
@@ -3584,51 +2661,10 @@ class _Base2_pre1(BaseEstimator):
 			flag_load = 1
 
 		if flag_load>0:
-			# data_file_type = 'CD34_bonemarrow'
-			# input_file_path = '%s/data_pre2/cd34_bonemarrow'%(input_file_path1)
 			data_file_type = select_config['data_file_type']
-			# input_file_path = select_config['data_path']
-			# filename_save_annot_1 = select_config['filename_save_annot_1']
-			# input_filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(input_file_path,data_file_type)
-			# input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(input_file_path,data_file_type)
-			# path_id1 = select_config['path_id1']
-			# if (data_file_type in ['mouse_endoderm','E8.75','E9.25']) and ('run_id_load' in select_config):
-			# 	data_timepoint = select_config['data_timepoint']
-			# 	input_file_path_2 = select_config['data_path_2']
-			# 	# print('input_file_path_2:%s'%(input_file_path_2))
-			# 	input_filename_1 = '%s/test_%s_meta_rna.normalize.log1.1.1.0.h5ad'%(input_file_path_2,filename_save_annot_1)
-			# 	input_filename_2 = '%s/test_%s_meta_atac.normalize.log1.1.1.0.h5ad'%(input_file_path_2,filename_save_annot_1)
-			# 	input_filename_3 = '%s/test_rna_meta_ad.%s.0.1.meta_scaled_exprs.2.txt'%(input_file_path_2,data_timepoint)
-			# 	run_id_load = select_config['run_id_load']
-			# 	if run_id_load<0:
-			# 		# input_filename_1 = '%s/test_E8.75#Multiome_meta_rna.normalize.log1.1.1.0.h5ad'%(input_file_path)
-			# 		# input_filename_2 = '%s/test_E8.75#Multiome_meta_atac.normalize.log1.1.1.0.h5ad'%(input_file_path)
-			# 		# input_filename_3 = '%s/test_E8.75#Multiome_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path)
-			# 		input_filename_3 = '%s/test_%s_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path_2,filename_save_annot_1)
-			# 	# else:
-			# 	# 	input_filename_3 = '%s/test_rna_meta_ad.%s.0.1.meta_scaled_exprs.2.txt'%(input_file_path_2,data_timepoint)
-			# else:
-			# 	input_filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot_1)
-			# 	input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot_1)
-			# 	input_filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path,filename_save_annot_1)
-
-			# input_filename_1 = '%s/test_rna_meta_ad.%s.1.h5ad'%(input_file_path,data_file_type)
-			# input_filename_2 = '%s/test_atac_meta_ad.%s.1.h5ad'%(input_file_path,data_file_type)
-			# input_filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path,data_file_type)
-
-			# if data_file_type_id1==1:
-			# 	if 'run_id_load' in select_config:
-			# 		input_filename_3 = '%s/test_rna_meta_ad.%s.0.1.meta_scaled_exprs.2.txt'%(input_file_path_2,data_timepoint)
-			# 	else:
-			# 		input_filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path,filename_save_annot_1)
-			# else:
-			# 	# input_filename_3 = '%s/test_E8.75#Multiome_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path)
-			# 	input_filename_3 = '%s/test_%s_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path,filename_save_annot_1)
-
-			input_filename_1, input_filename_2 = select_config['filename_rna'],select_config['filename_atac']
-			# input_filename_3 = select_config['filename_rna_exprs_1']
-			# rna_meta_ad = sc.read_h5ad(input_filename_1)
-			# atac_meta_ad = sc.read_h5ad(input_filename_2)
+			
+			# input_filename_1, input_filename_2 = select_config['filename_rna'],select_config['filename_atac']
+			input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
 			rna_meta_ad = sc.read(input_filename_1)
 			atac_meta_ad = sc.read(input_filename_2)
 			# flag_scale: -1, not query scaled exprs; {0,1}, query scaled exprs
@@ -3658,10 +2694,6 @@ class _Base2_pre1(BaseEstimator):
 					meta_scaled_exprs = dict_feature['rna_exprs']
 				else:
 					flag_scale = 1
-			# rna_meta_ad, atac_meta_ad, meta_scaled_exprs = list1[0:3]
-			# rna_meta_ad = dict_feature['rna']
-			# atac_meta_ad = dict_feature['atac']
-			# meta_scaled_exprs = dict_feature['rna_expr']
 
 		# flag_scale = 0
 		if filename_prefix_save=='':
@@ -3671,10 +2703,6 @@ class _Base2_pre1(BaseEstimator):
 
 		print('flag_scale: ',flag_scale)
 		if flag_scale>0:
-			# output_file_path = self.save_path_1
-			# filename_prefix = 'test_rna_meta_ad.%s.%d'%(data_file_type,type_id_1)
-			# filename_save_annot_1 = select_config['filename_save_annot_1']
-			# filename_prefix = 'test_rna_meta_ad.%s'%(filename_save_annot_1)
 			scale_type_id = 2
 			if 'scale_type_id' in select_config:
 				scale_type_id = select_config['scale_type_id']
@@ -3770,6 +2798,322 @@ class _Base2_pre1(BaseEstimator):
 			# 		print(input_filename_3)		
 
 		return peak_read, meta_scaled_exprs, meta_exprs_2
+
+	## query normalized peak read
+	def test_read_count_query_normalize(self,adata=[],feature_type_query='atac',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',float_format='%.5f',verbose=0,select_config={}):
+		
+		flag_read_normalize_1=1
+		if flag_read_normalize_1>0:
+			if len(adata)==0:
+				adata = self.atac_meta_ad
+
+			# atac_ad = self.atac_meta_ad
+			# rna_ad = self.rna_meta_ad
+			if ('normalize' in adata.layers):
+				read_count_1 = adata.layers['normalize']
+				print('read_count_1: ',read_count_1)
+				type_id_query = 0
+			
+			else:
+				type_id_query = 1 # the read count data need to be normalized
+				try:
+					# peak_read_1 = adata.layers['raw']
+					read_count_1 = adata.layers['raw']
+					# print('peak_read_1 ',peak_read_1.shape)
+					# print(peak_read_1)
+					# atac_ad_1 = sc.AnnData(peak_read_1)
+					# atac_ad_1.obs_names, atac_ad_1.var_names = atac_ad.obs_names, atac_ad.var_names
+					# atac_ad_1.X = csr_matrix(atac_ad_1.X)
+					# adata1 = sc.AnnData(read_count_1)
+					# adata1.obs_names, adata1.var_names = adata.obs_names, adata.var_names
+					# adata1.X = csr_matrix(adata1.X)
+				
+				except Exception as error:
+					print('error! ',error)
+					if adata.raw!=None:
+						# read_count_1 = adata.raw
+						adata1 = adata.raw
+						adata1.obs_names, adata1.var_names = adata.obs_names, adata.var_names
+						type_id_query = 3
+						# peak_read_1 = atac_ad.raw
+						# print('peak_read_1 ',peak_read_1.shape)
+						# print(peak_read_1)
+						# if verbose>0:
+						# 	print('read_count_1 ',read_count_1.shape)
+						# 	print(read_count_1)
+						# adata1 = sc.AnnData(read_count_1)
+						# adata1.obs_names, adata1.var_names = adata.obs_names, adata.var_names
+						# adata1.X = csr_matrix(adata1.X)
+					else:
+						# data_file_type = select_config['data_file_type']
+						# if (data_file_type in ['mouse_endoderm','E8.75']):
+						# 	# input_filename = '%s/test_E8.75#Multiome_meta_atac.normalize.1.0.h5ad'%(self.save_path_1)
+						# 	input_filename = '%s/test_E8.75#Multiome_meta_%s.normalize.1.0.h5ad'%(self.save_path_1,feature_type_query)
+						# 	# atac_ad_1 = sc.read(input_filename)
+						# 	# print('atac_ad_1 ',atac_ad_1.shape)
+						# 	# print(atac_ad_1)
+						# 	adata1 = sc.read(input_filename)
+						# 	type_id_query = 2
+						# 	if verbose>0:
+						# 		print('adata1 ',adata1.shape)
+						# 		print(adata1)
+						# else:
+						# 	print('please provide peak read file ')
+						# 	return
+
+						field_id = 'filename_%d_meta_ad'%(feature_type_query)
+						input_filename = select_config[field_id]
+						if os.path.exists(input_filename)==False:
+							print('please provide peak read file ')
+							return
+
+			if (type_id_query in [1,3]) or ((save_mode==2) and (type_id_query!=2)):
+				if type_id_query in [1]:
+					adata1 = sc.AnnData(read_count_1)
+					adata1.obs_names, adata1.var_names = adata.obs_names, adata.var_names
+					adata1.X = csr_matrix(adata1.X)
+					
+					# adata1.obs = adata.obs
+					if verbose>0:
+						print('read_count_1 ',read_count_1.shape)
+						print(read_count_1)
+				
+				if type_id_query in [1,3]:
+					# atac_ad_1 = sc.AnnData(peak_read_1)
+					# Normalize
+					# peak_read_mtx = peak_read_1.toarray()
+					# print(np.min(np.min(peak_read_mtx)),np.max(np.max(peak_read_mtx)))
+					# sc.pp.normalize_total(atac_ad_1, key_added='n_counts')
+					sc.pp.normalize_total(adata1, key_added='n_counts')
+
+			if save_mode>0:
+				filename_prefix_1 = '%s_meta_ad'%(feature_type_query)
+				filename_save_annot_1 = filename_save_annot
+				if filename_save_annot=='':
+					filename_save_annot_1 = select_config['filename_save_annot_pre1']
+
+				if save_mode==2:
+					# save anndata
+					# output_filename = '%s/test_atac_meta_ad.%s.normalize.h5ad'%(output_file_path,filename_save_annot_1)
+					output_filename = '%s/test_%s.%s.normalize.h5ad'%(output_file_path,filename_prefix_1,filename_save_annot_1)
+					# atac_ad_1.write(output_filename)
+					adata1.write(output_filename)
+
+				if type_id_query==0:
+					# read_count_normalize_1 = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=np.asarray(atac_ad_1.X.toarray()),dtype=np.float32)
+					read_count_normalize_1 = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=np.asarray(read_count_1),dtype=np.float32)
+				else:
+					read_count_normalize_1 = pd.DataFrame(index=adata1.obs_names,columns=adata1.var_names,data=np.asarray(adata1.X.toarray()),dtype=np.float32)
+
+				# print('peak_read_1 ',peak_read_1.shape, peak_read_1)
+				# print('peak_read_normalize_1 ',peak_read_normalize_1.shape, peak_read_normalize_1)
+				# print(np.min(np.min(peak_read_normalize_1)),np.max(np.max(peak_read_normalize_1)))
+				if verbose>0:
+					print('read_count_normalize_1 ',read_count_normalize_1.shape, read_count_normalize_1)
+
+				# prepare the input to chromVAR
+				read_count_normalize_1 = read_count_normalize_1.T # shape: (peak_num,sample_num)
+		
+				output_filename_1 = '%s/test_%s.%s.normalize.1.csv'%(output_file_path,filename_prefix_1,filename_save_annot_1)
+				read_count_normalize_1.to_csv(output_filename_1,sep=',',float_format=float_format)
+				t_value_1 = read_count_normalize_1.sum(axis=0)
+				
+				if verbose>0:
+					print('read_count_normalize_1 ',read_count_normalize_1.shape, read_count_normalize_1)
+					print('t_value_1 ',np.max(t_value_1),np.min(t_value_1),np.mean(t_value_1),np.median(t_value_1))
+
+			# return peak_read_normalize_1
+			return read_count_normalize_1
+
+	## query normalized and log-transformed RNA-seq data
+	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',save_format='tsv.gz'.float_format='%.5f',verbose=0,select_config={}):
+		
+		flag_read_normalize=1
+		if flag_read_normalize>0:
+			if filename_save_annot==''
+				filename_save_annot = select_config['filename_save_annot_pre1']
+			
+			feature_type_vec_1 = ['atac','rna']
+			if len(peak_read)==0:
+				peak_read = self.peak_read
+			if len(rna_exprs_unscaled)==0:
+				rna_exprs_unscaled = self.meta_exprs_2
+
+			list1 = [peak_read,rna_exprs_unscaled]
+			dict_query = dict(zip(feature_type_vec_1,list1))
+			for feature_type_query in feature_type_vec:
+				df_query_1 = dict_query[feature_type_query]
+				# output_filename = '%s/test_%s_meta_ad.%s.%s.tsv.gz'%(output_file_path,filename_annot1,filename_save_annot1,filename_annot2)
+				filename_prefix_1 = '%s_meta_ad' % (feature_type_query)
+				output_filename = '%s/test_%s.%s.log_normalize.%s'%(output_file_path,filename_prefix_1,filename_save_annot,save_format)
+				
+				df_query_1.to_csv(output_filename,sep='\t',float_format=float_format)
+				if verbose>0:
+					print('data: ',df_query_1.shape,feature_type_query)
+
+			return dict_query
+
+	## motif-peak estimate: load meta_exprs and peak_read
+	def test_motif_peak_estimate_control_load_pre1_ori_2(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,select_config={}):
+
+		input_file_path1 = self.save_path_1
+		data_file_type = select_config['data_file_type']
+		# input_file_path = select_config['data_path']
+		# filename_save_annot_1 = select_config['filename_save_annot_1']
+		
+		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
+		print('input_filename_1 ',input_filename_1)
+		print('input_filename_2 ',input_filename_2)
+		rna_meta_ad = sc.read_h5ad(input_filename_1)
+		atac_meta_ad = sc.read_h5ad(input_filename_2)
+
+		print(input_filename_1,input_filename_2)
+		print('rna_meta_ad\n', rna_meta_ad)
+		print('atac_meta_ad\n', atac_meta_ad)
+
+		if flag_format==True:
+			rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
+			rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
+
+		self.rna_meta_ad = rna_meta_ad
+		sample_id = rna_meta_ad.obs_names
+		assert list(sample_id)==list(atac_meta_ad.obs_names)
+
+		atac_meta_ad = atac_meta_ad[sample_id,:]
+		self.atac_meta_ad = atac_meta_ad
+		
+		column_1 = 'filename_rna_exprs_1'
+		meta_scaled_exprs = []
+		if column_1 in select_config:
+			input_filename_3 = select_config['filename_rna_exprs_1']
+			meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
+
+			if flag_format==True:
+				meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
+		
+			meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+			# self.meta_scaled_exprs = meta_scaled_exprs
+			# print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
+
+			vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
+			print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
+		else:
+			if flag_scale>0:
+				scale_type_id = 2
+				if 'scale_type_id' in select_config:
+					scale_type_id = select_config['scale_type_id']
+				else:
+					select_config.update({'scale_type_id':scale_type_id})
+
+				# save_mode_1 = 2
+				save_mode_1 = 1
+				pre_meta_ad_rna, pre_meta_ad_scaled_rna = self.test_metacell_compute_unit_2(pre_meta_ad=rna_meta_ad,
+																							save_mode=save_mode_1,output_file_path=output_file_path,
+																							output_filename='',
+																							filename_prefix=filename_prefix,
+																							select_config=select_config)
+				# self.atac_meta_ad = atac_meta_ad
+				# self.rna_meta_ad = rna_meta_ad
+				# self.select_config = select_config
+
+				# output_filename = input_filename
+				# save_mode1 = 1
+				save_mode1 = save_mode
+				rna_meta_ad_scaled = pre_meta_ad_scaled_rna
+				meta_scaled_exprs = pd.DataFrame(index=rna_meta_ad_scaled.obs_names,columns=rna_meta_ad_scaled.var_names,
+													data=rna_meta_ad_scaled.X.toarray(),dtype=np.float32)
+				self.meta_scaled_exprs = meta_scaled_exprs
+				# self.rna_meta_ad = pre_meta_ad_rna  # add the layer ['scale_%d'%(scale_type_id)]
+
+		# if len(meta_scaled_exprs)>0:
+		# 	sample_id1 = meta_scaled_exprs.index
+		# 	assert list(sample_id)==list(sample_id1)
+
+		peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
+		meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
+		self.peak_read = peak_read
+		self.meta_exprs_2 = meta_exprs_2
+		self.meta_scaled_exprs = meta_scaled_exprs
+
+		vec1 = utility_1.test_stat_1(np.mean(atac_meta_ad.X.toarray(),axis=0))
+		vec3 = utility_1.test_stat_1(np.mean(meta_exprs_2,axis=0))
+
+		print('atac_meta_ad mean values ',atac_meta_ad.shape,vec1)
+		# print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
+		print('rna_meta_ad mean values ',meta_exprs_2.shape,vec3)
+
+		return peak_read, meta_scaled_exprs, meta_exprs_2
+
+	## load data and query configuration parameters
+	# load motif data; load ATAC-seq and RNA-seq data of the metacells
+	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		# flag_config_1=1
+		# if flag_config_1>0:
+		# 	root_path_1 = select_config['root_path_1']
+		# 	root_path_2 = select_config['root_path_2']
+		# 	data_file_type_query = select_config['data_file_type']
+		
+		# flag_motif_data_load_1 = 1
+		# load motif data
+		method_type_feature_link = select_config['method_type_feature_link']
+		if flag_motif_data_load_1>0:
+			print('load motif data')
+			if len(method_type_vec_query)==0:
+				# method_type_vec_query = ['insilico_0.1']+[method_type_feature_link]
+				# method_type_vec_query = list(pd.Index(method_type_vec_query).unique())
+				method_type_vec_query = [method_type_feature_link]
+
+			# load motif data
+			# test_estimator = _Base2_2()
+			input_dir = select_config['input_dir']
+			file_path_1 = input_dir
+			test_estimator1 = _Base2_2(file_path=file_path_1)
+			# dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+			#																select_config=select_config)
+
+			method_type_feature_link = select_config['method_type_feature_link']
+			method_type_vec_query = [method_type_feature_link]
+			dict_motif_data, select_config = test_estimator1.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+																						select_config=select_config)
+
+			self.dict_motif_data = dict_motif_data
+
+		# flag_load_1 = 1
+		# load the ATAC-seq data and RNA-seq data of the metacells
+		if flag_load_1>0:
+			print('load peak accessiblity and gene expression data')
+			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
+			start = time.time()
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori_2(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,select_config=select_config)
+
+			# sample_id = meta_scaled_exprs.index
+			# peak_read = peak_read.loc[sample_id,:]
+			sample_id = peak_read.index
+			meta_exprs_2 = meta_exprs_2.loc[sample_id,:]
+			if len(meta_scaled_exprs)>0:
+				meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+				rna_exprs = meta_scaled_exprs	# scaled RNA-seq data
+			else:
+				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
+			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
+
+			print('ATAC-seq count matrx: ',peak_read.shape)
+			print(peak_read[0:2])
+
+			print('RNA-seq count matrx: ',rna_exprs.shape)
+			print(rna_exprs[0:2])
+
+			self.peak_read = peak_read
+			self.meta_scaled_exprs = meta_scaled_exprs
+			self.meta_exprs_2 = meta_exprs_2
+			self.rna_exprs = rna_exprs
+			# peak_loc_ori = peak_read.columns
+
+			stop = time.time()
+			print('load peak accessiblity and gene expression data used %.2fs'%(stop-start))
+			
+		return select_config
 
 	## bedGraph file for each metacell or cell type
 	def test_query_bedGraph_1(self,input_filename_annot='',peak_read=[],column_id='',output_file_path='',type_id_1=1,select_config={}):
