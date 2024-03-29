@@ -150,8 +150,8 @@ class _Base2_correlation2_1(_Base2_pre1):
 			load_mode_2 = 1
 			rna_meta_ad = self.rna_meta_ad
 
-		data_file_type_vec_query = ['E7.5','E7.75','E8.0','E8.5','E8.75']
-		data_file_type_vec_1 = ['mouse_endoderm','E8.75','E9.25','system1']+data_file_type_vec_query
+		data_file_type_vec_query = [data_file_type]
+		data_file_type_vec_1 = data_file_type_vec_query
 		if data_file_type in data_file_type_vec_1:
 			motif_query_ori = motif_data.columns
 			# gene_name_query_ori = meta_scaled_exprs.columns
@@ -178,7 +178,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 		if flag_copy>0:
 			self.motif_data_ori_2 = motif_data_ori.copy() # keep the peak-motif matrix in which the TFs may not be expressed
 			self.motif_data_score_ori_2 = motif_data_score_ori.copy()
-		# print('motif_data_expr ',motif_data_expr.shape)
 		
 		print('motif_data_ori, motif_data_score_ori ', motif_data_ori.shape, motif_data_score_ori.shape)
 		print(motif_data_ori[0:5])
@@ -188,7 +187,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 		motif_data = motif_data_ori.loc[:,motif_query_name_expr]
 		motif_data_score = motif_data_score_ori.loc[:,motif_query_name_expr]
 			
-		# print('motif_data, motif_data_score ', motif_data.shape, motif_data_score.shape, motif_data_score[0:5])
 		print('motif_data, motif_data_score ', motif_data.shape, motif_data_score.shape)
 		print(motif_data[0:5])
 		print(motif_data_score[0:5])
@@ -208,8 +206,7 @@ class _Base2_correlation2_1(_Base2_pre1):
 		self.motif_data = motif_data
 		self.motif_data_score = motif_data_score
 		data_file_type = select_config['data_file_type']
-		# filename_save_annot_1 = self.select_config['filename_save_annot_pre1']
-		# filename_save_annot_1 = select_config['filename_save_annot_pre1']
+
 		if flag_motif_data_load>0:
 			print('load motif data and motif score data')
 			
@@ -295,13 +292,7 @@ class _Base2_correlation2_1(_Base2_pre1):
 			print('motif_data, motif_data_score, motif_query_name_expr ', motif_data.shape, motif_data_score.shape, len(motif_query_name_expr))
 			print(motif_query_name_expr[0:10])
 
-			# if data_file_type_id1==0:
-			# if self.species_id in ['hg38']:
 			if flag_chromvar_score>0:
-				# input_filename = '%s/test_motif_query_name.1.txt'%(input_file_path)
-				# input_filename = '%s/test_motif_query_name.1.copy1.txt'%(input_file_path)
-				# input_filename = '%s/test_motif_query_name.1.copy2.txt'%(input_file_path)
-				# input_filename = '%s/translationTable.csv'%(input_file_path)
 				if flag_motif_data_load>0:
 					df1 = df_annot
 				else:
@@ -317,9 +308,7 @@ class _Base2_correlation2_1(_Base2_pre1):
 					column_id1 = select_config['column_motif']
 				df1.index = np.asarray(df1[column_id1])
 				filename_save_annot_1 = select_config['filename_save_annot_pre1']
-				# input_filename = '%s/test_peak_read.CD34_bonemarrow.normalize.1_chromvar_scores.1.csv'%(input_file_path)
-				# input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,data_file_type)
-				# input_filename = '%s/test_peak_read.%s.normalize.1_chromvar_scores.1.csv'%(input_file_path,filename_save_annot_1)
+
 				if 'filename_chromvar_score' in select_config:
 					input_filename = select_config['filename_chromvar_score']
 				else:
@@ -387,17 +376,11 @@ class _Base2_correlation2_1(_Base2_pre1):
 				except Exception as error:
 					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X))
 			
-				# print('motif_data ', motif_data)
-				# print('motif_data_score ', motif_data_score)
-				# peak_loc = self.atac_meta_ad.var_names
-				# motif_data = motif_data.loc[peak_loc,:]
-				# motif_data_score = motif_data_score.loc[peak_loc,:]
 				print(input_filename1,input_filename2)
 				print('motif_data ', motif_data.shape)
 				print('motif_data_score ', motif_data_score.shape)
 				print(motif_data[0:2])
 				print(motif_data_score[0:2])
-				# motif_data_query, motif_data_score_query = motif_data, motif_data_score
 				flag_pre1 = 1
 				# flag_load1 = 0
 
@@ -461,18 +444,23 @@ class _Base2_correlation2_1(_Base2_pre1):
 			flag_annot1 = 1
 			input_filename1, input_filename2 = input_filename_list2
 			
-			b = input_filename1.find('.csv')
-			if b>=0:
-				symbol_1 = ','
-			else:
-				symbol_1 = '\t'
 			if os.path.exists(input_filename1)==False:
 				print('the file does not exist: %s'%(input_filename1))
 			else:
+				b = input_filename1.find('.csv')
+				if b>=0:
+					symbol_1 = ','
+				else:
+					symbol_1 = '\t'
 				motif_data = pd.read_csv(input_filename1,index_col=0,sep=symbol_1)
 			if os.path.exists(input_filename2)==False:
 				print('the file does not exist: %s'%(input_filename2))
 			else:
+				b = input_filename2.find('.csv')
+				if b>=0:
+					symbol_1 = ','
+				else:
+					symbol_1 = '\t'
 				motif_data_score = pd.read_csv(input_filename2,index_col=0,sep=symbol_1)
 
 			if len(motif_data)==0:
@@ -563,15 +551,9 @@ class _Base2_correlation2_1(_Base2_pre1):
 			df1 = df_annot
 			# motif_name_query =  np.asarray(df1['motif_name'])
 			df1.index = np.asarray(df1['motif_id'])
-			# motif_name_query =  np.asarray(df1['tf'])
 			motif_name_ori = motif_data.columns
 			motif_name_query = np.asarray(df1.loc[motif_name_ori,'tf'])
-			# motif_data.columns = motif_name_query # TODO: should update
-			# motif_data_score.columns = motif_name_query # TODO: should update
-
-			# motif_data_score_ad = sc.AnnData(motif_data_score,dtype=motif_data_score.values.dtype)
-			# motif_data_score_ad.X = csr_matrix(motif_data_score_ad.X)
-
+			
 			motif_data_score_ad = test_save_anndata(motif_data_score,dtype=motif_data_score.values.dtype)
 			motif_data_ad = test_save_anndata(motif_data,dtype=motif_data.values.dtype)
 
@@ -591,10 +573,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 				# select_config.update({'motif_filename1':motif_filename1,'motif_filename2':motif_filename2})
 				output_filename1, output_filename2 = motif_filename1, motif_filename2
 			
-			# if os.path.exists(output_filename1)==False:
-			# 	motif_data_ad.write(output_filename1)
-			# else:
-			# 	print('the file exists ', output_filename1)
 			if os.path.exists(output_filename1)==True:
 				print('the file exists ', output_filename1)
 			motif_data_ad.write(output_filename1)
@@ -623,10 +601,7 @@ class _Base2_correlation2_1(_Base2_pre1):
 				motif_data_score[id1] = df2[id1]
 				peak_loc_ori = motif_data_score.index
 				peak_id2 = peak_loc_ori[motif_data_score_ori.loc[:,id2].min(axis=1)<0]
-				# print(motif_data_score_ori.loc[peak_id2,id2])
-				# print(motif_data_score.loc[peak_id2,id2])
-				# print(t_value_min)
-				# print(t_value_min[id2])
+
 		try:
 			peak_loc = self.atac_meta_ad.var_names
 			motif_data = motif_data.loc[peak_loc,:]
@@ -800,7 +775,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 	def test_translationTable_pre1(self,motif_data=[],motif_data_score=[],df_gene_annot=[],meta_scaled_exprs=[],
 										save_mode=1,save_file_path='',output_filename='',flag_cisbp_motif=1,flag_expr=1,select_config={}):
 
-		# motif_name_1 = motif_data.columns
 		motif_name_ori = motif_data.columns
 		if flag_cisbp_motif>0:
 			# motif name correction for the name conversion in R
@@ -834,31 +808,11 @@ class _Base2_correlation2_1(_Base2_pre1):
 			for i1 in range(query_num1):
 				motif_name_1 = pd.Index(motif_name_1).str.replace(str_vec_1[i1],str_vec_2[i1])
 
-			# motif_data.columns = motif_name_1
-			# if len(motif_data_score)>0:
-			# 	motif_data_score.columns = motif_name_1
-
 			df1 = pd.DataFrame.from_dict(data={'motif_id':motif_name_ori,'tf':motif_name_1},orient='columns')
 
-			# meta_scaled_exprs = self.meta_scaled_exprs
-			# motif_query_ori = motif_data.columns.str.upper()
-			# gene_name_query_ori = meta_scaled_exprs.columns.str.upper()
-			# # print('motif_query_ori ',motif_query_ori)
-			# # print('gene_name_query_ori ',gene_name_query_ori)
-			# motif_query_name_expr = motif_query_ori.intersection(gene_name_query_ori,sort=False)
-			# # self.motif_data_expr = self.motif_data.loc[:,motif_query_name_expr]
-			# # print('motif_data, motif_data_score, motif_data_expr ', motif_data.shape, motif_data_score.shape, self.motif_data_expr.shape)
-			# print('motif_data, motif_data_score, motif_query_name_expr ',motif_data.shape,motif_data_score.shape,len(motif_query_name_expr))
-
-			# df1['gene_id'] = df1['motif_id'].str.split('_').str.get(0) # ENSEMBL id
 			df1['gene_id'] = np.asarray(gene_id)
 			df1.index = np.asarray(df1['gene_id'].str.upper())
 			# df1 = df1.rename(columns={'gene_id':'ENSEMBL'})
-			
-			# if len(df_gene_annot)==0:
-			# 	df_gene_annot = self.df_gene_annot_ori
-			# if len(df_gene_annot_expr)==0:
-			# 	df_gene_annot_expr = self.df_gene_annot_expr
 
 			gene_id_1 = df_gene_annot['gene_id'].str.upper()
 			df_gene_annot.index = np.asarray(gene_id_1)
@@ -872,12 +826,9 @@ class _Base2_correlation2_1(_Base2_pre1):
 			df1['tf'] = tf_name
 			# tf_name = df1['tf']
 			if flag_expr>0:
-				# meta_scaled_exprs = self.meta_scaled_exprs
-				# gene_name_expr = meta_scaled_exprs.columns
 				df_var = self.rna_meta_ad.var
 				if flag_expr>1:
 					# motif name query by gene id
-					# df_var = self.rna_meta_ad.var
 					if 'gene_id' in df_var.columns:
 						gene_id_2 = df_var['gene_id'].str.upper()
 						motif_query_id_expr = df1.index.intersection(gene_id_2,sort=False)
@@ -892,7 +843,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 
 				if flag_expr==1:
 					# motif name query by gene name
-					# df_var = self.rna_meta_ad.var
 					gene_name_expr = self.rna_meta_ad.var_names
 					output_file_path = select_config['data_path_save_local']
 					# output_filename_2 = '%s/test_rna_meta_ad.df_var.query1.txt'%(output_file_path)
@@ -908,13 +858,9 @@ class _Base2_correlation2_1(_Base2_pre1):
 					
 				df1.index = np.asarray(df1['gene_id'])
 				self.motif_query_name_expr = motif_query_name_expr
-				# print('motif_query_id_expr ',len(motif_query_id_expr))
-				# df1.loc[motif_query_id_expr,'tf_expr'] = 1
+
 				print('motif_query_name_expr ',len(motif_query_name_expr))
 
-			# df.loc[:,'tf_ori'] = df.loc[:,'tf'].copy()
-			# df1.loc[motif_query_id_expr,'tf'] = df_gene_annot_expr.loc[motif_query_id_expr,'gene_name']
-			# df1.index = np.asarray(df1['tf'])
 			if save_mode>0:
 				if output_filename=='':
 					output_filename = '%s/translationTable.csv'%(save_file_path)
@@ -975,12 +921,8 @@ class _Base2_correlation2_1(_Base2_pre1):
 				motif_idvec = motif_data1.index
 				column_annot = 'tf_name'
 				if type_id==0:
-					# column_id1 = 'tf'
-					# motif_data1.loc[:,'tf'] = df_annot1.loc[motif_idvec,'tf']
-					# motif_data1.loc[:,'tf'] = df_annot1.loc[motif_idvec,column_query]
 					motif_data1.loc[:,column_annot] = df_annot1.loc[motif_idvec,column_query]
 				else:
-					# motif_data1.loc[:,'tf'] = np.asarray(motif_data1.index)
 					motif_data1.loc[:,column_annot] = np.asarray(motif_data1.index)
 
 				# motif_data1 = motif_data1.groupby('tf').max()
@@ -998,172 +940,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 			self.motif_data_score = dict_file_query['motif_data_score']
 
 			return dict_file_query
-
-	## TF motif cluster based on TF binding motif similarity
-	# motif clustering by motif similarity
-	def test_motif_similarity_group_1(self,motif_query_vec=[],method_type_id1=2):
-
-		method_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering']
-		method_type_id = method_type_vec[method_type_id1]
-
-		file_path_1 = '%s/tomtom_motif/test_motif_cluster1'%(self.path_1)
-		# cluster_filename1 = '%s/test_motif_compare_cisbp.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.txt'%(file_path_1)
-		# cluster_filename2 = '%s/test_motif_compare_cisbp.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.%s.txt'%(file_path_1,method_type_id)
-		# similarity_filename = '%s/tomtom_motif/test_motif_compare_cisbp.0.5.0.5.2.txt'%(self.path_1)
-
-		if 'motif_type_id' in self.config:
-			motif_type_id = self.config['motif_type_id']
-		else:
-			motif_type_id = 'chromvar'
-		# cluster_filename1 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.txt'%(file_path_1,motif_type_id)
-		# cluster_filename2 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.%s.txt'%(file_path_1,motif_type_id,method_type_id)
-		
-		# the motif clusters of each TF using different methods
-		cluster_filename1 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.correction.txt'%(file_path_1,motif_type_id)
-		# the TF motif clusters using the method AgglomerativeClustering
-		cluster_filename2 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.%s.correction.txt'%(file_path_1,motif_type_id,method_type_id)
-	
-		# similarity_filename = '%s/tomtom_motif/test_motif_compare_%s.0.5.0.5.2.txt'%(self.path_1,motif_type_id)
-		similarity_filename = '%s/tomtom_motif/test_motif_compare_%s.1.0.5.2.txt'%(self.path_1,motif_type_id)
-		
-		# motif_num = len(motif_query)
-		motif_cluster_data1 = pd.read_csv(cluster_filename1,index_col=0,sep='\t')
-		motif_cluster_data2 = pd.read_csv(cluster_filename2,index_col=0,sep='\t')
-
-		# if motif_type_id=='chromvar':
-		# 	motif_query_id = self.test_motif_name_rewrite(motif_cluster_data1.index)
-		# 	motif_cluster_data1.index=motif_query_id
-
-		motif_query_ori = motif_cluster_data1.index
-
-		# find 'Nkx2-1'
-		assert ('Nkx2-1' in motif_query_ori)
-		b1 = np.where(motif_query_ori=='Nkx2-1')[0]
-		print(motif_query_ori[b1])
-
-		# return
-
-		motif_cluster_data1_sub1 = motif_cluster_data1.loc[:,[method_type_id]]
-		motif_cluster = np.unique(motif_cluster_data1_sub1.loc[:,method_type_id])
-		motif_cluster_num = len(motif_cluster)
-		print('motif cluster ',method_type_id,motif_cluster_num,np.min(motif_cluster),np.max(motif_cluster))
-
-		motif_cluster_1 = motif_cluster_data2.index
-		motif_cluster_num1 = len(motif_cluster_1)
-		assert motif_cluster_num1==motif_cluster_num
-
-		motif_cluster_dict = dict()
-		cnt_vec1 = []
-		for t_motif_cluster_id in motif_cluster_1:
-			t_motif_vec = motif_cluster_data2.loc[t_motif_cluster_id,'motif_name'].split(',')
-			motif_cluster_dict[t_motif_cluster_id] = t_motif_vec
-			# print(t_motif_cluster_id,len(t_motif_vec))
-			cnt_vec1.append(len(t_motif_vec))
-
-		self.motif_cluster_dict = motif_cluster_dict
-		motif_cluster_data1_sub1.columns = ['cluster_id']
-		self.motif_cluster_data = motif_cluster_data1_sub1
-		print('motif similarity ',method_type_id,motif_cluster_data1_sub1.shape)
-		print(np.max(cnt_vec1),np.min(cnt_vec1),np.median(cnt_vec1),np.mean(cnt_vec1))
-
-		return motif_cluster_data1_sub1, motif_cluster_dict
-
-	# initiate motif neighbor dict by binding motif similarity
-	def test_motif_neighbor_dict(self,pre_data_dict={}):
-
-		motif_neighbor_dict = dict()
-		motif_data = self.motif_data
-		motif_query_ori = list(motif_data.columns)
-
-		method_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering']
-		method_type_id1 = 2
-		method_type_id = method_type_vec[method_type_id1]
-
-		file_path_1 = '%s/tomtom_motif/test_motif_cluster1'%(self.path_1)
-		# cluster_filename1 = '%s/test_motif_compare_cisbp.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.txt'%(file_path_1)
-		# cluster_filename2 = '%s/test_motif_compare_cisbp.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.%s.txt'%(file_path_1,method_type_id)
-		# similarity_filename = '%s/tomtom_motif/test_motif_compare_cisbp.0.5.0.5.2.txt'%(self.path_1)
-
-		if 'motif_type_id' in self.config:
-			motif_type_id = self.config['motif_type_id']
-		else:
-			motif_type_id = 'chromvar'
-
-		cluster_filename1 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.txt'%(file_path_1,motif_type_id)
-		cluster_filename2 = '%s/test_motif_compare_%s.1.0.5.2.Evalue.cluster.2.symmetry_0.connectivity_0.20_1.%s.txt'%(file_path_1,motif_type_id,method_type_id)
-		# similarity_filename = '%s/tomtom_motif/test_motif_compare_%s.0.5.0.5.2.txt'%(self.path_1,motif_type_id)
-		similarity_filename = '%s/tomtom_motif/test_motif_compare_%s.1.0.5.2.txt'%(self.path_1,motif_type_id)
-
-		data1 = pd.read_csv(similarity_filename,index_col=0,sep='\t')
-		# data2 = pd.read_csv(cluster_filename,index_col=0,sep='\t')
-
-		# motif_name, motif_name_ori, motif_name_compare = data1['motif_name'], data1['motif_name_ori'], data1['motif_name_compare']
-		motif_name, motif_name_compare = data1['motif_name'], data1['motif_name_compare'] 
-		motif_evalue_compare, motif_qvalue_compare = data1['motif_evalue_compare'], data1['motif_qvalue_compare']
-		motif_query_1 = np.unique(motif_name)
-		motif_query_subset2 = np.setdiff1d(motif_query_ori,motif_query_1)
-
-		print('motif_query_ori ',len(motif_query_ori))
-		print('motif_query_1 ',len(motif_name),len(motif_query_1))
-		print('motif_query_subset2 ',len(motif_query_subset2),motif_query_subset2)
-		
-		for t_motif_query in motif_query_ori:
-			if t_motif_query in motif_query_1:
-				t_motif_name_neighbor = data1.loc[t_motif_query,'motif_name_compare'].split(',')
-				t_motif_neighbor_evalue_1 = data1.loc[t_motif_query,'motif_evalue_compare'].split(',')
-				t_motif_neighbor_evalue = [float(t_value1) for t_value1 in t_motif_neighbor_evalue_1]
-				t_motif_neighbor_qvalue_1 = data1.loc[t_motif_query,'motif_qvalue_compare'].split(',')
-				t_motif_neighbor_qvalue = [float(t_value1) for t_value1 in t_motif_neighbor_qvalue_1]
-				t_data1 = pd.DataFrame(index=t_motif_name_neighbor,columns=['motif_name_neighbor','motif_neighbor_evalue','motif_neighbor_qvalue'])
-				t_data1['motif_neighbor'] = t_motif_name_neighbor
-				t_data1['motif_similarity_evalue'] = t_motif_neighbor_evalue
-				t_data1['motif_similarity_qvalue'] = t_motif_neighbor_qvalue
-				# print('motif neighbor by motif similarity ',t_motif_query,t_data1.shape)
-			else:
-				t_data1 = []
-			motif_neighbor_dict[t_motif_query] = t_data1
-
-		self.motif_neighbor_dict = motif_neighbor_dict
-
-		return motif_neighbor_dict
-
-	## TF motif cluster based on TF binding motif similarity
-	def test_motif_peak_estimate_motif_group_pre1(self,motif_query_vec=[],method_type_id1=2):
-
-		## motif_cluster_data1_sub1: the group assignment of each motif
-		## motif_cluster_dict: the motifs in each cluster
-		motif_cluster_data1_sub1, motif_cluster_dict = self.test_motif_similarity_group_1(motif_query_vec=motif_query_vec,method_type_id1=method_type_id1)
-
-		df_motif_group = motif_cluster_data1_sub1
-		column_id = 'group'
-		df_motif_group.columns = [column_id]
-		# self.df_motif_group = df_motif_group
-
-		motif_query_id_ori = df_motif_group.index
-		motif_sub1 = motif_query_id_ori.intersection(motif_query_vec,sort=False)
-		motif_sub2 = motif_query_id_ori.difference(motif_query_vec,sort=False)
-		motif_sub3 = motif_query_vec.difference(motif_query_id_ori,sort=False)
-		motif_num1, motif_num2, motif_num3 = len(motif_sub1), len(motif_sub2), len(motif_sub3)
-		print('motif_sub1, motif_sub2, motif_sub3 ', motif_num1, motif_num2, motif_num3)
-
-		if len(motif_query_vec)>0:
-			df_motif_group_query = pd.DataFrame(index=motif_query_vec,columns=df_motif_group.columns,data=-1)
-			df_motif_group_query.loc[motif_sub1,column_id] = df_motif_group.loc[motif_sub1,column_id]
-			group_id = df_motif_group[column_id]
-			cluster_id1, cluster_id2 = np.min(group_id), np.max(group_id)
-			
-			if motif_num3>0:
-				df_motif_group_query.loc[motif_sub3,column_id] = np.arange(cluster_id2+1,cluster_id2+motif_num2+1)
-				df_motif_group_query['overlap'] = 0
-				df_motif_group_query.loc[motif_sub1,'overlap'] = 1
-
-			if motif_num2>0:
-				df_motif_group['overlap'] = 0
-				df_motif_group.loc[motif_sub1,'overlap'] = 1
-		else:
-			df_motif_group_query = df_motif_group.copy()
-
-		return df_motif_group, df_motif_group_query
 
 	## load background peak loci
 	def test_gene_peak_query_bg_load(self,input_filename_peak='',input_filename_bg='',peak_bg_num=100,verbose=0,select_config={}):
@@ -1281,8 +1057,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 														type_id_1=type_id_est1+1)
 					vec1.append(vec1_bg)
 
-			# dict1 = pd.Series(vec1, index=peak_bg_idvec)
-			# sample_id = self.atac_meta_ad.obs_names
 			sample_id = peak_read.index
 			df1 = self.test_deviation_correction_1(deviation1,vec1,sample_id,motif_query)
 
@@ -1370,9 +1144,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 		if flag_query1>0:
 			print('test_chromvar_estimate_pre1 ')
 			start = time.time()
-			# peak_bg_num = 100
-			# peak_bg_num = 0
-			# output_filename = '%s/test_score_deviation_motif_query.1.txt'%(output_file_path1)
 			output_filename = ''
 			peak_loc_query = df_gene_peak_query['peak_id'].unique()
 			peak_loc_num = len(peak_loc_query)
@@ -1424,15 +1195,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 			# expected_mtx1 = pd.DataFrame(data=expected_cnt1,index=atac_read.obs_names,columns=atac_read.var_names)
 			expected_mtx1 = pd.DataFrame(index=sample_id,columns=peak_loc_query_ori,data=expected_cnt1)
 			
-			# atac_read_bg = sc.AnnData(expected_mtx1)
-			# atac_read_bg.X = csr_matrix(atac_read_bg.X)
-			# atac_read_expected = expected_mtx1
-			# atac_read_mtx = pd.DataFrame(data=mtx1,index=atac_read.obs_names,columns=atac_read.var_names)
-			# atac_read_mtx = pd.DataFrame(data=mtx1,index=sample_id,columns=peak_loc_query)
-
-			# atac_read_expected = atac_read_expected.loc[:,peak_loc_query]
-			# peak_loc_query_1 = peak_loc_query[0:1000]
-
 			atac_read_expected = expected_mtx1
 			peak_loc_query_1 = peak_loc_query
 			df1,df_score_deviation_ori,df_score_ori,df_score_expected = self.test_chromvar_estimate_pre1(peak_loc=peak_loc_query_1,peak_sel_local=peak_sel_local,
@@ -1475,18 +1237,13 @@ class _Base2_correlation2_1(_Base2_pre1):
 			query_num1 = len(list1)
 			for i1 in range(query_num1):
 				filename_annot2 = filename_annot_vec_2[i1]
-				# output_filename = '%s/%s.%s.pre1.txt'%(output_file_path,filename_prefix,filename_annot2)
-				# output_filename = '%s/%s.%s.pre1.%s.txt'%(output_file_path,filename_prefix,filename_annot2,filename_annot_2)
-				# output_filename = '%s/%s.%s.pre1.%s.combine.txt'%(output_file_path,filename_prefix,filename_annot2,filename_annot_2)
-				# output_filename = '%s/%s.%s.pre1.%s.combine.1.txt'%(output_file_path,filename_prefix,filename_annot2,filename_annot_2)					
+				
 				df_query1 = list1[i1]
 				if len(df_query1)>0:
 					if filename_annot2 in ['score_deviation','score_compare']:
-						# output_filename = '%s/%s.%s.pre1.%s.combine.peak_bg%d.2.txt'%(output_file_path,filename_prefix,filename_annot2,filename_annot_2,peak_bg_num)
 						output_filename = '%s/%s.%s.peak_bg%d.1.txt'%(output_file_path,filename_prefix,filename_annot2,peak_bg_num)
 						df_query1.to_csv(output_filename,sep='\t',float_format='%.6f')
 					else:
-						# output_filename = '%s/%s.%s.pre1.%s.combine.2.txt'%(output_file_path,filename_prefix,filename_annot2,filename_annot_2)
 						output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix,filename_annot2)
 						df_query1.to_csv(output_filename,sep='\t')
 			
@@ -1506,13 +1263,6 @@ class _Base2_correlation2_1(_Base2_pre1):
 				motif_data = self.motif_data
 			
 			# type_id1=1
-			# if len(peak_query_vec)==0:
-			# 	peak_query_vec = motif_data.index
-			# 	# peak_query_vec_2 = []
-			# 	type_id1=0
-			# else:
-			# 	peak_loc_ori = motif_data.index
-			# 	# peak_query_vec_2 = pd.Index(peak_loc_ori).difference(peak_query_vec,sort=False)
 			if default_mode==1:
 				## use the original motif_data
 				if len(peak_query_vec)==0:
@@ -1568,12 +1318,9 @@ class _Base2_correlation2_1(_Base2_pre1):
 					for i2 in range(motif_query_num2):
 						motif_id1 = motif_query_vec_2[i2]
 						df_pre2 = df_query.loc[[motif_id1],:]
-						# df_pre2 = df_query2.loc[df_query2['motif_id']==motif_id1,:]
 						peak_id2 = df_pre2['peak_id'].unique()
 						peak_num2 = len(peak_id2)
-						# gene_query_idvec_2 = df_pre2['gene_id'].unique()
-						# gene_query_num2 = len(gene_query_idvec_2)
-						# df_motif_annot1.loc[motif_id1,['peak_num_2','gene_num_2']] = [peak_num2,gene_query_num2]
+
 						t_value_1 = (i1*2-1)
 						peak_sel_local.loc[peak_id2,motif_id1] = t_value_1
 						if i2%100==0:

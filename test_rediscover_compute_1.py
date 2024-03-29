@@ -710,14 +710,24 @@ class _Base2_2(_Base2_1):
 			if os.path.exists(input_filename1)==False:
 				print('the file does not exist: %s'%(input_filename1))
 			else:
-				motif_data = pd.read_csv(input_filename1,index_col=0)
+				b = input_filename1.find('.csv')
+				if b>=0:
+					symbol_1 = ','
+				else:
+					symbol_1 = '\t'
+				motif_data = pd.read_csv(input_filename1,index_col=0,sep=symbol_1)
 				print('motif_data ',motif_data.shape)
 				print(motif_data[0:2])
 			
 			if os.path.exists(input_filename2)==False:
 				print('the file does not exist: %s'%(input_filename2))
 			else:
-				motif_data_score = pd.read_csv(input_filename2,index_col=0)
+				b = input_filename2.find('.csv')
+				if b>=0:
+					symbol_1 = ','
+				else:
+					symbol_1 = '\t'
+				motif_data_score = pd.read_csv(input_filename2,index_col=0,sep=symbol_1)
 				print('motif_data_score ',motif_data_score.shape)
 				print(motif_data_score[0:2])
 
@@ -3857,8 +3867,21 @@ class _Base2_2(_Base2_1):
 				feature_type_vec_pre1 = ['motif','peak']
 				column_vec_pre1 =['motif_id','peak_id']
 
-				feature_type_query_vec_2 = np.asarray(list(dict_feature.keys()))
+				type_query = 0
+				column_1 = 'type_combine_query'
+				if column_1 in select_config:
+					type_query = select_config[column_1]
+				if type_query==0:
+					# select_config_1 = self.select_config
+					# feature_type_combine = select_config_1['feature_type_combine']
+					feature_type_vec_2 = select_config['feature_type_vec_2']
+					feature_type_1, feature_type_2 = feature_type_vec_2[0:2]
+					feature_type_combine = 'latent_%s_%s_combine'%(feature_type_1,feature_type_2)
+					feature_type_query_vec_2 = [feature_type_combine]
+				else:
+					feature_type_query_vec_2 = np.asarray(list(dict_feature.keys()))
 				feature_type_num1 = len(feature_type_query_vec_2)
+				
 				# file_path_query1 = select_config['file_path_query_1']
 				file_path_query1 = select_config['file_path_save_link']
 				
