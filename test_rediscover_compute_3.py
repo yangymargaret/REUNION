@@ -4552,10 +4552,12 @@ class _Base2_2_pre1(_Base2_2_1):
 							peak_loc_1 = df_1.index
 							peak_num_1 = len(peak_loc_1)
 							print('peak_loc_1: ',peak_num_1)
+							print(input_filename)
 						else:
 							print('the file does not exist: %s'%(input_filename))
 
 						column_vec = df_1.columns
+						column_vec_query = select_config['column_vec_link']
 						column_vec_query_1 = pd.Index(column_vec_query).intersection(column_vec,sort=False)
 						if not (column_pred1 in column_vec_query_1):
 							print('the estimation not included')
