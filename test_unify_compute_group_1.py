@@ -2416,7 +2416,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,celltype,file_path,path_id,
 		flag_distance,data_file_type,data_file_type_id,input_dir,filename_atac,filename_rna,filename_atac_meta,filename_rna_meta,
-		motif_data,motif_data_score,file_mapping,file_peak,file_bg,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
+		filename_motif_data,filename_motif_data_score,file_mapping,file_peak,file_bg,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
 		method_type_feature_link,output_dir,output_filename,
 		beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,
 		flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,
@@ -2551,9 +2551,12 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 
 	select_config = {'data_file_type':data_file_type,
 						'root_path_1':root_path_1,'root_path_2':root_path_2,'path_id':path_id,
+						'input_dir':input_dir,
 						'run_id':run_id,'run_id_load':run_id_load,
 						'data_file_type_query':data_file_type_query,
 						'data_file_type_id':data_file_type_id,
+						'filename_rna':filename_rna,
+						'filename_atac':filenaem_atac,
 						'filename_atac_meta':filename_atac_meta,
 						'filename_rna_meta':filename_rna_meta,
 						'filename_motif_data':filename_motif_data,
@@ -2561,6 +2564,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'filename_translation':file_mapping,
 						'input_filename_peak':file_peak,
 						'input_filename_bg':file_bg,
+						'output_dir':output_dir,
 						'output_filename_link':output_filename,
 						'metacell_num':metacell_num,
 						'beta_mode':beta_mode,
@@ -2654,8 +2658,8 @@ def parse_args():
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
 	parser.add_option("--motif_data_score",default="-1",help="file path of the motif scores by motif scanning")
 	parser.add_option("--file_mapping",default="-1",help="file path of the mapping between TF motif identifier and the TF name")
-	parser.add_option("--file_peak",default="-1",help="file containing the peak regions")
-	parser.add_option("--file_bg",default="-1",help="file containing the estimate background peaks")
+	parser.add_option("--file_peak",default="-1",help="file containing the ATAC-seq peak loci")
+	parser.add_option("--file_bg",default="-1",help="file containing the estimated background peak loci")
 	parser.add_option("--metacell",default="500",help="metacell number")
 	parser.add_option("--peak_distance",default="500",help="peak distance threshold")
 	parser.add_option("--highly_variable",default="1",help="highly variable gene")
