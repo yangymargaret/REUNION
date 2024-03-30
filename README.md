@@ -56,6 +56,10 @@ The options:
 
 - --file_mapping: the filename of the mapping between TF motif identifier and the TF name, default = -1.
 
+- --file_peak: the file containing the ATAC-seq peak loci, default = -1.
+ 
+- --file_bg: the file containing the estimated background peak loci which match the ATAC-seq peak loci by GC content and average chromatin accessibility across the metacells, default = -1.
+  
 - --output_dir: the directory where the output of Unify will be saved, including the predicted peak-TF-gene associations and other associated files, default = 'output_file'
 
   By default Unify creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it. Unify will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF-gene associations. 
