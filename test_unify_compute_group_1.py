@@ -297,6 +297,7 @@ class _Base2_pre_2(_Base2_correlation5):
 		filename_translation = select_config['filename_translation']
 
 		data_file_query_motif = data_file_type_query
+		data_path_save_motif = select_config['data_path_save_motif']
 		# motif_filename1 = '%s/test_motif_data.%s.1.%s.h5ad'%(data_path_save_motif,data_file_query_motif,filename_annot2)
 		# motif_filename2 = '%s/test_motif_data_score.%s.1.%s.h5ad'%(data_path_save_motif,data_file_query_motif,filename_annot2)
 		motif_filename1 = '%s/test_motif_data.%s.h5ad'%(data_path_save_motif,data_file_query_motif) # motif data saved in anndata
