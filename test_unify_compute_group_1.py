@@ -268,6 +268,7 @@ class _Base2_pre_2(_Base2_correlation5):
 		interval_local_peak_corr = -1
 
 		data_file_type = select_config['data_file_type']
+		data_file_type_query = data_file_type
 		input_file_path = select_config['data_path_save_motif']
 		# input_filename_peak = '%s/test_peak_GC.1.1.bed'%(input_file_path)
 		# input_filename_bg = '%s/test_peak_read.%s.normalize.bg.%d.1.csv'%(input_file_path,data_file_type,peak_bg_num_ori)
