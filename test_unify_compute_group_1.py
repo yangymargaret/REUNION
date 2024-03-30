@@ -708,6 +708,15 @@ class _Base2_pre_2(_Base2_correlation5):
 		t_vec_1 = self.test_metacell_compute_basic_1(flag_attribute_query=flag_attribute_query,flag_read_normalize_1=flag_read_normalize_1,flag_read_normalize_2=flag_read_normalize_2,save_mode=1,save_file_path=save_file_path,verbose=verbose,select_config=select_config)
 		dict_attribute_query, peak_read_normalize, rna_exprs_normalize = t_vec_1[0:3]
 
+		feature_type_query = 'rna'
+		dict_attribute_query1 = dict_attribute_query[feature_type_query]
+		df_rna_obs_metacell = dict_attribute_query1['obs']
+		df_rna_var = dict_attribute_query1['var']
+		print('df_rna_obs_meta ',df_rna_obs_metacell.shape)
+		print(df_rna_obs_metacell[0:2])
+		print('df_rna_var ',df_rna_var.shape)
+		print(df_rna_var[0:2])
+
 		flag_gene_annot_query_pre1 = 0
 		# flag_gene_annot_query_pre1=select_config['flag_gene_annot_query_pre1']
 		# flag_gene_annot_query=config_flag['flag_gene_annot_query']
@@ -2176,22 +2185,10 @@ class _Base2_pre_2(_Base2_correlation5):
 																																	verbose=verbose,select_config=select_config)
 			return df_feature_link_query, df_feature_link, dict_query_1
 				
-	## query obs and var dataframe and AnnData
+	# query obs and var dataframe and AnnData
 	def test_feature_group_query_pre1_5_2_pre1_2(self,data=[],group_query_id='group5',peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],save_mode=0,output_file_path='',output_filename='',verbose=0,select_config={}):
 
-		# filename_annot_vec = ['group2', 'group1', 'group3', 'group5']
-		# group_query_id = 'group5'
-		# feature_type_vec = ['peak','gene','TF']
-		# feature_type_vec_pre1 = ['gene','peak','TF']
-		# feature_type_vec = ['gene','peak']
-		# feature_type_query1, feature_type_query2 = feature_type_vec[0:2]
-		# run_id = select_config['run_id']
-		# type_id_feature = select_config['type_id_feature']
-		# self.test_config_query_1(run_id=1,type_id_feature=0,select_config=select_config)
-
 		input_file_path1 = self.save_path_1
-		# input_file_path = '%s/data_pre2/system1'%(input_file_path1)
-		# select_config.update({'data_path_1':input_file_path})
 		data_path = select_config['data_path']
 		data_path_1 = select_config['data_path_1']
 		print('data_path: ',data_path)
@@ -2206,62 +2203,19 @@ class _Base2_pre_2(_Base2_correlation5):
 			os.makedirs(data_path_save,exist_ok=True)
 		
 		select_config.update({'data_path_save':data_path_save})
-		# input_filename_1 = select_config['input_filename_rna']
-		# input_filename_2 = select_config['input_filename_atac']
-		# input_filename_3 = '%s/vbak1/sample_metadata.txt'%(data_path_1)
-		# input_filename_list1 = [input_filename_1,input_filename_2,input_filename_3]
-
+		
 		feature_type_vec_pre1 = ['rna','atac']
 		feature_type_num1 = len(feature_type_vec_pre1)
 		feature_type_vec = ['peak','gene']
-		column_vec_query = ['sample','stage','genotype','pass_rnaQC']
-		column_id1, column_id2 = 'sample', 'stage'
-		column_vec_1 = [column_id1,column_id2]
 
 		output_file_path = data_path_save
 		list_query1 = []
-		# column_query1 = ['celltype','celltype.mapped']
-		# column_id_1, column_id_2 = column_query1
-		# flag_thresh1=1
-		# type_id2 = flag_thresh1
-
-		# flag_load_query1 = 1
-		# flag_load_query1 = 0
-		# dict_feature_query1 = dict()
-		# list1 = []
-
-		# data_timepoint_vec = ['E7.5','E7.75','E8.0','E8.5','E8.75']
-		# data_timepoint_num = len(data_timepoint_vec)
-		# replicate_num = 2
-		# replicate_num_vec = np.asarray([replicate_num]*data_timepoint_num)
-		# b1 = np.where(np.asarray(data_timepoint_vec)=='E7.75')[0]
-		# replicate_num_vec[b1] = 1
 
 		flag_query1=1
 		dict_feature_query = dict()
-		# group_query_vec_pre1 = ['E7.5','E7.75','E8.0','E8.5','E8.75','group_combine']
-		# group_query_vec_pre1 = ['E7.5','E7.75','E8.0','E8.5','E8.75','group_combine']
-		group_query_vec_pre1 = ['CD34_bonemarrow','E8.75']
 		if flag_query1>0:
-			# group_query_vec = ['E7.5']
-			# data_file_query_vec_1 = ['E7.5_rep1','E7.5_rep2']
-			# group_query_vec = ['CD34_bonemarrow']
-			# data_file_query_vec_1 = ['CD34_bonemarrow']
-
-			# group_query_vec = ['E8.0']
-			# data_file_query_vec_1 = ['E8.0_rep1','E8.0_rep2']
-
 			flag_query2_pre1 = 1
 			if flag_query2_pre1>0:
-				# select_config = self.test_config_query_1(select_config=select_config)
-				# self.select_config = select_config
-				# beta_mode = 1
-				# beta_mode = 0
-				# data_file_type = 'system1'
-				# start = time.time()
-				# add the field in select_config: 'motif_data', 'motif_data_score'
-				# group_query1 = group_query_vec[0]
-				# data_file_type_query_1 = group_query1
 				data_file_type = select_config['data_file_type']
 				print('data_file_type: ',data_file_type)
 
@@ -2290,76 +2244,10 @@ class _Base2_pre_2(_Base2_correlation5):
 				# input_file_path = '%s/seacell_1'%(data_path_save)
 				input_file_path = data_path_save_1
 
-				if data_file_type_query_1 in ['CD34_bonemarrow']:
-					# filename_1 = '%s/test_rna_meta_ad.E7.5.log_normalize.2.h5ad'%(input_file_path)
-					# filename_2 = '%s/test_atac_meta_ad.E7.5.log_normalize.2.h5ad'%(input_file_path)
-					filename_1 = '%s/test_rna_meta_ad.%s.log_normalize.2.h5ad'%(input_file_path,data_file_type_query_1)
-					filename_2 = '%s/test_atac_meta_ad.%s.log_normalize.2.h5ad'%(input_file_path,data_file_type_query_1)
-					filename_3_ori = '%s/test_query.%s.meta_scaled_exprs.2.txt'%(input_file_path,data_file_type_query_1)
-					filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path,data_file_type_query_1)
-
-					# rna_meta_ad = sc.read_h5ad(filename_1)
-					# atac_meta_ad = sc.read_h5ad(filename_2)
-					# print('rna_meta_ad, atac_meta_ad: ',rna_meta_ad.shape,atac_meta_ad.shape)
-					# print(rna_meta_ad)
-					# print(atac_meta_ad)
-					# self.rna_meta_ad = rna_meta_ad
-					# self.atac_meta_ad = atac_meta_ad
-
-					if os.path.exists(filename_3)==False:
-						print('the file does not exist: %s'%(filename_3))
-						rna_meta_ad = sc.read_h5ad(filename_1)
-						print('rna_meta_ad', rna_meta_ad.shape)
-						print(rna_meta_ad)
-
-						scale_type = 3
-						sample_id1 = rna_meta_ad.obs_names
-						df = pd.DataFrame(index=sample_id1,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray())
-						print('df ',df.shape,df)
-						print('scale_type ', scale_type)
-						feature_query = df.columns
-						# df = df.loc[:,feature_query[0:200]]
-						from utility_1 import test_motif_peak_estimate_score_scale_1
-						if scale_type!=-1:
-							score_query = df
-							df_feature = test_motif_peak_estimate_score_scale_1(score=score_query,
-																				feature_query_vec=[],
-																				select_config=select_config,
-																				scale_type_id=scale_type)
-							df_feature.to_csv(filename_3,sep='\t',float_format='%.6f')
-					else:
-						df_feature = pd.read_csv(filename_3,index_col=0,sep='\t')
-
-					filename_5 = filename_3_ori
-					if os.path.exists(filename_5)==True:
-						df_feature_2 = pd.read_csv(filename_5,index_col=0,sep='\t')
-						sample_id1 = df_feature.index
-						sample_id2 = df_feature_2.index
-						print('df_feature, df_feature_2: ',df_feature.shape,df_feature_2.shape)
-						assert list(sample_id1)==list(sample_id2)
-						column_vec_1, column_vec_2 = df_feature.columns, df_feature_2.columns
-						# assert list(np.sort(column_vec_1))==list(np.sort(column_vec_2))
-						assert list(column_vec_1)==list(column_vec_2)
-						difference = df_feature - df_feature_2.loc[:,column_vec_1]
-						t_value_1 = difference.abs().sum().sum()
-						# t_value_1 = difference.abs().mean().mean()
-						print('t_value_1: ',t_value_1)
-
-					select_config.update({'filename_rna':filename_1,'filename_atac':filename_2,
-											'filename_rna_exprs_1':filename_3})
-
-					print('filename_rna, filename_atac: ',filename_1,filename_2,filename_3)
-
-				# data_file_type = 'system1'
 				filename_prefix_save_pre2 = 'test_query.%s'%(data_file_type_query_1)
 				filename_prefix_save = 'test_query_gene_peak.%s'%(data_file_type_query_1)
 				filename_annot_save_motif = 'test_query_motif'
 				output_file_path = data_path_save_1
-				# select_config.update({'data_file_type':data_file_type,
-				# 						'data_file_type_1':data_file_type_query_1,
-				# 						'filename_prefix_default':filename_prefix_save,
-				# 						'filename_annot_save_motif':filename_annot_save_motif,
-				# 						'data_path_save_local':data_path_save_1})
 
 				select_config.update({'filename_prefix_default_pre2':filename_prefix_save_pre2,
 										'filename_prefix_default':filename_prefix_save,
@@ -2451,19 +2339,8 @@ class _Base2_pre_2(_Base2_correlation5):
 				input_filename_1 = '%s/%s_motif.1.2.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot2,file_format)
 				input_filename_2 = '%s/%s_motif_scores.1.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot2,file_format)
 				
-				# if (os.path.exists(input_filename_1)==True) and (os.path.exists(input_filename_2)==True):
-				# 	data_file_query_motif = data_file_query_motif2
-				# 	select_config.update({'data_file_query_motif':data_file_query_motif})
-				# else:
-				# 	filename_prefix = 'test_atac_meta_ad.%s.normalize.1'%(data_file_query_motif)
-				# 	input_filename_1 = '%s/%s_motif.1.2.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot2,file_format)
-				# 	input_filename_2 = '%s/%s_motif_scores.1.%s.%s'%(data_path_save_motif,filename_prefix,filename_annot2,file_format)
-				
 				print('data_file_query_motif: %s'%(data_file_query_motif))
 				
-				# input_filename_3 = '%s/test_peak_GC.%s.1.bed'%(input_file_path_2,data_file_type_query_1)
-				# filename_chromvar_score = '%s/test_atac_meta_ad.E7.75.normalize.1_chromvar_scores.1.thresh2.csv'%(input_file_path_2)
-				# filename_chromvar_score = '%s/test_atac_meta_ad.%s.normalize.1_chromvar_scores.1.%s.csv'%(input_file_path_2,data_file_type_query_1,filename_annot2)
 				filename_prefix_2 = 'test_atac_meta_ad.%s.normalize.1'%(data_file_type_query_1)
 				filename_chromvar_score = '%s/%s_chromvar_scores.1.%s.csv'%(data_path_save_motif,filename_prefix_2,filename_annot2)
 
@@ -2530,10 +2407,15 @@ class _Base2_pre_2(_Base2_correlation5):
 				
 		return dict_feature_query
 
-
 def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,celltype,file_path,path_id,
-		flag_distance,data_file_type,data_file_type_query,data_file_type_id,gene_num_query,beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,
-		flag_motif_data_load,motif_data_thresh,motif_data_type,flag_correlation_query_1,flag_correlation_query,flag_correlation_1,flag_computation,flag_combine_empirical_1,flag_combine_empirical,flag_query_thresh2,overwrite_thresh2,flag_merge_1,flag_correlation_2,flag_correlation_query1,
+		flag_distance,data_file_type,data_file_type_id,input_dir,filename_atac,filename_rna,filename_atac_meta,filename_rna_meta,
+		motif_data,motif_data_score,file_mapping,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
+		method_type_feature_link,output_dir,output_filename,
+		beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,
+		flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,
+		flag_motif_data_load,motif_data_thresh,motif_data_type,
+		flag_correlation_query_1,flag_correlation_query,flag_correlation_1,flag_computation,flag_combine_empirical_1,flag_combine_empirical,
+		flag_query_thresh2,overwrite_thresh2,flag_merge_1,flag_correlation_2,flag_correlation_query1,
 		flag_peak_tf_corr,flag_gene_tf_corr,flag_gene_expr_corr,flag_compute_1,flag_score_pre1,flag_group_query,
 		flag_feature_query1,flag_feature_query2,flag_feature_query3,
 		flag_basic_query,flag_basic_query_2,type_query_compare,flag_basic_filter_1,flag_basic_filter_combine_1,flag_basic_filter_2,Lasso_alpha,peak_distance_thresh1,peak_distance_thresh2,flag_pred_1,flag_pred_2,flag_group_1,flag_combine_1,flag_combine_2,flag_cond_query_1):
@@ -2550,24 +2432,43 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	type_id_feature = 0
 	# metacell_num = 500
 	path_id = int(path_id)
-	if path_id==1:
-		file_path = '../data2'
-		root_path_1 = file_path
-		root_path_2 = '%s/data_pre2'%(root_path_1)
-	elif path_id==2:
-		file_path = '/data/peer/yangy4/data1'
-		root_path_1 = file_path
-		root_path_2 = '%s/data_pre2'%(root_path_1)
-	else:
-		file_path = '/data/peer/yangy4/data1'
-		root_path_1 = file_path
-		root_path_2 = '%s/data_pre2/data1_1'%(root_path_1)
+	# if path_id==1:
+	# 	file_path = '../data2'
+	# 	root_path_1 = file_path
+	# 	root_path_2 = '%s/data_pre2'%(root_path_1)
+	# elif path_id==2:
+	# 	file_path = '/data/peer/yangy4/data1'
+	# 	root_path_1 = file_path
+	# 	root_path_2 = '%s/data_pre2'%(root_path_1)
+	# else:
+	# 	file_path = '/data/peer/yangy4/data1'
+	# 	root_path_1 = file_path
+	# 	root_path_2 = '%s/data_pre2/data1_1'%(root_path_1)
+
+	input_dir = str(input_dir)
+	root_path_1 = input_dir
+	root_path_2 = input_dir
 
 	# root_path_1 = file_path
 	# root_path_2 = '%s/data_pre2'%(root_path_1)
 	# query_id1, query_id2 = -1, -1
 	data_file_type_query = str(data_file_type_query)
 	data_file_type_id= int(data_file_type_id)
+
+	metacell_num = int(metacell_num)
+	peak_distance_thresh = int(peak_distance_thresh)
+	highly_variable = int(highly_variable)
+
+	filename_atac = str(filename_atac)
+	filename_rna = str(filename_rna)
+	filename_atac_meta = str(filename_atac_meta)
+	filename_rna_meta = str(filename_rna_meta)
+	filename_motif_data = str(filename_motif_data)
+	filename_motif_data_score = str(filename_motif_data_score)
+	file_mapping = str(file_mapping)
+	output_dir = str(output_dir)
+	output_filename = str(output_filename)
+
 	gene_num_query = int(gene_num_query)
 	query_id1, query_id2 = int(query_id1), int(query_id2)
 	fold_id = int(fold_id)
@@ -2640,12 +2541,20 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	flag_feature_query1 = int(flag_feature_query1)
 	flag_feature_query2 = int(flag_feature_query2)
 	flag_feature_query3 = int(flag_feature_query3)
+	# flag_normalize_2 = 1
+	flag_normalize_2 = 0
 
 	select_config = {'data_file_type':data_file_type,'data_timepoint':data_timepoint,
 						'root_path_1':root_path_1,'root_path_2':root_path_2,'path_id':path_id,
 						'run_id':run_id,'run_id_load':run_id_load,
 						'data_file_type_query':data_file_type_query,
 						'data_file_type_id':data_file_type_id,
+						'filename_atac_meta':filename_atac_meta,
+						'filename_rna_meta':filename_rna_meta,
+						'filename_motif_data':filename_motif_data,
+						'filename_motif_data_score':filename_motif_data_score,
+						'filename_translation':file_mapping,
+						'output_filename_link':output_filename,
 						'metacell_num':metacell_num,
 						'beta_mode':beta_mode,
 						'gene_num_query':gene_num_query,
@@ -2693,14 +2602,10 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 							'flag_gene_expr_corr':flag_gene_expr_corr,
 							'flag_compute_1':flag_compute_1,
 							'flag_score_pre1':flag_score_pre1,
+							'flag_normalize_2':flag_normalize_2,
 							'flag_group_query':flag_group_query,
 							'flag_cond_query_1':flag_cond_query_1})
 
-	# flag_normalize_2 = 1
-	flag_normalize_2 = 0
-	select_config.update({'flag_normalize_2':flag_normalize_2})
-
-	# test_estimator = _Base2_pre5_1(file_path=file_path,run_id=run_id,type_id_feature=type_id_feature,select_config=select_config)
 	test_estimator = _Base2_pre_2(file_path=file_path,run_id=run_id,type_id_feature=type_id_feature,select_config=select_config)
 
 	flag_correlation_query_1=0
@@ -2708,23 +2613,8 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 		flag_correlation_query_1 = select_config['flag_correlation_query_1']
 	
 	if flag_correlation_query_1>0:
-		group_query_vec = ['E7.5','E7.75','E8.0','E8.5','E8.75']
-		group_query_num1 = len(group_query_vec)
-		# for i1 in range(1,group_query_num1):
-		# for i1 in range(2,3):
-		# 	data_file_type_query_1 = group_query_vec[i1]
-		# 	select_config.update({'data_file_type_query':data_file_type_query_1})
-		# flag_query1 = 1
-		# flag_query1 = 0
-		flag_query1 = (flag_correlation_query_1==1)
-		# if flag_query1>0:
-		# 	test_estimator.test_feature_group_query_pre1_5_2_pre1(data=[],group_query_id='group5',peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
-		# 															save_mode=save_mode,output_file_path='',output_filename='',verbose=verbose,select_config=select_config)
-
-		# flag_query2 = 0
-		# flag_query2 = (flag_correlation_query_1==2)
-		flag_query2 = 1
-		if flag_query2>0:
+		flag_query = 1
+		if flag_query >0:
 			peak_distance_thresh = 2000
 			verbose = 1
 			test_estimator.test_gene_peak_query_correlation_gene_pre1(dict_feature=[],gene_query_vec=[],peak_distance_thresh=peak_distance_thresh,df_peak_query=[],
@@ -2747,10 +2637,23 @@ def parse_args():
 	parser.add_option("--file_path",default="1",help="file_path")
 	parser.add_option("--path1",default="1",help="file_path_id")
 	parser.add_option("--flag_distance",default="1",help="flag_distance")
-	parser.add_option("--data_file_type",default="system1",help="data_file_type")
-	parser.add_option("--data_file",default="E7.5",help="data_file_type_query")
+	parser.add_option("--data_file_type",default="pbmc",help="the cell type or dataset annotation")
 	parser.add_option("--data_file_query",default="0",help="data_file_type_id")
+	parser.add_option("--input_dir",default=".",help="the directory where the ATAC-seq and RNA-seq data of the metacells are saved")
+	parser.add_option("--atac_data",default="-1",help="file path of ATAC-seq data of the single cells")
+	parser.add_option("--rna_data",default="-1",help="file path of RNA-seq data of the single cells")
+	parser.add_option("--atac_meta",default="-1",help="file path of ATAC-seq data of the single cells")
+	parser.add_option("--rna_meta",default="-1",help="file path of RNA-seq data of the metacells")
+	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
+	parser.add_option("--motif_data_score",default="-1",help="file path of the motif scores by motif scanning")
+	parser.add_option("--file_mapping",default="-1",help="file path of the mapping between TF motif identifier and the TF name")
+	parser.add_option("--metacell",default="500",help="metacell number")
+	parser.add_option("--peak_distance",default="500",help="peak distance threshold")
+	parser.add_option("--highly_variable",default="1",help="highly variable gene")
 	parser.add_option("--gene_num_query",default="3000",help="selected highly variable gene number")
+	parser.add_option("--method_type_feature_link",default="Unify",help='method_type_feature_link')
+	parser.add_option("--output_dir",default='output_file',help='the directory to save the output')
+	parser.add_option("--output_filename",default='-1',help='filename of the predicted regulatory assocations')
 	parser.add_option("--beta_mode",default="0",help="beta_mode")
 	parser.add_option("--recompute",default="0",help="recompute")
 	parser.add_option("--interval_save",default="-1",help="interval_save")
@@ -2795,8 +2698,8 @@ def parse_args():
 	parser.add_option("--flag_basic_filter_combine_1",default="0",help="flag_basic_filter_combine_1")
 	parser.add_option("--flag_basic_filter_2",default="0",help="flag_basic_filter_2")
 	parser.add_option("--Lasso_alpha",default="0.001",help="Lasso_alpha")
-	parser.add_option("--peak_distance_thresh1",default="500",help="peak_distance_thresh1")
-	parser.add_option("--peak_distance_thresh2",default="500",help="peak_distance_thresh2")
+	parser.add_option("--peak_distance_thresh1",default="500",help="peak distance threshold 1")
+	parser.add_option("--peak_distance_thresh2",default="500",help="peak distance threshold 2")
 	parser.add_option("--flag_pred_1",default="0",help="flag_pred_1")
 	parser.add_option("--flag_pred_2",default="0",help="flag_pred_2")
 	parser.add_option("--flag_group_1",default="0",help="flag_group_1")
@@ -2820,9 +2723,22 @@ if __name__ == '__main__':
 		opts.path1,
 		opts.flag_distance,
 		opts.data_file_type,
-		opts.data_file,
 		opts.data_file_query,
+		opts.input_dir,
+		opts.atac_data,
+		opts.rna_data,
+		opts.atac_meta,
+		opts.rna_meta,
+		opts.motif_data,
+		opts.motif_data_score,
+		opts.file_mapping,
+		opts.metacell,
+		opts.peak_distance,
+		opts.highly_variable,
 		opts.gene_num_query,
+		opts.method_type_feature_link,
+		opts.output_dir,
+		opts.output_filename,
 		opts.beta_mode,
 		opts.recompute,
 		opts.interval_save,
