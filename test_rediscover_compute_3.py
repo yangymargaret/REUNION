@@ -3761,6 +3761,30 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return df_gene_annot_ori
 
+	## query motif data filename
+	def test_query_motif_data_filename_1(self,data=[],input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		if input_file_path=='':
+			input_file_path = select_config['input_dir']
+
+		# filename_motif_data = '%s/test_peak_read.pbmc.0.1.normalize.1_motif.1.2.csv'%(input_file_path_pre1)
+		# filename_motif_data_score = '%s/test_peak_read.pbmc.0.1.normalize.1_motif_scores.1.csv'%(input_file_path_pre1)
+		filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path_pre1)
+		filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path_pre1)
+		filename_translation = '%s/translationTable.csv'%(input_file_path_pre1)
+
+		field_query_1 = ['filename_motif_data','filename_motif_data_score','filename_translation']
+		list1 = [filename_motif_data,filename_motif_data_score,filename_translation]
+		for (field_id,query_value) in zip(field_query_1,list1):
+			if field_id in select_config:
+				query_value_1 = select_config[field_id]
+				print('field_id, query_value_1 ',field_id,query_value_1)
+			else:
+				print('field_id, query_value ',field_id,query_value)
+				select_config.update({field_id:query_value})
+
+		return select_config
+
 	## recompute based on clustering of peak and TF
 	# recompute based on training
 	def test_query_compare_binding_compute_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -3811,21 +3835,7 @@ class _Base2_2_pre1(_Base2_2_1):
 		# load ATAC-seq and RNA-seq data of the metacells
 		flag_load_pre1 = (flag_load_1>0)|(flag_motif_data_load_1>0)
 		if (flag_load_pre1>0):
-			# filename_motif_data = '%s/test_peak_read.pbmc.0.1.normalize.1_motif.1.2.csv'%(input_file_path_pre1)
-			 #filename_motif_data_score = '%s/test_peak_read.pbmc.0.1.normalize.1_motif_scores.1.csv'%(input_file_path_pre1)
-			filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path_pre1)
-			filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path_pre1)
-			filename_translation = '%s/translationTable.csv'%(input_file_path_pre1)
-
-			field_query_1 = ['filename_motif_data','filename_motif_data_score','filename_translation']
-			list1 = [filename_motif_data,filename_motif_data_score,filename_translation]
-			for (field_id,query_value) in zip(field_query_1,list1):
-				if field_id in select_config:
-					query_value_1 = select_config[field_id]
-					print('field_id, query_value_1 ',field_id,query_value_1)
-				else:
-					print('field_id, query_value ',field_id,query_value)
-					select_config.update({field_id:query_value})
+			select_config = self.test_query_motif_data_filename_1(input_file_path=input_file_path_pre1,save_mode=1,verbose=verbose,select_config=select_config)
 
 			select_config = self.test_query_load_pre1(data=[],method_type_vec_query=method_type_vec_query1,flag_config_1=flag_config_1,
 														flag_motif_data_load_1=flag_motif_data_load_1,
@@ -4497,7 +4507,6 @@ class _Base2_2_pre1(_Base2_2_1):
 					select_config.update({'feature_type_vec':feature_type_vec})
 					self.feature_type_vec = feature_type_vec
 
-					# filename_save_annot2_2 = '%s.%s.%s'%(method_type_group,motif_id1,data_file_type_query)
 					filename_save_annot2_2 = '%s.%s.%s.%s'%(method_type_query,method_type_group,motif_id_query,data_file_type_query)
 					if flag_neighbor_query_1>0:
 						df_group_1 = self.df_group_pre1
@@ -4535,14 +4544,10 @@ class _Base2_2_pre1(_Base2_2_1):
 						stop = time.time()
 						print('query feature group and neighbor annotation for TF %s (%s) used %.2fs'%(motif_id_query,motif_id2,stop-start))
 
-					# column_score_query_1 = '%s.score'%(method_type_feature_link)
-					# column_vec_query1 = [column_signal]+column_motif_vec_2+[column_motif,column_pred1,column_score_query_1]
 					column_vec_query1 = column_vec_link
 
 					if flag_neighbor_query_1>0:
 						column_vec_query1_2 = ['%s_group'%(feature_type_query_1),'%s_group'%(feature_type_query_2)]
-						# column_vec_query2_2 = [feature_type_query_1,feature_type_query_2]
-						# column_vec_query2 = column_vec_query1 + column_vec_query1_2 + column_vec_query2_2
 						column_vec_query2 = column_vec_query1 + column_vec_query1_2
 					else:
 						column_vec_query2 = column_vec_query1
