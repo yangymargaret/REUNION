@@ -2556,7 +2556,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'data_file_type_query':data_file_type_query,
 						'data_file_type_id':data_file_type_id,
 						'filename_rna':filename_rna,
-						'filename_atac':filenaem_atac,
+						'filename_atac':filename_atac,
 						'filename_atac_meta':filename_atac_meta,
 						'filename_rna_meta':filename_rna_meta,
 						'filename_motif_data':filename_motif_data,
