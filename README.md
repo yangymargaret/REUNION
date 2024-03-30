@@ -38,27 +38,27 @@ The options:
 
     For the data of single cells, Unify supports the anndata format.
 
-- --atac_data: the file path of the ATAC-seq data of the single cells, default = -1.
+- --atac_data: the file path of the ATAC-seq data of the single cells, default = -1
 
-- --rna_data: the file path of the RNA-seq data of the single cells, default = -1.
+- --rna_data: the file path of the RNA-seq data of the single cells, default = -1
 
   If atac_data or rna_data is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
 
-- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1.
+- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1
 
-- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
+- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1
   
   If atac_meta or rna_meta is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
-- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1.
+- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1
 
-- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1.
+- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1
 
-- --file_mapping: the filename of the mapping between TF motif identifier and the TF name, default = -1.
+- --file_mapping: the filename of the mapping between TF motif identifier and the TF name, default = -1
 
-- --file_peak: the file containing the ATAC-seq peak loci, default = -1.
+- --file_peak: the file containing the ATAC-seq peak loci, default = -1
  
-- --file_bg: the file containing the estimated background peak loci which match the ATAC-seq peak loci by GC content and average chromatin accessibility across the metacells, default = -1.
+- --file_bg: the file containing the estimated background peak loci which match the ATAC-seq peak loci by GC content and average chromatin accessibility across the metacells, default = -1
   
 - --output_dir: the directory where the output of Unify will be saved, including the predicted peak-TF-gene associations and other associated files, default = 'output_file'
 
@@ -81,7 +81,7 @@ The options:
   
     cell type 1 represents PBMC data
 
-- --data_file_type: the cell type or dataset annotation, default = 'PBMC'
+- --data_file_type: the cell type or dataset annotation, default = 'pbmc'
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
 
@@ -91,15 +91,15 @@ The options:
 
     'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
 
-- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1.
+- --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1
 
-- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1.
+- --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1
 
   If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
-- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1.
+- --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1
 
-- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1.
+- --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1
   
 - --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
 
@@ -137,7 +137,7 @@ The options:
 
   If 'output_filename' is specified and there are multiple TFs to query, ReDiscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
   
-- --method_type_group: the method for peak clustering, default = phenograph.20.
+- --method_type_group: the method for peak clustering, default = phenograph.20
 
   By default we use PhenoGraph algorithm for clustering with the number of neighbors = 20. To use PhenoGraph clustering with a specific number of neighbors, please use: phenogrph.$num, which represents the number of neighbors = $num
 
