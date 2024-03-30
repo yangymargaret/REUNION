@@ -306,6 +306,9 @@ class _Base2_pre_2(_Base2_correlation5):
 		for field_id in field_query:
 			print('%s %s:'%(field_id,select_config[field_id]))
 
+		column_motif = 'motif_id'
+		select_config.update({'column_motif':column_motif})
+
 		# filename_prefix_default = 'test_query_gene_peak.%s'%(data_file_type_query) # filename prefix dependent on sample
 		filename_annot_default = '1'
 		filename_prefix_save_1 = 'pre1'
@@ -593,8 +596,13 @@ class _Base2_pre_2(_Base2_correlation5):
 		data_file_type = select_config['data_file_type']
 		data_file_type_query = data_file_type
 		select_config.update({'data_file_type_query':data_file_type_query})
-		data_file_type_annot = select_config['data_file_type_annot']
 		print('data_file_type_query: ',data_file_type_query)
+		column_query = 'data_file_type_annot'
+		if column_query in select_config:
+			data_file_type_annot = select_config[column_query]
+		else:
+			data_file_type_annot = data_file_type_query
+			select_config.update({column_query:data_file_type_annot})
 		# run_id1 = select_config['run_id']
 		# print('run_id: ',run_id1)
 		
@@ -605,8 +613,8 @@ class _Base2_pre_2(_Base2_correlation5):
 		print('input_file_path_pre1: ',input_file_path_pre1)
 		print('output_file_path_pre1: ',output_file_path_pre1)
 
-		file_path_motif = input_file_path_pre1
-		select_config.update({'file_path_motif':file_path_motif})
+		# file_path_motif = input_file_path_pre1
+		# select_config.update({'file_path_motif':file_path_motif})
 
 		# select_config['flag_distance'] = 1
 		field_query = ['flag_attribute_query',
@@ -641,6 +649,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			select_config.update({'filename_gene_annot':filename_gene_annot})
 			df_gene_annot_ori = self.test_query_gene_annot_1(filename_gene_annot,select_config=select_config)
 			self.df_gene_annot_ori = df_gene_annot_ori
+			self.df_gene_annot_expr = df_gene_annot_ori
 
 		# load motif data
 		# load ATAC-seq and RNA-seq data of the metacells
@@ -691,12 +700,12 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			# return
 
-		data_path_save = select_config['data_path_save']
-		input_file_path = data_path_save
-		data_path_1 = data_path_save
+		data_path_save_1 = select_config['data_path_save_1'] # the directory of the metacell data
+		input_file_path = data_path_save_1
+		data_path_1 = data_path_save_1
 
-		save_file_path_1 = data_path_save
-		save_file_path = select_config['data_path_save_local']	# the directory of the metacell data
+		save_file_path_1 = data_path_save_1
+		save_file_path = select_config['data_path_save_local']	# the folder to save feature link estimation
 		output_file_path = save_file_path
 
 		## query obs and var attributes of the ATAC-seq and RNA-seq anndata
@@ -719,18 +728,15 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		flag_gene_annot_query_pre1 = 0
 		# flag_gene_annot_query_pre1=select_config['flag_gene_annot_query_pre1']
-		# flag_gene_annot_query=config_flag['flag_gene_annot_query']
+		# flag_gene_annot_query=select_config['flag_gene_annot_query']
 		df_gene_annot_1 = self.test_query_gene_annot_basic_1(data=[],flag_gene_annot_1=flag_gene_annot_query_pre1,flag_gene_annot_2=0,save_mode=1,verbose=verbose,select_config=select_config)
 
-		# filename_save_annot_1 = self.select_config['filename_save_annot_pre1']
 		# filename_save_annot_1 = select_config['filename_save_annot_pre1']
 
 		## search for peak loci within distance (2Mb) of the gene TSS
 		# flag_distance = select_config['flag_distance']
 		peak_distance_thresh = 2000
 		bin_size = 1000
-		# data_path = select_config['data_path']
-		data_path = select_config['data_path_save']
 		
 		rna_exprs = self.meta_scaled_exprs
 		atac_ad = self.atac_meta_ad
@@ -761,12 +767,13 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		flag_distance = config_flag['flag_distance']
 		beta_mode = select_config['beta_mode']
+		df_gene_annot = self.df_gene_annot_ori
 		if flag_distance>0:
-			input_file_path = data_path
+			# input_file_path = data_path
 			filename_prefix_1 = select_config['filename_prefix_default_pre1']
 			input_filename = '%s/%s.peak_query.%d.txt'%(input_file_path,filename_prefix_1,peak_distance_thresh)
 			output_filename = input_filename
-			gene_name_query_ori = df_gene_annot_expr['gene_name']
+			gene_name_query_ori = df_gene_annot['gene_name']
 			gene_query_vec_pre1 = []
 
 			# if beta_mode>0:
@@ -2409,7 +2416,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,celltype,file_path,path_id,
 		flag_distance,data_file_type,data_file_type_id,input_dir,filename_atac,filename_rna,filename_atac_meta,filename_rna_meta,
-		motif_data,motif_data_score,file_mapping,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
+		motif_data,motif_data_score,file_mapping,file_peak,file_bg,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
 		method_type_feature_link,output_dir,output_filename,
 		beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,
 		flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,
@@ -2420,10 +2427,6 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 		flag_feature_query1,flag_feature_query2,flag_feature_query3,
 		flag_basic_query,flag_basic_query_2,type_query_compare,flag_basic_filter_1,flag_basic_filter_combine_1,flag_basic_filter_2,Lasso_alpha,peak_distance_thresh1,peak_distance_thresh2,flag_pred_1,flag_pred_2,flag_group_1,flag_combine_1,flag_combine_2,flag_cond_query_1):
 
-	# data_file_type = 'E8.75'
-	# data_timepoint = 'E8.75'
-	# data_file_type = 'system1'
-	# data_timepoint = 'system1'
 	data_file_type = str(data_file_type)
 	data_timepoint = data_file_type
 	# run_id = 1
@@ -2452,7 +2455,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	# root_path_1 = file_path
 	# root_path_2 = '%s/data_pre2'%(root_path_1)
 	# query_id1, query_id2 = -1, -1
-	data_file_type_query = str(data_file_type_query)
+	data_file_type_query = data_file_type
 	data_file_type_id= int(data_file_type_id)
 
 	metacell_num = int(metacell_num)
@@ -2466,6 +2469,8 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	filename_motif_data = str(filename_motif_data)
 	filename_motif_data_score = str(filename_motif_data_score)
 	file_mapping = str(file_mapping)
+	file_peak = str(file_peak)
+	file_bg = str(file_bg)
 	output_dir = str(output_dir)
 	output_filename = str(output_filename)
 
@@ -2544,7 +2549,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	# flag_normalize_2 = 1
 	flag_normalize_2 = 0
 
-	select_config = {'data_file_type':data_file_type,'data_timepoint':data_timepoint,
+	select_config = {'data_file_type':data_file_type,
 						'root_path_1':root_path_1,'root_path_2':root_path_2,'path_id':path_id,
 						'run_id':run_id,'run_id_load':run_id_load,
 						'data_file_type_query':data_file_type_query,
@@ -2554,6 +2559,8 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'filename_motif_data':filename_motif_data,
 						'filename_motif_data_score':filename_motif_data_score,
 						'filename_translation':file_mapping,
+						'input_filename_peak':file_peak,
+						'input_filename_bg':file_bg,
 						'output_filename_link':output_filename,
 						'metacell_num':metacell_num,
 						'beta_mode':beta_mode,
@@ -2647,6 +2654,8 @@ def parse_args():
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
 	parser.add_option("--motif_data_score",default="-1",help="file path of the motif scores by motif scanning")
 	parser.add_option("--file_mapping",default="-1",help="file path of the mapping between TF motif identifier and the TF name")
+	parser.add_option("--file_peak",default="-1",help="file containing the peak regions")
+	parser.add_option("--file_bg",default="-1",help="file containing the estimate background peaks")
 	parser.add_option("--metacell",default="500",help="metacell number")
 	parser.add_option("--peak_distance",default="500",help="peak distance threshold")
 	parser.add_option("--highly_variable",default="1",help="highly variable gene")
@@ -2732,6 +2741,8 @@ if __name__ == '__main__':
 		opts.motif_data,
 		opts.motif_data_score,
 		opts.file_mapping,
+		opts.file_peak,
+		opts.file_bg,
 		opts.metacell,
 		opts.peak_distance,
 		opts.highly_variable,

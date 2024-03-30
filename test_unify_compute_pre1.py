@@ -2799,6 +2799,26 @@ class _Base2_pre1(BaseEstimator):
 
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
+	## query obs and var attribute
+	def test_attribute_query(self,data_vec,feature_type_vec=[],save_mode=1,output_file_path='',filename_save_annot=''):
+		
+		if len(feature_type_vec)==0:
+			feature_type_vec = list(data_vec.keys())  # feature_type_vec=['atac','rna']
+			
+		dict_query = dict()
+		for feature_type in feature_type_vec:
+			adata = data_vec[feature_type]
+			data_list = [adata.obs,adata.var]
+			annot_list = ['obs','var']
+			dict_query[feature_type] = []
+			for (df_query,annot) in zip(data_list,annot_list):
+				if save_mode>0:
+					output_filename = '%s/test_%s_meta_ad.%s.df_%s.txt'%(output_file_path,feature_type,filename_save_annot,annot)
+					df_query.to_csv(output_filename,sep='\t')
+				dict_query[feature_type].append(df_query)
+
+		return dict_query
+
 	## query normalized peak read
 	def test_read_count_query_normalize(self,adata=[],feature_type_query='atac',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',float_format='%.5f',verbose=0,select_config={}):
 		
@@ -2926,11 +2946,11 @@ class _Base2_pre1(BaseEstimator):
 			return read_count_normalize_1
 
 	## query normalized and log-transformed RNA-seq data
-	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',save_format='tsv.gz'.float_format='%.5f',verbose=0,select_config={}):
+	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',save_format='tsv.gz',float_format='%.5f',verbose=0,select_config={}):
 		
 		flag_read_normalize=1
 		if flag_read_normalize>0:
-			if filename_save_annot==''
+			if filename_save_annot=='':
 				filename_save_annot = select_config['filename_save_annot_pre1']
 			
 			feature_type_vec_1 = ['atac','rna']
@@ -3054,24 +3074,18 @@ class _Base2_pre1(BaseEstimator):
 		# 	root_path_2 = select_config['root_path_2']
 		# 	data_file_type_query = select_config['data_file_type']
 		
+		method_type_feature_link = select_config['method_type_feature_link']
 		# flag_motif_data_load_1 = 1
 		# load motif data
-		method_type_feature_link = select_config['method_type_feature_link']
 		if flag_motif_data_load_1>0:
 			print('load motif data')
 			if len(method_type_vec_query)==0:
-				# method_type_vec_query = ['insilico_0.1']+[method_type_feature_link]
-				# method_type_vec_query = list(pd.Index(method_type_vec_query).unique())
 				method_type_vec_query = [method_type_feature_link]
 
-			# load motif data
-			# test_estimator = _Base2_2()
 			input_dir = select_config['input_dir']
 			file_path_1 = input_dir
 			test_estimator1 = _Base2_2(file_path=file_path_1)
-			# dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
-			#																select_config=select_config)
-
+			
 			method_type_feature_link = select_config['method_type_feature_link']
 			method_type_vec_query = [method_type_feature_link]
 			dict_motif_data, select_config = test_estimator1.test_load_motif_data_1(method_type_vec=method_type_vec_query,
@@ -3130,8 +3144,6 @@ class _Base2_pre1(BaseEstimator):
 			sample_id = peak_read.index
 			sample_num = len(sample_id)
 
-			# input_file_path1 = self.save_path_1
-			# input_filename_1 = '%s/data2_copy1/test_E8.75#Multiome_meta_rna.df_obs.normalize.pre1.2.1.0.txt'%(input_file_path1)
 			input_filename_1 = input_filename_annot
 			df_annot_1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
 			sample_id_1 = df_annot_1.index
@@ -3139,12 +3151,6 @@ class _Base2_pre1(BaseEstimator):
 				column_id='Metacell'
 			# sample_id_2 = df_annot_1['Metacell'].unique()
 			sample_id_2 = df_annot_1[column_id].unique()
-
-			# celltype_vec = ['Pharynx','Thymus','Thyroid','Thyroid/Trachea','Trachea/Lung','Esophagus',
-			# 			'Stomach','Liver','Pancreas 1','Pancreas 2','Small int','Colon']
-
-			# celltype_vec_str = ['Pharynx','Thymus','Thyroid','Thyroid.Trachea','Trachea.Lung','Esophagus',
-			# 				'Stomach','Liver','Pancreas.1','Pancreas.2','Small.int','Colon']
 
 			celltype_vec = select_config['celltype_vec']
 			celltype_vec_str = select_config['celltype_vec_str']
