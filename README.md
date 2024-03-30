@@ -18,7 +18,7 @@ The options:
 
 - -b, --cell : cell type, default = 0
   
-    cell type 0 represents PBMC data
+    cell type 0 represents the PBMC data
 
 - --data_file_type: the cell type or dataset annotation, default = 'pbmc'
 
