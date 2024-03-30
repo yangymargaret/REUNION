@@ -180,6 +180,6 @@ Unify additionally requires the following packages to be installed:
 - pingouin
 
 ReDiscover additionally requires the following packages to be installed:
-- phenograph
+- PhenoGraph
 
   
