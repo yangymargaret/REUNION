@@ -165,7 +165,7 @@ class _Base2_2(_Base2_1):
 	# 	data_file_type = select_config['data_file_type']
 
 	## motif-peak estimate: load meta_exprs and peak_read
-	def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,select_config={}):
+	def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,select_config={}):
 
 		input_file_path1 = self.save_path_1
 		data_file_type = select_config['data_file_type']
@@ -390,7 +390,7 @@ class _Base2_2(_Base2_1):
 			return dict_motif_data, select_config
 
 	## load motif data
-	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,verbose=0,select_config={}):
+	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,save_file_path='',verbose=0,select_config={}):
 		
 		flag_query1=1
 		method_type_num = len(method_type_vec)
@@ -426,7 +426,7 @@ class _Base2_2(_Base2_1):
 
 					print('motif_filename_list1: ',input_filename_list1)
 
-					save_file_path = ''
+					# save_file_path = ''
 					flag_query2 = 1
 					# load motif data
 					motif_data, motif_data_score, df_annot, type_id_query = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
@@ -446,11 +446,11 @@ class _Base2_2(_Base2_1):
 					print('motif_data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
 					# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
 
-				print('perform motif name conversion ')
-				motif_data = self.test_query_motif_name_conversion_1(motif_data)
+				# print('perform motif name conversion ')
+				# motif_data = self.test_query_motif_name_conversion_1(motif_data)
 				
-				if len(motif_data_score)>0:
-					motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
+				# if len(motif_data_score)>0:
+				# 	motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
 				
 				dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
 			
@@ -742,6 +742,9 @@ class _Base2_2(_Base2_1):
 			print('motif_data_ori ',motif_data_ori.shape)
 			print(motif_data_ori[0:2])
 
+			print('perform motif name conversion ')
+			motif_data = self.test_query_motif_name_conversion_1(motif_data)
+
 			if len(motif_data_score)>0:
 				# motif_data_score.columns = motif_name_query # TODO: should update
 				motif_data_score, motif_data_score_ori = self.test_load_motif_data_pre2(motif_data=motif_data_score,
@@ -754,6 +757,9 @@ class _Base2_2(_Base2_1):
 
 				print('motif_data_score_ori ',motif_data_score_ori.shape)
 				print(motif_data_score_ori[0:2])
+
+				print('perform motif name conversion ')
+				motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
 
 			if save_mode>0:
 				# output_filename_list = input_filename_list1
@@ -3429,7 +3435,7 @@ class _Base2_2(_Base2_1):
 
 	## load data and query configuration parameters
 	# load motif data; load ATAC-seq and RNA-seq data of the metacells
-	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
+	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=0,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		# flag_config_1=1
 		# if flag_config_1>0:
@@ -3460,7 +3466,7 @@ class _Base2_2(_Base2_1):
 			print('load peak accessiblity and gene expression data')
 			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
 			start = time.time()
-			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(meta_exprs=[],peak_read=[],flag_format=False,select_config=select_config)
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,select_config=select_config)
 
 			# sample_id = meta_scaled_exprs.index
 			# peak_read = peak_read.loc[sample_id,:]

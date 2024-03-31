@@ -2800,22 +2800,28 @@ class _Base2_pre1(BaseEstimator):
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
 	## query obs and var attribute
-	def test_attribute_query(self,data_vec,feature_type_vec=[],save_mode=1,output_file_path='',filename_save_annot=''):
+	def test_attribute_query(self,data_vec,feature_type_vec=[],save_mode=1,output_file_path='',filename_save_annot='',select_config={}):
 		
 		if len(feature_type_vec)==0:
 			feature_type_vec = list(data_vec.keys())  # feature_type_vec=['atac','rna']
 			
 		dict_query = dict()
+		if filename_save_annot=='':
+			data_file_type = select_config['data_file_type']
+			filename_save_annot = data_file_type
 		for feature_type in feature_type_vec:
 			adata = data_vec[feature_type]
 			data_list = [adata.obs,adata.var]
 			annot_list = ['obs','var']
-			dict_query[feature_type] = []
+			# dict_query[feature_type] = []
+			dict_query[feature_type] = dict()
 			for (df_query,annot) in zip(data_list,annot_list):
 				if save_mode>0:
 					output_filename = '%s/test_%s_meta_ad.%s.df_%s.txt'%(output_file_path,feature_type,filename_save_annot,annot)
 					df_query.to_csv(output_filename,sep='\t')
-				dict_query[feature_type].append(df_query)
+				# dict_query[feature_type].append(df_query)
+				field_id1 = annot
+				dict_query[feature_type].update({field_id1:df_query})
 
 		return dict_query
 
@@ -2974,7 +2980,7 @@ class _Base2_pre1(BaseEstimator):
 			return dict_query
 
 	## motif-peak estimate: load meta_exprs and peak_read
-	def test_motif_peak_estimate_control_load_pre1_ori_2(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,select_config={}):
+	def test_motif_peak_estimate_control_load_pre1_ori_2(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,save_mode=1,output_file_path='',select_config={}):
 
 		input_file_path1 = self.save_path_1
 		data_file_type = select_config['data_file_type']
@@ -3002,10 +3008,11 @@ class _Base2_pre1(BaseEstimator):
 		atac_meta_ad = atac_meta_ad[sample_id,:]
 		self.atac_meta_ad = atac_meta_ad
 		
-		column_1 = 'filename_rna_exprs_1'
+		column_1 = 'filename_rna_exprs'
 		meta_scaled_exprs = []
 		if column_1 in select_config:
-			input_filename_3 = select_config['filename_rna_exprs_1']
+			# input_filename_3 = select_config['filename_rna_exprs']
+			input_filename_3 = select_config[column_1]
 			meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
 
 			if flag_format==True:
@@ -3015,8 +3022,8 @@ class _Base2_pre1(BaseEstimator):
 			# self.meta_scaled_exprs = meta_scaled_exprs
 			# print('atac_meta_ad, meta_scaled_exprs ',atac_meta_ad.shape,meta_scaled_exprs.shape,input_filename_3)
 
-			vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
-			print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
+			# vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
+			# print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
 		else:
 			if flag_scale>0:
 				scale_type_id = 2
@@ -3027,9 +3034,12 @@ class _Base2_pre1(BaseEstimator):
 
 				# save_mode_1 = 2
 				save_mode_1 = 1
+				filename_prefix = data_file_type
+				# output_filename = select_config['filename_rna_exprs']
+				output_filename = select_config[column_1]
 				pre_meta_ad_rna, pre_meta_ad_scaled_rna = self.test_metacell_compute_unit_2(pre_meta_ad=rna_meta_ad,
 																							save_mode=save_mode_1,output_file_path=output_file_path,
-																							output_filename='',
+																							output_filename=output_filename,
 																							filename_prefix=filename_prefix,
 																							select_config=select_config)
 				# self.atac_meta_ad = atac_meta_ad
@@ -3043,6 +3053,8 @@ class _Base2_pre1(BaseEstimator):
 				meta_scaled_exprs = pd.DataFrame(index=rna_meta_ad_scaled.obs_names,columns=rna_meta_ad_scaled.var_names,
 													data=rna_meta_ad_scaled.X.toarray(),dtype=np.float32)
 				self.meta_scaled_exprs = meta_scaled_exprs
+				print('meta_scaled_exprs ')
+				print(meta_scaled_exprs[0:2])
 				# self.rna_meta_ad = pre_meta_ad_rna  # add the layer ['scale_%d'%(scale_type_id)]
 
 		# if len(meta_scaled_exprs)>0:
@@ -3062,11 +3074,15 @@ class _Base2_pre1(BaseEstimator):
 		# print('meta_exprs_2 mean values ',meta_exprs_2.shape,vec3)
 		print('rna_meta_ad mean values ',meta_exprs_2.shape,vec3)
 
+		if len(meta_scaled_exprs)>0:
+			vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
+			print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
+
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
 	## load data and query configuration parameters
 	# load motif data; load ATAC-seq and RNA-seq data of the metacells
-	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
+	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=0,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		# flag_config_1=1
 		# if flag_config_1>0:
@@ -3084,11 +3100,17 @@ class _Base2_pre1(BaseEstimator):
 
 			input_dir = select_config['input_dir']
 			file_path_1 = input_dir
-			test_estimator1 = _Base2_2(file_path=file_path_1)
+			test_estimator1 = _Base2_2(file_path=file_path_1,select_config=select_config)
 			
 			method_type_feature_link = select_config['method_type_feature_link']
 			method_type_vec_query = [method_type_feature_link]
+			data_path_save_local = select_config['data_path_save_local']
+			# data_path_save_motif = select_config['data_path_save_motif']
+			file_path_motif = data_path_save_local
+			select_config.update({'file_path_motif':file_path_motif})
+			save_file_path = data_path_save_local
 			dict_motif_data, select_config = test_estimator1.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+																						save_mode=1,save_file_path=save_file_path,
 																						select_config=select_config)
 
 			self.dict_motif_data = dict_motif_data
@@ -3099,7 +3121,9 @@ class _Base2_pre1(BaseEstimator):
 			print('load peak accessiblity and gene expression data')
 			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
 			start = time.time()
-			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori_2(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,select_config=select_config)
+			data_path_save_local = select_config['data_path_save_local']
+			output_file_path = data_path_save_local
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori_2(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,save_mode=1,output_file_path=output_file_path,select_config=select_config)
 
 			# sample_id = meta_scaled_exprs.index
 			# peak_read = peak_read.loc[sample_id,:]

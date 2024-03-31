@@ -327,6 +327,7 @@ class _Base2_pre_2(_Base2_correlation5):
 		select_config.update({'filename_prefix_peak_gene':filename_prefix})
 
 		data_path_save_local = select_config['data_path_save_local']
+		save_file_path = data_path_save_local
 		# the original peak-gene correlations
 		input_filename_pre1 = '%s/%s.combine.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
 		# the peak-gene links selected using threshold 1 on the peak-gene correlation
@@ -469,7 +470,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			filename_save_annot_1 = filename_save_annot
 			print('query attributes of the ATAC-seq and RNA-seq data')
 			dict_attribute_query = self.test_attribute_query(data_vec,save_mode=1,output_file_path=output_file_path,
-																		filename_save_annot=filename_save_annot_1)
+																		filename_save_annot=filename_save_annot_1,
+																		select_config=select_config)
 
 		## query normalized peak read data without log transformation
 		# flag_read_normalize_1=0
@@ -516,7 +518,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			print('used: %.5fs'%(stop-start))
 			df_gene_annot_query = df_gene_annot3
 
-		flag_gene_annot_2 = flag_gene_annot_query
+		flag_gene_annot_query = flag_gene_annot_2
 		# load gene annotations
 		# flag_gene_annot_query=config_flag['flag_gene_annot_query']
 		# flag_gene_annot_query=select_config['flag_gene_annot_query']
@@ -567,9 +569,9 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		# filename_motif_data = '%s/test_peak_read.pbmc.0.1.normalize.1_motif.1.2.csv'%(input_file_path_pre1)
 		# filename_motif_data_score = '%s/test_peak_read.pbmc.0.1.normalize.1_motif_scores.1.csv'%(input_file_path_pre1)
-		filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path_pre1)
-		filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path_pre1)
-		filename_translation = '%s/translationTable.csv'%(input_file_path_pre1)
+		filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path)
+		filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path)
+		filename_translation = '%s/translationTable.csv'%(input_file_path)
 
 		field_query_1 = ['filename_motif_data','filename_motif_data_score','filename_translation']
 		list1 = [filename_motif_data,filename_motif_data_score,filename_translation]
@@ -657,13 +659,21 @@ class _Base2_pre_2(_Base2_correlation5):
 		# load ATAC-seq and RNA-seq data of the metacells
 		# query ATAC-seq and RNA-seq normalized read counts of the metacells
 		flag_load_1 = 1
-		flag_motif_data_load = select_config['flag_motif_data_load']
+		# flag_motif_data_load = select_config['flag_motif_data_load']
+		flag_motif_data_load = 1
 		flag_load_pre1 = (flag_load_1>0)|(flag_motif_data_load>0)
 		if flag_load_pre1>0:
 			select_config = self.test_query_motif_data_filename_1(input_file_path=input_file_path_pre1,save_mode=1,verbose=verbose,select_config=select_config)
 
 			flag_scale = 1
 			flag_format = False
+			
+			method_type_feature_link = select_config['method_type_feature_link']
+			method_type_query = method_type_feature_link
+			print(method_type_query)
+			
+			method_type_vec_query1 = [method_type_feature_link]
+			flag_config_1 = 0
 			select_config = self.test_query_load_pre1(data=[],method_type_vec_query=method_type_vec_query1,flag_config_1=flag_config_1,
 														flag_motif_data_load_1=flag_motif_data_load,
 														flag_load_1=flag_load_1,
@@ -671,17 +681,16 @@ class _Base2_pre_2(_Base2_correlation5):
 														flag_scale=flag_scale,
 														save_mode=1,verbose=verbose,select_config=select_config)
 
-			self.meta_scaled_exprs = meta_scaled_exprs
-			self.meta_exprs_2 = meta_exprs_2 # normalized and log-transformed data
-			self.peak_read = peak_read  # normalized and log-transformed data
+			# self.meta_scaled_exprs = meta_scaled_exprs
+			# self.meta_exprs_2 = meta_exprs_2 # normalized and log-transformed data
+			# self.peak_read = peak_read  # normalized and log-transformed data
+			rna_exprs = self.rna_exprs
+			meta_scaled_exprs = self.meta_scaled_exprs
+			meta_exprs_2 = self.meta_exprs_2
+			peak_read = self.peak_read
 			peak_loc_ori = peak_read.columns
 
 			dict_motif_data = self.dict_motif_data
-
-			method_type_feature_link = select_config['method_type_feature_link']
-			method_type_query = method_type_feature_link
-			print(method_type_query)
-
 			motif_data_query1 = dict_motif_data[method_type_query]['motif_data']
 			motif_data_score_query1 = dict_motif_data[method_type_query]['motif_data_score']
 			
@@ -773,7 +782,10 @@ class _Base2_pre_2(_Base2_correlation5):
 		if flag_distance>0:
 			# input_file_path = data_path
 			filename_prefix_1 = select_config['filename_prefix_default_pre1']
-			input_filename = '%s/%s.peak_query.%d.txt'%(input_file_path,filename_prefix_1,peak_distance_thresh)
+			parallel_mode_peak = select_config['parallel_mode_peak']
+			parallel_mode_query = parallel_mode_peak
+			# input_filename = '%s/%s.peak_query.%d.txt'%(input_file_path,filename_prefix_1,peak_distance_thresh)
+			input_filename = '%s/%s.peak_query.%d.%d.txt'%(input_file_path,filename_prefix_1,parallel_mode_query,peak_distance_thresh)
 			output_filename = input_filename
 			gene_name_query_ori = df_gene_annot['gene_name']
 			gene_query_vec_pre1 = []
@@ -791,7 +803,7 @@ class _Base2_pre_2(_Base2_correlation5):
 																						atac_ad=[],
 																						rna_exprs=[],
 																						highly_variable=False,
-																						save_mode=1,
+																						save_mode=1,parallel=parallel_mode_query,
 																						output_filename=output_filename,
 																						save_file_path='',
 																						annot_mode=1,
@@ -866,14 +878,20 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			id_query1 = (df_gene_annot2[column_query1]>thresh_dispersions_norm)
 			gene_highly_variable = gene_vec_1[id_query1]
+			gene_highly_variable_num = len(gene_highly_variable)
+			print('gene_highly_variable ',gene_highly_variable_num)
 			
 			# type_id2=0
-			type_id2=3
+			# type_id2=3
+			type_id2 = 1
 			group_type_id_1 = type_id2
 			select_config.update({'group_type_id_1':group_type_id_1})
 
+			# field_query_1 = ['filename_prefix_default','filename_annot_default',
+			# 				'filename_prefix_save_default','filename_prefix_save_2','filename_prefix_default_1']
+
 			field_query_1 = ['filename_prefix_default','filename_annot_default',
-							'filename_prefix_save_default','filename_prefix_save_2','filename_prefix_default_1']
+							'filename_prefix_save_default','filename_prefix_save_2']
 
 			df_gene_peak_1 = [] # peak-gene link with distance annotation
 			df_gene_peak_compute_1, df_gene_peak_compute_2 = [], [] # peak-gene link with peak-gene correlation estimation; pre-selected peak-gene link with peak-gene correlation estimation
@@ -895,15 +913,16 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			filename_prefix_list = [filename_prefix_default,filename_annot_default,filename_prefix_save_1,filename_prefix_save_2]
 			
-			select_config, filename_prefix_list_query = self.test_config_query_filename_1(field_query=field_query_1,filename_prefix_list=filename_prefix_list,select_config=select_config)
+			# select_config, filename_prefix_list_query = self.test_config_query_filename_1(field_query=field_query_1,filename_prefix_list=filename_prefix_list,select_config=select_config)
 			
-			filename_prefix = select_config['filename_prefix_default_1']
+			filename_prefix = select_config['filename_prefix_default']
+			filename_prefix_1 = filename_prefix
 			filename_annot1 = select_config['filename_annot_default']
 
-			input_filename_pre2 = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-			filename_peak_gene_thresh2 = '%s/%s.combine.thresh2.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-			select_config.update({'input_filename_pre2':input_filename_pre2,
-									'filename_save_thresh2':filename_peak_gene_thresh2})
+			# input_filename_pre2 = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
+			# filename_peak_gene_thresh2 = '%s/%s.combine.thresh2.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
+			# select_config.update({'input_filename_pre2':input_filename_pre2,
+			# 						'filename_save_thresh2':filename_peak_gene_thresh2})
 
 			if type_id2==0:
 				# gene_query_vec_1 = gene_vec_1[df_gene_annot2[column_query1]>thresh_dispersions_norm]
@@ -2421,7 +2440,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 		filename_motif_data,filename_motif_data_score,file_mapping,file_peak,file_bg,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
 		method_type_feature_link,output_dir,output_filename,
 		beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,
-		flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,
+		flag_motif_ori,iter_mode_1,restart,config_id,feature_num_query,parallel,parallel_1,
 		flag_motif_data_load,motif_data_thresh,motif_data_type,
 		flag_correlation_query_1,flag_correlation_query,flag_correlation_1,flag_computation,flag_combine_empirical_1,flag_combine_empirical,
 		flag_query_thresh2,overwrite_thresh2,flag_merge_1,flag_correlation_2,flag_correlation_query1,
@@ -2473,6 +2492,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	file_mapping = str(file_mapping)
 	file_peak = str(file_peak)
 	file_bg = str(file_bg)
+	method_type_feature_link = str(method_type_feature_link)
 	output_dir = str(output_dir)
 	output_filename = str(output_filename)
 
@@ -2492,6 +2512,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	beta_mode = int(beta_mode)
 	recompute = int(recompute)
 	parallel_mode = int(parallel)
+	parallel_mode_peak = int(parallel_1)
 	# interval_save = int(interval_save)
 	thresh_dispersions_norm = 0.5
 	# beta_mode = 1
@@ -2566,6 +2587,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'filename_translation':file_mapping,
 						'input_filename_peak':file_peak,
 						'input_filename_bg':file_bg,
+						'method_type_feature_link':method_type_feature_link,
 						'output_dir':output_dir,
 						'output_filename_link':output_filename,
 						'metacell_num':metacell_num,
@@ -2574,7 +2596,10 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'recompute':recompute,
 						'type_id_feature':type_id_feature,
 						'flag_motif_query_ori':flag_motif_ori,'iter_mode_1':iter_mode_1,'restart':restart,
-						'query_id1':query_id1,'query_id2':query_id2,'fold_id':fold_id,'n_iter_init':n_iter_init,'n_iter':n_iter,'config_id':config_id,'feature_num_query':feature_num_query,'parallel_mode':parallel_mode,
+						'query_id1':query_id1,'query_id2':query_id2,'fold_id':fold_id,'n_iter_init':n_iter_init,'n_iter':n_iter,'config_id':config_id,
+						'feature_num_query':feature_num_query,
+						'parallel_mode':parallel_mode,
+						'parallel_mode_peak':parallel_mode_peak,
 						'thresh_dispersions_norm':thresh_dispersions_norm}
 
 	select_config.update({'flag_correlation_query_1':flag_correlation_query_1,
@@ -2683,6 +2708,7 @@ def parse_args():
 	parser.add_option("--config_id",default="-1",help="config_id")
 	parser.add_option("--feature_num",default="200",help="feature query number")
 	parser.add_option("--parallel",default="0",help="parallel_mode")
+	parser.add_option("--parallel_1",default="0",help="parallel_mode_peak")
 	parser.add_option("--flag_motif_data_load",default="0",help="flag_motif_data_load")
 	parser.add_option("--motif_data_thresh",default="0",help="threshold for motif scanning")
 	parser.add_option("--motif_data_type",default="0",help="motif data type")
@@ -2770,6 +2796,7 @@ if __name__ == '__main__':
 		opts.config_id,
 		opts.feature_num,
 		opts.parallel,
+		opts.parallel_1,
 		opts.flag_motif_data_load,
 		opts.motif_data_thresh,
 		opts.motif_data_type,

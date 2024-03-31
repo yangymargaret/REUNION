@@ -634,7 +634,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 	# output: peak accessibility-gene expr correlation (dataframe)
 	def test_gene_peak_query_correlation_gene_pre1_1(self,gene_query_vec=[],peak_distance_thresh=500,df_peak_query=[],
 														filename_prefix_save='',input_filename='',peak_loc_query=[],
-														atac_ad=[],rna_exprs=[],highly_variable=False,
+														atac_ad=[],rna_exprs=[],highly_variable=False,parallel=0,
 														save_mode=1,output_filename='',save_file_path='',interval_peak_corr=50,interval_local_peak_corr=10,
 														annot_mode=1,verbose=0,select_config={}):
 
@@ -666,7 +666,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 																		df_gene_query=df_gene_query_1,
 																		peak_loc_query=peak_loc_query,
 																		peak_distance_thresh=peak_distance_thresh,
-																		type_id_1=type_id2,
+																		type_id_1=type_id2,parallel=parallel,
 																		save_mode=save_mode,
 																		output_filename=output_filename,
 																		verbose=verbose,
@@ -688,7 +688,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 	# for each gene query, search for peaks within the distance threshold
 	# input: the gene query, the gene position and TSS annotation, the peak loci query, the peak distance threshold
 	# output: peak loci within specific distance of the gene TSS (dataframe)
-	def test_gene_peak_query_distance(self,gene_query_vec=[],df_gene_query=[],peak_loc_query=[],peak_distance_thresh=500,type_id_1=0,save_mode=1,output_filename='',verbose=0,select_config={}):
+	def test_gene_peak_query_distance(self,gene_query_vec=[],df_gene_query=[],peak_loc_query=[],peak_distance_thresh=500,type_id_1=0,parallel=0,save_mode=1,output_filename='',verbose=0,select_config={}):
 
 		file_path1 = self.save_path_1
 		if type_id_1==0:
@@ -721,36 +721,59 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				print('peak_loc_query: %d'%(peak_loc_num))
 				print('peak_distance_thresh: %d bp'%(span))
 
+			start = time.time()
 			list1 = []
-			for i1 in range(gene_query_num):
-				gene_query = gene_query_vec[i1]
-				start = df_tss_query[gene_query]-span
-				stop = df_tss_query[gene_query]+span
-				chrom = df_gene_query.loc[gene_query,'chrom']
-				gene_pr = pr.from_dict({'Chromosome':[chrom],'Start':[start],'End':[stop]})
-				gene_peaks = peaks_pr.overlap(gene_pr)  # search for peak loci within specific distance of the gene
-				if i1%1000==0:
-					print('gene_peaks ', len(gene_peaks), gene_query, chrom, start, stop, i1)
+			interval = 5000
+			if parallel==0:
+				for i1 in range(gene_query_num):
+					gene_query = gene_query_vec[i1]
+					start = df_tss_query[gene_query]-span
+					stop = df_tss_query[gene_query]+span
+					chrom = df_gene_query.loc[gene_query,'chrom']
+					gene_pr = pr.from_dict({'Chromosome':[chrom],'Start':[start],'End':[stop]})
+					gene_peaks = peaks_pr.overlap(gene_pr)  # search for peak loci within specific distance of the gene
+					# if i1%1000==0:
+					if i1%interval==0:
+						print('gene_peaks ', len(gene_peaks), gene_query, chrom, start, stop, i1)
 
-				if len(gene_peaks)>0:
-					df1 = pd.DataFrame.from_dict({'chrom':gene_peaks.Chromosome.values,
-										'start':gene_peaks.Start.values,'stop':gene_peaks.End.values})
+					if len(gene_peaks)>0:
+						df1 = pd.DataFrame.from_dict({'chrom':gene_peaks.Chromosome.values,
+											'start':gene_peaks.Start.values,'stop':gene_peaks.End.values})
 
-					df1.index = [gene_query]*df1.shape[0]
-					list1.append(df1)
-				else:
-					print('gene query without peaks in the region query: %s %d'%(gene_query,i1))
+						df1.index = [gene_query]*df1.shape[0]
+						list1.append(df1)
+					else:
+						print('gene query without peaks in the region query: %s %d'%(gene_query,i1))
 
-			df_gene_peak_query = pd.concat(list1,axis=0,join='outer',ignore_index=False,keys=None,levels=None,names=None,verify_integrity=False,copy=True)
+				df_gene_peak_query = pd.concat(list1,axis=0,join='outer',ignore_index=False,keys=None,levels=None,names=None,verify_integrity=False,copy=True)
+
+			else:
+				interval_2 = 500
+				iter_num = int(np.ceil(gene_query_num/interval_2))
+				for iter_id in range(iter_num):
+					start_id1 = int(iter_id*interval_2)
+					start_id2 = np.min([(iter_id+1)*interval_2,gene_query_num])
+					iter_vec = np.arange(start_id1,start_id2)
+					res_local = Parallel(n_jobs=-1)(delayed(self.test_gene_peak_query_distance_unit1)(gene_query=gene_query_vec[i1],peaks_pr=peaks_pr,df_gene_annot=df_gene_query,df_annot_2=df_tss_query,
+																	span=span,query_id=i1,interval=interval,save_mode=1,verbose=verbose,select_config=select_config) for i1 in tqdm(iter_vec))
+
+					for df_query in res_local:
+						if len(df_query)>0:
+							list1.append(df_query)
+				
+				df_gene_peak_query = pd.concat(list1,axis=0,join='outer',ignore_index=False,keys=None,levels=None,names=None,verify_integrity=False,copy=True)
 
 			df_gene_peak_query['gene_id'] = np.asarray(df_gene_peak_query.index)
 			df_gene_peak_query.loc[df_gene_peak_query['start']<0,'start']=0
 			query_num1 = df_gene_peak_query.shape[0]
-			peak_id = test_query_index(df_gene_peak_query,column_vec=['chrom','start','stop'],symbol_vec=[':','-'])
+			peak_id = utility_1.test_query_index(df_gene_peak_query,column_vec=['chrom','start','stop'],symbol_vec=[':','-'])
 			df_gene_peak_query['peak_id'] = np.asarray(peak_id)
 			if (save_mode==1) and (output_filename!=''):
 				df_gene_peak_query = df_gene_peak_query.loc[:,['gene_id','peak_id']]
 				df_gene_peak_query.to_csv(output_filename,index=False,sep='\t')
+
+			stop = time.time()
+			# print('search for peaks within distance threshold of gene query used %.2fs'%(stop-start))
 		else:
 			print('load existing peak-gene link query')
 			input_filename = output_filename
@@ -770,6 +793,33 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			df_gene_peak_query.to_csv(output_filename,index=False,sep='\t')
 
 		return df_gene_peak_query
+
+	## gene-peak association query: 
+	def test_gene_peak_query_distance_unit1(self,gene_query,peaks_pr,df_gene_annot=[],df_annot_2=[],span=2000,query_id=-1,interval=5000,save_mode=1,verbose=0,select_config={}):
+		
+		df_gene_query = df_gene_annot
+		df_tss_query = df_annot_2
+		
+		start = df_tss_query[gene_query]-span
+		stop = df_tss_query[gene_query]+span
+		chrom = df_gene_query.loc[gene_query,'chrom']
+		
+		gene_pr = pr.from_dict({'Chromosome':[chrom],'Start':[start],'End':[stop]})
+		gene_peaks = peaks_pr.overlap(gene_pr)  # search for peak loci within specific distance of the gene
+		
+		if (interval>0) and (query_id%interval==0):
+			print('gene_peaks ', len(gene_peaks), gene_query, chrom, start, stop, query_id)
+
+		if len(gene_peaks)>0:
+			df1 = pd.DataFrame.from_dict({'chrom':gene_peaks.Chromosome.values,
+										'start':gene_peaks.Start.values,'stop':gene_peaks.End.values})
+
+			df1.index = [gene_query]*df1.shape[0]
+		else:
+			print('gene query without peaks in the region query: %s %d'%(gene_query,query_id))
+			df1 = []
+
+		return df1
 
 	## gene-peak association query: peak distance to the gene TSS query
 	# input: the gene query, the gene-peak pair query, the gene position and TSS annotation
