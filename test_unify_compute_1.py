@@ -238,48 +238,14 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			else:
 				root_path_2 = root_path_1
 				select_config.update({'root_path_2':root_path_2})
+			
 			print('data_file_type:%s'%(data_file_type))
-			if data_file_type in ['mouse_endoderm','E8.75','E9.25']:
-				# input_file_path = '%s/data_pre2/mouse_endoderm'%(input_file_path1)
-				input_file_path_1 = root_path_2
-				input_file_path = '%s/mouse_endoderm'%(input_file_path_1)
-				# root_path_2 = input_file_path
-				type_id_feature = select_config['type_id_feature']
-				# run_id = select_config['run_id']
-				# filename_save_annot_1 = 'E8.75#Multiome'
-				input_filename_1 = '%s/E8.75_E9.25_rna_endoderm_with_scrna.2.h5ad'%(input_file_path1)
-				input_filename_2 = '%s/E8.75_E9.25_atac_endoderm_with_scatac.2.h5ad'%(input_file_path1)
-				data_timepoint = select_config['data_timepoint']
-				# run_id_load = -1	# the previous annotation
-				# if 'run_id_load' in select_config:
-				# 	run_id_load = select_config['run_id_load']
-				# if run_id_load>0:
-				# 	filename_save_annot_1 = '%s.%d'%(data_timepoint,run_id_load)
-				# else:
-				# 	filename_save_annot_1 = 'E8.75#Multiome'
-				select_config.update({'input_filename_rna':input_filename_1,
-									'input_filename_atac':input_filename_2})
-				print('input_filename_rna:%s, input_filename_atac:%s'%(input_filename_1,input_filename_2))
-			else:
-				print('use input file path ')
 
-		self.save_path_1 = self.path_1
-		input_file_path1 = self.save_path_1
-		root_path_1 = select_config['root_path_1']
-		root_path_2 = select_config['root_path_2']
-		if 'data_file_type' in select_config:
-			data_file_type = select_config['data_file_type']
-			data_file_type_annot = data_file_type.lower()
-			data_file_type_vec = ['CD34_bonemarrow','pbmc','bonemarrow_Tcell','E8.75','E9.25']
-			file_path_annot = ['cd34_bonemarrow','10x_pbmc/data_1','bonemarrow_Tcell','mouse_endoderm/data_1/E8.75','mouse_endoderm/data_1/E9.25']
-			file_path_dict = dict(zip(data_file_type_vec,file_path_annot))
-			human_cell_type = ['CD34_bonemarrow','pbmc','bonemarrow_Tcell']
-			mouse_cell_type = ['E8.75','E9.25']
+			human_cell_type = ['pbmc']
 			if data_file_type in human_cell_type:
 				self.species_id = 'hg38'
 			else:
 				self.species_id = 'mm10'
-			select_config.update({'file_path_dict':file_path_dict})
 
 		return select_config
 
@@ -287,12 +253,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 	def test_config_query_2(self,beta_mode=0,save_mode=1,overwrite=False,select_config={}):
 
 		print('test_config_query')
-		# if 'data_file_type' in select_config:
-		# 	data_file_type = select_config['data_file_type']
-		# 	input_file_path1 = self.path_1
-		# 	root_path_1 = select_config['root_path_1']
-		# 	print('data_file_type:%s'%(data_file_type))
-		# file_path_dict = self.file_path_dict
 		file_path_dict = select_config['file_path_dict']
 		# filename_prefix_1 = select_config['filename_prefix_default']
 		# filename_prefix_save_1 = select_config['filename_prefix_save_local']
@@ -315,78 +275,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 								'data_path_1':data_path_1,
 								'filename_save_annot_1':filename_save_annot_1,
 								'filename_save_annot_pre1':filename_save_annot_1})
-
-		if (data_file_type in ['mouse_endoderm','E8.75','E9.25']) and ('run_id_load' in select_config):
-			data_timepoint = select_config['data_timepoint']
-			input_file_path_2 = select_config['data_path_2']
-			# print('input_file_path_2:%s'%(input_file_path_2))
-			filename_save_annot_2 = '%s#Multiome'%(data_timepoint)
-			input_filename_1 = '%s/test_%s_meta_rna.normalize.log1.1.1.0.h5ad'%(input_file_path_2,filename_save_annot_2)
-			input_filename_2 = '%s/test_%s_meta_atac.normalize.log1.1.1.0.h5ad'%(input_file_path_2,filename_save_annot_2)
-			# input_filename_3 = '%s/test_rna_meta_ad.%s.0.1.meta_scaled_exprs.2.txt'%(input_file_path_2,data_timepoint)
-			input_filename_3 = '%s/test_%s_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path_2,filename_save_annot_2)
-			run_id_load = select_config['run_id_load']
-			if run_id_load<0:
-				# input_filename_1 = '%s/test_E8.75#Multiome_meta_rna.normalize.log1.1.1.0.h5ad'%(input_file_path)
-				# input_filename_2 = '%s/test_E8.75#Multiome_meta_atac.normalize.log1.1.1.0.h5ad'%(input_file_path)
-				# input_filename_3 = '%s/test_E8.75#Multiome_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path)
-				input_filename_3 = '%s/test_%s_meta_exprs.normalize.log1_scale2.2.1.0.txt'%(input_file_path_2,filename_save_annot_2)
-			# else:
-			# 	input_filename_3 = '%s/test_rna_meta_ad.%s.0.1.meta_scaled_exprs.2.txt'%(input_file_path_2,data_timepoint)
-		else:
-			input_filename_1 = '%s/test_rna_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot_1)
-			input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(input_file_path,filename_save_annot_1)
-			input_filename_3 = '%s/test_rna_meta_ad.%s.meta_scaled_exprs.2.txt'%(input_file_path,filename_save_annot_1)
-
-		select_config.update({'filename_rna':input_filename_1,'filename_atac':input_filename_2,
-								'filename_rna_exprs_1':input_filename_3})
-
-		# filename_prefix_default = 'test_gene_peak_local_1'
-		filename_prefix_default = 'test_query_gene_peak_local_1'
-		filename_annot_default = '1'
-		filename_prefix_save_1 = 'pre1'
-		filename_prefix_save_2 = 'pre2'
-		filename_prefix_default_1 = '%s.%s'%(filename_prefix_default,filename_prefix_save_1)
-		select_config.update({'filename_prefix_default':filename_prefix_default,
-								'filename_prefix_default_1':filename_prefix_default_1,
-								'filename_annot_default':filename_annot_default,
-								'filename_prefix_save_default':filename_prefix_save_1,
-								'filename_prefix_save_2':filename_prefix_save_2})
-		peak_bg_num_ori = 100
-		peak_bg_num = 100
-		# interval_peak_corr = 500
-		# interval_local_peak_corr = -1
-		interval_peak_corr = 10
-		interval_local_peak_corr = -1
-		input_filename_peak = '%s/test_peak_GC.1.1.bed'%(input_file_path)
-		input_filename_bg = '%s/test_peak_read.%s.normalize.bg.%d.1.csv'%(input_file_path,data_file_type,peak_bg_num_ori)
-
-		list1 = [peak_bg_num,interval_peak_corr,interval_local_peak_corr]
-		field_query = ['peak_bg_num','interval_peak_corr','interval_local_peak_corr']
-		# print('select_config ',select_config)
-		query_num1 = len(list1)
-		for i1 in range(query_num1):
-			field_id = field_query[i1]
-			query_value = list1[i1]
-			if (not (field_id in select_config)) or (overwrite==True):
-				select_config.update({field_id:query_value})
-
-		select_config.update({'input_filename_peak':input_filename_peak,
-								'input_filename_bg':input_filename_bg})
-
-		# filename_prefix_save_1 = select_config['filename_prefix_save_local']
-		# filename_annot_vec = select_config['filename_annot_local']
-		# column_highly_variable = 'highly_variable_thresh%s'%(highly_variable_thresh)
-		# correlation_type = 'spearmanr'
-		# save_file_path_local = select_config['save_file_path_local']
-		# type_id_correlation = select_config['type_id_correlation']
-		# field_query = ['interval_peak_corr_bg','interval_local_peark_corr']
-
-		save_file_path = '%s/peak_local'%(data_path_1)
-		if os.path.exists(save_file_path)==False:
-			print('the directory does not exist ',save_file_path)
-			os.mkdir(save_file_path)
-		select_config.update({'data_path_save':save_file_path})
 
 		filename_prefix_1 = select_config['filename_prefix_default']
 		filename_prefix_save_1 = select_config['filename_prefix_save_default']
@@ -416,14 +304,16 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		# correlation_type = 'spearmanr'
 
 		## threshold for pre-selection of peak-gene links to estimate empirical p-values
-		thresh_distance_1 = 50 # to update
+		# thresh_distance_1 = 50 # to update
+		thresh_distance_1 = 100
 		thresh_corr_distance_1 = [[0,thresh_distance_1,0],
 									[thresh_distance_1,500,0.01],
 									[500,1000,0.1],
 									[1000,2050,0.15]]
 
 		## threshold for pre-selection of peak-gene links as candidate peaks
-		thresh_distance_1_2 = 50
+		# thresh_distance_1_2 = 50
+		thresh_distance_1_2 = 100
 		thresh_corr_distance_2 = [[0,thresh_distance_1_2,[[0,1,0,1]]],
 									[thresh_distance_1_2,500,[[0.01,0.1,-0.01,0.1],[0.15,0.15,-0.15,0.15]]],
 									[500,1000,[[0.1,0.1,-0.1,0.1]]],
@@ -1265,7 +1155,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		peak_bg_num_ori = 100
 		# input_filename_peak = '%s/test_peak_GC.1.bed'%(input_file_path)
 		# input_filename_bg = '%s/test_peak_read.%s.normalize.bg.%d.1.csv'%(input_file_path,data_file_type,peak_bg_num_ori)
-		
 		input_filename_peak, input_filename_bg = select_config['input_filename_peak'], select_config['input_filename_bg']
 		if os.path.exists(input_filename_bg)==False:
 			print('the file does not exist: %s'%(input_filename_bg))
@@ -1472,9 +1361,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				compute_mode_query = 3
 				self.test_query_feature_correlation_merge_1(df_gene_peak_query=[],filename_list=[],flag_combine=1,compute_mode=compute_mode_query,index_col=0,
 															save_mode=1,output_path=output_file_path,output_filename=output_filename,verbose=verbose,select_config=select_config)
-
-		
-		
+	
 		## add columns to the original peak-link query dataframe: empirical p-values for subset of peak-gene link query
 		# save_file_path = select_config['data_path_save']
 		input_file_path = save_file_path
@@ -1875,7 +1762,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			if 'thresh_corr_distance_1' in select_config:
 				thresh_corr_distance = select_config['thresh_corr_distance_1']
 			else:
-				thresh_distance_1 = 50
+				# thresh_distance_1 = 50
+				thresh_distance_1 = 100
 				if 'thresh_distance_default_1' in select_config:
 					thresh_distance_1 = select_config['thresh_distance_default_1'] # the distance threshold with which we retain the peaks without thresholds of correlation and p-value
 				thresh_corr_distance = [[0,thresh_distance_1,0],
@@ -1885,9 +1773,11 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 			if not ('distance' in df_gene_peak_query):
 				field_query = ['distance']
+				column_idvec = ['peak_id','gene_id']
 				df_peak_annot = self.df_gene_peak_distance
-				df_gene_peak_query = utility_1.test_gene_peak_query_attribute_1(df_gene_peak_query=df_gene_peak_query,
+				df_gene_peak_query = self.test_gene_peak_query_attribute_1(df_gene_peak_query=df_gene_peak_query,
 																					df_gene_peak_query_ref=df_peak_annot,
+																					column_idvec=column_idvec,
 																					field_query=field_query,
 																					column_name=[],
 																					reset_index=False,
@@ -1936,7 +1826,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 		# flag_correlation_1=1
 		# flag_computation_1=0
-		# flag_computation_1=1
 		if ('flag_computation_1' in select_config):
 			flag_computation_1 = select_config['flag_computation_1']
 
@@ -2411,7 +2300,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		warnings.filterwarnings('ignore')
 
 		save_filename_list = []
-		corr_thresh = 0.3
+		# corr_thresh = 0.3
+		corr_thresh = 0.35
 		column_corr_1 = select_config['column_correlation'][0]
 		
 		if interval_save>0:
