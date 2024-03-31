@@ -827,7 +827,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			# beta_mode = 1
 			# self.test_config_query_2(beta_mode=beta_mode,save_mode=1,overwrite=False,select_config=select_config)
 			# flag_computation_vec = [1]
-			flag_computation_vec = [3]
+			# flag_computation_vec = [3]
+			flag_computation_vec = [1,3]
 			
 			# gene_pre1_flag_computation, gene_pre1_flag_combine_1 = 1, 1
 			gene_pre1_flag_computation = 1
@@ -2714,7 +2715,7 @@ def parse_args():
 	parser.add_option("--motif_data_type",default="0",help="motif data type")
 	parser.add_option("--flag_correlation_query_1",default="1",help="flag_correlation_query_1")
 	parser.add_option("--flag_correlation_query",default="1",help="flag_correlation_query")
-	parser.add_option("--flag_correlation_1",default="0",help="flag_correlation_1")
+	parser.add_option("--flag_correlation_1",default="1",help="flag_correlation_1")
 	parser.add_option("--flag_computation",default="1",help="flag_computation_vec")
 	parser.add_option("--flag_combine_empirical_1",default="0",help="flag_combine_empirical_1")
 	parser.add_option("--flag_combine_empirical",default="0",help="flag_combine_empirical")
