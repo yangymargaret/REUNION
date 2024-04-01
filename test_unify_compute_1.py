@@ -2410,8 +2410,14 @@ class _Base2_correlation2(_Base2_correlation2_1):
 							gene_res.append(t_gene_res)
 			else:
 				gene_res = []
-				for t_gene_query in tqdm(gene_idvec1):
+				gene_query_num1 = len(gene_idvec1)
+				iter_vec = np.arange(gene_query_num1)
+				# for t_gene_query in tqdm(gene_idvec1):
+				for i1 in tqdm(iter_vec):
+					t_gene_query = gene_idvec1[i1]
 					peak_vec = np.asarray(df_gene_peak_query.loc[[t_gene_query],'peak_id'])
+					if i1%500==0:
+						print('peak_vec, gene_query ',len(peak_vec),t_gene_query,i1)
 					t_gene_res = self.dorc_func_pre1(peak_vec,t_gene_query,atac_meta_ad,rna_exprs,
 														flag_corr_=flag_corr_,df_query=df_query,
 														corr_thresh=-2,type_id_1=type_id_1,method_type=method_type)
