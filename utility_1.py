@@ -308,6 +308,37 @@ def test_column_query_1(input_filename_list,id_column,column_vec,df_list=[],type
 
 	return df_query1
 
+## copy columns of one dataframe to another
+# the two dataframes have a shared column
+# df2 has unique rownames
+def test_column_query_2(df_list=[],id_column=[],query_idvec=[],column_vec_1=[],column_vec_2=[],type_id_1=0,reset_index=True,flag_unduplicate=0,verbose=0,select_config={}):
+
+	df1, df2 = df_list[0:2]
+	column_id1 = id_column[0]
+	if reset_index==True:
+		# query_id1_ori, query_id2_ori = df1.index.copy(), df2.index.copy()
+		query_id1_ori = df1.index.copy()
+
+	if flag_unduplicate>0:
+		df2 = df2.drop_duplicates(subset=[column_id1])
+
+	df1.index = np.asarray(df1[column_id1])
+	df2.index = np.asarray(df2[column_id1])
+	if len(query_idvec)==0:
+		query_idvec = df1.index
+		df1.loc[:,column_vec_2] = np.asarray(df2.loc[query_idvec,column_vec_1])
+	else:
+		df_query1 = df1.loc[query_idvec,:]
+		query_id1 = np.asarray(df_query1[column_id1])
+		print('df1: ',df1.shape)
+		print('df_query1: ',df_query1.shape)
+		df1.loc[query_idvec,column_vec_2] = np.asarray(df2.loc[query_id1,column_vec_1])
+		
+	if reset_index==True:
+		df1.index = query_id1_ori
+
+	return df1
+
 # query default parameter
 def test_query_default_parameter_1(field_query=[],default_parameter=[],overwrite=False,select_config={}):
 
@@ -882,7 +913,52 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 				print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
 
 	return (df_corr_, df_pval_, df_pval_corrected, df_motif_basic)
-	
+
+## query peak-gene link attributes
+def test_gene_peak_query_attribute_1(df_gene_peak_query=[],df_gene_peak_query_ref=[],field_query=[],column_name=[],reset_index=True,select_config={}):
+
+		print('df_gene_peak_query, df_gene_peak_query_ref ',df_gene_peak_query.shape,df_gene_peak_query_ref.shape)
+		query_id1_ori = df_gene_peak_query.index.copy()
+		df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=['peak_id','gene_id'])
+		df_gene_peak_query_ref.index = test_query_index(df_gene_peak_query_ref,column_vec=['peak_id','gene_id'])
+		query_id1 = df_gene_peak_query.index
+		df_gene_peak_query.loc[:,field_query] = df_gene_peak_query_ref.loc[query_id1,field_query]
+		if len(column_name)>0:
+			df_gene_peak_query = df_gene_peak_query.rename(columns=dict(zip(field_query,column_name)))
+		if reset_index==True:
+			df_gene_peak_query.index = query_id1_ori # reset the index
+
+		return df_gene_peak_query
+
+## query the feature group
+def test_feature_group_query_basic_1(df_query=[],field_query=[],query_vec=[],column_vec=[],type_id_1=0,select_config={}):
+
+		if type_id_1==0:
+			column_id1='count'
+			# if 'count' in df_query:
+			# 	column_id1='count1'
+			df_query[column_id1] = 1
+			df_query_group = df_query.loc[:,[column_id1,field_query]].groupby(by=field_query).sum()
+		elif type_id_1==1:
+			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).max()
+		elif type_id_1==2:
+			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).min()
+		else:
+			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).mean()
+
+		query_id = df_query.index
+		if type_id_1==0:
+			if len(column_vec)==0:
+				column_vec = ['group_count']
+				column_id = column_vec[0]
+			df_query[column_id] = df_query_group.loc[query_id,column_id1]
+		else:
+			if len(column_vec)==0:
+				column_vec = query_vec
+			df_query.loc[:,column_vec] = df_query_group.loc[query_id,query_vec]
+
+		return df_query
+
 ## find the columns with non-zero values
 def test_columns_nonzero_1(df,type_id=0):
 
