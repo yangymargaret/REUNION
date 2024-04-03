@@ -3135,7 +3135,6 @@ class _Base2_pre1(BaseEstimator):
 			else:
 				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
 			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
-
 			print('ATAC-seq count matrx: ',peak_read.shape)
 			print(peak_read[0:2])
 
@@ -3152,6 +3151,64 @@ class _Base2_pre1(BaseEstimator):
 			print('load peak accessiblity and gene expression data used %.2fs'%(stop-start))
 			
 		return select_config
+
+	## load motif data
+	def test_load_motif_data_2(self,data=[],dict_motif_data={},save_mode=1,verbose=0,select_config={}):
+		
+		# motif_data, motif_data_score = [],[]
+		motif_data = self.motif_data
+		if len(motif_data)>0:
+			motif_data_score = self.motif_data_score
+			motif_query_name_expr = self.motif_query_name_expr
+		else:
+			if len(dict_motif_data)==0:
+				dict_motif_data_query_1 = self.dict_motif_data
+				if len(dict_motif_data_query_1)>0:				
+					dict_motif_data = dict_motif_data_query_1[method_type_query]
+
+			if len(dict_motif_data)==0:
+				print('load motif data')
+				input_dir = select_config['input_dir']
+				file_path_1 = input_dir
+				test_estimator1 = _Base2_2(file_path=file_path_1,select_config=select_config)
+					
+				method_type_feature_link = select_config['method_type_feature_link']
+				method_type_vec_query = [method_type_feature_link]
+				data_path_save_local = select_config['data_path_save_local']
+				# data_path_save_motif = select_config['data_path_save_motif']
+				file_path_motif = data_path_save_local
+				select_config.update({'file_path_motif':file_path_motif})
+				save_file_path = data_path_save_local
+				dict_motif_data_query_1, select_config = test_estimator1.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+																								save_mode=1,save_file_path=save_file_path,
+																								select_config=select_config)
+
+				self.dict_motif_data = dict_motif_data_query_1
+				dict_motif_data = dict_motif_data_query_1[method_type_query]
+
+			if len(dict_motif_data)>0:
+				# field_query = ['motif_data','motif_data_score','motif_query_name_expr']
+				field_query = ['motif_data','motif_data_score']
+				list1 = [dict_motif_data[field1] for field1 in field_query]
+
+				# motif_data, motif_data_score, motif_query_name_expr = list1
+				motif_data, motif_data_score = list1[0:2]
+
+				column_1 = 'motif_query_name_expr'
+				if column_1 in dict_motif_data:
+					motif_query_name_expr = dict_motif_data[column_1]
+				else:
+					motif_query_vec_pre1 = motif_data.columns
+					gene_query_name_ori = rna_exprs.columns
+					motif_query_name_expr = motif_query_vec_pre1.intersection(gene_query_name_ori,sort=False)
+
+				motif_data = motif_data.loc[:,motif_query_name_expr]
+				motif_data_score = motif_data_score.loc[:,motif_query_name_expr]
+				self.motif_data = motif_data
+				self.motif_data_score = motif_data_score
+				self.motif_query_name_expr = motif_query_name_expr
+
+		return motif_data, motif_data_score, motif_query_name_expr
 
 	## bedGraph file for each metacell or cell type
 	def test_query_bedGraph_1(self,input_filename_annot='',peak_read=[],column_id='',output_file_path='',type_id_1=1,select_config={}):

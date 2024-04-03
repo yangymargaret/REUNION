@@ -140,7 +140,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		# path_1 = '../example_datasets/data1'
 		self.path_1 = file_path
 		self.config = config
-		self.run_id = run_id
+		# self.run_id = run_id
 		# self.select_config = select_config
 
 		# self.save_path_1 = '../data2'
@@ -151,6 +151,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		self.motif_data = []
 		self.motif_data_score = []
 		self.motif_query_name_expr = []
+		self.dict_motif_data = dict()
 
 		data_type_id = 1
 		if 'data_type_id' in self.config:
@@ -199,7 +200,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		self.df_gene_peak_ = []
 		self.df_gene_peak_list_ = []
 		# self.df_gene_peak_distance = []
-		self.motif_data = []
+		# self.motif_data = []
 		self.gene_expr_corr_ = []
 		self.df_tf_expr_corr_list_pre1 = []	# tf-tf expr correlation
 		self.df_expr_corr_list_pre1 = []	# gene-tf expr correlation
@@ -1083,10 +1084,16 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 		motif_data, motif_data_score = [],[]
 		if len(dict_motif_data)>0:
-			field_query = ['motif_data','motif_data_score','motif_query_name_expr']
+			# field_query = ['motif_data','motif_data_score','motif_query_name_expr']
+			field_query = ['motif_data','motif_data_score']
 			list1 = [dict_motif_data[field1] for field1 in field_query]
 
-			motif_data, motif_data_score, motif_query_name_expr = list1
+			# motif_data, motif_data_score, motif_query_name_expr = list1
+			motif_data, motif_data_score = list1[0:2]
+			motif_query_vec_pre1 = motif_data.columns
+			gene_query_name_ori = rna_exprs.columns
+			motif_query_name_expr = motif_query_vec_pre1.intersection(gene_query_name_ori,sort=False)
+
 			motif_data = motif_data.loc[:,motif_query_name_expr]
 			motif_data_score = motif_data_score.loc[:,motif_query_name_expr]
 			self.motif_data = motif_data

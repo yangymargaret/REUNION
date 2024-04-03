@@ -228,6 +228,9 @@ class _Base2_pre_2(_Base2_correlation5):
 								'filename_prefix_default_1':filename_prefix_save,
 								'filename_prefix_default_pre2':filename_prefix_save_pre2,
 								'filename_annot_save_motif':filename_annot_save_motif})
+
+		filename_prefix_cond = filename_prefix_save_pre2
+		select_config.update({'filename_prefix_cond':filename_prefix_cond})
 		
 		# filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id))
 		filename_save_annot_1 = data_file_type_query
@@ -661,6 +664,7 @@ class _Base2_pre_2(_Base2_correlation5):
 		# flag_motif_data_load = select_config['flag_motif_data_load']
 		flag_motif_data_load = 1
 		flag_load_pre1 = (flag_load_1>0)|(flag_motif_data_load>0)
+		select_config.update({'flag_motif_data_load':flag_motif_data_load})
 		if flag_load_pre1>0:
 			select_config = self.test_query_motif_data_filename_1(input_file_path=input_file_path_pre1,save_mode=1,verbose=verbose,select_config=select_config)
 
@@ -697,6 +701,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			# motif_data_score_query1 = motif_data_score_query1.loc[peak_loc_ori,:]
 			motif_data = motif_data_query1.loc[peak_loc_ori,:]
 			motif_data_score = motif_data_score_query1.loc[peak_loc_ori,:]
+			self.motif_data  = motif_data
+			self.motif_data_score = motif_data_score
 
 			print('motif_data_, motif_data_score: ',motif_data.shape,motif_data_score.shape)
 			print(motif_data[0:2])
@@ -996,8 +1002,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			output_file_path = save_file_path
 			filename_save_thresh2 = select_config['filename_save_thresh2']
 			input_filename = filename_save_thresh2
-			print('filename_prefix_default: %s'%(filename_prefix_1))
-			print('filename_prefix_save_default: %s'%(filename_prefix_2))
+			# print('filename_prefix_default: %s'%(filename_prefix_1))
+			# print('filename_prefix_save_default: %s'%(filename_prefix_2))
 			print('filename_save_thresh2: %s'%(filename_save_thresh2))
 			self.test_gene_peak_query_pre1_basic_1(data=[],input_file_path='',input_filename=input_filename,
 														gene_query_vec=[],
@@ -1026,20 +1032,38 @@ class _Base2_pre_2(_Base2_correlation5):
 			input_filename = '%s/%s.feature_correlation.2.txt'%(input_file_path_1,filename_prefix_1)
 			list_distance_annot = [input_filename]
 			select_config.update({column_1:list_distance_annot})
-			self.test_feature_link_qurey_compare_pre1(data=[],input_filename='',distance_bin=50,n_bins_vec=[20,100],flag_discrete_1=1,flag_discrete_2=0,atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path=save_file_path,filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
+
+			df_link_query_1, select_config = self.test_feature_link_query_compare_pre1(data=[],input_filename='',distance_bin=50,n_bins_vec=[20,100],flag_discrete_1=1,flag_discrete_2=0,atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path=save_file_path,filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
 
 		flag_basic_filter_1 = select_config['flag_basic_filter_1']
 		if flag_basic_filter_1>0:
 			# peak-gene link comparison and pre-selection 2 for each peak linked to multiple gene query
-			self.test_feature_link_qurey_compare_pre3(data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
+			self.test_feature_link_query_compare_pre3(data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
 		
 		flag_cond_query_1 = 0
 		if 'flag_cond_query_1' in select_config:
 			flag_cond_query_1 = select_config['flag_cond_query_1']
-		
+
 		if flag_cond_query_1>0:
 			# compute gene-TF expression partial correlation given peak accessibility
-			self.test_feature_link_query_cond_pre1(atac_ad=[],rna_exprs=[],save_mode=1,save_file_path='',verbose=0,select_config=select_config)
+			flag_compute = 1
+			column_1 = 'filename_feature_link_pre1'
+			if column_1 in select_config:
+				filename_feature_link_pre1 = select_config[column_1]
+			else:
+				data_path_save_local = select_config['data_path_save_local']
+				input_file_path_query= data_path_save_local
+				filename_prefix_1 = select_config['filename_prefix_default']
+				thresh_annot = '100_0.15.500_-0.05'
+				type_query_compare = select_config['type_query_compare']
+				type_score_vec_query1 = [0,2]
+				type_score_query1,type_score_query2 = type_score_vec_query1[0:2]
+				filename_feature_link_pre1 = '%s/%s.df_link_query2.1.combine.%s.%d.%d_%d.2.txt'%(input_file_path_query,filename_prefix_1,thresh_annot,type_query_compare,type_score_query1,type_score_query2)
+				select_config.update({column_1:filename_feature_link_pre1})
+
+			atac_ad = self.atac_meta_ad
+			rna_exprs = self.rna_exprs
+			self.test_feature_link_query_cond_pre1(atac_ad=atac_ad,rna_exprs=rna_exprs,flag_compute=flag_compute,save_mode=1,save_file_path='',verbose=0,select_config=select_config)
 
 		flag_combine = 0
 		if flag_combine>0:
@@ -1047,6 +1071,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		flag_select_pre2 = 0
 		if flag_select_pre2>0:
+			# combine estimated feature link scores from different runs
 			dict_query_1 = self.test_feature_link_query_select_pre1(thresh_vec_query=[],atac_ad=[],rna_exprs=[],save_mode=1,save_mode_2=1,save_file_path='',verbose=0,select_config=select_config)
 
 		flag_basic_filter_2 = select_config['flag_basic_filter_2']
@@ -1054,6 +1079,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			t_vec_1 = self.test_feature_link_qurey_compare_1(data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
 			df_feature_link_query, df_feature_link, dict_query_1 = t_vec_1[0:3]
 	
+
 	## query peak-gene correlation 
 	def test_query_feature_link_correlation_1(self,df_feature_link_1=[],df_feature_link_2=[],column_idvec=['gene_id','peak_id'],column_vec_query=[],save_mode=1,verbose=0,select_config={}):
 
@@ -1130,8 +1156,77 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		return df_query1
 
+	## combine feature link score estimation
+	def test_feature_link_score_combine_pre1(self,data=[],save_mode=1,verbose=0,select_config={}):
+
+		flag_combine_query = 1
+		if flag_combine_query>0:
+			data_path_save_local = select_config['data_path_save_local']
+			input_file_path_query = '%s/temp1'%(data_path_save_local)
+			filename_prefix_1 = select_config['filename_prefix_default']
+			thresh_annot = '100_0.15.500_-0.05'
+			type_query_compare = select_config['type_query_compare']
+			# input_filename_1 = '%s/test_query_gene_peak.pbmc.df_link_query2.1.combine.100_0.15.500_-0.05.2.2.2.txt'
+			# input_filename_list = []
+			column_idvec = ['peak_id','gene_id']
+			df_list1 = []
+			type_score_vec_query1 = [0,2]
+			for type_score in type_score_vec_query1:
+				input_filename_1 = '%s/%s.df_link_query2.1.combine.%s.%d.%d.2.txt'%(input_file_path_query,filename_prefix_1,thresh_annot,type_query_compare,type_score)
+				df_query = pd.read_csv(input_filename_1,index_col=False,sep='\t')
+				df_query.index = test_query_index(df_query,column_vec=column_idvec)
+				df_list1.append(df_query)
+
+			df_query1, df_query2 = df_list1[0:2]
+			column_corr_1 = 'spearmanr'
+			column_score_1 = column_corr_1
+
+			query_num1 = len(df_list1)
+			df_list1_1 = []
+			df_list1_2 = []
+			for i1 in range(query_num1):
+				df_query = df_list1[i1]
+				id1 = (df_query[column_score_1]>0)
+				id2 = (~id1)
+				df_pre1 = df_query.loc[id1,:]
+				df_pre2 = df_query.loc[id2,:]
+				df_list1_1.append(df_pre1)
+				df_list1_2.append(df_pre2)
+				print('df_query,df_pre1, df_pre2 ',df_query.shape,df_pre1.shape,df_pre2.shape,i1)
+
+			df_pre1_1,df_pre1_2 = df_list1_1[0:2]
+			df_pre2_1,df_pre2_2 = df_list1_2[0:2]
+			query_id1_1, query_id1_2 = df_pre1_1.index, df_pre1_2.index
+			query_id2_1, query_id2_2 = df_pre2_1.index, df_pre2_2.index
+				
+			query_id1_pre1 = query_id1_1.intersection(query_id1_2,sort=False)
+			query_id1_pre2 = query_id1_1.difference(query_id1_2,sort=False)
+			query_id1_pre3 = query_id1_2.difference(query_id1_1,sort=False)
+			query_num1_pre1, query_num1_pre2, query_num1_pre3 = len(query_id1_pre1), len(query_id1_pre2), len(query_id1_pre3)
+			print('query_id1_pre1, query_id1_pre2, query_id1_pre3 ',query_num1_pre1,query_num1_pre2,query_num1_pre3)
+
+			query_num2_1, query_num2_2 = len(query_id2_1), len(query_id2_2)
+			print('query_id2_1, query_id2_2 ',query_num2_1,query_num2_2)
+
+			df_pre1_3 = df_pre1_1.loc[query_id1_pre1,:]
+			list1 = [df_pre1_2,df_pre2_1]
+			df_query_1 = pd.concat(list1,axis=0,join='outer',ignore_index=False)
+			output_file_path_query = input_file_path_query
+
+			type_score_query1, type_score_query2 = type_score_vec_query1[0:2]
+			output_filename = '%s/%s.df_link_query2.1.combine.%s.%d.%d_%d.2.txt'%(output_file_path_query,filename_prefix_1,thresh_annot,type_query_compare,type_score_query1,type_score_query2)
+			df_query_1 = df_query_1.drop_duplicates(subset=column_idvec)
+			df_query_1.to_csv(output_filename,index=False,sep='\t')
+			print('df_query_1 ',df_query_1.shape)
+			print(output_filename)
+
+			column_1 = 'filename_feature_link_pre1'
+			select_config.update({column_1:output_filename})
+
+			return df_query_1, select_config
+
 	## perform feature link comparison and selection
-	def test_feature_link_qurey_compare_pre1(self,data=[],df_gene_peak=[],df_gene_peak_combine=[],input_filename='',distance_bin=50,n_bins_vec=[20,100],flag_discrete_1=1,flag_discrete_2=0,atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	def test_feature_link_query_compare_pre1(self,data=[],df_gene_peak=[],df_gene_peak_combine=[],input_filename='',distance_bin=50,n_bins_vec=[20,100],flag_discrete_1=1,flag_discrete_2=0,atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		flag_correlation_2=0
 		if 'flag_correlation_2' in select_config:
@@ -1141,7 +1236,6 @@ class _Base2_pre_2(_Base2_correlation5):
 		df_gene_peak_compute_pre1 = df_gene_peak_combine
 		if flag_correlation_2>0:
 			df_gene_peak_compare_pre1_1 = self.df_gene_peak_distance
-			
 			if len(df_gene_peak)==0:
 				input_filename = select_config['filename_save_thresh2']
 				df_gene_peak_query_thresh2 = pd.read_csv(input_filename,index_col=0,sep='\t')
@@ -1200,6 +1294,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			print('df_gene_peak_compare_pre1, df_gene_peak_compare ',df_gene_peak_compare_pre1.shape,df_gene_peak_query_compare.shape)
 			query_id_compare = df_gene_peak_query_compare.index.copy()
 
+			# compute peak accessibility-gene expression correlation
 			if flag_correlation_2 in [1]:
 				iter_mode_1 = 0
 				if ('query_id1' in select_config) and ('query_id2' in select_config):
@@ -1539,7 +1634,9 @@ class _Base2_pre_2(_Base2_correlation5):
 			df_gene_peak_query_1 = df_gene_peak_query.copy()
 			column_score_query = column_corr_1
 
-			for type_score in [0,2]:
+			type_score_vec_query1 = [0,2]
+			# for type_score in [0,2]:
+			for type_score in type_score_vec_query1:
 				print('perform peak-gene link query comparison')
 				start = time.time()
 				if type_score in [2]:
@@ -1557,7 +1654,73 @@ class _Base2_pre_2(_Base2_correlation5):
 																						save_mode=1,filename_prefix_save=filename_prefix_save,output_file_path=output_file_path,verbose=verbose,select_config=select_config)
 				stop = time.time()
 				print('perform peak-gene link query comparison used: %.2fs'%(stop-start))
-	
+
+			# flag_combine_query = 0
+			flag_combine_query = 1
+			if flag_combine_query>0:
+				# data_path_save_local = select_config['data_path_save_local']
+				# input_file_path_query = '%s/temp1'%(data_path_save_local)
+				# filename_prefix_1 = select_config['filename_prefix_default']
+				# thresh_annot = '100_0.15.500_-0.05'
+				# type_query_compare = select_config['type_query_compare']
+				# # input_filename_1 = '%s/test_query_gene_peak.pbmc.df_link_query2.1.combine.100_0.15.500_-0.05.2.2.2.txt'
+				# # input_filename_list = []
+				# column_idvec = ['peak_id','gene_id']
+				# df_list1 = []
+				# for type_score in type_score_vec_query1:
+				# 	input_filename_1 = '%s/%s.df_link_query2.1.combine.%s.%d.%d.2.txt'%(input_file_path_query,filename_prefix_1,thresh_annot,type_query_compare,type_score)
+				# 	df_query = pd.read_csv(input_filename_1,index_col=False,sep='\t')
+				# 	df_query.index = test_query_index(df_query,column_vec=column_idvec)
+				# 	df_list1.append(df_query)
+
+				# df_query1, df_query2 = df_list1[0:2]
+				# column_corr_1 = 'spearmanr'
+				# column_score_1 = column_corr_1
+
+				# query_num1 = len(df_list1)
+				# df_list1_1 = []
+				# df_list1_2 = []
+				# for i1 in range(query_num1):
+				# 	df_query = df_list1[i1]
+				# 	id1 = (df_query[column_score_1]>0)
+				# 	id2 = (~id1)
+				# 	df_pre1 = df_query.loc[id1,:]
+				# 	df_pre2 = df_query.loc[id2,:]
+				# 	df_list1_1.append(df_pre1)
+				# 	df_list1_2.append(df_pre2)
+				# 	print('df_query,df_pre1, df_pre2 ',df_query.shape,df_pre1.shape,df_pre2.shape,i1)
+
+				# df_pre1_1,df_pre1_2 = df_list1_1[0:2]
+				# df_pre2_1,df_pre2_2 = df_list1_2[0:2]
+				# query_id1_1, query_id1_2 = df_pre1_1.index, df_pre1_2.index
+				# query_id2_1, query_id2_2 = df_pre2_1.index, df_pre2_2.index
+				
+				# query_id1_pre1 = query_id1_1.intersection(query_id1_2,sort=False)
+				# query_id1_pre2 = query_id1_1.difference(query_id1_2,sort=False)
+				# query_id1_pre3 = query_id1_2.difference(query_id1_1,sort=False)
+				# query_num1_pre1, query_num1_pre2, query_num1_pre3 = len(query_id1_pre1), len(query_id1_pre2), len(query_id1_pre3)
+				# print('query_id1_pre1, query_id1_pre2, query_id1_pre3 ',query_num1_pre1,query_num1_pre2,query_num1_pre3)
+
+				# query_num2_1, query_num2_2 = len(query_id2_1), len(query_id2_2)
+				# print('query_id2_1, query_id2_2 ',query_num2_1,query_num2_2)
+
+				# df_pre1_3 = df_pre1_1.loc[query_id1_pre1,:]
+				# list1 = [df_pre1_2,df_pre2_1]
+				# df_query_1 = pd.concat(list1,axis=0,join='outer',ignore_index=False)
+				# output_file_path_query = input_file_path_query
+
+				# type_score_query1, type_score_query2 = type_score_vec_query1[0:2]
+				# output_filename = '%s/%s.df_link_query2.1.combine.%s.%d.%d_%d.2.txt'%(output_file_path_query,filename_prefix_1,thresh_annot,type_query_compare,type_score_query1,type_score_query2)
+				# df_query_1 = df_query_1.drop_duplicates(subset=column_idvec)
+				# df_query_1.to_csv(output_filename,index=False,sep='\t')
+				# print('df_query_1 ',df_query_1.shape)
+				# print(output_filename)
+
+				# column_1 = 'filename_feature_link_pre1'
+				# select_config.update({column_1:output_filename})
+
+				df_link_query_2, select_config = self.test_feature_link_score_combine_pre1(data=[],save_mode=1,verbose=0,select_config=select_config)
+
 		# flag_basic_filter_1 = select_config['flag_basic_filter_1']
 		# beta_mode = select_config['beta_mode']
 		# save_file_path = select_config['data_path_save_local']
@@ -1569,7 +1732,7 @@ class _Base2_pre_2(_Base2_correlation5):
 		# column_corr_1, column_pval_ori = column_correlation[0], column_correlation[2]
 		# column_pval_1 = column_correlation[1]
 
-		return df_link_query_1
+		return df_link_query_2, select_config
 		
 	## perform feature link comparison and selection
 	def test_feature_link_qurey_compare_pre2(self,data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -1738,7 +1901,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			# 															select_config=select_config)
 
 	## perform feature link comparison and selection
-	def test_feature_link_qurey_compare_pre3(self,data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	def test_feature_link_query_compare_pre3(self,data=[],input_filename='',atac_ad=[],rna_exprs=[],type_query_compare=2,peak_distance_thresh=2000,sub_sample_num=-1,save_mode=1,save_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		flag_basic_filter_1=1
 		if flag_basic_filter_1==1:
@@ -1851,7 +2014,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 	## compute score 1 and score 2
 	# compute partial correlation between gene and TF expression given peak accessibility
-	def test_feature_link_query_cond_pre1(self,atac_ad=[],rna_exprs=[],save_mode=1,save_file_path='',verbose=0,select_config={}):
+	def test_feature_link_query_cond_pre1(self,atac_ad=[],rna_exprs=[],flag_compute=1,save_mode=1,save_file_path='',verbose=0,select_config={}):
 
 		# file_path1 = self.save_path_1
 		## provide file paths
@@ -1860,23 +2023,36 @@ class _Base2_pre_2(_Base2_correlation5):
 			flag_cond_query_1 = select_config['flag_cond_query_1']
 
 		beta_mode = select_config['beta_mode']
-		data_file_type_query = select_config['data_file_type_query']
+		# data_file_type_query = select_config['data_file_type_query']
+		data_file_type = select_config['data_file_type']
+		data_file_type_query = data_file_type
 		save_file_path = select_config['data_path_save_local']
-		thresh_motif_1 = select_config['thresh_motif_1']
-		file_save_path2 = '%s/motif_score_%s'%(save_file_path,thresh_motif_1)
+		# thresh_motif_1 = select_config['thresh_motif_1']
+		# file_save_path2 = '%s/motif_score_%s'%(save_file_path,thresh_motif_1)
+		column_1 = 'thresh_motif_1'
+		if column_1 in select_config:
+			thresh_motif_1 = select_config[column_1]
+		else:
+			thresh_motif_1 = '5e-05'
+			select_config.update({column_1:thresh_motif_1})
 		
-		if os.path.exists(file_save_path2)==False:
-			print('the directory does not exist: %s'%(file_save_path2))
-			os.makedirs(file_save_path2,exist_ok=True)
+		# if os.path.exists(file_save_path2)==False:
+		# 	print('the directory does not exist: %s'%(file_save_path2))
+		# 	os.makedirs(file_save_path2,exist_ok=True)
 		
 		filename_annot_default = data_file_type_query
 		filename_annot_motif_score = '%s.%s'%(filename_annot_default,thresh_motif_1)
-		file_path_motif_score = file_save_path2
-		select_config.update({'file_path_motif_score':file_path_motif_score,
-								'filename_annot_motif_score':filename_annot_motif_score})
 
+		file_save_path2 = select_config['file_path_motif_score']
+		file_path_motif_score = file_save_path2
+		# select_config.update({'file_path_motif_score':file_path_motif_score,
+		# 						'filename_annot_motif_score':filename_annot_motif_score})
+
+		select_config.update({'filename_annot_motif_score':filename_annot_motif_score})
+		
 		if flag_cond_query_1>0:
 			flag_motif_data_load = select_config['flag_motif_data_load']
+			dict_motif_data = dict()
 			if flag_motif_data_load>0:
 				motif_data = self.motif_data
 				motif_data_score = self.motif_data_score
@@ -1899,7 +2075,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			rna_exprs_unscaled = self.meta_exprs_2
 
 			correlation_type = 'spearmanr'
-			flag_peak_tf_corr = 0
+			# flag_peak_tf_corr = 0
+			flag_peak_tf_corr = 1
 			flag_load_peak_tf = 1
 			thresh_insilco_ChIP_seq = 0.1
 			flag_save_text_peak_tf = 1
@@ -1915,14 +2092,19 @@ class _Base2_pre_2(_Base2_correlation5):
 			file_save_path_1 = select_config['data_path_save']
 			file_save_path_local = select_config['data_path_save_local']
 			
-			input_filename_1 = '%s/test_peak_tf_correlation.%s.spearmanr.1.copy1.txt'%(file_save_path_local,data_file_type_query)
+			# input_filename_1 = '%s/test_peak_tf_correlation.%s.spearmanr.1.copy1.txt'%(file_save_path_local,data_file_type_query)
+			input_filename_1 = '%s/test_peak_tf_correlation.%s.spearmanr.1.txt'%(file_save_path_local,data_file_type_query)
 			select_config.update({'filename_peak_tf_corr':input_filename_1})
+			print('filename_peak_tf_corr ',input_filename_1)
 
 			file_save_path_2 = select_config['file_path_motif_score']
 			filename_annot = select_config['filename_annot_save_default']
 			filename_1 = '%s/test_query_meta_nbrs.%s.1.txt'%(file_save_path_2,filename_annot)
 			filename_2 = '%s/test_query_peak_access.%s.1.txt'%(file_save_path_2,filename_annot)
 			select_config.update({'output_filename_open_peaks':filename_1,'output_filename_nbrs_atac':filename_2})
+
+			print('output_filename_open_peaks ',filename_1)
+			print('output_filename_nbrs_atac ',filename_2)
 
 			# file_path_basic_filter = select_config['file_path_basic_filter']
 			# filename_prefix_default = select_config['filename_prefix_link_pre1']
@@ -1969,10 +2151,16 @@ class _Base2_pre_2(_Base2_correlation5):
 			# 	df_link_query1 = df_link_query_2
 			# 	feature_query_num_1 = gene_query_num_2
 
-			input_filename_query = select_config['filename_feature_link_pre1'] # the file of the pre-selected peak-gene link query
-			df_link_query1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
+			# input_filename_query = select_config['filename_feature_link_pre1'] # the file of the pre-selected peak-gene link query
+			filename_feature_link_pre1 = select_config['filename_feature_link_pre1']
+			input_filename_query = filename_feature_link_pre1
+			df_link_query1 = pd.read_csv(input_filename_query,index_col=False,sep='\t')
 			print('feature link: ',df_link_query1.shape)
-			print(df_link_query1[0:2])
+			print(df_link_query1.columns)
+			# print(df_link_query1[0:2])
+			print(df_link_query1)
+			# print(input_filename_query)
+			print(filename_feature_link_pre1)
 
 			column_vec_1 = ['motif_id','peak_id','gene_id']
 			column_id3, column_id2, column_id1 = column_vec_1[0:3]
@@ -1984,7 +2172,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			gene_query_vec_1 = df_link_query1[column_id1].unique()
 			gene_query_num1 = len(gene_query_vec_1)
-			feature_query_num_1 = gene_query_num
+			feature_query_num_1 = gene_query_num1
 			print('gene_query_vec_1: %d'%(gene_query_num1))
 
 			column_gene_tf_corr_peak = ['gene_tf_corr_peak','gene_tf_corr_peak_pval','gene_tf_corr_peak_pval_corrected1']
@@ -1993,7 +2181,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			input_file_path_2 = select_config['file_path_motif_score']
 			# filename_prefix_default_1 = select_config['filename_prefix_default_1']
 			filename_prefix_default_1 = select_config['filename_prefix_cond']
-			
+
 			query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
 			iter_mode=0
 			if (query_id1>=0) and (query_id2>query_id1):
@@ -2024,6 +2212,7 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			file_save_path2 = select_config['file_path_motif_score']
 			input_file_path = file_save_path2
+
 			filename_list1 = []
 			for i2 in [1,3]:
 				input_filename_query = '%s/%s.annot1_%d.1.txt'%(input_file_path,filename_prefix_save_pre2,i2)
@@ -2052,11 +2241,12 @@ class _Base2_pre_2(_Base2_correlation5):
 
 				# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
 				column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
+				# parameter configuration for feature score computation
 				select_config = self.test_query_score_config_1(column_pval_cond=column_pval_cond,thresh_corr_1=0.1,thresh_pval_1=0.1,overwrite=True,
 																flag_config_1=1,flag_config_2=1,save_mode=1,verbose=verbose,select_config=select_config)
 
 				# flag_compute = 1
-				flag_compute = 2
+				# flag_compute = 2
 				if flag_compute in [1,3]:
 					# estimate the peak-TF-gene link score
 					if load_mode==0:
@@ -2070,10 +2260,30 @@ class _Base2_pre_2(_Base2_correlation5):
 							select_config.update({field_id:query_value})
 
 						# computation of peak-TF-gene link score
-						df_link_query2 = self.test_gene_peak_query_correlation_gene_pre2(gene_query_vec=[],motif_query_vec=motif_query_vec,df_gene_peak_query=df_link_query1,peak_distance_thresh=peak_distance_thresh,
-																						df_peak_query=[],peak_loc_query=[],df_gene_tf_corr_peak=df_gene_tf_corr_peak_1,atac_ad=atac_ad,peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-																						motif_data=motif_data,motif_data_score=motif_data_score,dict_motif_data=dict_motif_data,
-																						interval_peak_corr=50,interval_local_peak_corr=10,annot_mode=1,flag_load_pre1=0,flag_load_1=0,
+						filename_prefix_save = select_config['filename_prefix_default']
+						data_path_save_local = select_config['data_path_save_local']
+						file_path_motif_score = select_config['file_path_motif_score']
+						input_file_path = data_path_save_local
+						output_file_path = file_path_motif_score
+						peak_distance_thresh = select_config['peak_distance_thresh']
+
+						if len(atac_ad)==0:
+							atac_ad = self.atac_meta_ad
+
+						peak_read = self.peak_read
+						interval_peak_corr = -1
+						interval_local_peak_corr = 10
+						df_link_query2 = self.test_gene_peak_query_correlation_gene_pre2(gene_query_vec=[],motif_query_vec=motif_query_vec,
+																						df_gene_peak_query=df_link_query1,
+																						peak_distance_thresh=peak_distance_thresh,
+																						df_peak_query=[],peak_loc_query=[],
+																						df_gene_tf_corr_peak=df_gene_tf_corr_peak_1,
+																						atac_ad=atac_ad,peak_read=peak_read,
+																						rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
+																						motif_data=motif_data,motif_data_score=motif_data_score,
+																						dict_motif_data=dict_motif_data,
+																						interval_peak_corr=interval_peak_corr,interval_local_peak_corr=interval_local_peak_corr,
+																						annot_mode=1,flag_load_pre1=0,flag_load_1=0,
 																						save_mode=1,input_file_path=input_file_path,filename_prefix_save=filename_prefix_save,output_filename='',output_file_path=output_file_path,
 																						verbose=verbose,select_config=select_config)
 					else:

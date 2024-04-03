@@ -55,6 +55,7 @@ from scipy.optimize import minimize
 from scipy.cluster.hierarchy import dendrogram, linkage
 from statsmodels.stats.multitest import multipletests
 import statsmodels.api as sm
+import pingouin as pg
 import gc
 from joblib import Parallel, delayed
 
@@ -62,7 +63,7 @@ import time
 from timeit import default_timer as timer
 
 import utility_1
-from utility_1 import pyranges_from_strings, test_file_merge_1
+from utility_1 import pyranges_from_strings, test_file_merge_1, test_query_index
 from utility_1 import spearman_corr, pearson_corr
 import h5py
 import json
@@ -671,7 +672,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		df_gene_peak_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 		if len(column_vec)>0:
-			df_gene_peak_query.index = self.test_query_index(df_gene_peak_query,column_vec=column_vec)
+			# df_gene_peak_query.index = self.test_query_index(df_gene_peak_query,column_vec=column_vec)
+			df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=column_vec)
 
 		return df_gene_peak_query
 
@@ -713,33 +715,41 @@ class _Base2_correlation5(_Base2_correlation3):
 														df_peak_query=[],peak_loc_query=[],df_gene_tf_corr_peak=[],
 														atac_ad=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
 														motif_data=[],motif_data_score=[],dict_motif_data=[],
-														interval_peak_corr=50,interval_local_peak_corr=10,annot_mode=1,flag_load_pre1=0,flag_load_1=0,overwrite_1=False,overwrite_2=False,parallel_mode=1,
+														interval_peak_corr=50,interval_local_peak_corr=10,annot_mode=1,
+														flag_load_pre1=0,flag_load_1=0,overwrite_1=False,overwrite_2=False,parallel_mode=1,
 														input_file_path='',save_mode=1,filename_prefix_save='',output_filename='',output_file_path='',verbose=0,select_config={}):
 
 		# file_path1 = self.save_path_1
 		## provide file paths
 		input_file_path1 = self.save_path_1
 		data_file_type_ori = select_config['data_file_type']
-		data_file_type_query = select_config['data_file_type_query']
-		data_file_type = data_file_type_query
+		# data_file_type_query = select_config['data_file_type_query']
+		data_file_type = select_config['data_file_type']
+		data_file_type_query = data_file_type
+		# data_file_type = data_file_type_query
 		data_file_type_annot = data_file_type_query.lower()
 		
 		run_id = select_config['run_id']
 		type_id_feature = select_config['type_id_feature']
-		# input_file_path = '%s/metacell_%d/run%d'%(data_dir,metacell_num,run_id)
-		file_save_path = select_config['data_path_save']
+
+		file_save_path = select_config['data_path_save']	# data_path_save = data_path_save_local
 		input_file_path = file_save_path
 		print('input_file_path: %s'%(input_file_path))
+
 		if output_file_path=='':
 			output_file_path_ori = file_save_path
 		output_file_path_ori = output_file_path
 		
 		# flag_load_pre1=0
+		if (flag_load_pre1==0):
+			if (len(peak_read)==0) or (len(rna_exprs)==0):
+				flag_load_pre1 = 1
+
 		if flag_load_pre1>0:
 			## query ATAC-seq and RNA-seq normalized read counts
-			# select_config.update({'data_path_2':input_file_path_2})
-			# peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1(peak_read=[],meta_exprs=[],select_config=select_config)
-			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(peak_read=[],meta_exprs=[],select_config=select_config)
+			# peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(peak_read=[],meta_exprs=[],select_config=select_config)
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori_2(peak_read=[],meta_exprs=[],flag_format=False,flag_scale=0,select_config=select_config)
+
 			self.meta_scaled_exprs = meta_scaled_exprs
 			self.meta_exprs_2 = meta_exprs_2
 			self.peak_read = peak_read
@@ -752,29 +762,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				self.test_gene_annotation_query1(select_config=select_config)
 				stop = time.time()
 				print('used: %.5fs'%(stop-start))
-			
-		# flag_load_1=0
-		if len(motif_data)==0:
-			flag_load_1 = 1
-		if flag_load_1>0:
-			self.test_motif_peak_estimate_load_1(peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-													dict_motif_data=dict_motif_data,select_config=select_config)
-
-		if (len(motif_data)==0) or (flag_load_1==1):
-			motif_data = self.motif_data
-			motif_data_score = self.motif_data_score
-
-		print('motif_data, motif_data_score: ',motif_data.shape,motif_data_score.shape)
-		print(motif_data[0:2],motif_data_score[0:2])
-		
-		peak_loc_ori = motif_data.index
-		motif_query_name_expr = motif_data.columns
-		if len(motif_query_vec)==0:
-			motif_query_vec = motif_query_name_expr
-		
-		motif_query_num = len(motif_query_vec)
-		print('motif_query_vec: %d'%(motif_query_num))
-		# motif_query_vec = motif_query_vec[0:5]
 
 		if len(peak_read)==0:
 			peak_read = self.peak_read
@@ -788,11 +775,47 @@ class _Base2_correlation5(_Base2_correlation3):
 		sample_id = rna_exprs.index
 		rna_exprs_unscaled = rna_exprs_unscaled.loc[sample_id,:]
 		peak_read = peak_read.loc[sample_id,:]
-	
+		
+		method_type_feature_link = select_config['method_type_feature_link']
+		method_type_query = method_type_feature_link
+
+		# flag_load_1=0
+		if len(motif_data)==0:
+			flag_load_1 = 1
+		if flag_load_1>0:
+			# self.test_motif_peak_estimate_load_1(peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
+			# 										dict_motif_data=dict_motif_data,select_config=select_config)
+
+			motif_data, motif_data_score, motif_query_name_expr = self.test_load_motif_data_2(dict_motif_data=dict_motif_data,select_config=select_config)
+
+		# if (len(motif_data)==0) or (flag_load_1==1):
+		# 	motif_data = self.motif_data
+		# 	motif_data_score = self.motif_data_score
+		# peak_loc_ori = motif_data.index
+		peak_loc_ori = peak_read.columns
+		motif_data = motif_data.loc[peak_loc_ori,:]
+		motif_data_score = motif_data_score.loc[peak_loc_ori,:]
+
+		print('motif_data, motif_data_score: ',motif_data.shape,motif_data_score.shape)
+		print(motif_data[0:2],motif_data_score[0:2])
+
+		motif_query_name_expr = motif_data.columns
+		if len(motif_query_vec)==0:
+			motif_query_vec = motif_query_name_expr
+		
+		motif_query_num = len(motif_query_vec)
+		print('motif_query_vec: %d'%(motif_query_num))
+		# motif_query_vec = motif_query_vec[0:5]
+
 		## peak accessibility-TF expr correlation
 		filename_prefix_1 = filename_prefix_save
 		# correlation_type = 'spearmanr'
-		correlation_type = select_config['correlation_type']
+		# correlation_type = select_config['correlation_type']
+		column_1 = 'correlation_type'
+		if column_1 in select_config:
+			correlation_type = select_config[column_1]
+		else:
+			correlation_type = 'spearmanr'
 		# flag_query1=0
 		flag_query_peak_basic=0
 
@@ -813,35 +836,33 @@ class _Base2_correlation5(_Base2_correlation3):
 				flag_gene_tf_corr,flag_peak_tf_corr,flag_motif_score_normalize,
 				flag_gene_tf_corr_peak_compute,flag_gene_tf_corr_peak_combine]
 
-		select_config, param_vec = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=False,select_config=select_config)
-			
+		# overwrite_2 = True
+		overwrite_pre2 = False
+		# select_config, param_vec = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=False,select_config=select_config)
+		select_config, param_vec = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=overwrite_pre2,select_config=select_config)
+
 		flag_query_peak_basic,flag_query_peak_ratio,flag_gene_tf_corr,flag_peak_tf_corr,flag_motif_score_normalize,flag_gene_tf_corr_peak_compute,flag_gene_tf_corr_peak_combine = param_vec
 		for (field_id,query_value) in zip(field_query,param_vec):
 			print('field_id, query_value: ',field_id,query_value)
 
 		if flag_motif_score_normalize>0:
 			flag_motif_score_normalize_1=1
-			# flag_motif_score_normalize_1=0
 			flag_motif_score_normalize_1_query=1
-			# flag_motif_score_normalize_1_query=0
 			flag_motif_score_normalize_2=1
-			# flag_motif_score_normalize_2=0
 		else:
 			flag_motif_score_normalize_1=0
 			flag_motif_score_normalize_1_query=0
 			flag_motif_score_normalize_2=0
 
-		if 'flag_motif_score_normalize_2' in select_config:
-			flag_motif_score_normalize_2 = select_config['flag_motif_score_normalize_2']
+		column_1 = 'flag_motif_score_normalize_2'
+		if column_1 in select_config:
+			flag_motif_score_normalize_2 = select_config[column_1]
 
 		## query tf binding activity score
-		# flag_query6_5=0
-		## re-compute gene_tf_corr_peak for peak-gene link query added
+		# re-compute gene_tf_corr_peak for peak-gene link query added
 		flag_query_recompute=0
 	
 		flag_motif_score_normalize_thresh1 = flag_motif_score_normalize_1_query
-		# overwrite_1 = False
-		# overwrite_2 = False
 		df_gene_peak_query1 = []
 		df_link_query_1 = self.test_gene_peak_query_correlation_gene_pre2_compute_1(gene_query_vec=gene_query_vec,
 																						motif_query_vec=motif_query_vec,
@@ -1957,11 +1978,12 @@ class _Base2_correlation5(_Base2_correlation3):
 						continue
 						# return
 					df_query1 = pd.read_csv(input_filename,index_col=0,sep='\t')
-					df_query1.index = self.test_query_index(df_query1,column_vec=['motif_id','peak_id','gene_id'])
+					# df_query1.index = self.test_query_index(df_query1,column_vec=['motif_id','peak_id','gene_id'])
+					df_query1.index = test_query_index(df_query1,column_vec=['motif_id','peak_id','gene_id'])
 					t_columns = df_query1.columns.difference(['ratio_1','ratio_cond1'],sort=False)
 					df_query_1 = df_query1.loc[:,t_columns]
 					df_query2 = df_query1.loc[:,['peak_id','gene_id','ratio_1','ratio_cond1']]
-					df_query2.index = self.test_query_index(df_query2,column_vec=['peak_id','gene_id'])
+					df_query2.index = test_query_index(df_query2,column_vec=['peak_id','gene_id'])
 					# df_query2= df_query2.drop_duplicates(subset=['ratio_1','ratio_cond1'])
 					df_query_2 = df_query2.loc[~df_query2.index.duplicated(keep='first')]
 					print('df_query1 ',df_query1.shape,input_filename,i1)
@@ -2957,7 +2979,7 @@ class _Base2_correlation5(_Base2_correlation3):
 												motif_data=[],peak_read=[],rna_exprs=[],filename_annot='',reset_index=True,flag_annot_1=1,type_query=0,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		df_query_1 = df_gene_peak_tf_query
-		from utility_1 import test_query_index
+		# from utility_1 import test_query_index
 		if len(column_idvec)==0:
 			column_idvec = ['motif_id','peak_id','gene_id']
 		if reset_index==True:
@@ -3036,7 +3058,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			if flag_annot1>0:
 				column_idvec_1 = column_idvec
 				# column_vec_1 = [[column_pval_cond]]
-				df_1.index = utility_1.test_query_index(df_1,column_vec=column_idvec)
+				df_1.index = test_query_index(df_1,column_vec=column_idvec)
 				df_link_query_1 = utility_1.test_column_query_1(input_filename_list=[],id_column=column_idvec_1,column_vec=column_vec_1,
 																df_list=df_list1,type_id_1=0,type_id_2=0,reset_index=False,select_config=select_config)
 
@@ -3296,7 +3318,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		else:
 			df_gene_peak_query_pre1 = df_gene_peak_query
 
-		from utility_1 import test_query_index
+		# from utility_1 import test_query_index
 		df_gene_peak_query_pre1.index = test_query_index(df_gene_peak_query_pre1,column_vec=['motif_id','peak_id','gene_id'])
 		print('df_gene_peak_query_pre1 ',df_gene_peak_query_pre1.shape)
 
@@ -3492,7 +3514,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			list_query1 = []
 			flag_link_type = 1
 			flag_compute = 1
-			from utility_1 import test_query_index, test_column_query_1
+			# from utility_1 import test_query_index, test_column_query_1
+			from utility_1 import test_column_query_1
 			
 			if len(df_feature_link)==0:
 				if iter_mode>0:
@@ -3581,7 +3604,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		if reset_index>0:
 			query_id_ori = df_feature.index.copy()
-			df_feature.index = utility_1.test_query_index(df_feature,column_vec=column_idvec)
+			df_feature.index = test_query_index(df_feature,column_vec=column_idvec)
 
 		# query_id_ori = pd.Index(query_id_ori)
 		# df_feature.index = np.asarray(df_feature[column_id_query])
@@ -3692,7 +3715,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			print(df_link_query[0:2])
 
 			column_idvec = ['motif_id','peak_id','gene_id']
-			df_link_query.index = utility_1.test_query_index(df_link_query,column_vec=column_idvec)
+			df_link_query.index = test_query_index(df_link_query,column_vec=column_idvec)
 			df_link_query = df_link_query.loc[(~df_link_query.index.duplicated(keep='first')),:]
 			print('df_link_query: ',df_link_query.shape)
 			print(df_link_query.columns)
@@ -3745,7 +3768,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				select_config.update({'column_idvec':column_idvec})
 			
 			print('column_idvec ',column_idvec)
-			from utility_1 import test_query_index
+			# from utility_1 import test_query_index
 			df_gene_peak_query_1.index = test_query_index(df_gene_peak_query_1,column_vec=column_idvec)
 			df_gene_peak_query_1 = df_gene_peak_query_1.fillna(0)
 			query_id_ori = df_gene_peak_query_1.index.copy()
@@ -3931,6 +3954,342 @@ class _Base2_correlation5(_Base2_correlation3):
 			df_query.index = query_id_ori
 
 		return df_query, df_query1
+
+	## ====================================================
+	# compare between scores of peaks with the multiple genes
+	# query the maximum score for peak-gene link query based on scores of peak-TF-gene link query
+	def test_query_link_score_pre1(self,df_feature_link=[],feature_type_query='',column_vec_query=[],column_distance='distance',score_bin_value=0.05,thresh_vec=[],type_id_1=0,flag_annot_1=1,flag_annot_2=1,flag_load=0,flag_compare_1=1,flag_thresh_1=1,input_filename='',save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=0,select_config={}):
+
+		column_idvec = ['peak_id','gene_id']
+		column_id2, column_id1 = column_idvec[0:2]
+
+		if (len(df_feature_link)==0) or (flag_load>0):
+			df_feature_link = pd.read_csv(input_filename,index_col=False,sep='\t')
+
+		# df_link_query1 = df_feature_link
+		if len(column_vec_query)==0:
+			# column_query1 = 'score_pred2_recompute'
+			# column_query2 = 'score_pred3'
+			column_query1 = 'score_pred1'
+			column_query2 = 'score_pred2'
+			column_vec_query = [column_query1,column_query2]
+		else:
+			column_query1, column_query2 = column_vec_query[0:2]
+
+		# df_link_query1 = df_link_query1.sort_values(by=[column_query2,column_query1],ascending=False)
+		# column_distance = 'distance'
+		column_distance_1 = '%s_abs'%(column_distance)
+
+		# query peak-gene distance
+		# column_distance = 'distance'
+		if not (column_distance in df_feature_link.columns):
+			df_gene_peak_distance = self.df_gene_peak_distance
+			df_feature_link.index = test_query_index(df_feature_link,column_vec=[column_id1,column_id2])
+			df_gene_peak_distance.index = test_query_index(df_gene_peak_distance,column_vec=[column_id1,column_id2])
+			query_id_1 = df_feature_link.index
+			df_feature_link[column_distance] = df_gene_peak_distance.loc[query_id_1,column_distance]
+			
+		df_feature_link[column_distance_1] = df_feature_link[column_distance].abs()
+		column_vec_1 = [column_query1,column_query2,column_distance_1]
+		query_num1 = len(column_vec_1)
+		ascending_vec = [False,False,True]
+
+		# flag_annot_1 = 1
+		df_query_1 = []
+		df_link_query_1 = df_feature_link
+		if flag_annot_1>0:
+			list_1 = []
+			for i1 in range(query_num1-1):
+				column_1 = column_vec_1[i1]
+				print('column_1: ',column_1)
+				df_link_query = df_feature_link.sort_values(by=[column_1],ascending=ascending_vec[i1])
+				list_1.append(df_link_query)
+				# if column_1 in [column_query1,column_query2]:
+				# 	# column_2_query = 'distance_bin'
+				# 	column_2 = '%s_bin'%(column_1)
+				# 	bin_value = 0.05
+				# 	lower_bound, upper_bound = -1, 1
+				# 	t_vec_1 = np.arange(lower_bound,upper_bound+bin_value,bin_value)
+
+				# 	score_query = df_link_query[column_1]
+				# 	df_link_query[column_2] = np.digitize(score_query,t_vec_1)
+				# list_1.append(df_link_query)
+
+			# df_link_query1, df_link_query2, df_link_query3 = list_1[0:3]
+			df_link_query1 = list_1[0] # feature link sorted by score 1
+			# feature_type_query = column_id2
+
+			# df_group_1 = df_link_query1.groupby([feature_type_query])
+			df_link_query1['query_id'] = test_query_index(df_link_query1,column_vec=column_idvec) # peak-gene link query
+			column_query_1 = 'count'
+			
+			df_link_query1[column_query_1] = 1
+			column_idvec_1 = ['motif_id','peak_id','gene_id']
+			df_link_query1.index = test_query_index(df_link_query1,column_vec=column_idvec_1)
+			# df_link_query1['query_id_1'] = np.asarray(df_link_query1.index) 
+			df_group_1 = df_link_query1.groupby(['query_id']) # group link query by peak-gene link
+			
+			column_vec_query1 = [column_query1,column_query2]
+			# df_1 = df_group_1[column_vec_query1]
+			df_group_query = df_group_1[[column_query1,column_query2]]
+			df_score_1 = df_group_query.max()	# query the maximum score 1 and score 2 for peak-gene link query
+			df_query_1 = df_group_query.idxmax()	# the dataframe with the annotation of link query with the maximum score
+
+			query_value_1 = (np.asarray(df_score_1[column_query1])+np.asarray(df_score_1[column_query2]))*0.5 # the average of the scores
+			
+			column_query_2 = 'combine'
+			df_score_1['combine'] = query_value_1
+			df_score_1[column_query_1] = df_group_1[column_query_1].sum()	# the number of links between gene and peak
+
+			# df_link_query = list_1[2]	# feature link sorted by distance
+			df_link_query = df_link_query1
+		
+			df_link_query_1 = df_link_query.drop_duplicates(subset=column_idvec)	# keep peak-gene link query with maximum score 1 and with annotation of maximum score 2 and score combine
+			df_link_query_1.index = test_query_index(df_link_query_1,column_vec=column_idvec)
+			# column_distance = 'distance'
+			# df_score_1[column_distance] = df_link_query_1.loc[query_id1,column_distance]
+
+			column_annot_1 = ['%s_max'%(column_1) for column_1 in column_vec_query1]
+			# query_id1 = df_score_1.index
+			query_id1 = df_link_query_1.index
+			# copy the columns of maximum score, score_combine and count from df_score_1
+			df_link_query_1.loc[:,column_annot_1] = np.asarray(df_score_1.loc[query_id1,column_vec_query1])
+			df_link_query_1.loc[:,column_query_1] = np.asarray(df_score_1.loc[query_id1,column_query_1])
+			df_link_query_1.loc[:,column_query_2] = np.asarray(df_score_1.loc[query_id1,column_query_2])
+			
+			print('df_link_query_1: ',df_link_query_1.shape)
+			print(df_link_query_1.columns)
+			print(df_link_query_1[0:2])
+
+		# flag_annot_2 = 1
+		if flag_annot_2>0:
+			peak_distance_thresh_1 = 2050
+			distance_bin_value = 50
+			t_vec_1 = np.arange(0,peak_distance_thresh_1+distance_bin_value,distance_bin_value)
+			# distance_abs = df_link_query_1['distance'].abs()
+			distance_abs = df_link_query_1[column_distance_1]
+				
+			# add the columns of distance bin and score bin
+			# column_2_query = 'distance_bin'
+			column_2_query = '%s_bin'%(column_distance)
+			df_link_query_1[column_2_query] = np.digitize(distance_abs,t_vec_1)
+
+			list_1 = []
+			column_vec_query2 = column_annot_1 + [column_query_2]
+			query_num2 = len(column_vec_query2)
+			for i2 in range(query_num2):
+				column_1 = column_vec_query2[i2]
+				# bin_value = 0.05
+				bin_value = score_bin_value
+				lower_bound, upper_bound = -1, 1
+				t_vec_1 = np.arange(lower_bound,upper_bound+bin_value,bin_value)
+
+				column_2 = '%s_bin'%(column_1)
+				score_query = df_link_query_1[column_1]
+				bin_num1 = int(lower_bound/bin_value)
+				df_link_query_1[column_2] = np.digitize(score_query,t_vec_1)+bin_num1
+			
+			# distance min within score_max_bin
+			# score max within distance_bin
+
+		return df_link_query_1, df_query_1
+
+	## ====================================================
+	# pre-selection of feature link query
+	def test_query_feature_link_basic_filter_1_pre2_basic_2(self,df_feature_link=[],df_gene_peak_distance=[],column_idvec=['peak_id','gene_id'],column_vec_query=[],peak_distance_thresh=2000,thresh_type=3,type_query_compare=2,save_mode=1,filename_prefix_save='',filename_save_annot='',output_file_path='',output_filename='',float_format='%.5f',verbose=0,select_config={}):
+
+		file_save_path = select_config['data_path_save']
+		file_save_path_local = select_config['data_path_save_local']
+		file_save_path2 = select_config['file_path_motif_score']
+
+		# column_vec_query = ['distance','score_pred1']
+		column_vec_query1 = ['score_pred1','score_pred2']
+		if 'column_score_query' in select_config:
+			column_vec_query1 = select_config['column_score_query']
+
+		column_query1, column_query2 = column_vec_query1[0:2]
+		# df_link_query1 = df_link_query1.sort_values(by=[column_query2,column_query1],ascending=False)
+		column_distance = 'distance'
+		column_distance_1 = '%s_abs'%(column_distance)
+
+		# data_file_type_query = select_config['data_file_type_query']
+		# column_idvec = ['peak_id','gene_id']
+		column_id2, column_id1 = column_idvec[0:2]
+		flag_query1=1
+		if flag_query1>0:
+			# if not (column_distance_1 in df_feature_link.columns):
+			# 	# df_feature_link['distance_abs'] = df_feature_link['distance'].abs()
+			# 	df_feature_link[column_distance_1] = df_feature_link[column_distance].abs()
+			# column_vec_1 = [column_query1,column_query2,column_distance_1]
+			# query_num1 = len(column_vec_1)
+			# ascending_vec = [False,False,True]
+			# df_feature_link_query, df_query_2 = self.test_gene_peak_query_basic_filter_2_local_2(df_feature_link=df_feature_link,feature_type_query='',
+			# 																						column_vec_query=column_vec_query1,thresh_vec=[],type_id_1=0,flag_load=0,flag_compare_1=1,flag_thresh_1=1,input_filename='',
+			# 																						save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=verbose,select_config=select_config)
+
+			# query the maximum score for peak-gene link query based on scores of peak-TF-gene link query
+			df_feature_link_query, df_query_annot1 = self.test_query_link_score_pre1(df_feature_link=df_feature_link,feature_type_query='',
+																						column_vec_query=column_vec_query1,column_distance=column_distance,thresh_vec=[],type_id_1=0,
+																						flag_load=0,flag_compare_1=1,flag_thresh_1=1,input_filename='',
+																						save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=verbose,select_config=select_config)
+
+			print('df_feature_link_query: ',df_feature_link_query.shape)
+			
+		flag_query2=1
+		if flag_query2>0:
+			# type_query = 0
+			# thresh_type = 3
+			# type_query_compare = 2
+			flag_config=1
+			if flag_config>0:
+				thresh_value_1 = 100 # distance threshold
+				# thresh_value_2 = 0.1 # correlation threshold
+				# thresh_value_2 = 0.15 # correlation threshold
+				# thresh_value_2 = 0 # correlation threshold
+				thresh_value_2 = 0.01 # correlation threshold
+
+				thresh_value_1_2 = 500 # distance threshold
+				# thresh_value_2_2 = 0 # correlation threshold
+				thresh_value_2_2 = -0.05 # correlation threshold
+
+				thresh_vec_query = [[thresh_value_1,thresh_value_2],[thresh_value_1_2,thresh_value_2_2]]
+				thresh_type = len(thresh_vec_query)
+				select_config.update({'thresh_vec_group1':thresh_vec_query})
+			
+				thresh_value_1_3 = -50 # distance threshold
+				# thresh_value_2_2 = 0 # correlation threshold
+				thresh_value_2_3 = 0.20 # correlation threshold
+				# thresh_vec_query_1 = [150,[0.3,0.1]]
+				# thresh_vec_query_2 = [[thresh_value_1_3,thresh_value_2_3]]
+				# thresh_vec_group2 = [thresh_vec_query_1, thresh_vec_query_2]
+				# select_config.update({'thresh_vec_group2':thresh_vec_group2})
+				# thresh_type = 3
+
+				# thresh_vec_query_1 = [150,[0.3,0.1]]
+				thresh_vec_query_1 = [100,[0.25,0.1]]
+				thresh_vec_query_2 = [[thresh_value_1_3,thresh_value_2_3]]
+				thresh_vec_group2 = [thresh_vec_query_1, thresh_vec_query_2]
+				select_config.update({'thresh_vec_group2':thresh_vec_group2})
+				thresh_type = 3
+
+				verbose = 1
+				# type_combine = 0
+				type_combine = 1
+				save_mode_2 = 1
+				# thresh_type = 2
+				# thresh_type = 3
+				# type_query_1 = 1
+				type_query_1 = type_query_compare
+
+			# filename_prefix_save = filename_prefix_save_1
+			if len(df_gene_peak_distance)==0:
+				df_gene_peak_distance = self.df_gene_peak_distance
+			
+			# peak_distance_thresh_1 = 2000
+			peak_distance_thresh_1 = peak_distance_thresh
+			print('perform peak-gene link query comparison')
+
+			# column_vec_2 = ['score_pred1_max','score_pred2_max','combine']
+			column_vec_2 = ['%s_max'%(column_query1),'%s_max'%(column_query2),'combine']
+			query_num2 = len(column_vec_2)
+
+			# filename_prefix_default_1 = select_config['filename_prefix_default_1']
+			output_file_path = file_save_path2
+			dict_query1 = dict()
+			for i1 in range(query_num2):
+				column_score_1 = column_vec_2[i1]
+				column_query = '%s_bin'%(column_score_1)
+				column_score = column_score_1
+
+				field_query = ['distance','score']
+				column_vec_query = ['distance',column_score_1]
+				# column_score = 'spearmanr'
+				column_label = 'label_cond'
+				flag_basic_query = 3
+				type_score = 1
+				df_feature_link_query['score_bin'] = df_feature_link_query[column_query]
+
+				start = time.time()
+				filename_prefix_save_2 = '%s.%s'%(filename_prefix_save,column_score_1)
+				# float_format = '%.5f'
+				df_link_query_1 = self.test_query_feature_link_basic_filter_1_pre2_basic_1(peak_id=[],df_peak_query=[],df_gene_peak_query=df_feature_link_query,df_gene_peak_distance_annot=df_gene_peak_distance,
+																							input_filename='',field_query=field_query,column_vec_query=column_vec_query,column_score=column_score,
+																							distance_bin_value=50,score_bin_value=0.05,peak_distance_thresh=peak_distance_thresh_1,thresh_vec_compare=[],
+																							column_label=column_label,thresh_type=thresh_type,flag_basic_query=3,flag_unduplicate=1,
+																							type_query_compare=type_query_1,type_score=type_score,type_id_1=0,print_mode=0,
+																							save_mode=save_mode_2,filename_prefix_save=filename_prefix_save_2,output_file_path=output_file_path,float_format=float_format,verbose=verbose,select_config=select_config)
+				dict_query1.update({column_score_1:df_link_query_1})
+
+				stop = time.time()
+				print('perform peak-gene link query comparison used: %.2fs'%(stop-start))
+
+			return dict_query1
+
+	## ====================================================
+	# pre-selection of feature link query
+	def test_query_feature_link_basic_filter_1_pre2_combine(self,df_feature_link=[],df_gene_peak_distance=[],column_idvec=['peak_id','gene_id'],column_label='label_compare',column_vec_query=[],peak_distance_thresh=2000,thresh_type=3,type_query_compare=2,type_combine=0,input_file_path='',save_mode=1,filename_prefix_save='',filename_save_annot='',output_file_path='',output_filename='',float_format='%.5f',compression='gzip',verbose=0,select_config={}):
+
+		# file_save_path = select_config['data_path_save']
+		# file_save_path_local = select_config['data_path_save_local']
+		# file_save_path2 = select_config['file_path_motif_score']
+
+		column_num1 = len(column_vec_query)
+		type_id_1,type_query_1,thresh_type = 1,1,3
+
+		column_idvec = ['motif_id','peak_id','gene_id']
+		column_id3, column_id2, column_id1 = column_idvec[0:3]
+		column_vec_2 = [column_id2,column_id1]
+
+		dict_query1 = dict()
+		# from utility_1 import test_query_index
+		for i1 in range(column_num1):
+			column_score_1 = column_vec_query[i1]
+			filename_prefix_save_1 = '%s.%s'%(filename_prefix_save,column_score_1)
+
+			input_filename = '%s/%s.link_query.2_1.combine.%s.txt'%(input_file_path,filename_prefix_save_1,filename_save_annot)
+			df1 = pd.read_csv(input_filename,index_col=False,sep='\t')
+			# df1 = df_query.loc[:,t_columns]
+			# df1.to_csv(output_filename,index=False,sep='\t',float_format=float_format)
+			gene_query_vec = df1[column_id1].unique()
+			gene_query_num = len(gene_query_vec)
+			print('df1, gene_query_vec: ',df1.shape,gene_query_num,column_score_1)
+			print(input_filename)
+			if verbose>0:
+				print(df1.columns)
+				print(df1[0:2])
+
+			query_id1 = test_query_index(df1,column_vec=column_vec_2)
+			query_id1 = pd.Index(query_id1).unique()
+			query_num1 = len(query_id1)
+			print('query_id1: ',query_num1,query_id1[0:5],column_score_1)
+			dict_query1.update({column_score_1:query_id1})
+
+			if i1==0:
+				query_id_pre1 = query_id1
+			else:
+				if type_combine==0:
+					query_id_pre1 = pd.Index(query_id_pre1).union(query_id1,sort=False)
+				else:
+					query_id_pre1 = pd.Index(query_id_pre1).intersection(query_id1,sort=False)
+
+		# query_id_ori = df_feature_link.index.copy()
+		df_feature_link.index = test_query_index(df_feature_link,column_vec=column_vec_2)
+		query_idvec = df_feature_link.index
+		query_id_pre2 = pd.Index(query_id_pre1).intersection(query_idvec,sort=False)
+
+		df_feature_link_query = df_feature_link.loc[query_id_pre2,:]
+		df_feature_link.loc[query_id_pre2,column_label] = 1
+		df_feature_link.index = np.asarray(df_feature_link[column_id1])
+		# df_feature_link_query.index = np.asarray(df_feature_link_query[column_id1])
+
+		print('query_id_pre1, query_id_pre2: ',len(query_id_pre1),len(query_id_pre2))
+		print('df_feature_link, df_feature_link_query: ',df_feature_link.shape,df_feature_link_query.shape)
+
+		if (save_mode>0 and output_filename!=''):
+			if compression!=-1:
+				df_feature_link.to_csv(output_filename,sep='\t',index=False,float_format=float_format,compression=compression)
+
+		return df_feature_link_query, df_feature_link, dict_query1
 
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
