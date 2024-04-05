@@ -3571,7 +3571,11 @@ class _Base2_correlation5(_Base2_correlation3):
 			from utility_1 import test_column_query_1
 			
 			if len(df_feature_link)==0:
-				if iter_mode>0:
+				id1 = 0
+				if input_filename!='':
+					id1 = (os.path.exists(input_filename)==True)
+				
+				if (iter_mode>0) or (id1<1):
 					input_filename_list1 = select_config['filename_list_score']
 					input_filename_list2 = select_config['filename_annot_list']
 					input_filename_list3 = select_config['filename_link_list']
@@ -3744,37 +3748,42 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## compute feature link score
 	# combine the estimated feature link score from different runs
-	def test_query_feature_score_init_pre1_1(self,data=[],input_filename_list=[],recompute=1,iter_mode=1,load_mode=1,save_mode=1,verbose=0,select_config={}):
+	def test_query_feature_score_init_pre1_1(self,data=[],input_filename_list=[],recompute=0,iter_mode=1,load_mode=1,save_mode=1,verbose=0,select_config={}):
 
 		df_feature_link = []
 		if load_mode>0:
 			filename_prefix_save_1 = select_config['filename_prefix_score']
+			filename_prefix_save_1_ori = filename_prefix_save_1
+			filename_annot_1_ori = select_config['filename_annot_score_1']
+			filename_annot_1 = filename_annot_1_ori
 			# filename_prefix_save_1_ori = select_config['filename_prefix_score_ori']
 			# filename_annot_score_1 = 'annot2.init.1'
 			# filename_annot_score_2 = 'annot2.init.query1'
-			filename_annot_1_ori = select_config['filename_annot_score_1']
 			# filename_annot_1 = '%s.recompute'%(filename_annot_1_ori)
-			# filename_annot_1 = '%s'%(filename_annot_1_ori)
-			filename_annot_1 = filename_annot_1_ori
 			# column_pval_cond = select_config['column_pval_cond']
-			if iter_mode>0:
-				if len(input_filename_list)==0:
+			if len(input_filename_list)==0:
+				# input_filename_list = []
+				input_filename_list2 = []
+				input_filename_list_2 = []
+				input_filename_list_3 = []
+				input_filename_list_motif = []
+
+				format_str1 = 'txt.gz'
+				compression = 'infer'
+				if format_str1 in ['txt.gz']:
+					compression = 'gzip'
+
+				if iter_mode>0:
 					interval = select_config['feature_score_interval']
 					feature_query_num_1 = select_config['feature_query_num']
-					
 					iter_num = int(np.ceil(feature_query_num_1/interval))
-					input_filename_list = []
-					input_filename_list2 = []
-					input_filename_list_2 = []
-					input_filename_list_3 = []
-					input_filename_list_motif = []
-					format_str1 = 'txt.gz'
-					compression = 'infer'
-					if format_str1 in ['txt.gz']:
-						compression = 'gzip'
+
+				else:
+					iter_num = 1
 					
-					for i1 in range(iter_num):
-					# for i1 in range(2):
+				for i1 in range(iter_num):
+				# for i1 in range(2):
+					if iter_mode>0:
 						query_id_1 = i1*interval
 						query_id_2= (i1+1)*interval
 						query_id_2_ori = query_id_2
@@ -3784,59 +3793,63 @@ class _Base2_correlation5(_Base2_correlation3):
 
 						# filename_prefix_save_pre_2 = '%s.pcorr_query1.%d_%d'%(filename_prefix_default_1,query_id_1,query_id_2)
 						filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id_1,query_id_2)
+						filename_prefix_save_pre2 = '%s.%d_%d'%(filename_prefix_save_1_ori,query_id_1,query_id_2)
+					else:
+						filename_prefix_save_pre1 = filename_prefix_save_1
+						filename_prefix_save_pre2 = filename_prefix_save_1_ori
+
+					# input_filename = '%s/%s.%s.txt'%(input_file_path,filename_prefix_save_pre1,filename_annot_1) # prepare for the file
+					input_filename = '%s/%s.%s.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,format_str1) # prepare for the file
+					input_filename_list.append(input_filename)
+
+					# if os.path.exists(input_filename)==False:
+					# 	print('the file does not exist: %s'%(input_filename))
+					# 	recompute = 1
+
+					input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
+					# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,format_str1)
+					input_filename_list2.append(input_filename_2)
 						
-						# input_filename = '%s/%s.%s.txt'%(input_file_path,filename_prefix_save_pre1,filename_annot_1) # prepare for the file
-						input_filename = '%s/%s.%s.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,format_str1) # prepare for the file
-						input_filename_list.append(input_filename)
-
-						filename_prefix_save_pre2 = '%s.%d_%d'%(filename_prefix_save_1_ori,query_id_1,query_id_2_pre)
-						# format_str1 = 'txt.gz'
-						input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
-						# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,format_str1)
-						input_filename_list2.append(input_filename_2)
-						# df2 = pd.read_csv(input_filename_2,index_col=index_col,sep='\t')
-						df2 = pd.read_csv(input_filename_2,index_col=index_col,sep='\t')
-
-						# the annotation file with the correlation and p-value estimation
-						# input_filename_3 = '%s/%s.annot1_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
-						input_filename_3 = '%s/%s.annot1_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
-						# input_filename_3 = '%s/%s.annot1_1.copy1.txt'%(input_file_path,filename_prefix_save_pre1) # the file with th column: gene_tf_corr_peak_pval_corrected2
-						filename_query = input_filename_3
+					# the annotation file with the correlation and p-value estimation
+					# input_filename_3 = '%s/%s.annot1_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
+					input_filename_3 = '%s/%s.annot1_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					# input_filename_3 = '%s/%s.annot1_1.copy1.txt'%(input_file_path,filename_prefix_save_pre1) # the file with th column: gene_tf_corr_peak_pval_corrected2
+					filename_query = input_filename_3
 						
-						flag_1=0
-						if flag_1>0:
-							df3 = pd.read_csv(input_filename_3,index_col=False,sep='\t')
-							if not (column_pval_cond in df3.columns):
-								df_list1 = [df3,df2]
-								column_vec_1 = [[column_pval_cond]]
-								df_link_query_1 = test_column_query_1(input_filename_list=[],id_column=column_idvec,column_vec=column_vec_1,
-																		df_list=df_list1,type_id_1=2,type_id_2=0,reset_index=False,select_config=select_config)
+					flag_1=0
+					if flag_1>0:
+						df3 = pd.read_csv(input_filename_3,index_col=False,sep='\t')
+						if not (column_pval_cond in df3.columns):
+							df2 = pd.read_csv(input_filename_2,index_col=index_col,sep='\t')
 
-								# output_filename = '%s/%s.annot1_1.copy1.txt'%(output_file_path,filename_prefix_save_pre1)
-								output_filename = '%s/%s.annot1_1.copy1_1.txt'%(output_file_path,filename_prefix_save_pre1)
-								df_link_query_1.to_csv(output_filename,index=False,sep='\t')
-								filename_query = output_filename
-								print('filename_query: ',filename_query)
+							df_list1 = [df3,df2]
+							column_vec_1 = [[column_pval_cond]]
+							df_link_query_1 = test_column_query_1(input_filename_list=[],id_column=column_idvec,column_vec=column_vec_1,
+																	df_list=df_list1,type_id_1=2,type_id_2=0,reset_index=False,select_config=select_config)
+
+							# output_filename = '%s/%s.annot1_1.copy1.txt'%(output_file_path,filename_prefix_save_pre1)
+							output_filename = '%s/%s.annot1_1.copy1_1.txt'%(output_file_path,filename_prefix_save_pre1)
+							df_link_query_1.to_csv(output_filename,index=False,sep='\t')
+							filename_query = output_filename
+							print('filename_query: ',filename_query)
 						
-						input_filename_list_2.append(filename_query)
+					input_filename_list_2.append(filename_query)
 
-						if flag_select_link_type>0:
-							# select_config['filename_link_type'] = 1
-							# input_filename_link = '%s/%s.annot2_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
-							input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
-							# input_filename_link = '%s/%s.annot2_1.1.recompute.txt'%(input_file_path,filename_prefix_save_pre1)
-							input_filename_list_3.append(input_filename_link)
+					if flag_select_link_type>0:
+						# input_filename_link = '%s/%s.annot2_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
+						input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+						# input_filename_link = '%s/%s.annot2_1.1.recompute.txt'%(input_file_path,filename_prefix_save_pre1)
+						input_filename_list_3.append(input_filename_link)
 
-						if recompute>0:
-							# to recompute the link score we need to recompute lambda of link and need motif score annotation
-							# input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
-							input_filename_motif_score = '%s/%s.annot1_3.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
-							input_filename_list_motif.append(input_filename_motif_score)
-							
-					select_config.update({'filename_pcorr_list':input_filename_list2,
-											'filename_annot_list':input_filename_list_2,
-											'filename_link_list':input_filename_list_3,
-											'filename_motif_score_list':input_filename_list_motif})
+					# to recompute the link score we need to recompute lambda of link and need motif score annotation
+					# input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
+					input_filename_motif_score = '%s/%s.annot1_3.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					input_filename_list_motif.append(input_filename_motif_score)
+
+				select_config.update({'filename_pcorr_list':input_filename_list2,
+										'filename_annot_list':input_filename_list_2,
+										'filename_link_list':input_filename_list_3,
+										'filename_motif_score_list':input_filename_list_motif})
 
 				filename_list_score = input_filename_list
 				select_config.update({'filename_list_score':filename_list_score})
@@ -3938,9 +3951,9 @@ class _Base2_correlation5(_Base2_correlation3):
 				print(input_filename_feature_link)
 			else:
 				load_mode_2 = 1
-				recompute = 1
+				recompute_2 = 0
 				print('compute feature link score')
-				df_feautre_link, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],load_mode=load_mode_2,save_mode=1,verbose=verbose,select_config=select_config)
+				df_feautre_link, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],recompute=recompute_2,iter_mode=1,load_mode=load_mode_2,save_mode=1,verbose=verbose,select_config=select_config)
 
 		df_score_annot_1 = []
 		if flag_score_quantile_1>0:
@@ -4003,6 +4016,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				filename_annot_1 = filename_annot_score_2
 				list_1 = []
 				list_2 = []
+
 				# float_format = '%.5E'
 				for i1 in range(query_num1):
 					input_filename = input_filename_list[i1]
@@ -4059,8 +4073,12 @@ class _Base2_correlation5(_Base2_correlation3):
 					list_1.append(df_link_query_pre2)
 					list_2.append(df_link_query2)
 
-				df_feature_link_pre1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)
-				df_feature_link_pre2 = pd.concat(list_2,axis=0,join='outer',ignore_index=False)
+				if query_num1>1:
+					df_feature_link_pre1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)
+					df_feature_link_pre2 = pd.concat(list_2,axis=0,join='outer',ignore_index=False)
+				else:
+					df_feature_link_pre1 = list_1[0]
+					df_feature_link_pre2 = list_2[0]
 
 				if save_mode>0:
 					float_format = '%.5E'
