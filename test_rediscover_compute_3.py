@@ -2289,7 +2289,8 @@ class _Base2_2_pre1(_Base2_2_1):
 				peak_num_1 = len(peak_loc_1)
 				print('peak_loc_1: ',peak_num_1)
 
-				method_type_vec_pre2 = ['TRIPOD','GRaNIE','Pando','insilico_0.1']+[method_type_feature_link]
+				# method_type_vec_pre2 = ['TRIPOD','GRaNIE','Pando','insilico_0.1']+[method_type_feature_link]
+				method_type_vec_pre2 = [method_type_feature_link]
 				# column_motif_vec_2 = ['%s.motif'%(method_type_query) for method_type_query in method_type_vec_2]
 				# column_motif_vec_3 = ['%s.pred'%(method_type_query) for method_type_query in method_type_vec_2]
 				# column_motif_vec_2 = []
@@ -4782,176 +4783,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				# 	print('error! ',error, motif_id_query,motif_id1,motif_id2,i1)
 					# return
 
-	def run_pre1_ori(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],metacell_num=500,peak_distance_thresh=100,
-						highly_variable=1,upstream=100,downstream=100,type_id_query=1,thresh_fdr_peak_tf=0.2,path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=0,
-						method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,method_type_feature_link='joint_score_pre1.thresh3',neighbor_num=30,model_type_id='XGBClassifier',typeid2=0,folder_id=1,
-						config_id_2=1,config_group_annot=1,ratio_1=0.25,ratio_2=2,flag_group=-1,train_id1=1,flag_scale_1=1,beta_mode=0,motif_id_1='',query_id1=-1,query_id2=-1,query_id_1=-1,query_id_2=-1,train_mode=0,config_id_load=-1):
-		
-		chromosome = str(chromosome)
-		run_id = int(run_id)
-		species_id = str(species)
-		# cell = str(cell)
-		cell_type_id = int(cell)
-		print('cell_type_id: %d'%(cell_type_id))
-		metacell_num = int(metacell_num)
-		peak_distance_thresh = int(peak_distance_thresh)
-		highly_variable = int(highly_variable)
-		upstream, downstream = int(upstream), int(downstream)
-		if downstream<0:
-			downstream = upstream
-		type_id_query = int(type_id_query)
-
-		thresh_fdr_peak_tf = float(thresh_fdr_peak_tf)
-		type_group = int(type_group)
-		type_group_2 = int(type_group_2)
-		type_group_load_mode = int(type_group_load_mode)
-		method_type_group = str(method_type_group)
-		thresh_size_group = int(thresh_size_group)
-		thresh_score_group_1 = float(thresh_score_group_1)
-		method_type_feature_link = str(method_type_feature_link)
-		neighbor_num = int(neighbor_num)
-		model_type_id1 = str(model_type_id)
-		typeid2 = int(typeid2)
-		folder_id = int(folder_id)
-		config_id_2 = int(config_id_2)
-		config_group_annot = int(config_group_annot)
-		ratio_1 = float(ratio_1)
-		ratio_2 = float(ratio_2)
-		flag_group = int(flag_group)
-		train_id1 = int(train_id1)
-		flag_scale_1 = int(flag_scale_1)
-		beta_mode = int(beta_mode)
-		motif_id_1 = str(motif_id_1)
-
-		input_dir = str(input_dir)
-		output_dir = str(output_dir)
-		filename_atac_meta = str(filename_atac_meta)
-		filename_rna_meta = str(filename_rna_meta)
-		filename_motif_data = str(filename_motif_data)
-		filename_motif_score = str(filename_motif_data_score)
-		file_mapping = str(file_mapping)
-
-		path_id = int(path_id)
-		run_id_save = int(save)
-		if run_id_save<0:
-			run_id_save = run_id
-
-		config_id_load = int(config_id_load)
-
-		celltype_vec = ['CD34_bonemarrow','pbmc']
-		flag_query1=1
-		if flag_query1>0:
-			query_id1 = int(query_id1)
-			query_id2 = int(query_id2)
-			query_id_1 = int(query_id_1)
-			query_id_2 = int(query_id_2)
-			train_mode = int(train_mode)
-			# data_file_type = 'pbmc'
-			# data_file_type = 'CD34_bonemarrow'
-			data_file_type = celltype_vec[cell_type_id]
-			print('data_file_type: %s'%(data_file_type))
-			run_id = 1
-			type_id_feature = 0
-			metacell_num = 500
-			# print('query_id1, query_id2: ',query_id1,query_id2)
-
-			if path_id==1:
-				save_file_path_default = '../data2/data_pre2'
-				root_path_2 = '.'
-				root_path_1 = '../data2'
-			elif path_id==2:
-				root_path_1 = '/data/peer/yangy4/data1'
-				root_path_2 = '%s/data_pre2/data1_2'%(root_path_1)
-				save_file_path_default = root_path_2
-
-			select_config = {'root_path_1':root_path_1,'root_path_2':root_path_2,
-								'data_file_type':data_file_type,
-								'input_dir':input_dir,
-								'output_dir':output_dir,
-								'type_id_feature':type_id_feature,
-								'metacell_num':metacell_num,
-								'run_id':run_id,
-								'filename_atac_meta':filename_atac_meta,
-								'filename_rna_meta':filename_rna_meta,
-								'filename_motif_data':filename_motif_data,
-								'filename_motif_data_score':file_path_motif_score,
-								'filename_translation':file_mapping,
-								'upstream_tripod':upstream,
-								'downstream_tripod':downstream,
-								'type_id_tripod':type_id_query,
-								'thresh_fdr_peak_tf_GRaNIE':thresh_fdr_peak_tf,
-								'path_id':path_id,
-								'run_id_save':run_id_save,
-								'type_id_group':type_group,
-								'type_id_group_2':type_group_2,
-								'type_group_load_mode':type_group_load_mode,
-								'method_type_group':method_type_group,
-								'thresh_size_group':thresh_size_group,
-								'thresh_score_group_1':thresh_score_group_1,
-								'method_type_feature_link':method_type_feature_link,
-								'neighbor_num':neighbor_num,
-								'model_type_id1':model_type_id1,
-								'typeid2':typeid2,
-								'folder_id':folder_id,
-								'config_id_2':config_id_2,
-								'config_group_annot':config_group_annot,
-								'ratio_1':ratio_1,
-								'ratio_2':ratio_2,
-								'train_id1':train_id1,
-								'flag_scale_1':flag_scale_1,
-								'beta_mode':beta_mode,
-								'motif_id_1':motif_id_1,
-								'query_id1':query_id1,'query_id2':query_id2,
-								'query_id_1':query_id_1,'query_id_2':query_id_2,
-								'train_mode':train_mode,
-								'config_id_load':config_id_load,
-								'save_file_path_default':save_file_path_default}
-			
-			# self.test_peak_motif_query_1(select_config)
-			verbose = 1
-			flag_score_1 = 0
-			flag_score_2 = 0
-			flag_compare_1 = 1
-			flag_group_1 = flag_group
-
-			flag_25=(flag_group_1==25)
-			if flag_25>0:
-				flag_select_1 = 1
-				flag_select_2 = 1
-				select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
-				flag1=1
-				if flag1>0:
-					# type_query_group = 1
-					type_query_group = 0
-					# parallel_group = 1
-					parallel_group = 0
-					# flag_score_query = 1
-					flag_score_query = 0
-					select_config.update({'type_query_group':type_query_group,'parallel_group':parallel_group})
-					# run_id2_vec = [18]
-					# run_id2_vec = [1]
-					# run_id2_vec = [10,12,15,16,17]
-					run_id2_ori = select_config['query_id2']
-					if run_id2_ori<0:
-						# run_id2_vec = [10,12,15,16,17]
-						run_id2_vec = [12,15,16,17]
-					else:
-						run_id2_vec = [run_id2_ori]
-
-					flag_select_1 = 1
-					flag_select_2 = 1
-					select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
-					# type_motif_query = 0
-					type_motif_query = 1
-					method_type_feature_link_ori = select_config['method_type_feature_link']
-					select_config.update({'type_motif_query':type_motif_query,
-											'method_type_feature_link_ori':method_type_feature_link})
-					for run_id_2 in run_id2_vec:
-						run_id_2_ori = run_id_2
-						select_config.update({'run_id_2_ori':run_id_2_ori})
-						select_config.update({'method_type_feature_link':method_type_feature_link_ori})
-						self.test_query_compare_binding_compute_1(data=[],dict_feature=[],motif_id_query='',motif_id='',feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=flag_score_query,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
-
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',
 						method_type_feature_link='',tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',
@@ -5029,7 +4860,8 @@ class _Base2_2_pre1(_Base2_2_1):
 		config_id_load = int(config_id_load)
 		flag_group = int(flag_group)
 
-		celltype_vec = ['CD34_bonemarrow','pbmc']
+		# celltype_vec = ['CD34_bonemarrow','pbmc']
+		celltype_vec = ['pbmc']
 		flag_query1=1
 		if flag_query1>0:
 			query_id1 = int(query_id1)
@@ -5037,25 +4869,13 @@ class _Base2_2_pre1(_Base2_2_1):
 			query_id_1 = int(query_id_1)
 			query_id_2 = int(query_id_2)
 			train_mode = int(train_mode)
-			# data_file_type = 'pbmc'
-			# data_file_type = 'CD34_bonemarrow'
-			# data_file_type = celltype_vec[cell_type_id]
-			# print('data_file_type: %s'%(data_file_type))
 			data_file_type = str(data_file_type)
 
 			# run_id = 1
 			type_id_feature = 0
-			# metacell_num = 500
-			# print('query_id1, query_id2: ',query_id1,query_id2)
 
-			if path_id==1:
-				# save_file_path_default = '../data2/data_pre2'
-				root_path_2 = '.'
-				root_path_1 = '../data2'
-			elif path_id==2:
-				root_path_1 = '/data/peer/yangy4/data1'
-				root_path_2 = '%s/data_pre2/data1_2'%(root_path_1)
-				# save_file_path_default = root_path_2
+			root_path_1 = '.'
+			root_path_2 = '.'
 
 			save_file_path_default = output_dir
 			file_path_motif_score = input_dir
@@ -5103,7 +4923,6 @@ class _Base2_2_pre1(_Base2_2_1):
 								'config_id_load':config_id_load,
 								'save_file_path_default':save_file_path_default}
 			
-			# self.test_peak_motif_query_1(select_config)
 			verbose = 1
 			flag_score_1 = 0
 			flag_score_2 = 0
@@ -5113,9 +4932,8 @@ class _Base2_2_pre1(_Base2_2_1):
 			else:
 				flag_group_1 = flag_group
 			
-			# flag_25=(flag_group_1==25)
-			flag_25 = flag_group_1
-			if flag_25>0:
+			flag_1 = flag_group_1
+			if flag_1>0:
 				flag_select_1 = 1
 				flag_select_2 = 1
 				select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
@@ -5134,7 +4952,7 @@ class _Base2_2_pre1(_Base2_2_1):
 					select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
 
 					self.test_query_compare_binding_compute_2(data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
-
+					
 
 def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,
 			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,metacell_num,peak_distance_thresh,
@@ -5148,14 +4966,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 	test_estimator1 = _Base2_2_pre1(file_path=file_path_1)
 
 	flag_1=1
-	if flag_1==0:
-		test_estimator1.run_pre1_ori(chromosome,run_id,species,cell,generate,chromvec,testchromvec,metacell_num,peak_distance_thresh,
-									highly_variable,upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-									method_type_group,thresh_size_group,thresh_score_group_1,method_type_feature_link,neighbor_num,model_type_id,typeid2,folder_id,
-									config_id_2,config_group_annot,ratio_1,ratio_2,flag_group,train_id1,flag_scale_1,beta_mode,motif_id_1,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load)
-		
-
-	elif flag_1==1:
+	if flag_1==1:
 		test_estimator1.run_pre1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type=data_file_type,metacell_num=metacell_num,peak_distance_thresh=peak_distance_thresh,
 									highly_variable=highly_variable,input_dir=input_dir,filename_atac_meta=filename_atac_meta,filename_rna_meta=filename_rna_meta,
 									filename_motif_data=filename_motif_data,filename_motif_data_score=filename_motif_data_score,file_mapping=file_mapping,

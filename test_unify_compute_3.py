@@ -3362,6 +3362,104 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return score_mtx
 
+	## score query by quantile
+	def test_score_query_2(self,data=[],feature_query_vec=[],column_id_query='',column_idvec=[],column_query_vec=[],column_label_vec=[],flag_annot=1,reset_index=1,parallel_mode=0,interval=100,verbose=0,select_config={}):
+
+		df_feature = data
+		if len(feature_query_vec)==0:
+			feature_query_vec = df_feature[column_id_query].unique()
+		feature_query_num = len(feature_query_vec)
+
+		# column_query_vec_1 = [column_query1,column_query2]
+		column_num1 = len(column_query_vec)
+		print('feature_query_vec: ',feature_query_num)
+		print('column_id_query: ',column_id_query)
+
+		if reset_index>0:
+			query_id_ori = df_feature.index.copy()
+			df_feature.index = test_query_index(df_feature,column_vec=column_idvec)
+
+		# query_id_ori = pd.Index(query_id_ori)
+		# df_feature.index = np.asarray(df_feature[column_id_query])
+		query_id_1 = df_feature.index
+
+		if parallel_mode>0:
+			if interval<0:
+				score_query_1 = Parallel(n_jobs=-1)(delayed(self.test_score_query_pre2)(data=df_feature,feature_query=feature_query_vec[id1],feature_query_id=id1,
+																							column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,
+																							verbose=verbose,select_config=select_config) for id1 in range(feature_query_num))
+				query_num1 = len(score_query_1)
+				for i1 in range(query_num1):
+					score_mtx = score_query_1[i1]
+					query_id1 = score_mtx.index
+					df_feature.loc[query_id1,column_label_vec] = score_mtx
+
+			else:
+				iter_num = int(np.ceil(feature_query_num/interval))
+				print('iter_num, interval: ',iter_num,interval)
+				for iter_id in range(iter_num):
+					start_id1, start_id2 = interval*iter_id, np.min([interval*(iter_id+1),feature_query_num])
+					print('start_id1, start_id2: ',start_id1,start_id2,iter_id)
+					query_vec_1 = np.arange(start_id1,start_id2)
+					# estimate feature score quantile
+					score_query_1 = Parallel(n_jobs=-1)(delayed(self.test_score_query_pre2)(data=df_feature,feature_query=feature_query_vec[id1],feature_query_id=id1,
+																							column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,
+																							verbose=verbose,select_config=select_config) for id1 in query_vec_1)
+					query_num1 = len(score_query_1)
+					for i1 in range(query_num1):
+						score_mtx = score_query_1[i1]
+						query_id1 = score_mtx.index
+						df_feature.loc[query_id1,column_label_vec] = score_mtx
+		else:
+			for i1 in range(feature_query_num):
+			# for i1 in range(10):
+				feature_query1 = feature_query_vec[i1]
+				feature_query_id1 = i1
+				
+				# estimate feature score quantile
+				score_mtx = self.test_score_query_pre2(data=df_feature,feature_query=feature_query1,feature_query_id=feature_query_id1,
+														column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,verbose=verbose,select_config=select_config)
+				
+				if (i1%500==0):
+					print('df_feature: ',df_feature.shape,feature_query1,i1)
+					print(df_feature[0:2])
+					print('score_mtx: ',score_mtx.shape)
+					print(score_mtx[0:2])
+
+				query_id1 = score_mtx.index
+				try:
+					df_feature.loc[query_id1,column_label_vec] = score_mtx
+				
+				except Exception as error:
+					print('error! ',error,feature_query1,i1,len(query_id1))
+					# query_id_1 = df1.index
+					# id1 = df1.index.duplicated(keep='first')
+					query_id_2 = query_id1.unique()
+					df1 = df_feature.loc[query_id_2,:]
+					print('df1 ',df1.shape)
+					
+					# query_id2 = query_id_1[df1.index.duplicated(keep='first')]
+					df2 = df1.loc[df1.index.duplicated(keep=False),:]
+					query_id2 = df2.index.unique()
+					print('query_id_2: ',len(query_id_2))
+					print('duplicated idvec, query_id2: ',len(query_id2))
+					
+					file_save_path2 = select_config['file_path_motif_score']
+					output_filename = '%s/test_query_score_quantile.duplicated.query1.%s.1.txt'%(file_save_path2,feature_query1)
+					
+					if os.path.exists(output_filename)==True:
+						print('the file exists: %s'%(output_filename))
+						filename1 = output_filename
+						b = filename1.find('.txt')
+						output_filename = filename1[0:b]+'.copy1.txt'
+					df2.to_csv(output_filename,sep='\t')
+					df_feature = df_feature.loc[(~df_feature.index.duplicated(keep='first')),:]
+
+		if reset_index==1:
+			df_feature.index = query_id_ori
+
+		return df_feature
+
 	## gene-peak-tf association: the difference between gene_tf_corr_peak and gene-tf expression correlation
 	def test_gene_peak_tf_query_compare_1(self,input_filename='',df_gene_peak_query=[],df_annot=[],thresh_corr_1=0.30,thresh_corr_2=0.05,save_mode=0,output_file_path='',filename_prefix_save='',select_config={}):
 
@@ -3532,6 +3630,47 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return select_config
 
+	## parameter configuration for feature score computation
+	# parameter configuration for estimating the feature link type
+	def test_query_score_config_2(self,thresh_query_1=[],thresh_query_2=[],overwrite=False,save_mode=1,verbose=0,select_config={}):
+
+		# column_score_query
+		# field_query_link = select_config['field_link_2']
+		# thresh_corr_1, thresh_pval_1 = 0.05, 0.1 # the previous parameter
+		# thresh_corr_1, thresh_pval_1 = 0.1, 0.1  # the alternative parameter to use; use relatively high threshold for negative peaks
+		# thresh_corr_2, thresh_pval_2 = 0.1, 0.05
+		# thresh_corr_3, thresh_pval_3 = 0.15, 1
+		# thresh_motif_score_neg_1, thresh_motif_score_neg_2 = 0.80, 0.90 # higher threshold for regression mechanism
+		# # thresh_score_accessibility = 0.1
+		# thresh_score_accessibility = 0.25
+		# thresh_list_query = [[thresh_corr_1,thresh_pval_1],[thresh_corr_2,thresh_pval_2],[thresh_corr_3, thresh_pval_3]]
+
+		if len(thresh_query_1)==0:
+			thresh_corr_1, thresh_pval_1 = 0.1, 0.1  # the alternative parameter to use; use relatively high threshold for negative peaks
+			thresh_corr_2, thresh_pval_2 = 0.1, 0.05
+			thresh_corr_3, thresh_pval_3 = 0.15, 1
+			thresh_list_query = [[thresh_corr_1,thresh_pval_1],[thresh_corr_2,thresh_pval_2],[thresh_corr_3,thresh_pval_3]]
+		else:
+			thresh_list_query = thresh_query_1
+
+		if len(thresh_query_2)==0:
+			thresh_motif_score_neg_1, thresh_motif_score_neg_2 = 0.80, 0.90 # higher threshold for regression mechanism
+			thresh_score_accessibility = 0.25
+			thresh_query_2 = [thresh_motif_score_neg_1,thresh_motif_score_neg_2,thresh_score_accessibility]
+		else:
+			thresh_motif_score_neg_1, thresh_motif_score_neg_2 = thresh_query_2[0:2]
+			thresh_score_accessibility = thresh_query_2[2]
+
+		column_1 = 'config_link_type'
+		if (not (column_1 in select_config)) or (overwrite==True):
+			config_link_type = {'thresh_list_query':thresh_list_query,
+										'thresh_motif_score_neg_1':thresh_motif_score_neg_1,
+										'thresh_motif_score_neg_2':thresh_motif_score_neg_2,
+										'thresh_score_accessibility':thresh_score_accessibility}
+			select_config.update({column_1:config_link_type})
+
+		return select_config
+
 	## compute feature link score
 	def test_query_feature_score_compute_1(self,df_feature_link=[],input_filename='',overwrite=False,iter_mode=1,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -3607,7 +3746,9 @@ class _Base2_correlation5(_Base2_correlation3):
 
 						if save_mode>0:
 							b = input_filename_1.find('.txt')
-							output_filename = input_filename_1[0:b]+'.recompute.txt'
+							extension = input_filename_1[b:]
+							# output_filename = input_filename_1[0:b]+'.recompute.txt'
+							output_filename = input_filename_1[0:b]+'.recompute'+extension
 							column_score_query_pre1 = select_config['column_score_query_pre1']
 
 							# retrieve the columns of score estimation and subset of annotations
@@ -3633,9 +3774,9 @@ class _Base2_correlation5(_Base2_correlation3):
 							column_vec_2 = list(column_idvec) + field_link_1 + field_link_2 + ['group']
 							df_link_query_pre3 = df_link_query_pre1.loc[:,column_vec_2]
 
-							b = filename_link.find('.txt')
-							output_filename_2 = filename_link[0:b]+'.recompute.txt'
-							df_link_query_pre3.to_csv(output_filename_2,index=False,sep='\t')
+							# b = filename_link.find('.txt')
+							# output_filename_2 = filename_link[0:b]+'.recompute.txt'
+							# df_link_query_pre3.to_csv(output_filename_2,index=False,sep='\t')
 
 					df_feature_link = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
 				
@@ -3648,110 +3789,14 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			return df_feature_link
 
-	## score query by quantile
-	def test_score_query_2(self,data=[],feature_query_vec=[],column_id_query='',column_idvec=[],column_query_vec=[],column_label_vec=[],flag_annot=1,reset_index=1,parallel_mode=0,interval=100,verbose=0,select_config={}):
-
-		df_feature = data
-		if len(feature_query_vec)==0:
-			feature_query_vec = df_feature[column_id_query].unique()
-		feature_query_num = len(feature_query_vec)
-
-		# column_query_vec_1 = [column_query1,column_query2]
-		column_num1 = len(column_query_vec)
-		print('feature_query_vec: ',feature_query_num)
-		print('column_id_query: ',column_id_query)
-
-		if reset_index>0:
-			query_id_ori = df_feature.index.copy()
-			df_feature.index = test_query_index(df_feature,column_vec=column_idvec)
-
-		# query_id_ori = pd.Index(query_id_ori)
-		# df_feature.index = np.asarray(df_feature[column_id_query])
-		query_id_1 = df_feature.index
-
-		if parallel_mode>0:
-			if interval<0:
-				score_query_1 = Parallel(n_jobs=-1)(delayed(self.test_score_query_pre2)(data=df_feature,feature_query=feature_query_vec[id1],feature_query_id=id1,
-																							column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,
-																							verbose=verbose,select_config=select_config) for id1 in range(feature_query_num))
-				query_num1 = len(score_query_1)
-				for i1 in range(query_num1):
-					score_mtx = score_query_1[i1]
-					query_id1 = score_mtx.index
-					df_feature.loc[query_id1,column_label_vec] = score_mtx
-
-			else:
-				iter_num = int(np.ceil(feature_query_num/interval))
-				print('iter_num, interval: ',iter_num,interval)
-				for iter_id in range(iter_num):
-					start_id1, start_id2 = interval*iter_id, np.min([interval*(iter_id+1),feature_query_num])
-					print('start_id1, start_id2: ',start_id1,start_id2,iter_id)
-					query_vec_1 = np.arange(start_id1,start_id2)
-					# estimate feature score quantile
-					score_query_1 = Parallel(n_jobs=-1)(delayed(self.test_score_query_pre2)(data=df_feature,feature_query=feature_query_vec[id1],feature_query_id=id1,
-																							column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,
-																							verbose=verbose,select_config=select_config) for id1 in query_vec_1)
-					query_num1 = len(score_query_1)
-					for i1 in range(query_num1):
-						score_mtx = score_query_1[i1]
-						query_id1 = score_mtx.index
-						df_feature.loc[query_id1,column_label_vec] = score_mtx
-		else:
-			for i1 in range(feature_query_num):
-			# for i1 in range(10):
-				feature_query1 = feature_query_vec[i1]
-				feature_query_id1 = i1
-				
-				# estimate feature score quantile
-				score_mtx = self.test_score_query_pre2(data=df_feature,feature_query=feature_query1,feature_query_id=feature_query_id1,
-														column_id_query=column_id_query,column_query_vec=column_query_vec,column_label_vec=column_label_vec,verbose=verbose,select_config=select_config)
-				
-				if (i1%500==0):
-					print('df_feature: ',df_feature.shape,feature_query1,i1)
-					print(df_feature[0:2])
-					print('score_mtx: ',score_mtx.shape)
-					print(score_mtx[0:2])
-
-				query_id1 = score_mtx.index
-				try:
-					df_feature.loc[query_id1,column_label_vec] = score_mtx
-				
-				except Exception as error:
-					print('error! ',error,feature_query1,i1,len(query_id1))
-					# query_id_1 = df1.index
-					# id1 = df1.index.duplicated(keep='first')
-					query_id_2 = query_id1.unique()
-					df1 = df_feature.loc[query_id_2,:]
-					print('df1 ',df1.shape)
-					
-					# query_id2 = query_id_1[df1.index.duplicated(keep='first')]
-					df2 = df1.loc[df1.index.duplicated(keep=False),:]
-					query_id2 = df2.index.unique()
-					print('query_id_2: ',len(query_id_2))
-					print('duplicated idvec, query_id2: ',len(query_id2))
-					
-					file_save_path2 = select_config['file_path_motif_score']
-					output_filename = '%s/test_query_score_quantile.duplicated.query1.%s.1.txt'%(file_save_path2,feature_query1)
-					
-					if os.path.exists(output_filename)==True:
-						print('the file exists: %s'%(output_filename))
-						filename1 = output_filename
-						b = filename1.find('.txt')
-						output_filename = filename1[0:b]+'.copy1.txt'
-					df2.to_csv(output_filename,sep='\t')
-					df_feature = df_feature.loc[(~df_feature.index.duplicated(keep='first')),:]
-
-		if reset_index==1:
-			df_feature.index = query_id_ori
-
-		return df_feature
-
 	## compute feature link score
 	# combine the estimated feature link score from different runs
 	def test_query_feature_score_init_pre1_1(self,data=[],input_filename_list=[],recompute=0,iter_mode=1,load_mode=1,save_mode=1,verbose=0,select_config={}):
 
 		df_feature_link = []
 		if load_mode>0:
+			file_path_motif_score = select_config['file_path_motif_score']
+			input_file_path = file_path_motif_score
 			filename_prefix_save_1 = select_config['filename_prefix_score']
 			filename_prefix_save_1_ori = filename_prefix_save_1
 			filename_annot_1_ori = select_config['filename_annot_score_1']
@@ -3761,6 +3806,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			# filename_annot_score_2 = 'annot2.init.query1'
 			# filename_annot_1 = '%s.recompute'%(filename_annot_1_ori)
 			# column_pval_cond = select_config['column_pval_cond']
+			print('filename_prefix_save_1 ',filename_prefix_save_1)
 			if len(input_filename_list)==0:
 				# input_filename_list = []
 				input_filename_list2 = []
@@ -3777,10 +3823,10 @@ class _Base2_correlation5(_Base2_correlation3):
 					interval = select_config['feature_score_interval']
 					feature_query_num_1 = select_config['feature_query_num']
 					iter_num = int(np.ceil(feature_query_num_1/interval))
-
 				else:
 					iter_num = 1
-					
+				
+				print('iter_mode, iter_num ',iter_mode,iter_num)
 				for i1 in range(iter_num):
 				# for i1 in range(2):
 					if iter_mode>0:
@@ -3801,20 +3847,28 @@ class _Base2_correlation5(_Base2_correlation3):
 					# input_filename = '%s/%s.%s.txt'%(input_file_path,filename_prefix_save_pre1,filename_annot_1) # prepare for the file
 					input_filename = '%s/%s.%s.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,format_str1) # prepare for the file
 					input_filename_list.append(input_filename)
+					print(input_filename)
 
-					# if os.path.exists(input_filename)==False:
-					# 	print('the file does not exist: %s'%(input_filename))
-					# 	recompute = 1
+					if os.path.exists(input_filename)==False:
+						print('the file does not exist: %s'%(input_filename))
+						recompute = 1
+					else:
+						print('the file exists: %s'%(input_filename))
+						# recompute = 0
 
+					# the computed gene-TF expression partial correlation given peak accessibility
+					# the computed gene-TF expression partial correlation given peak accessibility
 					input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
 					# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,format_str1)
 					input_filename_list2.append(input_filename_2)
+					print(input_filename_2)
 						
 					# the annotation file with the correlation and p-value estimation
 					# input_filename_3 = '%s/%s.annot1_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_3 = '%s/%s.annot1_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
 					# input_filename_3 = '%s/%s.annot1_1.copy1.txt'%(input_file_path,filename_prefix_save_pre1) # the file with th column: gene_tf_corr_peak_pval_corrected2
 					filename_query = input_filename_3
+					print(input_filename_3)
 						
 					flag_1=0
 					if flag_1>0:
@@ -3835,16 +3889,23 @@ class _Base2_correlation5(_Base2_correlation3):
 						
 					input_filename_list_2.append(filename_query)
 
-					if flag_select_link_type>0:
-						# input_filename_link = '%s/%s.annot2_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
-						input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
-						# input_filename_link = '%s/%s.annot2_1.1.recompute.txt'%(input_file_path,filename_prefix_save_pre1)
-						input_filename_list_3.append(input_filename_link)
+					# if flag_select_link_type>0:
+					# 	# input_filename_link = '%s/%s.annot2_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
+					# 	input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					# 	# input_filename_link = '%s/%s.annot2_1.1.recompute.txt'%(input_file_path,filename_prefix_save_pre1)
+					# 	input_filename_list_3.append(input_filename_link)
+
+					input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					input_filename_list_3.append(input_filename_link)
+					print(input_filename_link)
 
 					# to recompute the link score we need to recompute lambda of link and need motif score annotation
 					# input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_motif_score = '%s/%s.annot1_3.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					if os.path.exists(input_filename_motif_score)==False:
+						input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_list_motif.append(input_filename_motif_score)
+					print(input_filename_motif_score)
 
 				select_config.update({'filename_pcorr_list':input_filename_list2,
 										'filename_annot_list':input_filename_list_2,
@@ -3866,12 +3927,19 @@ class _Base2_correlation5(_Base2_correlation3):
 			# thresh_score_accessibility = 0.1
 			thresh_score_accessibility = 0.25
 			thresh_list_query = [[thresh_corr_1,thresh_pval_1],[thresh_corr_2,thresh_pval_2],[thresh_corr_3, thresh_pval_3]]
+			thresh_query_1 = thresh_list_query
+			thresh_query_2 = [thresh_motif_score_neg_1,thresh_motif_score_neg_2,thresh_score_accessibility]
 
-			config_link_type = {'thresh_list_query':thresh_list_query,
-									'thresh_motif_score_neg_1':thresh_motif_score_neg_1,
-									'thresh_motif_score_neg_2':thresh_motif_score_neg_2,
-									'thresh_score_accessibility':thresh_score_accessibility}
-			select_config.update({'config_link_type':config_link_type})
+			# column_1 = 'config_link_type'
+			# if not (column_1 in select_config):
+			# 	config_link_type = {'thresh_list_query':thresh_list_query,
+			# 							'thresh_motif_score_neg_1':thresh_motif_score_neg_1,
+			# 							'thresh_motif_score_neg_2':thresh_motif_score_neg_2,
+			# 							'thresh_score_accessibility':thresh_score_accessibility}
+			# 	select_config.update({column_1:config_link_type})
+
+			# parameter configuration for feature score computation; parameter configuration for estimating the feature link type
+			select_config = self.test_query_score_config_2(thresh_query_1=thresh_query_1,thresh_query_2=thresh_query_2,save_mode=1,verbose=verbose,select_config=select_config)
 
 			df_feature_link = self.test_query_feature_score_compute_1(df_feature_link=[],input_filename='',overwrite=False,iter_mode=iter_mode,
 																		save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
@@ -3882,8 +3950,7 @@ class _Base2_correlation5(_Base2_correlation3):
 	## feature score query
 	# perform selection of peak-TF-gene association
 	def test_query_feature_score_init_pre1(self,df_feature_link=[],input_filename_list=[],input_filename='',index_col=0,iter_mode=0,recompute=0,
-												flag_score_quantile_1=1,flag_score_query_1=1,
-												flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=1,flag_select_feature_2=1,
+												flag_score_quantile_1=1,flag_score_query_1=1,flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=0,flag_select_feature_2=0,
 												flag_select_local=1,flag_select_link_type=0,overwrite=False,input_file_path='',
 												save_mode=0,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -3934,7 +4001,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		# column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
 		# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
-		
 		field_query_pre2 = ['column_peak_tf_pval','column_peak_gene_pval','column_pval_cond','column_gene_tf_pval']
 		# field_query_2 = ['peak_tf_pval_corrected','peak_gene_pval',column_pval_cond,'gene_tf_pval_corrected']
 		field_query_2 = [select_config[field_id] for field_id in field_query_pre2]
@@ -3945,15 +4011,21 @@ class _Base2_correlation5(_Base2_correlation3):
 		input_filename_feature_link = input_filename
 		if len(df_feature_link)==0:
 			if os.path.exists(input_filename_feature_link)==True:
-				df_feature_link = pd.read_csv(input_filename,index_col=index_col,sep='\t')
+				df_feature_link = pd.read_csv(input_filename_feature_link,index_col=index_col,sep='\t')
 				print('df_feature_link: ',df_feature_link.shape)
 				print(df_feature_link.columns)
+				print(df_feature_link[0:2])
 				print(input_filename_feature_link)
 			else:
 				load_mode_2 = 1
-				recompute_2 = 0
+				# recompute_2 = 0
+				recompute_2 = 1
 				print('compute feature link score')
-				df_feautre_link, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],recompute=recompute_2,iter_mode=1,load_mode=load_mode_2,save_mode=1,verbose=verbose,select_config=select_config)
+				df_feature_link, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],recompute=recompute_2,iter_mode=iter_mode,load_mode=load_mode_2,save_mode=1,verbose=verbose,select_config=select_config)
+
+				print('df_feature_link: ',df_feature_link.shape)
+				print(df_feature_link.columns)
+				print(df_feature_link[0:2])
 
 		df_score_annot_1 = []
 		if flag_score_quantile_1>0:
@@ -3965,6 +4037,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		# flag_score_query_1 = 1
 		# flag_score_query_1 = flag_score_query
+		df_feature_link_pre1 = []
+		df_feature_link_pre2 = []
 		if flag_score_query_1>0:
 			# input_filename_link = '%s/%s.annot2_1.1.txt'%(file_save_path2,filename_prefix_score)
 			# select_config.update({'filename_link_type':input_filename_link})
@@ -3977,6 +4051,8 @@ class _Base2_correlation5(_Base2_correlation3):
 				select_config.update({'thresh_score_query_1':thresh_vec_1})
 			else:
 				thresh_vec_1 = select_config['thresh_score_query_1']
+
+			print('thresh_score_query_1 ',thresh_vec_1)
 
 			thresh_gene_tf_corr_peak = 0.30
 			thresh_gene_tf_corr_ = 0.05
@@ -4007,13 +4083,12 @@ class _Base2_correlation5(_Base2_correlation3):
 				# flag_select_feature_2 = 1
 				# flag_select_local = 1
 				# flag_select_link_type = 0
-
 				save_mode_2 = 1
-				filename_prefix_1 = filename_prefix_score
-				output_file_path = file_save_path2
 				filename_prefix_score = select_config['filename_prefix_score']
+				filename_prefix_1 = filename_prefix_score
 				filename_annot_score_2 = select_config['filename_annot_score_2']
 				filename_annot_1 = filename_annot_score_2
+				output_file_path = file_save_path2
 				list_1 = []
 				list_2 = []
 
@@ -4049,18 +4124,31 @@ class _Base2_correlation5(_Base2_correlation3):
 					print('df_link_query_pre2: ',df_link_query_pre2.shape)
 					print(df_link_query_pre2[0:2])
 					print(df_link_query_pre2.columns)
+					
 					print('df_link_query2: ',df_link_query2.shape)
 					print(df_link_query2[0:2])
 					print(df_link_query2.columns)
 
 					if 'column_score_query_1' in select_config:
-						column_score_query_1 = select_config['column_score_query_1']
-						t_columns = pd.Index(column_score_query_1).intersection(df_link_query2.columns,sort=False)
-						df_link_query2 = df_link_query2.loc[:,t_columns]
+						column_score_query_1 = select_config['column_score_query_1'] # the columns to keep
+						# t_columns = pd.Index(column_score_query_1).intersection(df_link_query2.columns,sort=False)
+						# df_link_query2 = df_link_query2.loc[:,t_columns]
 
 						# column_score_query_1 = select_config['column_score_query_1']
-						# t_columns = pd.Index(column_score_query_1).intersection(df_link_query2.columns,sort=False)
+						t_columns = pd.Index(column_score_query_1).intersection(df_link_query_pre2.columns,sort=False)
 						df_link_query_pre2 = df_link_query_pre2.loc[:,t_columns]
+
+						# keep the columns of correlation and p-values
+						column_score_vec_2 = ['peak_tf_corr','gene_tf_corr_peak','peak_gene_corr_','gene_tf_corr',
+												'peak_tf_pval_corrected','gene_tf_corr_peak_pval_corrected1',
+												'peak_gene_corr_pval','gene_tf_pval_corrected']
+						
+						column_score_query_2 = list(column_score_query_1)+column_score_vec_2
+						column_score_query_2 = pd.Index(column_score_query_2).unique()
+						select_config.update({'column_score_query_2':column_score_query_2})
+
+						t_columns_2 = pd.Index(column_score_query_2).intersection(df_link_query2.columns,sort=False)
+						df_link_query2 = df_link_query2.loc[:,t_columns_2]
 
 					b = input_filename.find('.txt')
 					# output_filename = input_filename[0:b]+'.query1.txt'
@@ -4082,17 +4170,24 @@ class _Base2_correlation5(_Base2_correlation3):
 
 				if save_mode>0:
 					float_format = '%.5E'
-					output_filename_1 = '%s/%s.%s.1.txt.gz'%(output_file_path,filename_prefix_score,filename_annot_1)
-					df_feature_link_pre1.to_csv(output_filename_1,sep='\t',float_format=float_format,compression='gzip')
+					# extension = 'txt.gz'
+					extension = 'txt'
+					compression = 'infer'
+					output_filename_1 = '%s/%s.%s.1.%s'%(output_file_path,filename_prefix_score,filename_annot_1,extension)
+					
+					column_id1 = 'gene_id'
+					df_feature_link_pre1.index = np.asarray(df_feature_link_pre1[column_id1])
+					df_feature_link_pre1.to_csv(output_filename_1,sep='\t',float_format=float_format,compression=compression)
 					print('df_feature_link_pre1: ',df_feature_link_pre1.shape)
 					print(df_feature_link_pre1.columns)
 					
-					output_filename_2 = '%s/%s.%s.2.txt.gz'%(output_file_path,filename_prefix_score,filename_annot_1)
-					df_feature_link_pre2.to_csv(output_filename_2,sep='\t',float_format=float_format,compression='gzip')
+					output_filename_2 = '%s/%s.%s.2.%s'%(output_file_path,filename_prefix_score,filename_annot_1,extension)
+					df_feature_link_pre2.index = np.asarray(df_feature_link_pre2[column_id1])
+					df_feature_link_pre2.to_csv(output_filename_2,sep='\t',float_format=float_format,compression=compression)
 					print('df_feature_link_pre2: ',df_feature_link_pre2.shape)
 					print(df_feature_link_pre2.columns)
 
-				return df_feature_link_pre1, df_feature_link_pre2
+		return df_feature_link_pre1, df_feature_link_pre2
 
 	## compute feature score quantile
 	def test_query_feature_score_quantile_compute_1(self,df_feature_link=[],input_filename_list=[],index_col=0,column_idvec=[],iter_mode=1,overwrite=False,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
@@ -4221,10 +4316,159 @@ class _Base2_correlation5(_Base2_correlation3):
 				
 			return df_link_query_pre1
 
+	## peak-tf-gene link query selection
+	# select feature link with specific score above thresholdds
+	def test_query_feature_link_select_1(self,data=[],flag_select_local=1,save_mode=1,verbose=0,select_config={}):
+
+			# flag_select_thresh1_feature_local=0
+			# flag_select_thresh1_feature_local=1
+			flag_select_thresh1_feature_local=flag_select_local
+
+			df_link_query_1 = data
+			query_id_ori = df_link_query_1.index.copy()
+			print('df_link_query_1: ',df_link_query_1.shape)
+			print(df_link_query_1[0:2])
+			
+			if flag_select_thresh1_feature_local>0:
+				column_query_1 = [['peak_tf_corr','peak_tf_pval_corrected'],['peak_gene_corr_','peak_gene_corr_pval'],
+									['gene_tf_corr_peak','gene_tf_corr_peak_pval_corrected1']]
+
+				# column_query_1 = [['peak_tf_corr','peak_tf_pval_corrected'],['peak_gene_corr_','peak_gene_corr_pval'],
+				# 					['gene_tf_corr_peak','gene_tf_corr_peak_pval_corrected2']]
+
+				# field_query_1 = ['column_peak_tf_corr','column_peak_gene_corr','column_query_cond']
+				# field_query_2 = ['column_peak_tf_pval','column_peak_gene_pval','column_pval_cond']
+				# field_num1 = len(field_query_1)
+				# for i1 in range(field_num1):
+				# 	field1, field2 = field_query_1[i1], field_query_2[i1]
+				# 	if (field1 in select_config) and (field2 in select_config):
+				# 		column_1, column_2 = select_config[field1], select_config[field2]
+				# 		print(field1,column_1,i1)
+				# 		print(field2,column_2,i1)
+				# 		column_query_1[i1] = [column_1,column_2]
+
+				field_query1 = ['peak_tf','peak_gene']
+				field_query2 = ['corr','pval']
+				list1 = []
+				for field_id1 in field_query1:
+					list1.append(['column_%s_%s'%(field_id1,field_id2) for field_id2 in field_query2])
+				list1.append(['column_query_cond','column_pval_cond'])
+				field_query_1 = list1
+
+				field_num1 = len(field_query_1)
+				for i1 in range(field_num1):
+					# field1, field2 = field_query_1[i1], field_query_2[i1]
+					for i2 in range(2):
+						field1 = field_query_1[i1][i2]
+						if (field1 in select_config):
+							column_1 = select_config[field1]
+							print(field1,column_1,i1,i2)
+							column_query_1[i1][i2] = column_1
+
+				column_query_pre1 = column_query_1.copy()
+
+				# column_query_1 = column_query_pre1
+				field_query = ['peak_tf_corr_thresh1','peak_gene_corr_thresh1','gene_tf_corr_peak_thresh1']
+				# thresh_corr_1 = 0.10
+				# thresh_corr_2 = 0.15
+				# thresh_corr_2 = 0.30
+				# # pval_thresh1 = 0.10
+				# # pval_thresh2 = 0.05
+				# # pval_thresh3 = 0.15
+				# pval_thresh3 = 0.25
+				if 'thresh_vec_score_2' in select_config:
+					thresh_vec = select_config['thresh_vec_score_2']
+					# the thresholds for peak_tf_corr, peak_gene_corr, and gene_tf_corr_peak
+					thresh_vec_1,thresh_vec_2,thresh_vec_3 = thresh_vec[0:3]
+				else:
+					thresh_corr_1 = 0.30
+					thresh_corr_2 = 0.50
+					# thresh_pval_1, thresh_pval_2 = 0.25, 1
+					thresh_pval_1, thresh_pval_2, thresh_pval_3 = 0.05, 0.10, 1
+					# thresh_vec_1 = [[thresh_corr_1,thresh_pval_2],[thresh_corr_2,thresh_pval_2]]	# original
+					thresh_vec_1 = [[thresh_corr_1,thresh_pval_2],[thresh_corr_2,thresh_pval_3]]	# updated
+					# thresh_vec_2 = thresh_vec_1.copy()
+					# thresh_vec_2 = [[thresh_corr_1,thresh_pval_1],[thresh_corr_2,thresh_pval_2]]	# original
+					thresh_vec_2 = [[thresh_corr_1,thresh_pval_1],[thresh_corr_2,thresh_pval_3]]	# updated
+					# thresh_vec_3 = [[thresh_corr_1,thresh_pval_2],[thresh_corr_2,thresh_pval_2]]	# original
+					thresh_vec_3 = [[thresh_corr_1,thresh_pval_2],[thresh_corr_2,thresh_pval_3]]	# updated
+					thresh_vec = [thresh_vec_1,thresh_vec_2,thresh_vec_3]
+					select_config.update({'thresh_vec_score_2':thresh_vec})
+
+				query_num1 = len(column_query_1)
+				flag_abs_query = 1
+				list_query1 = []
+				load_mode = 0
+				if len(df_annot_query)>0:
+					df_annot_1 = df_annot_query
+					load_mode = 1
+				
+				for i1 in range(query_num1):
+					column_vec_1 = column_query_1[i1]
+					column_query1, column_query2 = column_vec_1[0:2]
+					for column_query in column_vec_1:
+						if not(column_query in df_link_query_1.columns):
+							# if len(df_annot_query)>0:
+							# 	df_annot_1 = df_annot_query
+							# else:
+							# 	if 'filename_annot_1' in select_config:
+							# 		filename_annot_1 = select_config['filename_annot_1']
+							# 		df_annot_1 = pd.read_csv(filename_annot_1,index_col=False,sep='\t')
+							# 	else:
+							# 		print('please provide the estimated correlation and p-value')
+							if load_mode==0:
+								if 'filename_annot_1' in select_config:
+									filename_annot_1 = select_config['filename_annot_1']
+									df_annot_1 = pd.read_csv(filename_annot_1,index_col=False,sep='\t')
+									df_annot_1.index = test_query_index(df_annot_1,column_vec=column_idvec)
+									print('df_annot_1 ',df_annot_1.shape)
+									print(df_annot_1[0:2])
+									print(filename_annot_1)
+									load_mode = 1
+								else:
+									print('please provide the estimated correlation and p-value')
+									return
+
+							df_link_query_1[column_query] = df_annot_1.loc[query_id_ori,column_query]
+
+					query_value_1, pval_query = df_link_query_1[column_query1], df_link_query_1[column_query2]
+					if flag_abs_query>0:
+						query_value_1 = query_value_1.abs()
+
+					thresh_vec_query1 = thresh_vec[i1]
+					thresh_num1 = len(thresh_vec_query1)
+					for i2 in range(thresh_num1):
+						thresh_vec_query = thresh_vec_query1[i2]
+						thresh_corr_query, thresh_pval_query = thresh_vec_query[0:2]
+						print('thresh_corr_query, thresh_pval_query: ',thresh_corr_query,thresh_pval_query)
+						id_corr = (query_value_1>thresh_corr_query)
+						id_pval = (pval_query<thresh_pval_query)
+						id1 = (id_corr&id_pval)
+						if i2==0:
+							id_pre1 = id1
+						else:
+							id_pre1 = (id_pre1|id1)
+
+					query_id1 = query_id_ori[id_pre1]
+					query_num = len(query_id1)
+					field_query1 = field_query[i1]
+					list_query1.append(query_id1)
+					print('field_query1: ',field_query1,query_num)
+
+				dict_query_local_1 = dict(zip(field_query,list_query1))
+				if flag_annot_1>0:
+					field_num1 = len(field_query)
+					for i1 in range(field_num1):
+						field_query1 = field_query[i1]
+						query_id1 = dict_query_local_1[field_query1]
+						df_link_query_1.loc[query_id1,field_query1] = 1
+
+				return df_link_query_1
+
 	## ====================================================
 	# peak-tf-gene link query selection
 	def test_gene_peak_tf_query_select_1(self,df_gene_peak_query=[],df_annot_query=[],df_score_annot=[],lambda1=0.5,lambda2=0.5,type_id_1=0,column_id1=-1,
-											flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=1,flag_select_feature_2=1,
+											flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=0,flag_select_feature_2=0,
 											flag_select_local=1,flag_select_link_type=1,iter_mode=0,
 											input_file_path='',save_mode=1,filename_prefix_save='',output_file_path='',verbose=1,select_config={}):
 
@@ -4272,7 +4516,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			field_query1 = ['peak_tf','peak_gene']
 			field_query2 = ['corr','pval']
 			list1 = []
-			
+
 			for field_id1 in field_query1:
 				list1.append(['column_%s_%s'%(field_id1,field_id2) for field_id2 in field_query2])
 			list1.append(['column_query_cond','column_pval_cond'])
@@ -4368,6 +4612,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				
 				thresh_num1 = len(thresh_vec_1)
 				score_query1, score_query2 = df_link_query_1[column_query1], df_link_query_1[column_query2]
+
 				list1 = []
 				for i1 in range(thresh_num1):
 					thresh_vec_query = thresh_vec_1[i1]
@@ -4386,7 +4631,58 @@ class _Base2_correlation5(_Base2_correlation3):
 				df_link_query_1.loc[query_id_1,column_label_1] = 1
 				df_link_query_1.loc[query_id_1,column_label_2] = 1
 
-			return df_link_query_1
+			flag_combine_1=1
+			if flag_combine_1>0:
+				# field_query_1 = ['label_score_1', 'label_score_2',
+				# 					'peak_tf_corr_thresh1','peak_gene_corr_thresh1']
+
+				field_query_1 = ['label_score_1', 'label_score_2']
+				field_query1_1 = ['peak_tf_corr_thresh1','peak_gene_corr_thresh1']
+
+				field_query_2 = ['feature1_score1_quantile','feature1_score2_quantile']
+				if flag_select_feature_2>0:
+					# field_query_2 = ['feature1_score1_quantile','feature1_score2_quantile','feature2_score1_quantile']
+					field_query_2 = field_query_2 + ['feature2_score1_quantile']
+
+				field_query_3 = ['label_gene_tf_corr_peak_compare']
+				field_query_5 = ['link_query']
+
+				mask_1 = (df_link_query_1.loc[:,field_query_1]>0) # label score above threshold
+				df1 = (mask_1.sum(axis=1)>0)
+
+				field_query1 = field_query_3[0]
+				df3 = (df_link_query_1.loc[:,field_query1]>0) # difference between gene_tf_corr_peak and gene_tf_corr
+
+				if (flag_select_feature_1>0) or (flag_select_feature_2>0):
+					thresh1 = 0.95
+					if 'thresh_score_quantile' in select_config:
+						thresh1 = select_config['thresh_score_quantile']
+					mask_2 = (df_link_query_1.loc[:,field_query_2]>thresh1) # score quantile above threshold
+					df2 = (mask_2.sum(axis=1)>0)
+				
+					# id_1 = (((df1|df2)&df5)|df3)
+					# id_1 = (df1|df2|df3)
+					id_1 = (df1|df2)&(~df3)
+
+				else:
+					id_1 = (df1&(~df3))
+
+				df_link_query1 = df_link_query_1.loc[id_1,:]
+
+				df_link_query2 = []
+				flag_select_link_type_1 = flag_select_link_type
+				if flag_select_link_type_1>0:
+					field_query2 = field_query_5[0]
+					df5 = (df_link_query_1.loc[:,field_query2]!=-1)
+				
+					# id_2 = (((df1|df2)&(~df3))&df5)
+					id_2 = (id_1&df5)
+					df_link_query2 = df_link_query_1.loc[id_2,:]
+
+				# df_link_query3 = df_link_query_1.loc[(~df3),:]
+				# print('df_link_query_1, df_link_query1, df_link_query2: ',df_link_query_1.shape,df_link_query1.shape,df_link_query2.shape)
+
+			return df_link_query_1, df_link_query1, df_link_query2
 
 	## ====================================================
 	# query tf-(peak,gene) link type: 1: positive regulation; -1: negative regulation

@@ -2300,11 +2300,13 @@ class _Base2_pre_2(_Base2_correlation5):
 
 					flag_compare_thresh1 = 1
 					flag_select_pair_1 = 1
-					flag_select_feature_1 = 1
-					flag_select_feature_2 = 1
+					# flag_select_feature_1 = 1
+					flag_select_feature_1 = 0
+					# flag_select_feature_2 = 1
+					flag_select_feature_2 = 0
 					flag_select_local = 1
-					# flag_select_link_type = 0
-					flag_select_link_type = 1
+					flag_select_link_type = 0
+					# flag_select_link_type = 1
 
 					feature_query_num = feature_query_num_1
 					
@@ -2318,15 +2320,20 @@ class _Base2_pre_2(_Base2_correlation5):
 						if feature_score_interval>0:
 							iter_mode = 1
 
-					select_config.update({'feature_query_num':feature_query_num})
+					select_config.update({'feature_query_num':feature_query_num,
+											'iter_mode':iter_mode})
 
 					index_col = False
-					recompute = 0
-					# recompute = 1
+					# recompute = 0
+					recompute = 1
 					flag_score_quantile_1 = 0
 					# flag_score_quantile_1 = 1
-					flag_score_query_1 = 0
-					# flag_score_query_1 = 1
+					# flag_score_query_1 = 0
+					flag_score_query_1 = 1
+
+					# thresh_vec_1 = [[0.10,0.05],[0.05,0.10]]
+					thresh_vec_1 = [[0.10,0],[0,0.10]]
+					select_config.update({'thresh_score_query_1':thresh_vec_1})
 
 					column_query = 'filename_feature_link_query1'
 					input_filename = ''
