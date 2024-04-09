@@ -394,7 +394,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				# df_gene_peak_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t')
 				df_gene_peak_query_1 = pd.read_csv(input_filename,index_col=False,sep='\t')
 				df_gene_peak_query_1.index = np.asarray(df_gene_peak_query_1[column_id1])
-				print('df_gene_peak_query_1 ',df_gene_peak_query_1.shape)
+				# print('df_gene_peak_query_1 ',df_gene_peak_query_1.shape)
+				print('peak-gene links, dataframe of ',df_gene_peak_query_1.shape)
 			else:
 				print('the file does not exist ',input_filename)
 				flag_query=0
@@ -411,15 +412,15 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		gene_query_vec_ori = df_gene_peak_query_1[column_id1].unique()
 		gene_query_num_ori = len(gene_query_vec_ori)
 		if verbose>0:
-			print('gene_query_vec_ori ',gene_query_num_ori)
+			# print('gene_query_vec_ori ',gene_query_num_ori)
+			print('gene number: %d'%(gene_query_num_ori))
+		
 		if flag_query>0:
 			# thresh_highly_variable = 0.5
 			column_id_query1 = select_config['column_highly_variable']
 			if column_id_query1 in df_gene_peak_query_1.columns:
 				id1=(df_gene_peak_query_1[column_id_query1]>0)
 				id2=(~id1)
-				# gene_idvec_1 = df_gene_peak_query_1.loc[id1,'gene_id'].unique()
-				# gene_idvec_2 = df_gene_peak_query_1.loc[id2,'gene_id'].unique()
 				# df_gene_peak_query_1.loc[pd.isna(df_gene_peak_query_1[column_id_query])==True,column_id_query]=0
 				gene_idvec_1 = df_gene_peak_query_1.loc[id1,column_id1].unique()
 				gene_idvec_2 = df_gene_peak_query_1.loc[id2,column_id2].unique()
@@ -428,7 +429,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			else:
 				# rna_meta_ad = self.rna_meta_ad
 				# df_var_1 = rna_meta_ad.var
-				# id1 = (df_var_1['highly_variable']>0)
 				# gene_name_query_expr = df_var_1.index
 				df_annot = self.df_gene_annot_expr
 				gene_name_query_expr = df_annot.index
@@ -436,8 +436,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				gene_highly_variable = gene_name_query_expr[id1]
 				gene_group2 = gene_name_query_expr[(~id1)]
 				gene_query_num1, gene_query_num2 = len(gene_highly_variable), len(gene_group2)
-				if verbose>0:
-					print('gene_highly_variable, gene_group2 ',gene_query_num1,gene_query_num2)
+				# if verbose>0:
+				# 	print('gene_highly_variable, gene_group2 ',gene_query_num1,gene_query_num2)
+				
 				gene_idvec_1 = pd.Index(gene_highly_variable).intersection(gene_query_vec_ori,sort=False)
 				gene_idvec_2 = pd.Index(gene_group2).intersection(gene_query_vec_ori,sort=False)
 				df_gene_peak_query_1[column_id_query1] = 0
@@ -447,15 +448,14 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			# column_id_query2 = '%s_count'%(column_id_query)
 			# df_gene_peak_query_1[column_id_query2] = 0
 			# df_gene_peak_query_1.loc[gene_idvec_1,column_id_query2] = 1
-			if verbose>0:
-				print('gene_idvec_1, gene_idvec_2 ',gene_num1,gene_num2)
+			# if verbose>0:
+			# 	print('gene_idvec_1, gene_idvec_2 ',gene_num1,gene_num2)
 
 			df_gene_peak_query_1['count'] = 1
 			# df_gene_peak_query_1.index = np.asarray(df_gene_peak_query_1['gene_id'])
 			df_gene_peak_query_1.index = np.asarray(df_gene_peak_query_1[column_id1])
 			column_distance = select_config['column_distance']
 			column_distance_1 = '%s_abs'%(column_distance)
-			# df_gene_peak_query_1['distance_abs'] = df_gene_peak_query_1['distance'].abs()
 			df_gene_peak_query_1[column_distance_1] = df_gene_peak_query_1[column_distance].abs()
 			column_correlation_1 = select_config['column_correlation'][0]
 			# column_id_1 = 'gene_id'
@@ -491,6 +491,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				# df_gene_peak_query_group_1_distance_2 = df_gene_peak_query_1.loc[:,[column_id_1,'distance_abs']].groupby(by=[column_id_1]).min().rename(columns={'distance_abs':'distance_min'})
 				# df_gene_peak_query_group_1_corr_1 = df_gene_peak_query_1.loc[:,[column_id_1,'spearmanr']].groupby(by=[column_id_1]).max().rename(columns={'spearmanr':'corr_max'})
 				# df_gene_peak_query_group_1_corr_2 = df_gene_peak_query_1.loc[:,[column_id_1,'spearmanr']].groupby(by=[column_id_1]).min().rename(columns={'spearmanr':'corr_min'})
+				
 				query_num2 = len(column_vec_query)
 				list1 = [df_gene_peak_query_group]
 				for i2 in range(query_num2):
@@ -567,12 +568,14 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				stop = time.time()
 				print('search for peak loci within distance %d Kb of the gene TSS used %.5fs'%(peak_distance_thresh, stop-start))
 			else:
-				print('load gene-peak link query: %s'%(input_filename))
+				 #print('load gene-peak link query: %s'%(input_filename))
+				print('load peak-gene links from %s'%(input_filename))
 				df_gene_peak_query = pd.read_csv(input_filename,index_col=False,sep='\t')
 
 			df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
 			self.df_gene_peak_distance = df_gene_peak_query
-			print('df_gene_peak_query: ',df_gene_peak_query.shape)
+			# print('df_gene_peak_query: ',df_gene_peak_query.shape)
+			# print('peak-gene links, dataframe of ',df_gene_peak_query.shape)
 
 			# return True
 			return df_gene_peak_query
@@ -782,7 +785,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		peak_loc_1 = atac_ad.var_names
 		assert list(peak_query.index) == list(peak_loc_1)
 		self.atac_meta_peak_loc = np.asarray(peak_query.index)
-		print('atac matecell peaks', len(self.atac_meta_peak_loc), self.atac_meta_peak_loc[0:5])
+		# print('atac matecell peaks', len(self.atac_meta_peak_loc), self.atac_meta_peak_loc[0:5])
+		print('peak loci in ATAC-seq metacell data: %d'%(len(self.atac_meta_peak_loc)))
+		print('preview: ',self.atac_meta_peak_loc[0:5])
 
 		peak_bg = pd.read_csv(input_filename_bg,index_col=0)
 		peak_bg_num_ori = peak_bg.shape[1]
@@ -1276,7 +1281,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 																							select_config=select_config)
 						dict_query1.update({compute_mode:df_gene_peak_1})
 
-						print('df_gene_peak_1 ',df_gene_peak_1.shape)
+						# print('df_gene_peak_1 ',df_gene_peak_1.shape)
+						print('peak-gene links, dataframe of ',df_gene_peak_1.shape)
+						print('preview: ')
 						print(df_gene_peak_1[0:5])
 
 					# load estimated peak-gene correlations and perform pre-selection
@@ -1310,9 +1317,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					input_filename_pre2 = select_config['input_filename_pre2']
 					output_filename = input_filename_pre2
 					
-					print('peak-gene link, peak-gene link background: ',df_gene_peak_pre1.shape,df_gene_peak_bg.shape)
-					print(df_gene_peak_pre1[0:2])
-					print(df_gene_peak_bg[0:2])
+					# print('peak-gene link, peak-gene link background: ',df_gene_peak_pre1.shape,df_gene_peak_bg.shape)
+					# print(df_gene_peak_pre1[0:2])
+					# print(df_gene_peak_bg[0:2])
 					
 					df_gene_peak_query_1 = self.test_query_feature_correlation_merge_2(df_gene_peak_query=df_gene_peak_pre1,
 																						df_gene_peak_bg=df_gene_peak_bg,
@@ -1501,7 +1508,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				if not (column_id1 in df_gene_peak_query_1.columns):
 					df_gene_peak_query_1[column_id1] = np.asarray(df_gene_peak_query_1.index)
 					
-			print('peak-gene link: ',df_gene_peak_query_1.shape)
+			print('peak-gene links, dataframe of ',df_gene_peak_query_1.shape)
+			print('preview: ')
 			print(df_gene_peak_query_1[0:2])
 
 			# df_gene_peak_query_compute1 = df_gene_peak_query
@@ -1656,7 +1664,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 		gene_query_vec_pre1 = gene_query_vec
 		gene_query_num_1 = len(gene_query_vec_pre1)
-		print('target gene set: %d '%(gene_query_num_1))
+		# print('target gene set: %d '%(gene_query_num_1))
 		query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
 		recompute=0
 		if 'recompute' in select_config:
@@ -1724,12 +1732,12 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		gene_query_num_bg = len(gene_query_vec_bg)
 		# if verbose>0:
 		# 	print('gene_query_vec:%d, gene_query_vec_bg:%d, query_id1:%d, query_id2:%d, start_id1:%d, start_id2:%d'%(len(gene_query_vec),len(gene_query_vec_bg),query_id1,query_id2,start_id1,start_id2))
-		if verbose>0:
-			print('gene_query_vec_ori ',gene_query_num_ori,gene_query_vec_ori[0:2])
-			print('gene_name_query_1 ',gene_query_num_1,gene_name_query_1[0:2])
-			print('gene_query_vec ',gene_query_num,gene_query_vec[0:2])
-			print('query_id1:%d, query_id2:%d, start_id1:%d, start_id2:%d'%(query_id1,query_id2,start_id1,start_id2))
-			# print('gene_query_vec:%d, gene_query_vec_bg:%d, query_id1:%d, query_id2:%d, start_id1:%d, start_id2:%d'%(len(gene_query_vec),len(gene_query_vec_bg),query_id1,query_id2,start_id1,start_id2))
+		# if verbose>0:
+		# 	print('gene_query_vec_ori ',gene_query_num_ori,gene_query_vec_ori[0:2])
+		# 	print('gene_name_query_1 ',gene_query_num_1,gene_name_query_1[0:2])
+		# 	print('gene_query_vec ',gene_query_num,gene_query_vec[0:2])
+		# 	print('query_id1:%d, query_id2:%d, start_id1:%d, start_id2:%d'%(query_id1,query_id2,start_id1,start_id2))
+		# 	# print('gene_query_vec:%d, gene_query_vec_bg:%d, query_id1:%d, query_id2:%d, start_id1:%d, start_id2:%d'%(len(gene_query_vec),len(gene_query_vec_bg),query_id1,query_id2,start_id1,start_id2))
 
 		interval_peak_corr, interval_local_peak_corr = select_config['interval_peak_corr'], select_config['interval_local_peak_corr']
 		interval_peak_corr_bg, interval_local_peak_corr_bg = interval_peak_corr, interval_local_peak_corr
@@ -1771,22 +1779,23 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		flag_query1=1
 		if flag_query1>0:
 			df_gene_peak_compute1 = df_gene_peak_query
-			print('peak-gene link: ',df_gene_peak_compute1.shape)
+			# print('peak-gene links, dataframe of ',df_gene_peak_compute1.shape)
 
 			if len(gene_query_vec)>0:
-				print('perform pre-selection for the gene subset: %d genes'%(len(gene_query_vec)))
+				# print('perform peak-gene link pre-selection for the gene subset: %d genes'%(len(gene_query_vec)))
 				query_id_ori = df_gene_peak_query.index.copy()
 				df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
 				# df_gene_peak_query_compute1 = df_gene_peak_query.copy()
 				
 				gene_query_idvec = pd.Index(gene_query_vec).intersection(df_gene_peak_query.index,sort=False)
-				print('gene_query_vec_2: %d, gene_query_idvec: %d'%(len(gene_query_vec),len(gene_query_idvec)))
+				# print('gene_query_vec_2: %d, gene_query_idvec: %d'%(len(gene_query_vec),len(gene_query_idvec)))
+				print('perform peak-gene link pre-selection for the gene subset: %d genes'%(len(gene_query_idvec)))
 				df_gene_peak_query = df_gene_peak_query.loc[gene_query_idvec,:]
 			else:
-				print('perform pre-selection for genes with estimated peak-gene correlations')
+				print('perform peak-gene link pre-selection for genes with estimated peak-gene correlations')
 				# df_gene_peak_query_compute1 = df_gene_peak_query
 
-			print('peak-gene link ',df_gene_peak_query.shape)
+			print('peak-gene links, dataframe of ',df_gene_peak_query.shape)
 
 			## select gene-peak query above correlation thresholds for each distance range for empricial p-value calculation
 			# tol_1 = 0.5
@@ -1805,8 +1814,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 										[500,1000,0.1],
 										[1000,2050,0.15]]
 
-			print('thresh_corr_distance ')
-			print(thresh_corr_distance)
+			# print('thresh_corr_distance ')
+			# print(thresh_corr_distance)
 
 			if not ('distance' in df_gene_peak_query):
 				field_query = ['distance']
@@ -1827,6 +1836,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			distance_abs = df_gene_peak_query['distance'].abs()
 			list1 = []
 			
+			print('threshold for peak-gene link pre-selection: ')
+			print('distance threshold 1, distance threshold 2, correlation threshold')
+
 			# correlation_type = 'spearmanr'
 			column_id = correlation_type
 			query_idvec = df_gene_peak_query.index
@@ -1844,7 +1856,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
 			df_gene_peak_query = df_gene_peak_query.sort_values(by=['gene_id','distance'],ascending=True)
 
-			print('df_gene_peak_query_ori, df_gene_peak_query after pre-selection by correlation thresholds: ',df_gene_peak_query_ori.shape,df_gene_peak_query.shape)
+			# print('df_gene_peak_query_ori, df_gene_peak_query after pre-selection by correlation thresholds: ',df_gene_peak_query_ori.shape,df_gene_peak_query.shape)
+			print('original peak-gene links, dataframe of ',df_gene_peak_query_ori.shape)
+			print('peak-gene links after pre-selection by correlation thresholds, dataframe of ',df_gene_peak_query.shape)
 			if (save_mode>0) and (output_filename!=''):
 				# df_gene_peak_query.to_csv(output_filename,sep='\t',float_format='%.6E')
 				df_gene_peak_query.to_csv(output_filename,sep='\t',float_format=float_format)
@@ -1965,7 +1979,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 																												output_filename=output_filename,
 																												select_config=select_config)
 				stop = time.time()
-				print('peak accessibility-gene expr correlation estimation for peaks used %.5fs'%(stop-start))
+				# print('peak accessibility-gene expr correlation estimation for peaks used %.5fs'%(stop-start))
 				df_gene_peak_query_1 = df_gene_peak_query
 
 		df_gene_peak_query_2 = df_gene_peak_query_1
@@ -2148,13 +2162,15 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					else:
 						df_gene_peak_query = df_peak_query
 
-					print('background_query, df_gene_peak_query ',df_gene_peak_query.shape)
+					# print('background_query, df_gene_peak_query ',df_gene_peak_query.shape)
+					print('peak-gene links, dataframe of ',df_gene_peak_query.shape)
 
 					gene_query_idvec_1 = df_gene_peak_query['gene_id'].unique()
 					gene_query_num1 = len(gene_query_idvec_1)
 					gene_query_vec_bg1 = pd.Index(gene_query_vec_bg).intersection(gene_query_idvec_1,sort=False)
 					gene_query_num_bg, gene_query_num_bg1 = len(gene_query_vec_bg), len(gene_query_vec_bg1)
-					print('gene_query_idvec_1:%d, gene_query_vec_bg:%d, gene_query_vec_bg1:%d '%(gene_query_num1,gene_query_num_bg,gene_query_num_bg1))
+					# print('gene_query_idvec_1:%d, gene_query_vec_bg:%d, gene_query_vec_bg1:%d '%(gene_query_num1,gene_query_num_bg,gene_query_num_bg1))
+					print('gene number: %d'%(df_gene_peak_query.shape))
 
 					gene_query_vec = gene_query_vec_bg1
 					df_gene_peak_query_1 = df_gene_peak_query
@@ -2162,8 +2178,10 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				warnings.filterwarnings('ignore')
 				print('peak accessibility-gene expression correlation estimation')
 				# print('gene_query_vec: ',gene_query_vec)
-				print('atac_ad: ',atac_ad.shape)
-				print('rna_exprs: ',rna_exprs.shape)
+				# print('atac_ad: ',atac_ad.shape)
+				# print('rna_exprs: ',rna_exprs.shape)
+				print('ATAC-seq data, anndata of ',atac_ad.shape)
+				print('gene expression, dataframe of ',rna_exprs.shape)
 				print('filename_prefix_save: %s'%(filename_prefix_save))
 				print('save_file_path: %s, save_file_path_local: %s'%(save_file_path,save_file_path_local))
 				
@@ -2185,7 +2203,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					print('save file: %s'%(output_filename))
 
 				df_gene_peak_query_compute1 = df_gene_peak_query
-				print('df_gene_peak_query, compute_mode: ', df_gene_peak_query.shape,compute_mode)
+				# print('df_gene_peak_query, compute_mode: ', df_gene_peak_query.shape,compute_mode)
+				print('peak-gene links, dataframe of ',df_gene_peak_query.shape)
 				
 				warnings.filterwarnings('default')
 
@@ -2198,7 +2217,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 																filename_prefix_save='',interval_peak_corr=50,interval_local_peak_corr=10,peak_bg_num=-1,verbose=0,select_config={}):
 
 		# peak accessibility-gene expr correlation query
-		print('peak accessibility-gene expr correlation query')
+		# print('peak accessibility-gene expression correlation query')
 		# start = time.time()
 		if len(atac_ad)==0:
 			atac_ad = self.atac_meta_ad
@@ -2239,7 +2258,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 																	select_config=select_config)
 
 			stop = time.time()
-			print('peak accessibility-gene expr correlation query used %.5fs'%(stop-start))
+			print('peak accessibility-gene expression correlation estimation used %.5fs'%(stop-start))
 		else:
 			if 'save_filename_list' in select_config:
 				save_filename_list = select_config['save_filename_list']
@@ -2258,7 +2277,6 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		file_num1 = len(save_filename_list)
 		list_1 = []
 		if file_num1>0:
-
 			df_gene_peak_query = self.test_gene_peak_query_combine_1(save_filename_list=save_filename_list,verbose=verbose,select_config=select_config)
 
 		return df_gene_peak_query
@@ -2346,7 +2364,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 		save_filename_list = []
 		# corr_thresh = 0.3
 		# corr_thresh = 0.35
-		corr_thresh = 0.5
+		# corr_thresh = 0.5
+		# corr_thresh = 0.6
+		corr_thresh = 0.7
 		column_corr_1 = select_config['column_correlation'][0]
 		
 		if interval_save>0:
@@ -2377,7 +2397,10 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			if flag_corr_==0:
 				field_query_vec = [['spearmanr'],['pearsonr'],['spearmanr','pearsonr']]
 				df_query = df_gene_peak_query.loc[gene_idvec1,['peak_id']+field_query_vec[type_id_1-1]].fillna(-1)
-				print('df_query ',df_query.shape,df_query)
+				# print('df_query ',df_query.shape,df_query)
+				print('peak-gene links: ',df_query.shape[0])
+				print('preview: ')
+				print(df_query[0:2])
 
 			## dorc_func_pre1: (gene_query, df)
 			if iter_mode>0:
@@ -2419,12 +2442,12 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				gene_res = []
 				gene_query_num1 = len(gene_idvec1)
 				iter_vec = np.arange(gene_query_num1)
-				# for t_gene_query in tqdm(gene_idvec1):
 				for i1 in tqdm(iter_vec):
 					t_gene_query = gene_idvec1[i1]
 					peak_vec = np.asarray(df_gene_peak_query.loc[[t_gene_query],'peak_id'])
 					if i1%500==0:
-						print('peak_vec, gene_query ',len(peak_vec),t_gene_query,i1)
+						# print('peak_vec, gene_query ',len(peak_vec),t_gene_query,i1)
+						print('gene: %s, peak number: %d, %d'%(t_gene_query,len(peak_vec),i1))
 					t_gene_res = self.dorc_func_pre1(peak_vec,t_gene_query,atac_meta_ad,rna_exprs,
 														flag_corr_=flag_corr_,df_query=df_query,
 														corr_thresh=-2,type_id_1=type_id_1,method_type=method_type)
@@ -2443,7 +2466,9 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					query_num = len(gene_peaks)
 					try:
 						if query_num>0:
-							print(t_gene_query,query_num,gene_peaks,df.loc[gene_peaks,:])
+							# print(t_gene_query,query_num,gene_peaks,df.loc[gene_peaks,:])
+							print('gene: %s, peak loci with high correlation: %d'%(t_gene_query,query_num))
+							print(df.loc[gene_peaks,:])
 					except Exception as error:
 						print('error! ', error)
 						print(t_gene_query,gene_peaks,query_num)
@@ -2554,7 +2579,8 @@ class _Base2_correlation2(_Base2_correlation2_1):
 				if flag_corr_==0:
 					df = df_query.loc[gene_query,:]
 					df.index = np.asarray(df['peak_id'])
-					print('background peak query ',df.shape)
+					# print('background peak query ',df.shape[0])
+					print('candidate peaks of gene %s: %d'%(gene_query,df.shape[0]))
 				
 				for p in df.index:
 					id1 = np.int64(self.peak_bg.loc[p,:]-1)
@@ -2581,7 +2607,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 
 						m1, v1 = np.mean(rand_cors_spearman), np.std(rand_cors_spearman)
 						spearmanr_1 = df.loc[p,column_id1]
-						pvalue1 = 1 - norm.cdf(spearmanr_1, m1, v1)
+						pvalue1 = 1 - norm.cdf(spearmanr_1, m1, v1) # estimate the empirical p-value
 
 						if (spearmanr_1<0) and (pvalue1>0.5):
 							pvalue1 = 1-pvalue1
@@ -2704,6 +2730,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			input_filename_pre1 = input_filename
 			if (load_mode!=1):
 				if not ('filename_list_combine_1' in select_config):
+					# query filename for files saved for peak-gene correlation estimated
 					input_filename_list, select_config = self.test_feature_link_query_correlation_file_pre1(input_file_path=input_file_path,select_config=select_config)
 				else:
 					input_filename_list = select_config['filename_list_combine_1']
@@ -2771,7 +2798,7 @@ class _Base2_correlation2(_Base2_correlation2_1):
 	def test_gene_peak_query_correlation_thresh_pre1(self,df_gene_peak_query=[],column_idvec=['peak_id','gene_id'],column_vec_query=[],thresh_corr_distance=[],verbose=0,select_config={}):
 
 		# peak accessibility-gene expr correlation query
-		# print('peak accessibility-gene expr correlation query')
+		# print('peak accessibility-gene expression correlation query')
 		# start = time.time()
 
 		df_gene_peak_query.index = utility_1.test_query_index(df_gene_peak_query,column_vec=column_idvec)

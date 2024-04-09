@@ -443,15 +443,10 @@ class _Base2_2(_Base2_1):
 					motif_data_score_pre1 = motif_data_score
 				else:
 					motif_data, motif_data_score = motif_data_pre1, motif_data_score_pre1
-					print('motif_data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
-					# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
+					# print('motif data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
+					print('loaded motif scanning data (binary), dataframe of ',motif_data.shape)
+					print('loaded motif scores, dataframe of ',motif_data_score.shape)
 
-				# print('perform motif name conversion ')
-				# motif_data = self.test_query_motif_name_conversion_1(motif_data)
-				
-				# if len(motif_data_score)>0:
-				# 	motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
-				
 				dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
 			
 			dict_motif_data[method_type] = dict_query
@@ -630,9 +625,11 @@ class _Base2_2(_Base2_1):
 			
 				# print('motif_data ', motif_data)
 				# print('motif_data_score ', motif_data_score)
-				print('motif_data ', motif_data.shape)
-				print('motif_data_score ', motif_data_score.shape)
+				print('motif scanning data (binary), dataframe of ', motif_data.shape)
+				print('data preview: ')
 				print(motif_data[0:2])
+				print('motif scores, dataframe of ', motif_data_score.shape)
+				print('data preview: ')
 				print(motif_data_score[0:2])
 				# motif_data_query, motif_data_score_query = motif_data, motif_data_score
 				flag_pre1 = 1
@@ -642,8 +639,8 @@ class _Base2_2(_Base2_1):
 			print('load the motif data')
 			input_filename1, input_filename2 = input_filename_list2[0:2]
 
-			print('input_filename1 ',input_filename1)
-			print('input_filename2 ',input_filename2)
+			print('filename of motif scanning data (binary) ',input_filename1)
+			print('filename of motif scores ',input_filename2)
 
 			# motif_data, motif_data_score = [], []
 			if os.path.exists(input_filename1)==False:
@@ -655,7 +652,8 @@ class _Base2_2(_Base2_1):
 				else:
 					symbol_1 = '\t'
 				motif_data = pd.read_csv(input_filename1,index_col=0,sep=symbol_1)
-				print('motif_data ',motif_data.shape)
+				print('motif scanning data, dataframe of ',motif_data.shape)
+				print('data preview: ')
 				print(motif_data[0:2])
 			
 			if os.path.exists(input_filename2)==False:
@@ -667,7 +665,8 @@ class _Base2_2(_Base2_1):
 				else:
 					symbol_1 = '\t'
 				motif_data_score = pd.read_csv(input_filename2,index_col=0,sep=symbol_1)
-				print('motif_data_score ',motif_data_score.shape)
+				print('motif scores, dataframe of ',motif_data_score.shape)
+				print('data preview: ')
 				print(motif_data_score[0:2])
 
 			if len(motif_data)==0:
@@ -675,7 +674,7 @@ class _Base2_2(_Base2_1):
 					# motif_data = (motif_data_score>0)
 					motif_data = (motif_data_score.abs()>0)
 				else:
-					print('please provide motif data')
+					print('please provide motif scanning data')
 					return
 			else:
 				if len(motif_data_score)>0:
@@ -696,8 +695,6 @@ class _Base2_2(_Base2_1):
 					# print('load motif data', input_filename1, input_filename2, motif_data.shape, motif_data_score.shape)
 					# print('motif_data ', motif_data)
 					# print('motif_data_score ', motif_data_score)
-					print('motif_data ', input_filename1, motif_data.shape)
-					print('motif_data_score ', input_filename2, motif_data_score.shape)
 
 			# motif name conversion
 			input_filename_translation = select_config['filename_translation']
@@ -736,11 +733,12 @@ class _Base2_2(_Base2_1):
 																			column_id=column_id,
 																			select_config=select_config)
 
-			print('motif_data ',motif_data.shape)
+			print('motif scanning data, dataframe of ',motif_data.shape)
+			print('data preview: ')
 			print(motif_data[0:2])
 
-			print('motif_data_ori ',motif_data_ori.shape)
-			print(motif_data_ori[0:2])
+			# print('motif_data_ori ',motif_data_ori.shape)
+			# print(motif_data_ori[0:2])
 
 			print('perform motif name conversion ')
 			motif_data = self.test_query_motif_name_conversion_1(motif_data)
@@ -755,8 +753,8 @@ class _Base2_2(_Base2_1):
 				print('motif_data_score ',motif_data_score.shape)
 				print(motif_data_score[0:2])
 
-				print('motif_data_score_ori ',motif_data_score_ori.shape)
-				print(motif_data_score_ori[0:2])
+				# print('motif_data_score_ori ',motif_data_score_ori.shape)
+				# print(motif_data_score_ori[0:2])
 
 				print('perform motif name conversion ')
 				motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
@@ -791,7 +789,7 @@ class _Base2_2(_Base2_1):
 
 				if (os.path.exists(output_filename1)==False) or (overwrite==True):
 					motif_data_ad.write(output_filename1)
-					print('save motif data ',motif_data_ad)
+					print('save motif scanning data ',motif_data_ad)
 					print(output_filename1)
 
 				if len(motif_data_score)>0:
@@ -799,7 +797,7 @@ class _Base2_2(_Base2_1):
 
 					if (os.path.exists(output_filename2)==False) or (overwrite==True):
 						motif_data_score_ad.write(output_filename2)
-						print('save motif_data_score',motif_data_score_ad)
+						print('save motif score data',motif_data_score_ad)
 						print(output_filename2)
 
 		flag_query2=0
@@ -809,11 +807,12 @@ class _Base2_2(_Base2_1):
 			if len(id2)>0:
 				motif_data_score_ori = motif_data_score.copy()
 				count1 = np.sum(np.sum(df1))
-				print('there are negative motif scores ',id2,count1)
-				df_1 = (motif_data_score>0)
-				motif_data_score_1 = motif_data_score[df_1]
+				# print('there are negative motif scores ',id2,count1)
+				print('there are negative motif scores ',count1)
+				# df_1 = (motif_data_score>0)
+				# motif_data_score_1 = motif_data_score[df_1]
 				# print('motif_data_score_1 ',motif_data_score_1)
-				t_value_min = np.min(motif_data_score_1,axis=0)
+				# t_value_min = np.min(motif_data_score_1,axis=0)
 				# df_value_min = np.outer(np.ones(motif_data_score.shape[0]),np.asarray(t_value_min))
 				# df2 = pd.DataFrame(index=motif_data_score.index,columns=motif_data_score.columns,data=np.asarray(df_value_min),dtype=np.float32)
 				# id1 = df1
@@ -841,7 +840,7 @@ class _Base2_2(_Base2_1):
 		motif_data1 = motif_data1.groupby('tf').max()
 		motif_data = motif_data1.T
 		# print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-		print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape)
+		# print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape)
 		
 		query_idvec = np.asarray(df_annot['motif_id'])
 		query_num1 = len(query_idvec)
@@ -855,7 +854,7 @@ class _Base2_2(_Base2_1):
 			# print('column_1, column_2 ',column_1,column_2,iter_id1)
 
 			difference = (motif_data_ori[column_1].astype(int)-motif_data[column_2].astype(int)).abs().max()
-			print('difference ',column_1,column_2,difference,iter_id1)
+			# print('difference ',column_1,column_2,difference,iter_id1)
 			assert difference<1E-07
 
 		# print(motif_data[0:5])

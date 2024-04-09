@@ -7,77 +7,42 @@ import anndata as ad
 from anndata import AnnData
 import SEACells
 from SEACells import core, genescores
-# import SEACells_1 as SEACells
-# from SEACells_1 import core, genescores
-import scanpy.external as sce
+# import scanpy.external as sce
 
 from copy import deepcopy
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pylab
 plt.switch_backend('Agg')
-import matplotlib.ticker as ticker
-import matplotlib.gridspec as gridspec
 import seaborn as sns
-# import xgboost
-# import xgbfir
 
-import pyranges as pr
 import warnings
 
 # import palantir 
-import phenograph
+# import phenograph
 
 import sys
 from tqdm.notebook import tqdm
 
-import csv
 import os
 import os.path
-import shutil
 from optparse import OptionParser
 
 import sklearn
-from sklearn.linear_model import LinearRegression, ElasticNet
-from sklearn.base import BaseEstimator, _pprint
-from sklearn.utils import check_array, check_random_state
-from sklearn.utils.validation import check_is_fitted
-from sklearn.neighbors import NearestNeighbors
-
+from sklearn.base import BaseEstimator
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
-from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, OneHotEncoder, LabelEncoder, KBinsDiscretizer
 from sklearn.pipeline import make_pipeline
-
-from scipy import stats
-from scipy.stats import multivariate_normal, skew, pearsonr, spearmanr
-from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact, chi2_contingency
-from scipy.stats.contingency import expected_freq
-from scipy.stats import gaussian_kde, zscore, poisson, multinomial, norm, rankdata
 import scipy.sparse
 from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse, hstack, vstack
-from scipy import signal
-from scipy.optimize import minimize
-from scipy.cluster.hierarchy import dendrogram, linkage
-from statsmodels.stats.multitest import multipletests
-import statsmodels.api as sm
-import gc
-from joblib import Parallel, delayed
 
 import time
 from timeit import default_timer as timer
 
 import utility_1
-# from utility_1 import pyranges_from_strings, test_file_merge_1
-from utility_1 import spearman_corr, pearson_corr
 import test_rediscover_compute_1
 from test_rediscover_compute_1 import _Base2_2
-import h5py
-import json
 import pickle
-
-import itertools
-from itertools import combinations
 
 class _Base2_pre1(BaseEstimator):
 	"""Feature association estimation.
@@ -2990,16 +2955,49 @@ class _Base2_pre1(BaseEstimator):
 		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
 		print('input_filename_1 ',input_filename_1)
 		print('input_filename_2 ',input_filename_2)
-		rna_meta_ad = sc.read_h5ad(input_filename_1)
-		atac_meta_ad = sc.read_h5ad(input_filename_2)
 
-		print(input_filename_1,input_filename_2)
-		print('rna_meta_ad\n', rna_meta_ad)
-		print('atac_meta_ad\n', atac_meta_ad)
+		# b1 = input_filename_1.find('.h5ad')
+		# b2 = input_filename_1.find('.ad')
+
+		extension_vec = ['.h5ad','.tsv','.txt','.csv']
+		data_type_vec = [0,1,1,2]
+		query_num1 = len(extension_vec)
+		data_type = -1
+		for i1 in range(query_num1):
+			extension_query = extension_vec[i1]
+			b1 = input_filename_1.find(extension_query)
+			if b1>=0:
+				data_type = data_type_vec[i1]
+				break
+
+		if data_type==0:
+			rna_meta_ad = sc.read_h5ad(input_filename_1)
+			atac_meta_ad = sc.read_h5ad(input_filename_2)
+
+			# print(input_filename_1,input_filename_2)
+			# print('rna_meta_ad\n', rna_meta_ad)
+			# print('atac_meta_ad\n', atac_meta_ad)
+		else:
+			if data_type==1:
+				sep = '\t'
+			elif data_type==2:
+				sep=','
+
+			df_rna_meta = pd.read_csv(input_filename_1,index_col=0,sep=sep)
+			df_atac_meta = pd.read_csv(input_filename_2,index_col=0,sep=sep)
+
+			rna_meta_ad = sc.AnnData(df_rna_meta,dtype=df_rna_meta.values.dtype)
+			rna_meta_ad.X = csr_matrix(rna_meta_ad.X)
+
+			atac_meta_ad = sc.AnnData(df_atac_meta,dtype=df_atac_meta.values.dtype)
+			atac_meta_ad.X = csr_matrix(atac_meta_ad.X)
 
 		if flag_format==True:
 			rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
 			rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
+
+		print('RNA-seq metacell data\n', rna_meta_ad)
+		print('ATAC-seq metacell data\n', atac_meta_ad)
 
 		self.rna_meta_ad = rna_meta_ad
 		sample_id = rna_meta_ad.obs_names
@@ -3084,17 +3082,11 @@ class _Base2_pre1(BaseEstimator):
 	# load motif data; load ATAC-seq and RNA-seq data of the metacells
 	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=0,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
-		# flag_config_1=1
-		# if flag_config_1>0:
-		# 	root_path_1 = select_config['root_path_1']
-		# 	root_path_2 = select_config['root_path_2']
-		# 	data_file_type_query = select_config['data_file_type']
-		
 		method_type_feature_link = select_config['method_type_feature_link']
-		# flag_motif_data_load_1 = 1
+
 		# load motif data
 		if flag_motif_data_load_1>0:
-			print('load motif data')
+			print('load motif scanning data')
 			if len(method_type_vec_query)==0:
 				method_type_vec_query = [method_type_feature_link]
 
@@ -3106,6 +3098,7 @@ class _Base2_pre1(BaseEstimator):
 			method_type_vec_query = [method_type_feature_link]
 			data_path_save_local = select_config['data_path_save_local']
 			# data_path_save_motif = select_config['data_path_save_motif']
+			
 			file_path_motif = data_path_save_local
 			select_config.update({'file_path_motif':file_path_motif})
 			save_file_path = data_path_save_local
@@ -3136,9 +3129,11 @@ class _Base2_pre1(BaseEstimator):
 				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
 			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
 			print('ATAC-seq count matrx: ',peak_read.shape)
+			print('data preview: ')
 			print(peak_read[0:2])
 
 			print('RNA-seq count matrx: ',rna_exprs.shape)
+			print('data preview: ')
 			print(rna_exprs[0:2])
 
 			self.peak_read = peak_read

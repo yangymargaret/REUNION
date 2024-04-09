@@ -233,8 +233,11 @@ class _Base2_correlation3(_Base2_correlation2):
 														save_mode=1,filename_prefix_save='',filename_save_annot='',output_filename='',output_file_path='',verbose=0,select_config={}):
 
 		df_gene_peak_query_compare = df_gene_peak_compare
-		print('df_gene_peak_query_compare: ',df_gene_peak_query_compare.shape)
-		print(df_gene_peak_query_compare)
+		# print('df_gene_peak_query_compare: ',df_gene_peak_query_compare.shape)
+		# print(df_gene_peak_query_compare)
+		print('peak-gene links, dataframe of ',df_gene_peak_query_compare.shape)
+		print('preview:')
+		print(df_gene_peak_query_compare[0:2])
 		
 		if len(column_correlation)==0:
 			column_correlation=['spearmanr','pval1','pval1_ori']
@@ -266,8 +269,11 @@ class _Base2_correlation3(_Base2_correlation2):
 				feature_query_vec = feature_query_vec_ori[start_id1:start_id2]
 				df_gene_peak_query_compare = df_gene_peak_query_compare.loc[feature_query_vec,:]
 				print('start_id1: %d, start_id2: %d'%(start_id1,start_id2))
-				print(df_gene_peak_query_compare.shape)
-				print(df_gene_peak_query_compare)
+				# print(df_gene_peak_query_compare.shape)
+				# print(df_gene_peak_query_compare)
+				print('peak-gene links, dataframe of ',df_gene_peak_query_compare.shape)
+				print('preview:')
+				print(df_gene_peak_query_compare[0:2])
 			else:
 				return df_gene_peak_query_compare2
 
@@ -291,20 +297,28 @@ class _Base2_correlation3(_Base2_correlation2):
 		# 		column_label = 'label_corr'
 		# 	# df_gene_peak_query_compare.loc[query_id1_1,column_label] = -1
 		# 	# df_gene_peak_query_compare.loc[query_id1,column_label] = 1
-			
-		df_compare1 = df_gene_peak_query_compare.assign(spearmanr_abs=df_gene_peak_query_compare[column_corr_1].abs(),
-														distance_abs=df_gene_peak_query_compare['distance'].abs())
-		df_gene_peak_query_compare = df_compare1.sort_values(by=[column_id1,'%s_abs'%(column_corr_1),'distance_abs'],ascending=[True,False,True])
 		
-		# query the peak-gene link without peak accessibility-gene expression correlation estimation
-		query_id2 = df_gene_peak_query_compare.index[pd.isna(df_gene_peak_query_compare[column_corr_1])==True] # without previously estimated peak-gene correlation;
-		print('query_id2 ',len(query_id2))
+		if (column_corr_1 in df_gene_peak_query_compare.columns):
+			# df_compare1 = df_gene_peak_query_compare.assign(spearmanr_abs=df_gene_peak_query_compare[column_corr_1].abs(),
+			# 												distance_abs=df_gene_peak_query_compare['distance'].abs())
+			
+			# df_gene_peak_query_compare = df_compare1.sort_values(by=[column_id1,'%s_abs'%(column_corr_1),'distance_abs'],ascending=[True,False,True])
 
-		## for peak-gene links without estimated peak accessibility-gene expression correlation, estimate the correlation
-		df_compare2 = df_compare1.loc[query_id2]
+			# query the peak-gene link without peak accessibility-gene expression correlation estimation
+			query_id2 = df_gene_peak_query_compare.index[pd.isna(df_gene_peak_query_compare[column_corr_1])==True] # without previously estimated peak-gene correlation;
+			print('query_id2 ',len(query_id2))
+
+			## for peak-gene links without estimated peak accessibility-gene expression correlation, estimate the correlation
+			# df_compare2 = df_compare1.loc[query_id2]
+			df_compare2 = df_gene_peak_query_compare.loc[query_id2]
+		else:
+			df_compare2 = df_gene_peak_query_compare
+		
 		gene_query_vec_2 = df_compare2[column_id1].unique()
 		gene_query_num2 = len(gene_query_vec_2)
-		print('gene_query_vec_2 ',gene_query_num2)
+		# print('gene_query_vec_2 ',gene_query_num2)
+		print('potential alternative target genes: %d '%(gene_query_num2))
+
 		df_compare2.index = np.asarray(df_compare2[column_id1])
 		peak_dict = dict()
 
@@ -313,18 +327,8 @@ class _Base2_correlation3(_Base2_correlation2):
 			warnings.filterwarnings('ignore')
 			start1 = time.time()
 			print('peak accessibility-gene expression correlation estimation')
-			# if len(atac_ad)==0:
-			# 	atac_ad = self.atac_meta_ad
-			# if len(rna_exprs)==0:
-			# 	rna_exprs = self.meta_scaled_exprs
-			# output_file_path1 = '%s/temp1'%(output_file_path)
-			# if os.path.exists(output_file_path1)==False:
-			# 	print('the directory does not exist: %s'%(output_file_path1))
-			# 	# os.mkdir(output_file_path1)
-			# 	os.makedirs(output_file_path1,exist_ok=True)
 
 			output_file_path1 = output_file_path
-
 			save_file_path = output_file_path1
 			save_file_path_local = output_file_path1
 			if filename_prefix_save=='':
@@ -374,7 +378,7 @@ class _Base2_correlation3(_Base2_correlation2):
 																										select_config=select_config)
 			warnings.filterwarnings('default')
 			stop1 = time.time()
-			print('peak accessibility-gene expression correlation estimation used: %.5fs'%(stop1-start1))
+			# print('peak accessibility-gene expression correlation estimation used: %.5fs'%(stop1-start1))
 			
 			# df_gene_peak_query_compare2.index = ['%s.%s'%(peak_id,gene_id) for (peak_id,gene_id) in zip(df_gene_peak_query_compare2[column_id2],df_gene_peak_query_compare2[column_id1])]
 			df_gene_peak_query_compare2.index = np.asarray(df_gene_peak_query_compare2[column_id1])
