@@ -242,7 +242,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				input_filename = input_filename_list[i1]
 				
 				if os.path.exists(input_filename)==True:
-					df_query = pd.read_csv(input_filename,sep='\t')
+					df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 					field_query1 = filename_annot1
 					dict_query.update({field_query1:df_query})
 					print('df_query ',df_query.shape,filename_annot1)
@@ -342,7 +342,7 @@ class _Base2_correlation5(_Base2_correlation3):
 					else:
 						adata = sc.read(input_filename_expr_corr)
 						df_peak_tf_expr_corr_ = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=adata.X.toarray(),dtype=np.float32)
-					print('df_peak_tf_expr_corr_ ',df_peak_tf_expr_corr_.shape,input_filename_expr_corr)
+					# print('df_peak_tf_expr_corr_ ',df_peak_tf_expr_corr_.shape,input_filename_expr_corr)
 				else:
 					print('the file does not exist:%s'%(input_filename_expr_corr))
 					return
@@ -361,6 +361,8 @@ class _Base2_correlation5(_Base2_correlation3):
 																			filename_prefix=filename_prefix,
 																			select_config=select_config)
 				df_peak_tf_expr_corr_ = dict_peak_tf_corr_[column_id1]
+		print('df_peak_tf_expr_corr_ ',df_peak_tf_expr_corr_.shape)
+		print(df_peak_tf_expr_corr_[0:2])
 
 		# peak_id_1, motif_id_1 = df_peak_tf_expr_corr_.index, df_peak_tf_expr_corr_.columns
 		peak_loc_ori = motif_data.index
@@ -1130,7 +1132,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			beta_mode = select_config['beta_mode']
 
 		if flag_motif_score_normalize_1>0:
-			print('normalization of TF motif score of in silico ChIP-seq')
+			print('normalization of TF motif score using in silico ChIP-seq')
 			start = time.time()
 			output_filename = filename_motif_score_1
 			dict_peak_tf_corr_ = self.dict_peak_tf_corr_
@@ -3856,7 +3858,6 @@ class _Base2_correlation5(_Base2_correlation3):
 						print('the file exists: %s'%(input_filename))
 						# recompute = 0
 
-					# the computed gene-TF expression partial correlation given peak accessibility
 					# the computed gene-TF expression partial correlation given peak accessibility
 					input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
 					# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,format_str1)

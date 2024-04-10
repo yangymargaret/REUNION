@@ -330,8 +330,8 @@ def test_column_query_2(df_list=[],id_column=[],query_idvec=[],column_vec_1=[],c
 	else:
 		df_query1 = df1.loc[query_idvec,:]
 		query_id1 = np.asarray(df_query1[column_id1])
-		print('df1: ',df1.shape)
-		print('df_query1: ',df_query1.shape)
+		# print('df1: ',df1.shape)
+		# print('df_query1: ',df_query1.shape)
 		df1.loc[query_idvec,column_vec_2] = np.asarray(df2.loc[query_id1,column_vec_1])
 		
 	if reset_index==True:
