@@ -2170,10 +2170,10 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					gene_query_vec_bg1 = pd.Index(gene_query_vec_bg).intersection(gene_query_idvec_1,sort=False)
 					gene_query_num_bg, gene_query_num_bg1 = len(gene_query_vec_bg), len(gene_query_vec_bg1)
 					# print('gene_query_idvec_1:%d, gene_query_vec_bg:%d, gene_query_vec_bg1:%d '%(gene_query_num1,gene_query_num_bg,gene_query_num_bg1))
-					print('gene number: %d'%(df_gene_peak_query.shape))
 
 					gene_query_vec = gene_query_vec_bg1
 					df_gene_peak_query_1 = df_gene_peak_query
+					print('gene number: %d'%(gene_query_num_bg1))
 
 				warnings.filterwarnings('ignore')
 				print('peak accessibility-gene expression correlation estimation')

@@ -3770,8 +3770,8 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		# filename_motif_data = '%s/test_peak_read.pbmc.0.1.normalize.1_motif.1.2.csv'%(input_file_path_pre1)
 		# filename_motif_data_score = '%s/test_peak_read.pbmc.0.1.normalize.1_motif_scores.1.csv'%(input_file_path_pre1)
-		filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path_pre1)
-		filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path_pre1)
+		filename_motif_data = '%s/test_peak_read.pbmc.normalize.motif.thresh5e-05.csv'%(input_file_path)
+		filename_motif_data_score = '%s/test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv'%(input_file_path)
 		filename_translation = '%s/translationTable.csv'%(input_file_path_pre1)
 
 		field_query_1 = ['filename_motif_data','filename_motif_data_score','filename_translation']
@@ -3836,7 +3836,7 @@ class _Base2_2_pre1(_Base2_2_1):
 		# load ATAC-seq and RNA-seq data of the metacells
 		flag_load_pre1 = (flag_load_1>0)|(flag_motif_data_load_1>0)
 		if (flag_load_pre1>0):
-			select_config = self.test_query_motif_data_filename_1(input_file_path=input_file_path_pre1,save_mode=1,verbose=verbose,select_config=select_config)
+			# select_config = self.test_query_motif_data_filename_1(input_file_path=input_file_path_pre1,save_mode=1,verbose=verbose,select_config=select_config)
 
 			select_config = self.test_query_load_pre1(data=[],method_type_vec_query=method_type_vec_query1,flag_config_1=flag_config_1,
 														flag_motif_data_load_1=flag_motif_data_load_1,
@@ -3880,7 +3880,7 @@ class _Base2_2_pre1(_Base2_2_1):
 		select_config.update({'method_type_group_name':method_type_group_name,
 								'method_type_group_neighbor':method_type_group_neighbor})
 
-		flag_clustering_1 = 0
+		# flag_clustering_1 = 0
 		# flag_clustering_1 = 1
 		output_dir = select_config['output_dir']
 		file_save_path_1 = output_dir
@@ -3907,6 +3907,17 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		# flag_embedding_compute=1
 		flag_embedding_compute=0
+		flag_clustering_1=0
+		flag_group_load_1=1
+		column_1 = 'flag_embedding_compute'
+		if column_1 in select_config:
+			flag_embedding_compute = select_config[column_1]
+
+		field_query = ['flag_embedding_compute','flag_clustering','flag_group_load']
+		default_parameter_vec = [flag_embedding_compute,flag_clustering_1,flag_group_load_1]
+		list1 = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=default_parameter_vec,overwrite=False,select_config=select_config)
+		flag_embedding_compute, flag_clustering_1, flag_group_load_1 = list1[0:3]
+
 		dict_query_1 = dict()
 		dict_latent_query1 = dict()
 		peak_read = self.peak_read
@@ -3965,7 +3976,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			print('computing feature embeddings used %.2fs'%(stop-start))
 
 		# flag_clustering_1=1
-		flag_clustering_1=0
+		# flag_clustering_1=0
 		dict_file_feature = dict()
 		feature_type_vec_2 = feature_type_vec_2_ori
 		feature_type1, feature_type2 = feature_type_vec_2[0:2]
@@ -4009,7 +4020,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			thresh_score_default_1 = thresh_score_query_1
 			thresh_score_default_2 = 0.10
 
-		flag_group_load_1 = 1
+		# flag_group_load_1 = 1
 	
 		input_file_path_2 = file_path_group_query
 		output_file_path_2 = file_path_group_query
@@ -4543,7 +4554,7 @@ class _Base2_2_pre1(_Base2_2_1):
 																		filename_prefix_save='',filename_save_annot=filename_save_annot2_2,verbose=verbose,select_config=select_config)
 						
 						stop = time.time()
-						print('query feature group and neighbor annotation for TF %s (%s) used %.2fs'%(motif_id_query,motif_id2,stop-start))
+						print('query feature group and neighbor annotation for TF %s used %.2fs'%(motif_id_query,motif_id2,stop-start))
 
 					column_vec_query1 = column_vec_link
 
@@ -4788,7 +4799,8 @@ class _Base2_2_pre1(_Base2_2_1):
 						method_type_feature_link='',tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',
 						output_dir='',output_filename='',path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=1,method_type_group='phenograph.20',
 						n_components=100,n_components_2=50,neighbor_num=100,neighbor_num_sel=30,model_type_id='LogisticRegression',ratio_1=0.25,ratio_2=1.5,thresh_size_group=50,thresh_score_group_1=0.15,
-						thresh_score='0.25,0.75',flag_group=-1,flag_scale_1=0,beta_mode=0,query_id1=-1,query_id2=-1,query_id_1=-1,query_id_2=-1,train_mode=0,config_id_load=-1):
+						thresh_score='0.25,0.75',flag_group=-1,flag_embedding_compute=0,flag_clustering=0,flag_group_load=1,
+						flag_scale_1=0,beta_mode=0,query_id1=-1,query_id2=-1,query_id_1=-1,query_id_2=-1,train_mode=0,config_id_load=-1):
 
 		chromosome = str(chromosome)
 		run_id = int(run_id)
@@ -4838,6 +4850,11 @@ class _Base2_2_pre1(_Base2_2_1):
 		ratio_1 = float(ratio_1)
 		ratio_2 = float(ratio_2)
 		flag_group = int(flag_group)
+
+		flag_embedding_compute = int(flag_embedding_compute)
+		flag_clustering = int(flag_clustering)
+		flag_group_load = int(flag_group_load)
+
 		# train_id1 = int(train_id1)
 		flag_scale_1 = int(flag_scale_1)
 		beta_mode = int(beta_mode)
@@ -4858,7 +4875,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			run_id_save = run_id
 
 		config_id_load = int(config_id_load)
-		flag_group = int(flag_group)
 
 		# celltype_vec = ['CD34_bonemarrow','pbmc']
 		celltype_vec = ['pbmc']
@@ -4915,6 +4931,9 @@ class _Base2_2_pre1(_Base2_2_1):
 								'model_type_id1':model_type_id1,
 								'ratio_1':ratio_1,
 								'ratio_2':ratio_2,
+								'flag_embedding_compute':flag_embedding_compute,
+								'flag_clustering':flag_clustering,
+								'flag_group_load':flag_group_load,
 								'flag_scale_1':flag_scale_1,
 								'beta_mode':beta_mode,
 								'query_id1':query_id1,'query_id2':query_id2,
@@ -4960,7 +4979,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-			typeid2,folder_id,config_id_2,config_group_annot,flag_group,train_id1,flag_scale_1,beta_mode,motif_id_1,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
+			typeid2,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,train_id1,flag_scale_1,beta_mode,motif_id_1,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
 	
 	file_path_1 = '.'
 	test_estimator1 = _Base2_2_pre1(file_path=file_path_1)
@@ -4973,7 +4992,8 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 									method_type_feature_link=method_type_feature_link,tf_name=tf_name,filename_prefix=filename_prefix,filename_annot=filename_annot,input_link=input_link,columns_1=columns_1,
 									output_dir=output_dir,output_filename=output_filename,path_id=path_id,save=save,type_group=type_group,type_group_2=type_group_2,type_group_load_mode=type_group_load_mode,method_type_group=method_type_group,
 									n_components=n_components,n_components_2=n_components_2,neighbor_num=neighbor_num,neighbor_num_sel=neighbor_num_sel,ratio_1=ratio_1,ratio_2=ratio_2,thresh_size_group=thresh_size_group,thresh_score_group_1=thresh_score_group_1,
-									thresh_score=thresh_score,flag_group=flag_group,flag_scale_1=flag_scale_1,beta_mode=beta_mode,query_id1=query_id1,query_id2=query_id2,query_id_1=query_id_1,query_id_2=query_id_2,train_mode=train_mode,config_id_load=config_id_load)
+									thresh_score=thresh_score,flag_group=flag_group,flag_embedding_compute=flag_embedding_compute,flag_clustering=flag_clustering,flag_group_load=flag_group_load,
+									flag_scale_1=flag_scale_1,beta_mode=beta_mode,query_id1=query_id1,query_id2=query_id2,query_id_1=query_id_1,query_id_2=query_id_2,train_mode=train_mode,config_id_load=config_id_load)
 
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
@@ -5027,6 +5047,9 @@ def parse_args():
 	parser.add_option("--config_id_2",default="1",help="config_id_2")
 	parser.add_option("--config_group_annot",default="1",help="config_group_annot")
 	parser.add_option("--flag_group",default="-1",help="flag_group")
+	parser.add_option("--flag_embedding_compute",default="0",help="compute feature embeddings")
+	parser.add_option("--flag_clustering",default="-1",help="perform clustering")
+	parser.add_option("--flag_group_load",default="-1",help="load group annotation")
 	parser.add_option("--train_id1",default="1",help="train_id1")
 	parser.add_option("--flag_scale_1",default="0",help="flag_scale_1")
 	parser.add_option("--beta_mode",default="0",help="beta_mode")
@@ -5094,6 +5117,9 @@ if __name__ == '__main__':
 		opts.config_id_2,
 		opts.config_group_annot,
 		opts.flag_group,
+		opts.flag_embedding_compute,
+		opts.flag_clustering,
+		opts.flag_group_load,
 		opts.train_id1,
 		opts.flag_scale_1,
 		opts.beta_mode,

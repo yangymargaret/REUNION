@@ -797,16 +797,24 @@ class _Base2_correlation5(_Base2_correlation3):
 		motif_data = motif_data.loc[peak_loc_ori,:]
 		motif_data_score = motif_data_score.loc[peak_loc_ori,:]
 
-		print('motif_data, motif_data_score: ',motif_data.shape,motif_data_score.shape)
-		print(motif_data[0:2],motif_data_score[0:2])
+		 #print('motif_data, motif_data_score: ',motif_data.shape,motif_data_score.shape)
+		# print(motif_data[0:2],motif_data_score[0:2])
+		print('motif scanning data, dataframe of size ',motif_data.shape)
+		print('data preview: ')
+		print(motif_data[0:2])
+		print('motif scores, dataframe of size ',motif_data_score.shape)
+		print('data preview: ')
+		print(motif_data_score[0:2])
 
 		motif_query_name_expr = motif_data.columns
 		if len(motif_query_vec)==0:
 			motif_query_vec = motif_query_name_expr
 		
 		motif_query_num = len(motif_query_vec)
-		print('motif_query_vec: %d'%(motif_query_num))
+		# print('motif_query_vec: %d'%(motif_query_num))
 		# motif_query_vec = motif_query_vec[0:5]
+		print('number of the TFs: %d'%(motif_query_num))
+		# print('preview: ',motif_query_vec[0:5])
 
 		## peak accessibility-TF expr correlation
 		filename_prefix_1 = filename_prefix_save
@@ -945,7 +953,10 @@ class _Base2_correlation5(_Base2_correlation3):
 		flag_init_score = (flag_score_pre1 in [2,3])
 
 		if len(df_gene_tf_corr_peak_pre1)>0:
-			print('df_gene_tf_corr_peak_pre1 ',df_gene_tf_corr_peak_pre1.shape)
+			# print('df_gene_tf_corr_peak_pre1 ',df_gene_tf_corr_peak_pre1.shape)
+			# print(df_gene_tf_corr_peak_pre1[0:2])
+			print('initial peak-TF-gene link query, dataframe of size ',df_gene_tf_corr_peak_pre1.shape)
+			print('data preview ')
 			print(df_gene_tf_corr_peak_pre1[0:2])
 		else:
 			flag_init_score=0
@@ -1002,7 +1013,8 @@ class _Base2_correlation5(_Base2_correlation3):
 		
 		## peak accessibility-TF expr correlation estimation
 		data_file_type = select_config['data_file_type']
-		data_file_type_query = select_config['data_file_type_query']
+		# data_file_type_query = select_config['data_file_type_query']
+		data_file_type_query = data_file_type
 		output_file_path_default = file_save_path
 
 		filename_prefix_save_default = select_config['filename_prefix_save_default']
@@ -3598,8 +3610,8 @@ class _Base2_correlation5(_Base2_correlation3):
 				thresh_gene_tf_corr_compare = [thresh_gene_tf_corr_peak,thresh_gene_tf_corr_]
 				select_config.update({'thresh_gene_tf_corr_compare':thresh_gene_tf_corr_compare})
 
-			print(select_config['thresh_score_query_1'])
-			print(select_config['thresh_gene_tf_corr_compare'])
+			# print(select_config['thresh_score_query_1'])
+			# print(select_config['thresh_gene_tf_corr_compare'])
 			
 			column_label_1 = 'feature1_score1_quantile'
 			column_label_2 = 'feature1_score2_quantile'
@@ -3710,7 +3722,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			flag_compute = 1
 			# from utility_1 import test_query_index, test_column_query_1
 			from utility_1 import test_column_query_1
-			
 			if len(df_feature_link)==0:
 				id1 = 0
 				if input_filename!='':
@@ -3797,6 +3808,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		df_feature_link = []
 		if load_mode>0:
+			# query filename of feature link annotation
 			file_path_motif_score = select_config['file_path_motif_score']
 			input_file_path = file_path_motif_score
 			filename_prefix_save_1 = select_config['filename_prefix_score']
@@ -3863,13 +3875,16 @@ class _Base2_correlation5(_Base2_correlation3):
 					# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,format_str1)
 					input_filename_list2.append(input_filename_2)
 					print(input_filename_2)
+					print('filename of the partial correlation values: %s'%(input_filename_2))
 						
 					# the annotation file with the correlation and p-value estimation
 					# input_filename_3 = '%s/%s.annot1_1.1.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_3 = '%s/%s.annot1_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+					# input_filename_3 = '%s/%s.annot1_correlation.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
+
 					# input_filename_3 = '%s/%s.annot1_1.copy1.txt'%(input_file_path,filename_prefix_save_pre1) # the file with th column: gene_tf_corr_peak_pval_corrected2
 					filename_query = input_filename_3
-					print(input_filename_3)
+					print('filename of the correlation values and p-values: %s'%(input_filename_3))
 						
 					flag_1=0
 					if flag_1>0:
@@ -3898,7 +3913,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 					input_filename_link = '%s/%s.annot2_1.1.%s'%(input_file_path,filename_prefix_save_pre1,format_str1)
 					input_filename_list_3.append(input_filename_link)
-					print(input_filename_link)
+					print('filename of the link type: %s'%(input_filename_link))
 
 					# to recompute the link score we need to recompute lambda of link and need motif score annotation
 					# input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
@@ -3906,7 +3921,8 @@ class _Base2_correlation5(_Base2_correlation3):
 					if os.path.exists(input_filename_motif_score)==False:
 						input_filename_motif_score = '%s/%s.annot1_3.1.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_list_motif.append(input_filename_motif_score)
-					print(input_filename_motif_score)
+					# print(input_filename_motif_score)
+					print('filename of the motif scores: %s'%(input_filename_motif_score))
 
 				select_config.update({'filename_pcorr_list':input_filename_list2,
 										'filename_annot_list':input_filename_list_2,
@@ -3942,6 +3958,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			# parameter configuration for feature score computation; parameter configuration for estimating the feature link type
 			select_config = self.test_query_score_config_2(thresh_query_1=thresh_query_1,thresh_query_2=thresh_query_2,save_mode=1,verbose=verbose,select_config=select_config)
 
+			# compute feature link score
 			df_feature_link = self.test_query_feature_score_compute_1(df_feature_link=[],input_filename='',overwrite=False,iter_mode=iter_mode,
 																		save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
 																		verbose=verbose,select_config=select_config)
@@ -4013,10 +4030,11 @@ class _Base2_correlation5(_Base2_correlation3):
 		if len(df_feature_link)==0:
 			if os.path.exists(input_filename_feature_link)==True:
 				df_feature_link = pd.read_csv(input_filename_feature_link,index_col=index_col,sep='\t')
-				print('df_feature_link: ',df_feature_link.shape)
-				print(df_feature_link.columns)
-				print(df_feature_link[0:2])
-				print(input_filename_feature_link)
+				# print('df_feature_link: ',df_feature_link.shape)
+				# print(df_feature_link.columns)
+				# print(df_feature_link[0:2])
+				# print(input_filename_feature_link)
+				print('load peak-TF-gene link query from %s'%(input_filename_feature_link))
 			else:
 				load_mode_2 = 1
 				# recompute_2 = 0
@@ -4024,9 +4042,14 @@ class _Base2_correlation5(_Base2_correlation3):
 				print('compute feature link score')
 				df_feature_link, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],recompute=recompute_2,iter_mode=iter_mode,load_mode=load_mode_2,save_mode=1,verbose=verbose,select_config=select_config)
 
-				print('df_feature_link: ',df_feature_link.shape)
-				print(df_feature_link.columns)
-				print(df_feature_link[0:2])
+				# print('df_feature_link: ',df_feature_link.shape)
+				# print(df_feature_link.columns)
+				# print(df_feature_link[0:2])
+
+			print('initial peak-TF-gene links, dataframe of size ',df_feature_link.shape)
+			print('columns: ',np.asarray(df_feature_link.columns))
+			print('data preview: ')
+			print(df_feature_link[0:2])
 
 		df_score_annot_1 = []
 		if flag_score_quantile_1>0:
@@ -4048,12 +4071,14 @@ class _Base2_correlation5(_Base2_correlation3):
 			# select_config.update({'filename_annot_1':filename_annot_1})
 
 			if not ('thresh_score_query_1' in select_config):
-				thresh_vec_1 = [[0.10,0.05],[0.05,0.10]]
+				# thresh_vec_1 = [[0.10,0.05],[0.05,0.10]]
+				thresh_vec_1 = [[0.10,0],[0,0.10]]
 				select_config.update({'thresh_score_query_1':thresh_vec_1})
 			else:
 				thresh_vec_1 = select_config['thresh_score_query_1']
 
-			print('thresh_score_query_1 ',thresh_vec_1)
+			# print('thresh_score_query_1 ',thresh_vec_1)
+			print('thresholds for the feature link selection ',thresh_vec_1)
 
 			thresh_gene_tf_corr_peak = 0.30
 			thresh_gene_tf_corr_ = 0.05
@@ -4072,6 +4097,13 @@ class _Base2_correlation5(_Base2_correlation3):
 			flag_query2 = 1
 			# if iter_mode>0:
 			if flag_query2>0:
+				column_1 = 'filename_list_score'
+				if not (column_1 in select_config):
+					print('query peak-TF-gene link annotations ')
+					# query filename of feature link annotation
+					df_feature_link_query1, select_config = self.test_query_feature_score_init_pre1_1(input_filename_list=[],recompute=0,iter_mode=iter_mode,load_mode=1,
+																										save_mode=1,verbose=0,select_config=select_config)
+
 				input_filename_list = select_config['filename_list_score']
 				# input_filename_list2 = select_config['filename_pcorr_list']
 				input_filename_list2 = select_config['filename_annot_list']
@@ -4097,9 +4129,14 @@ class _Base2_correlation5(_Base2_correlation3):
 				for i1 in range(query_num1):
 					input_filename = input_filename_list[i1]
 					df_link_query_pre1 = pd.read_csv(input_filename,index_col=index_col,sep='\t')
-					print('df_link_query_pre1: ',df_link_query_pre1.shape,input_filename,i1)
+					
+					# print('df_link_query_pre1: ',df_link_query_pre1.shape,input_filename,i1)
+					print('peak-TF-gene link with score, dataframe of size ',df_link_query_pre1.shape)
+					print('data loaded from %s '%(input_filename))
+
 					if (i1==0):
-						print(df_link_query_pre1.columns)
+						print('columns: ',np.asarray(df_link_query_pre1.columns))
+						print('data preview: ')
 						print(df_link_query_pre1[0:2])
 
 					input_filename_2 = input_filename_list2[i1]
@@ -4122,13 +4159,23 @@ class _Base2_correlation5(_Base2_correlation3):
 																												input_file_path='',save_mode=save_mode_2,filename_prefix_save=filename_prefix_1,output_file_path=output_file_path,
 																												verbose=verbose,select_config=select_config)
 
-					print('df_link_query_pre2: ',df_link_query_pre2.shape)
-					print(df_link_query_pre2[0:2])
-					print(df_link_query_pre2.columns)
+					# print('df_link_query_pre2: ',df_link_query_pre2.shape)
+					# print(df_link_query_pre2[0:2])
+					# print(df_link_query_pre2.columns)
 					
-					print('df_link_query2: ',df_link_query2.shape)
+					# print('df_link_query2: ',df_link_query2.shape)
+					# print(df_link_query2[0:2])
+					# print(df_link_query2.columns)
+
+					print('the initial peak-TF-gene links with score, dataframe of size ',df_link_query_pre2.shape)
+					print('columns ',np.asarray(df_link_query_pre2.columns))
+					print('data preview: ')
+					print(df_link_query_pre2[0:2])
+
+					print('the selected peak-TF-gene links, dataframe of size ',df_link_query2.shape)
+					print('columns ',np.asarray(df_link_query2.columns))
+					print('data preview: ')
 					print(df_link_query2[0:2])
-					print(df_link_query2.columns)
 
 					if 'column_score_query_1' in select_config:
 						column_score_query_1 = select_config['column_score_query_1'] # the columns to keep
@@ -4179,14 +4226,18 @@ class _Base2_correlation5(_Base2_correlation3):
 					column_id1 = 'gene_id'
 					df_feature_link_pre1.index = np.asarray(df_feature_link_pre1[column_id1])
 					df_feature_link_pre1.to_csv(output_filename_1,sep='\t',float_format=float_format,compression=compression)
-					print('df_feature_link_pre1: ',df_feature_link_pre1.shape)
-					print(df_feature_link_pre1.columns)
+					# print('df_feature_link_pre1: ',df_feature_link_pre1.shape)
+					# print(df_feature_link_pre1.columns)
+					print('the initial peak-TF-gene links with score, dataframe of size ',df_feature_link_pre1.shape)
+					print('columns ',np.asarray(df_feature_link_pre1.shape))
 					
 					output_filename_2 = '%s/%s.%s.2.%s'%(output_file_path,filename_prefix_score,filename_annot_1,extension)
 					df_feature_link_pre2.index = np.asarray(df_feature_link_pre2[column_id1])
 					df_feature_link_pre2.to_csv(output_filename_2,sep='\t',float_format=float_format,compression=compression)
-					print('df_feature_link_pre2: ',df_feature_link_pre2.shape)
-					print(df_feature_link_pre2.columns)
+					# print('df_feature_link_pre2: ',df_feature_link_pre2.shape)
+					# print(df_feature_link_pre2.columns)
+					print('the selected peak-TF-gene links, dataframe of size ',df_feature_link_pre2.shape)
+					print('columns ',np.asarray(df_feature_link_pre2.columns))
 
 		return df_feature_link_pre1, df_feature_link_pre2
 

@@ -1109,7 +1109,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,metacell_n
 			config_id_2,config_group_annot,ratio_1,ratio_2,flag_group,train_id1,flag_scale_1,beta_mode,motif_id_1,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
 	
 	file_path_1 = '.'
-	test_estimator1 = _Base2_2(file_path=file_path_1)
+	test_estimator1 = _Base2_2_1(file_path=file_path_1)
 
 	test_estimator1.run_pre1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,metacell_num,peak_distance_thresh,
 								highly_variable,upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
