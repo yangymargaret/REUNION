@@ -16,97 +16,41 @@ import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 import seaborn as sns
 
-from pandas import read_excel
-
-import pyranges as pr
 import warnings
 
-import palantir 
 import phenograph
 
 import sys
 from tqdm.notebook import tqdm
 
-import csv
 import os
 import os.path
-import shutil
 import sklearn
 
 from optparse import OptionParser
-from sklearn.linear_model import LinearRegression, ElasticNet
-from sklearn.svm import SVR, SVC
-# from scipy.misc import logsumexp
-from sklearn.base import BaseEstimator, _pprint
-from sklearn.utils import check_array, check_random_state
-from sklearn.utils.validation import check_is_fitted
+from sklearn.base import BaseEstimator
 from sklearn.neighbors import NearestNeighbors
 
 from sklearn.manifold import LocallyLinearEmbedding, MDS, Isomap, TSNE
 from sklearn.decomposition import PCA,IncrementalPCA,KernelPCA,SparsePCA,TruncatedSVD
 from sklearn.decomposition import FastICA, NMF, MiniBatchDictionaryLearning
-from sklearn.decomposition import FactorAnalysis
 from sklearn.random_projection import GaussianRandomProjection, SparseRandomProjection
-from sklearn.model_selection import KFold, StratifiedKFold, GroupKFold, train_test_split
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.utils.fixes import loguniform
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform
-from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, OneHotEncoder, LabelEncoder
 from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import Normalizer
 
-from sklearn.metrics import average_precision_score,precision_score,recall_score,f1_score
-from sklearn.metrics import roc_auc_score,accuracy_score,matthews_corrcoef
-from sklearn.metrics import mean_squared_error, explained_variance_score, mean_absolute_error, median_absolute_error, r2_score
-from sklearn.metrics import pairwise_distances
-from sklearn import linear_model
-from sklearn.linear_model import LinearRegression, LogisticRegression, Lasso, LassoCV
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.neighbors import NearestNeighbors
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.datasets import make_regression
-from sklearn.model_selection import train_test_split, KFold
-from sklearn.feature_selection import SelectKBest, SelectPercentile
-from sklearn.feature_selection import f_classif, mutual_info_classif, f_regression, mutual_info_regression
-from sklearn.feature_selection import chi2, SelectFpr, SelectFdr, SelectFwe, GenericUnivariateSelect
-from sklearn.feature_selection import SelectFromModel,RFE,RFECV,VarianceThreshold
+from sklearn.metrics import mean_squared_error, explained_variance_score, mean_absolute_error, median_absolute_error, r2_score, consensus_score
 
-from sklearn.inspection import permutation_importance
-from sklearn.cluster import AffinityPropagation,SpectralClustering,AgglomerativeClustering,DBSCAN,OPTICS,cluster_optics_dbscan
-from sklearn.cluster import MiniBatchKMeans,KMeans,MeanShift,estimate_bandwidth,Birch
-
-from sklearn.linear_model import Ridge
-from sklearn.metrics import r2_score
-from sklearn.metrics import make_scorer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.cluster import AffinityPropagation, SpectralClustering, SpectralCoclustering, AgglomerativeClustering, DBSCAN,OPTICS, cluster_optics_dbscan
+from sklearn.cluster import MiniBatchKMeans, KMeans,MeanShift, estimate_bandwidth,Birch
 
 from scipy import stats
-from scipy.stats import multivariate_normal, skew, pearsonr, spearmanr
-from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact
-from scipy.stats import chi2_contingency
-from scipy.stats.contingency import expected_freq
-from scipy.stats import gaussian_kde, zscore
-from scipy.stats import poisson, multinomial
 from scipy.stats import norm
-from scipy.stats import rankdata
 import scipy.sparse
 from scipy.sparse import spmatrix
 from scipy.sparse import hstack, csr_matrix, csc_matrix, issparse, vstack
 from scipy import signal
-from scipy.signal import find_peaks, find_peaks_cwt, peak_prominences
-from scipy.optimize import minimize
-from statsmodels.stats.multitest import multipletests
-
-from sklearn.datasets import make_biclusters
-from sklearn.cluster import SpectralCoclustering
-from sklearn.metrics import consensus_score
-from sklearn.preprocessing import KBinsDiscretizer
-
 from scipy.cluster.hierarchy import dendrogram, linkage
-from scipy import signal
 
 import gc
 from joblib import Parallel, delayed
@@ -115,22 +59,12 @@ import time
 from timeit import default_timer as timer
 
 import utility_1
-# from utility_1 import log_transform, pyranges_from_strings, plot_cell_types, plot_gene_expression
-# from utility_1 import _dot_func, impute_data, density_2d, test_query_index
-# from utility_1 import _broadcast_concatenate, _get_mwu_z
-from utility_1 import test_query_index
 import h5py
 import json
 import pickle
 
-import itertools
-from itertools import combinations
-
-import train_pre1_1
-from train_pre1_1 import _Base2_train1
-
 # get_ipython().run_line_magic('matplotlib', 'inline')
-sc.settings.verbosity = 3             # verbosity: errors (0), warnings (1), info (2), hints (3)
+sc.settings.verbosity = 3  # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=80, facecolor='white')
 
@@ -151,26 +85,6 @@ plt.rcParams['axes.titlesize'] = 15
 # warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
 class _Base2_group1(BaseEstimator):
-	"""Base class for Hidden Markov Models.
-	"""
-	# def __init__(self, n_components=1, run_id=0,
-	#            startprob_prior=1.0, transmat_prior=1.0,
-	#            algorithm="viterbi", random_state=None,
-	#            n_iter=10, tol=1e-2, verbose=False,
-	#            params=string.ascii_letters,
-	#            init_params=string.ascii_letters):
-	#   self.n_components = n_components
-	#   self.params = params
-	#   self.init_params = init_params
-	#   self.startprob_prior = startprob_prior
-	#   self.transmat_prior = transmat_prior
-	#   self.algorithm = algorithm
-	#   self.random_state = random_state
-	#   self.n_iter = n_iter
-	#   self.tol = tol
-	#   self.verbose = verbose
-	#   self.run_id = run_id
-
 	def __init__(self,file_path,run_id=1,species_id=1,cell='ES', 
 					generate=1,
 					chromvec=[1],
@@ -1012,9 +926,8 @@ class _Base2_group1(BaseEstimator):
 
 		flag_clustering = 1
 		# filename_annot_save = select_config['filename_annot_save']
-		# filename_annot_save = filename_save_annot
-		# filename_annot1 = filename_annot_save
-		filename_annot1 = filename_save_annot
+		filename_annot_save = filename_save_annot
+		filename_annot1 = filename_annot_save
 		
 		if flag_clustering > 0:
 			# n_clusters = 100
@@ -1102,17 +1015,14 @@ class _Base2_group1(BaseEstimator):
 																select_config=select_config)
 					print(ad1)
 
-					# filename_thresh_annot1 = '%d_%d.%d' % (n_components, type_id_compute, type_id_feature_2)
-					# filename_annot_2 = '%s.%s' % (filename_annot1, filename_thresh_annot1)
-					filename_annot_2 = filename_annot1
-					# output_filename_1 = '%s/%s.feature_dimension.%s.1.h5ad' % (output_file_path,filename_prefix_save,filename_annot_2)
-					output_filename_1 = '%s/%s.%s.1.h5ad' % (output_file_path,filename_prefix_save,filename_annot_2)
+					filename_thresh_annot1 = '%d_%d.%d' % (n_components, type_id_compute, type_id_feature_2)
+					filename_annot_2 = '%s.%s' % (filename_annot1, filename_thresh_annot1)
+					output_filename_1 = '%s/%s.feature_dimension.%s.1.h5ad' % (output_file_path,filename_prefix_save,filename_annot_2)
 					ad1.write(output_filename_1)
 					print(ad1)
 					df_obs = ad1.obs
 					# output_filename_2 = '%s/test_query_feature_dimension.%s.df_obs.1.txt' % (output_file_path, filename_annot_2)
-					# output_filename_2 = '%s/%s.feature_dimension.%s.df_obs.1.txt' % (output_file_path,filename_prefix_save,filename_annot_2)
-					output_filename_2 = '%s/%s.%s.df_obs.1.txt' % (output_file_path,filename_prefix_save,filename_annot_2)
+					output_filename_2 = '%s/%s.feature_dimension.%s.df_obs.1.txt' % (output_file_path,filename_prefix_save,filename_annot_2)
 					df_obs.to_csv(output_filename_2, sep='\t')
 				
 				return df_obs
