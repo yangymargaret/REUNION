@@ -356,102 +356,178 @@ def test_query_default_parameter_1(field_query=[],default_parameter=[],overwrite
 
 	return select_config, param_vec
 
-## motif-peak estimate: tf accessibility score scaling
+def score_function_multiclass1(y_test,y_pred,y_proba=[],average='binary',average_2='macro'):
+
+	auc, aupr = 0, 0
+	type_id_1 = 0
+	if len(y_proba)>0:
+		type_id_1 = 1
+		auc = roc_auc_score(y_test,y_proba,average=average_2)
+		aupr = average_precision_score(y_test,y_proba,average=average_2)
+	
+	precision = precision_score(y_test,y_pred,average=average)
+	recall = recall_score(y_test,y_pred,average=average)
+	accuracy = (np.sum(y_test == y_pred)*1.0 / len(y_test))
+	eps=1E-12
+	F1 = 2*precision*recall/(precision+recall+eps)
+
+	if type_id_1==0:
+		vec1 = [accuracy, precision, recall, F1]
+		field_query_1 = ['accuracy','precision','recall','F1']
+	else:
+		vec1 = [accuracy, precision, recall, F1, auc, aupr]
+		field_query_1 = ['accuracy','precision','recall','F1','auc','aupr']
+
+	df_score_pred = pd.Series(index=field_query_1,data=vec1,dtype=np.float32)
+
+	# print(auc,aupr,precision,recall)
+	
+	# return accuracy, auc, aupr, precision, recall, F1
+	return df_score_pred
+
+def score_function_multiclass2(y_test,y_pred,y_proba=[],average='macro',average_2='macro'):
+
+	auc, aupr = 0, 0
+	type_id_1 = 0
+	if len(y_proba)>0:
+		type_id_1 = 1
+		try:
+			auc = roc_auc_score(y_test,y_proba,average=average_2)
+		except Exception as error:
+			print('error! ',error)
+			auc = 0
+		try:
+			aupr = average_precision_score(y_test,y_proba,average=average_2)
+		except Exception as error:
+			print('error!',error)
+			aupr = 0
+	
+	precision = precision_score(y_test,y_pred,average=average)
+	recall = recall_score(y_test,y_pred,average=average)
+	# try:
+	# 	precision = precision_score(y_test,y_pred,average=average)
+	# except Exception as error:
+	# 	print('error!',error)
+	# 	precision = 0
+
+	# try:
+	# 	recall = recall_score(y_test,y_pred,average=average)
+	# except Exception as error:
+	# 	print('error!',error)
+	# 	recall = 0
+
+	accuracy = (np.sum(y_test == y_pred)*1.0 / len(y_test))
+	eps=1E-12
+	F1 = 2*precision*recall/(precision+recall+eps)
+
+	if type_id_1==0:
+		vec1 = [accuracy, precision, recall, F1]
+		field_query_1 = ['accuracy','precision','recall','F1']
+	else:
+		vec1 = [accuracy, precision, recall, F1, auc, aupr]
+		field_query_1 = ['accuracy','precision','recall','F1','auc','aupr']
+
+	df_score_pred = pd.Series(index=field_query_1,data=vec1,dtype=np.float32)
+
+	# print(auc,aupr,precision,recall)
+	# return accuracy, auc, aupr, precision, recall, F1
+	return df_score_pred
+
+## feature scaling
+# tf accessibility score scaling
 # tf accessibility score: cell_num by feature_query_num
 def test_motif_peak_estimate_score_scale_1(score=[],feature_query_vec=[],with_mean=True,with_std=True,verbose=0,select_config={},scale_type_id=1):
 
-		thresh_upper_1, thresh_lower_1 = 0.99, 0.01
-		thresh_upper_2, thresh_lower_2 = 0.995, 0.005
-		thresh_2, thresh2 = 1E-05, 1E-05
-		# print('scale_type_id ', scale_type_id)
-		t_value1 = score.sum(axis=1)
-		# print(score.shape,score[0:5],np.max(t_value1),np.min(t_value1),np.mean(t_value1),np.median(t_value1))
-		quantile_vec_1 = [thresh_lower_2,thresh_lower_1,0.1,0.25,0.5,0.75,0.9,0.95,thresh_upper_1,thresh_upper_2]
+	thresh_upper_1, thresh_lower_1 = 0.99, 0.01
+	thresh_upper_2, thresh_lower_2 = 0.995, 0.005
+	thresh_2, thresh2 = 1E-05, 1E-05
+	# print('scale_type_id ', scale_type_id)
+	t_value1 = score.sum(axis=1)
+	# print(score.shape,score[0:5],np.max(t_value1),np.min(t_value1),np.mean(t_value1),np.median(t_value1))
+	quantile_vec_1 = [thresh_lower_2,thresh_lower_1,0.1,0.25,0.5,0.75,0.9,0.95,thresh_upper_1,thresh_upper_2]
 		
-		warnings.filterwarnings('ignore')
-		t_columns = test_columns_nonzero_1(score,type_id=1)
-		# print('columns with non-zero values: ', len(t_columns))
-		if scale_type_id in [0,'minmax_scale']:
-			# minmax normalization
-			score_mtx = minmax_scale(score,[0,1])
+	warnings.filterwarnings('ignore')
+	t_columns = test_columns_nonzero_1(score,type_id=1)
+	# print('columns with non-zero values: ', len(t_columns))
+	if scale_type_id in [0,'minmax_scale']:
+		# minmax normalization
+		score_mtx = minmax_scale(score,[0,1])
 
-		if scale_type_id in [6,'minmax_scale_1']:
-			# minmax normalization
-			score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
+	if scale_type_id in [6,'minmax_scale_1']:
+		# minmax normalization
+		score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
 
-			# for t_feature_query in tqdm(score.columns):
-			for (i1,t_feature_query) in enumerate(t_columns):
+		for (i1,t_feature_query) in enumerate(t_columns):
+			t_value1 = score[t_feature_query]
+			# t_vec1 = test_stat_1(t_value1,quantile_vec=quantile_vec_1)
+			# print(t_vec1, t_feature_query, i1)
+			thresh1 = np.quantile(t_value1, thresh_upper_2)
+			b1 = (t_value1>thresh1)
+			t_value1[b1] = thresh1
+			min_value = 0
+			if np.min(t_value1)>thresh_2:
+				min_value = thresh2
+			t_score = minmax_scale(t_value1,[min_value, 1.0])
+			score_1[t_feature_query] = t_score
+
+	elif scale_type_id in [1,'minmax_scale_2']:
+		score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
+		for t_feature_query in t_columns:
+			t_value1 = score[t_feature_query]
+			min_value = 0
+			if np.min(t_value1)>thresh_2:
+				min_value = thresh2
+			score_1[t_feature_query] = minmax_scale(t_value1, [min_value, np.quantile(score[t_feature_query], thresh_upper_2)])
+
+	elif scale_type_id in [2,'scale']:
+		# score_mtx = scale(score)
+		score_mtx = scale(score,with_mean=with_mean,with_std=with_std,copy=True)
+
+	elif scale_type_id in [3,'scale_2']:
+		score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
+		i1 = 0
+		cnt = 0
+		for (i1,t_feature_query) in enumerate(t_columns):
+			# t_score = minmax_scale(score[t_feature_query],[0, np.percentile(score[t_feature_query], 99)])
+			try:
+				# t_score = minmax_scale(score[t_feature_query],[np.quantile(score[t_feature_query],thresh_lower_2), np.quantile(score[t_feature_query], thresh_upper_2)])
 				t_value1 = score[t_feature_query]
-				# t_vec1 = test_stat_1(t_value1,quantile_vec=quantile_vec_1)
-				# print(t_vec1, t_feature_query, i1)
-				thresh1 = np.quantile(t_value1, thresh_upper_2)
-				b1 = (t_value1>thresh1)
-				t_value1[b1] = thresh1
-				min_value = 0
+				min_value_1 = 0
 				if np.min(t_value1)>thresh_2:
-					min_value = thresh2
-				t_score = minmax_scale(t_value1,[min_value, 1.0])
-				score_1[t_feature_query] = t_score
+					min_value_1 = np.quantile(t_value1,thresh_lower_1)
+				max_value_1 = np.quantile(t_value1, thresh_upper_1)
+				t_score = minmax_scale(t_value1,[min_value_1, max_value_1])
+			except Exception as error:
+				cnt = cnt+1
+				print('error! ', error, t_feature_query, i1, cnt)
+				t_vec1 = test_stat_1(score[t_feature_query],quantile_vec=quantile_vec_1)
+				print(t_vec1, t_feature_query)
+				t_score = score[t_feature_query]
+			score_1[t_feature_query] = scale(t_score,with_mean=with_mean,with_std=with_std)
+			if (verbose>0) and (i1%1000==0):
+				print('feature_query: ',t_feature_query,i1)
 
-		elif scale_type_id in [1,'minmax_scale_2']:
-			score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
-			# for t_feature_query in tqdm(score.columns):
-			for t_feature_query in t_columns:
-				t_value1 = score[t_feature_query]
-				min_value = 0
-				if np.min(t_value1)>thresh_2:
-					min_value = thresh2
-				score_1[t_feature_query] = minmax_scale(t_value1, [min_value, np.quantile(score[t_feature_query], thresh_upper_2)])
+	elif scale_type_id in [7,'scale']:
+		score_mtx = scale(score,with_mean=False,with_std=True,copy=True)
 
-		elif scale_type_id in [2,'scale']:
-			# score_mtx = scale(score)
-			score_mtx = scale(score,with_mean=with_mean,with_std=with_std,copy=True)
-
-		elif scale_type_id in [3,'scale_2']:
-			score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=0.0)
-			i1 = 0
-			cnt = 0
-			# for t_feature_query in tqdm(score.columns):
-			for (i1,t_feature_query) in enumerate(t_columns):
-				# t_score = minmax_scale(score[t_feature_query],[0, np.percentile(score[t_feature_query], 99)])
-				try:
-					# t_score = minmax_scale(score[t_feature_query],[np.quantile(score[t_feature_query],thresh_lower_2), np.quantile(score[t_feature_query], thresh_upper_2)])
-					t_value1 = score[t_feature_query]
-					min_value_1 = 0
-					if np.min(t_value1)>thresh_2:
-						min_value_1 = np.quantile(t_value1,thresh_lower_1)
-					max_value_1 = np.quantile(t_value1, thresh_upper_1)
-					t_score = minmax_scale(t_value1,[min_value_1, max_value_1])
-				except Exception as error:
-					cnt = cnt+1
-					print('error! ', error, t_feature_query, i1, cnt)
-					t_vec1 = test_stat_1(score[t_feature_query],quantile_vec=quantile_vec_1)
-					print(t_vec1, t_feature_query)
-					t_score = score[t_feature_query]
-				score_1[t_feature_query] = scale(t_score,with_mean=with_mean,with_std=with_std)
-				if (verbose>0) and (i1%1000==0):
-					print('feature_query: ',t_feature_query,i1)
-
-		elif scale_type_id in [7,'scale']:
-			score_mtx = scale(score,with_mean=False,with_std=True,copy=True)
-
-		elif scale_type_id in [5,'quantile_transform']:
-			# quantile normalization
-			normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
-			if 'score_quantile_normalize_type' in select_config:
-				normalize_type = select_config['score_quantile_normalize_type']
+	elif scale_type_id in [5,'quantile_transform']:
+		# quantile normalization
+		normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
+		if 'score_quantile_normalize_type' in select_config:
+			normalize_type = select_config['score_quantile_normalize_type']
 			
-			# print('score normalize type', normalize_type)
-			score_mtx = quantile_transform(score,n_quantiles=1000,output_distribution=normalize_type)
-		else:
-			score_1 = score
+		# print('score normalize type', normalize_type)
+		score_mtx = quantile_transform(score,n_quantiles=1000,output_distribution=normalize_type)
+	
+	else:
+		score_1 = score
 
-		if scale_type_id in [0,2,5,7,'minmax_scale','scale','quantile_transform']:
-			score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=np.asarray(score_mtx))
+	if scale_type_id in [0,2,5,7,'minmax_scale','scale','quantile_transform']:
+		score_1 = pd.DataFrame(index=score.index,columns=score.columns,data=np.asarray(score_mtx))
 
-		warnings.filterwarnings('default')
+	warnings.filterwarnings('default')
 		
-		return score_1
+	return score_1
 
 ## combine different files
 def test_file_merge_1(input_filename_list,input_file_path='',column_vec_query=[],index_col=0,header=0,axis_join=0,float_format=-1,flag_unduplicate=0,save_mode=0,output_filename='',verbose=0,select_config={}):
@@ -670,6 +746,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 		if flag_load>0:
 			if len(field_load)==0:
 				field_load = [correlation_type,'pval','pval_corrected']
+				field_annot = ['correlation','p-value','corrected p-value']
 			field_num = len(field_load)
 
 			file_num = len(input_filename_list)
@@ -679,6 +756,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 
 			# list_query = [pd.read_csv(input_filename,sep='\t') for input_filename in input_filename_list]
 			dict_query = dict()
+			print('load estimated peak accessibility-TF expression correlation and p-value')
 			for i1 in range(field_num):
 				filename_annot1 = field_load[i1]
 				input_filename = input_filename_list[i1]
@@ -690,7 +768,10 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 					df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 					field_query1 = filename_annot1
 					dict_query.update({field_query1:df_query})
-					print('df_query ',df_query.shape,filename_annot1)
+					# print('df_query ',df_query.shape,filename_annot1)
+					field_id1 = field_annot[i1]
+					print('%s, dataframe of size '%(field_id1),df_query.shape)
+					print('input filename: %s'%(input_filename))
 				else:
 					print('the file does not exist: %s'%(input_filename))
 					flag_load = 0
@@ -704,7 +785,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 
 		# else:
 		if flag_load==0:
-			print('peak accessibility-TF expr correlation estimation ')
+			# print('peak accessibility-TF expression correlation estimation ')
 			start = time.time()
 			df_peak_tf_corr_, df_peak_tf_pval_, df_peak_tf_pval_corrected, df_motif_basic = test_peak_tf_correlation_1(motif_data=motif_data,
 																														peak_query_vec=peak_query_vec,
@@ -725,7 +806,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 			dict_query = dict(zip(filename_annot_vec,list_query1))
 			query_num1 = len(list_query1)
 			stop = time.time()
-			print('peak accessibility-TF expr correlation estimation used: %.5fs'%(stop-start))
+			print('peak accessibility-TF expression correlation estimation used: %.5fs'%(stop-start))
 			# if filename_prefix=='':
 			# 	# filename_prefix_1 = 'test_peak_tf_correlation'
 			# 	filename_prefix = 'test_peak_tf_correlation'
@@ -764,7 +845,7 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 		if len(motif_query_vec)==0:
 			motif_query_name_ori = motif_data.columns
 			motif_query_name_expr = motif_query_name_ori.intersection(rna_exprs.columns,sort=False)
-			print('motif_query_name_ori, motif_query_name_expr ',len(motif_query_name_ori),len(motif_query_name_expr))
+			# print('motif_query_name_ori, motif_query_name_expr ',len(motif_query_name_ori),len(motif_query_name_expr))
 			motif_query_vec = motif_query_name_expr
 		else:
 			motif_query_vec_1 = motif_query_vec
@@ -785,51 +866,13 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 		# df_corr_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
 		# df_pval_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
 		flag_pval_correction = pval_correction
-		# if flag_pval_correction>0:
-		# 	df_pval_corrected = df_pval_.copy()
-		# else:
-		# 	df_pval_corrected = []
-		
-		# df_motif_basic = pd.DataFrame(index=feature_query_vec_2,columns=['peak_num','corr_max','corr_min'])
 
-		# correlation_type = 'spearmanr'
-		# flag_pval_correction = 1
-		# flag_pval_correction = pval_correction
-		# alpha = 0.05
-		# method_type_id_correction = 'fdr_bh'
 		# parallel_mode=0
 		if parallel_mode==0:
 			t_vec_1 = test_peak_tf_correlation_unit1(motif_data=motif_data_query,peak_query_vec=[],motif_query_vec=motif_query_vec,
 															peak_read=peak_read,rna_exprs=rna_exprs,correlation_type=correlation_type,pval_correction=pval_correction,
 															alpha=alpha,method_type_id_correction=method_type_id_correction,parallel_mode=0,verbose=1,select_config=select_config)
-			df_corr_, df_pval_, df_pval_corrected, df_motif_basic = t_vec_1		
-			
-			# for i1 in range(motif_query_num):
-			# 	motif_id = motif_query_vec[i1]
-			# 	peak_loc_query = peak_loc_ori[motif_data_query.loc[:,motif_id]>0]
-
-			# 	df_feature_query1 = peak_read.loc[:,peak_loc_query]
-			# 	df_feature_query2 = rna_exprs.loc[:,[motif_id]]
-			# 	df_corr_1, df_pval_1 = test_correlation_pvalues_pair(df_feature_query1,df_feature_query2,correlation_type=correlation_type,float_precision=6)
-			# 	# df_corr_.loc[peak_loc_query,[motif_id]] = np.asarray(df_corr_1)
-			# 	# df_pval_.loc[peak_loc_query,[motif_id]] = np.asarray(df_pval_1)
-
-			# 	df_corr_.loc[peak_loc_query,motif_id] = df_corr_1.loc[peak_loc_query,motif_id]
-			# 	df_pval_.loc[peak_loc_query,motif_id] = df_pval_1.loc[peak_loc_query,motif_id]
-
-			# 	corr_max, corr_min = df_corr_1.max().max(), df_corr_1.min().min()
-			# 	peak_num = len(peak_loc_query)
-			# 	df_motif_basic.loc[motif_id] = [peak_num,corr_max,corr_min]
-			# 	if verbose>0:
-			# 		if i1%10==0:
-			# 			print('motif_id: %s, id_query: %d, peak_num: %s, maximum peak accessibility-TF expr. correlation: %s, minimum correlation: %s'%(motif_id,i1,peak_num,corr_max,corr_min))
-			# 	if flag_pval_correction>0:
-			# 		pvals = np.asarray(df_pval_1.loc[peak_loc_query,motif_id])
-			# 		pvals_correction_vec1, pval_thresh1 = test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_id_correction)
-			# 		id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
-			# 		df_pval_corrected.loc[peak_loc_query,motif_id] = pvals_corrected1
-			# 		if (verbose>0) and (i1%100==0):
-			# 			print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
+			df_corr_, df_pval_, df_pval_corrected, df_motif_basic = t_vec_1
 		else:
 			dict_query_1 = dict()
 			field_query = ['correlation','pval','pval_corrected','motif_basic']
@@ -884,8 +927,8 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 	for i1 in range(motif_query_num):
 		motif_id = motif_query_vec[i1]
 		peak_loc_query = peak_loc_ori[motif_data_query.loc[:,motif_id]>0]
-		print('peak_loc_query: ',len(peak_loc_query))
-		print(peak_loc_query[0:10])
+		# print('peak_loc_query: ',len(peak_loc_query))
+		# print(peak_loc_query[0:10])
 		
 		df_feature_query1 = peak_read.loc[:,peak_loc_query]
 		df_feature_query2 = rna_exprs.loc[:,[motif_id]]
@@ -900,9 +943,12 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 		peak_num = len(peak_loc_query)
 		df_motif_basic.loc[motif_id] = [peak_num,corr_max,corr_min]
 		
+		interval_1 = 100
 		if verbose>0:
-			if i1%10==0:
-				print('motif_id: %s, id_query: %d, peak_num: %s, maximum peak accessibility-TF expr. correlation: %s, minimum correlation: %s'%(motif_id,i1,peak_num,corr_max,corr_min))
+			# if i1%10==0:
+			if i1%interval_1==0:
+				# print('motif_id: %s, id_query: %d, peak_num: %s, maximum peak accessibility-TF expr. correlation: %s, minimum correlation: %s'%(motif_id,i1,peak_num,corr_max,corr_min))
+				print('TF: %s, %d, number of peaks with motif: %d, maximum peak accessibility-TF expression correlation: %s, minimum correlation: %s'%(motif_id,i1,peak_num,corr_max,corr_min))
 		
 		if flag_pval_correction>0:
 			pvals = np.asarray(df_pval_1.loc[peak_loc_query,motif_id])
@@ -910,7 +956,8 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 			id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
 			df_pval_corrected.loc[peak_loc_query,motif_id] = pvals_corrected1
 			if (verbose>0) and (i1%100==0):
-				print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
+				# print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
+				print('p-value correction: alpha: %s, method type: %s, minimum p-value corrected: %s, maximum p-value corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
 
 	return (df_corr_, df_pval_, df_pval_corrected, df_motif_basic)
 
@@ -962,7 +1009,6 @@ def test_feature_group_query_basic_1(df_query=[],field_query=[],query_vec=[],col
 ## find the columns with non-zero values
 def test_columns_nonzero_1(df,type_id=0):
 
-	# t_value1 = np.sum(df,axis=0).abs()
 	t_value1 = np.sum(df.abs(),axis=0)
 	b1 = np.where(t_value1>0)[0]
 	if type_id==0:

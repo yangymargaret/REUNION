@@ -12,9 +12,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pylab
 plt.switch_backend('Agg')
-import matplotlib.ticker as ticker
-import matplotlib.gridspec as gridspec
-import seaborn as sns
 
 import warnings
 
@@ -23,53 +20,36 @@ import phenograph
 import sys
 from tqdm.notebook import tqdm
 
+import csv
 import os
 import os.path
-import sklearn
-
 from optparse import OptionParser
+
+import sklearn
 from sklearn.base import BaseEstimator
-from sklearn.neighbors import NearestNeighbors
-
-from sklearn.manifold import LocallyLinearEmbedding, MDS, Isomap, TSNE
 from sklearn.decomposition import PCA,IncrementalPCA,KernelPCA,SparsePCA,TruncatedSVD
-from sklearn.decomposition import FastICA, NMF, MiniBatchDictionaryLearning
-from sklearn.random_projection import GaussianRandomProjection, SparseRandomProjection
 from sklearn import preprocessing
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
 from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
 
-from sklearn.metrics import mean_squared_error, explained_variance_score, mean_absolute_error, median_absolute_error, r2_score, consensus_score
-
-from sklearn.cluster import AffinityPropagation, SpectralClustering, SpectralCoclustering, AgglomerativeClustering, DBSCAN,OPTICS, cluster_optics_dbscan
-from sklearn.cluster import MiniBatchKMeans, KMeans,MeanShift, estimate_bandwidth,Birch
+from sklearn.cluster import AffinityPropagation,SpectralClustering,AgglomerativeClustering,DBSCAN,OPTICS,cluster_optics_dbscan
+from sklearn.cluster import MiniBatchKMeans,KMeans,MeanShift
 
 from scipy import stats
-from scipy.stats import norm
 import scipy.sparse
 from scipy.sparse import spmatrix
 from scipy.sparse import hstack, csr_matrix, csc_matrix, issparse, vstack
-from scipy import signal
-from scipy.cluster.hierarchy import dendrogram, linkage
-
-import gc
-from joblib import Parallel, delayed
-
-import time
-from timeit import default_timer as timer
 
 import utility_1
 import h5py
-import json
 import pickle
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
-sc.settings.verbosity = 3  # verbosity: errors (0), warnings (1), info (2), hints (3)
+sc.settings.verbosity = 3   # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=80, facecolor='white')
 
 # %matplotlib inline
-sns.set_style('ticks')
 # matplotlib.rcParams['figure.figsize'] = [5, 5]
 matplotlib.rcParams['figure.dpi'] = 100
 matplotlib.rcParams['image.cmap'] = 'Spectral_r'
@@ -77,14 +57,14 @@ warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont"
 
 matplotlib.rc('xtick', labelsize=10)
 matplotlib.rc('ytick', labelsize=10)
-# matplotlib.rc('xlabel', labelsize=12)
-# matplotlib.rc('ylabel', labelsize=12)
 plt.rcParams['axes.labelsize'] = 12
 plt.rcParams['axes.titlesize'] = 15
 # plt.rcParams["figure.autolayout"] = True
 # warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
 class _Base2_group1(BaseEstimator):
+	"""Base class for group estimation
+	"""
 	def __init__(self,file_path,run_id=1,species_id=1,cell='ES', 
 					generate=1,
 					chromvec=[1],
@@ -120,8 +100,6 @@ class _Base2_group1(BaseEstimator):
 		if 'data_type_id' in self.config:
 			data_type_id = self.config['data_type_id']
 
-		# data_file_type = select_config['data_file_type']
-		# input_file_path1 = self.path_1
 		input_file_path1 = self.save_path_1
 
 		self.select_config = select_config
@@ -130,7 +108,6 @@ class _Base2_group1(BaseEstimator):
 		self.peak_dict_ = []
 		self.df_gene_peak_ = []
 		self.df_gene_peak_list_ = []
-		# self.df_gene_peak_distance = []
 		self.motif_data = []
 		self.gene_expr_corr_ = []
 		self.df_tf_expr_corr_list_pre1 = []	# tf-tf expr correlation
@@ -319,135 +296,6 @@ class _Base2_group1(BaseEstimator):
 				n_components_thresh = n_components_thresh1
 
 		return n_components_thresh, thresh_cml_var_query
-
-	# dimension reduction methods
-	def dimension_reduction(self,x_ori,feature_dim,type_id,shuffle=False,sub_sample=-1,filename_prefix='',filename_load='test1'):
-
-		idx = np.asarray(range(0,x_ori.shape[0]))
-		if (sub_sample>0) and (type_id!=7) and (type_id!=11):
-			id1 = idx[0:sub_sample]
-		else:
-			id1 = idx
-
-		if type_id==0:
-			# PCA
-			pca = PCA(n_components=feature_dim, whiten = False, random_state = 0)
-			if sub_sample>0:
-				pca.fit(x_ori[id1,:])
-				x = pca.transform(x_ori)
-			else:
-				x = pca.fit_transform(x_ori)
-			dimension_model = pca
-			# X_pca_reconst = pca.inverse_transform(x)
-		elif type_id==1:
-			# Incremental PCA
-			n_batches = 10
-			inc_pca = IncrementalPCA(n_components=feature_dim)
-			for X_batch in np.array_split(x_ori, n_batches):
-				inc_pca.partial_fit(X_batch)
-			x = inc_pca.transform(x_ori)
-			dimension_model = inc_pca
-			# X_ipca_reconst = inc_pca.inverse_transform(x)
-		elif type_id==2:
-			# Kernel PCA
-			kpca = KernelPCA(kernel="rbf",n_components=feature_dim, gamma=None, fit_inverse_transform=True, random_state = 0, n_jobs=50)
-			kpca.fit(x_ori[id1,:])
-			x = kpca.transform(x_ori)
-			dimension_model = kpca
-			# X_kpca_reconst = kpca.inverse_transform(x)
-		elif type_id==3:
-			# Sparse PCA
-			sparsepca = SparsePCA(n_components=feature_dim, alpha=0.0001, random_state=0, n_jobs=50)
-			sparsepca.fit(x_ori[id1,:])
-			x = sparsepca.transform(x_ori)
-			dimension_model = sparsepca
-		elif type_id==4:
-			# SVD
-			SVD_ = TruncatedSVD(n_components=feature_dim,algorithm='randomized', random_state=0, n_iter=10)
-			SVD_.fit(x_ori[id1,:])
-			x = SVD_.transform(x_ori)
-			dimension_model = SVD_
-			# X_svd_reconst = SVD_.inverse_transform(x)
-		elif type_id==5:
-			# Gaussian Random Projection
-			GRP = GaussianRandomProjection(n_components=feature_dim,eps = 0.5, random_state=2019)
-			GRP.fit(x_ori[id1,:])
-			x = GRP.transform(x_ori)
-			dimension_model = GRP
-		elif type_id==6:
-			# Sparse random projection
-			SRP = SparseRandomProjection(n_components=feature_dim,density = 'auto', eps = 0.5, random_state=2019, dense_output = False)
-			SRP.fit(x_ori[id1,:])
-			x = SRP.transform(x_ori)
-			dimension_model = SRP
-		elif type_id==7:
-			# MDS
-			mds = MDS(n_components=feature_dim, n_init=12, max_iter=1200, metric=True, n_jobs=4, random_state=2019)
-			x = mds.fit_transform(x_ori[id1])
-			dimension_model = mds
-		elif type_id==8:
-			# ISOMAP
-			isomap = Isomap(n_components=feature_dim, n_jobs = 4, n_neighbors = 5)
-			isomap.fit(x_ori[id1,:])
-			x = isomap.transform(x_ori)
-			dimension_model = isomap
-		elif type_id==9:
-			# MiniBatch dictionary learning
-			miniBatchDictLearning = MiniBatchDictionaryLearning(n_components=feature_dim,batch_size = 1000,alpha = 1,n_iter = 25,  random_state=2019)
-			if sub_sample>0:
-				miniBatchDictLearning.fit(x_ori[id1,:])
-				x = miniBatchDictLearning.transform(x_ori)
-			else:
-				x = miniBatchDictLearning.fit_transform(x_ori)
-			dimension_model = miniBatchDictLearning
-		elif type_id==10:
-			# ICA
-			fast_ICA = FastICA(n_components=feature_dim, algorithm = 'parallel',whiten = True,max_iter = 100,  random_state=2019)
-			if sub_sample>0:
-				fast_ICA.fit(x_ori[id1])
-				x = fast_ICA.transform(x_ori)
-			else:
-				x = fast_ICA.fit_transform(x_ori)
-			dimension_model = fast_ICA
-			# X_fica_reconst = FastICA.inverse_transform(x)
-			# elif type_id==11:
-			# 	# t-SNE
-			# 	tsne = TSNE(n_components=feature_dim,learning_rate=300,perplexity = 30,early_exaggeration = 12,init = 'random',  random_state=2019)
-			# 	x = tsne.fit_transform(x_ori)
-		elif type_id==12:
-			# Locally linear embedding
-			lle = LocallyLinearEmbedding(n_components=feature_dim, n_neighbors = np.max((int(feature_dim*1.5),500)),method = 'modified', n_jobs = 20,  random_state=2019)
-			lle.fit(x_ori[id1,:])
-			x = lle.transform(x_ori)
-			dimension_model = lle
-		elif type_id==13:
-			# Autoencoder
-			feature_dim_ori = x_ori.shape[1]
-			m = Sequential()
-			m.add(Dense(512,  activation='elu', input_shape=(feature_dim_ori,)))
-			# m.add(Dense(256,  activation='elu'))
-			m.add(Dense(feature_dim,   activation='linear', name="bottleneck"))
-			# m.add(Dense(256,  activation='elu'))
-			m.add(Dense(512,  activation='elu'))
-			m.add(Dense(feature_dim_ori,  activation='sigmoid'))
-			m.compile(loss='mean_squared_error', optimizer = Adam())
-			history = m.fit(x_ori[id1], x_ori[id1], batch_size=256, epochs=20, verbose=1)
-
-			encoder = Model(m.input, m.get_layer('bottleneck').output)
-			x = encoder.predict(x_ori)
-			Renc = m.predict(x_ori)
-			dimension_model = encoder
-
-		# save transfrom model
-		if filename_prefix=='':
-			filename1 = '%s_%d_dimensions.h5'%(filename_load,feature_dim)
-		else:
-			filename1 = '%s_%d_%d_dimensions.h5'%(filename_prefix,type_id,feature_dim)
-			
-		# np.save(filename1, self.dimension_model)
-		pickle.dump(dimension_model, open(filename1, 'wb'))
-		# self.dimension_model = pickle.load(open(filename1, 'rb'))
-		return x, dimension_model
 
 	## dimension reduction
 	# dimension reduction using methods: TruncatedSVD 1, TruncatedSVD 2, PCA (2: from scanpy, 3: from sklearn)
@@ -714,10 +562,11 @@ class _Base2_group1(BaseEstimator):
 				stop = time.time()
 				label_vec = np.unique(cluster_label)
 				label_num = len(label_vec)
-				# print('cluster query: %.5fs %s %d'%(stop-start,method_type,label_num))
-				## to add: the different numbers of clusters
+				# to add: the different numbers of clusters
 				inertia_ = predictor.inertia_
-				print('cluster query: %.5fs %s %d %.5f'%(stop-start,method_type,label_num,inertia_))
+				# print('cluster query: %.5fs %s %d %.5f'%(stop-start,method_type,label_num,inertia_))
+				print('clustering used %.2fs'%(stop-start))
+				print('method: %s, the number of clusters: %d, inertia_: %.5E'%(method_type,label_num,inertia_))
 				query_vec.append({method_type:inertia_})
 
 			elif method_type in [1,'phenograph']:
@@ -728,19 +577,19 @@ class _Base2_group1(BaseEstimator):
 				np.random.seed(0)
 				communities, graph, Q = phenograph.cluster(pd.DataFrame(feature_mtx),k=k) # run PhenoGraph
 				cluster_label = pd.Categorical(communities)
-				# ad.obs['PhenoGraph_clusters'] = cluster_label
+				
 				ad.obs[method_type_annot] = cluster_label
 				ad.uns['PhenoGraph_Q'] = Q
 				ad.uns['PhenoGraph_k'] = k
-				# df = pd.DataFrame(index=sample_id,columns=[method_type])
-				# df[method_type] = cluster_label
+
 				stop = time.time()
 				label_vec = np.unique(cluster_label)
 				label_num = len(label_vec)
-				print('cluster query: %.5fs %s %d'%(stop-start,method_type,label_num))
+				print('clustering used %.2fs'%(stop-start))
+				print('method: %s, the number of clusters: %d'%(method_type,label_num))
 			else:
 				cluster_model = dict_query[method_type]
-				print(method_type)
+				# print(method_type)
 				start = time.time()
 				x = feature_mtx
 				np.random.seed(0)
@@ -750,58 +599,54 @@ class _Base2_group1(BaseEstimator):
 				label_vec = np.unique(t_labels)
 				label_num = len(label_vec)
 				stop = time.time()
-				# print(method_type,label_num,stop-start)
-				print('cluster query: %.5fs %s %d'%(stop-start,method_type,label_num))
-
+				print('clustering used %.2fs'%(stop-start))
+				print('method: %s, the number of clusters: %d'%(method_type,label_num))
+				
 		return ad, query_vec
 
 	## cluster plot query
 	def test_cluster_query_plot_1(self,adata,column_id,n_pcs=100,n_neighbors=20,layer_name_query='X_svd',palatte_name='tab20',title='Group',flag_umap=1,flag_tsne=1,flag_fdl=1,save_mode=1,filename_prefix_save='',select_config={}):
 
-			if (flag_umap>0) or (flag_fdl>0):
-				try:
-					sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
-				except Exception as error:
-					print('error! ',error)
-					return
+		if (flag_umap>0) or (flag_fdl>0):
+			try:
+				sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
+			except Exception as error:
+				print('error! ',error)
+				return
 			
-			matplotlib.rcParams['figure.figsize'] = [3.5,3.5]
-			if flag_umap>0:
-				# sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
-				sc.tl.umap(adata)
-				# sc.pl.umap(adata,color=[column_id],palette='tab20', # 'palette' specifies the colormap to use)
-				# 									title=["Clusters"])
-				sc.pl.umap(adata,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
+		matplotlib.rcParams['figure.figsize'] = [3.5,3.5]
+		if flag_umap>0:
+			# sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
+			sc.tl.umap(adata)
+			# sc.pl.umap(adata,color=[column_id],palette='tab20', # 'palette' specifies the colormap to use)
+			# 									title=["Clusters"])
+			sc.pl.umap(adata,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
 													title=[title])
 
-				if save_mode>0:
-					# b = input_filename.find('.h5ad')
-					# output_filename = input_filename[0:b]+'.umap.%d.%d.1.png'%(n_pcs,method_type_id1)
-					# method_type_id1 = column_id
-					# output_filename = filename_prefix_save+'.umap.%d.%s.1.png'%(n_pcs,method_type_id1)
-					output_filename = filename_prefix_save+'.umap.%d.%s.1.png'%(n_pcs,column_id)
-					plt.savefig(output_filename,format='png')
+			if save_mode>0:
+				output_filename = filename_prefix_save+'.umap.%d.%s.1.png'%(n_pcs,column_id)
+				plt.savefig(output_filename,format='png')
 
-			if flag_tsne>0:
-				# sc.pp.neighbors(adata, n_pcs=n_pcs, use_rep='X_svd')
-				# sc.tl.tsne(adata,use_rep='X_svd')
-				sc.tl.tsne(adata,use_rep=layer_name_query)
-				sc.pl.tsne(adata,use_raw=False,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
+		if flag_tsne>0:
+			# sc.pp.neighbors(adata, n_pcs=n_pcs, use_rep='X_svd')
+			# sc.tl.tsne(adata,use_rep='X_svd')
+			sc.tl.tsne(adata,use_rep=layer_name_query)
+			sc.pl.tsne(adata,use_raw=False,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
 																	title=[title])
-				if save_mode>0:
-					output_filename = filename_prefix_save+'.tsne.%d.%s.1.png'%(n_pcs,column_id)
-					plt.savefig(output_filename,format='png')
+			if save_mode>0:
+				output_filename = filename_prefix_save+'.tsne.%d.%s.1.png'%(n_pcs,column_id)
+				plt.savefig(output_filename,format='png')
 
-			if flag_fdl>0:
-				sc.tl.draw_graph(adata)
-				sc.pl.draw_graph(adata,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
+		if flag_fdl>0:
+			sc.tl.draw_graph(adata)
+			sc.pl.draw_graph(adata,color=[column_id],palette=palatte_name, # 'palette' specifies the colormap to use)
 															title=[title])
 
-				if save_mode>0:
-					output_filename = filename_prefix_save+'.fdl.%d.%s.1.png'%(n_pcs,column_id)
-					plt.savefig(output_filename,format='png')
+			if save_mode>0:
+				output_filename = filename_prefix_save+'.fdl.%d.%s.1.png'%(n_pcs,column_id)
+				plt.savefig(output_filename,format='png')
 
-			return True
+		return True
 
 	# query cluster mean value, std value and cluster frequency for each clustering prediction
 	# return: dict_feature: {'mean','std','mean_scale','df_ratio'}
@@ -925,26 +770,20 @@ class _Base2_group1(BaseEstimator):
 	def test_query_group_1(self,data=[],adata=[],feature_type_query='peak',list_config=[],flag_iter_2=1,flag_clustering_1=1,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		flag_clustering = 1
-		# filename_annot_save = select_config['filename_annot_save']
-		filename_annot_save = filename_save_annot
-		filename_annot1 = filename_annot_save
-		
+		filename_annot1 = filename_save_annot
 		if flag_clustering > 0:
 			# n_clusters = 100
 			n_clusters = 50
-			# neighbors = 30
 			neighbors = 20
 			data1 = data
 			ad1 = adata
+
 			linkage_type_vec = ['ward', 'average', 'complete', 'single']
-			# distance_threshold = 20
 			# linkage_type_id = 1
 			linkage_type_id = 0
-			# metric = 'euclidean'
-			# group_type = feature_type_query
+
 			config_vec_1 = select_config['config_vec_1']
 			n_components, type_id_compute, type_id_feature_2 = config_vec_1
-			# flag_iter_2 = 1
 			if flag_iter_2 > 0:
 				if feature_type_query == 'peak':
 					method_type_query = 'MiniBatchKMeans'
@@ -1015,14 +854,12 @@ class _Base2_group1(BaseEstimator):
 																select_config=select_config)
 					print(ad1)
 
-					filename_thresh_annot1 = '%d_%d.%d' % (n_components, type_id_compute, type_id_feature_2)
-					filename_annot_2 = '%s.%s' % (filename_annot1, filename_thresh_annot1)
-					output_filename_1 = '%s/%s.feature_dimension.%s.1.h5ad' % (output_file_path,filename_prefix_save,filename_annot_2)
+					filename_annot_2 = filename_annot1
+					output_filename_1 = '%s/%s.%s.1.h5ad' % (output_file_path,filename_prefix_save,filename_annot_2)
 					ad1.write(output_filename_1)
 					print(ad1)
 					df_obs = ad1.obs
-					# output_filename_2 = '%s/test_query_feature_dimension.%s.df_obs.1.txt' % (output_file_path, filename_annot_2)
-					output_filename_2 = '%s/%s.feature_dimension.%s.df_obs.1.txt' % (output_file_path,filename_prefix_save,filename_annot_2)
+					output_filename_2 = '%s/%s.%s.df_obs.1.txt' % (output_file_path,filename_prefix_save,filename_annot_2)
 					df_obs.to_csv(output_filename_2, sep='\t')
 				
 				return df_obs
