@@ -19,8 +19,6 @@ from optparse import OptionParser
 
 from scipy import stats
 from scipy.stats import pearsonr, spearmanr
-import scipy.sparse
-from scipy.sparse import hstack, vstack, issparse, csr_matrix
 from sklearn.base import BaseEstimator
 from sklearn.preprocessing import minmax_scale, scale, quantile_transform
 

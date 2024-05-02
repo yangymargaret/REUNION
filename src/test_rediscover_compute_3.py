@@ -21,9 +21,6 @@ from scipy import stats
 from scipy.stats import chisquare, fisher_exact, chi2_contingency, zscore, poisson, multinomial, norm, pearsonr, spearmanr
 from scipy.stats.contingency import expected_freq
 
-import scipy.sparse
-from scipy.sparse import hstack, vstack, issparse, csr_matrix
-
 import time
 from timeit import default_timer as timer
 

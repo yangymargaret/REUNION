@@ -12,22 +12,15 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pylab
 plt.switch_backend('Agg')
-import matplotlib.ticker as ticker
-import matplotlib.gridspec as gridspec
-# import seaborn as sns
 
 import os
 import os.path
 from optparse import OptionParser
 from test_rediscover_compute_1 import _Base2_2
-from test_group_1 import _Base2_group1
 
 from scipy import stats
 from scipy.stats import chisquare, chi2_contingency, fisher_exact
 from scipy.stats.contingency import expected_freq
-
-import scipy.sparse
-from scipy.sparse import hstack, csr_matrix, issparse, vstack
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform
 from sklearn.metrics import average_precision_score,precision_score,recall_score,f1_score
@@ -81,25 +74,6 @@ class _Base2_2_1(_Base2_2):
 								type_id_feature=type_id_feature,
 								config=config,
 								select_config=select_config)
-
-	## file_path query
-	# query the basic file path
-	def test_file_path_query_1_ori(self,input_file_path='',run_id=1,select_config={}):
-
-			# input_file_path1 = self.save_path_1
-			data_file_type = select_config['data_file_type']
-			root_path_1 = select_config['root_path_1']
-			input_file_path1 = root_path_1
-			data_file_type_id1 = 0
-			# run_id = select_config['run_id']
-			type_id_feature = select_config['type_id_feature']
-			filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
-
-			select_config_query = {'data_path':input_file_path,
-									'filename_save_annot_1':filename_save_annot_1,
-									'filename_save_annot_pre1':filename_save_annot_1}
-
-			return select_config_query
 
 	## load the ChIP-seq data annotation file
 	def test_query_file_annotation_load_1(self,data_file_type_query='',input_filename='',folder_id=1,save_mode=1,verbose=0,select_config={}):
@@ -1784,7 +1758,6 @@ class _Base2_2_1(_Base2_2):
 		method_type_group = select_config['method_type_group']
 
 		df_signal_query1, dict_signal_query1 = self.test_query_signal_overlap_format_1(input_filename='',input_filename_list=[],feature_query='',feature_query_vec=[],peak_query_vec=[],column_vec=[],type_id_1=0,type_query=0,save_mode=1,filename_prefix_save='',filename_save_annot='annot',output_filename='',verbose=0,select_config=select_config)
-
 
 	##  prepare annotation of the genome-wide peak loci overlapping with peak loci with ChIP-seq signals
 	# prepare annotation of the genome-wide peak loci overlapping with peak loci with ChIP-seq signals

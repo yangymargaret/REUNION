@@ -14,7 +14,6 @@ import matplotlib.pylab as pylab
 plt.switch_backend('Agg')
 
 import warnings
-
 import phenograph
 
 import sys
@@ -37,8 +36,7 @@ from sklearn.cluster import MiniBatchKMeans,KMeans,MeanShift
 
 from scipy import stats
 import scipy.sparse
-from scipy.sparse import spmatrix
-from scipy.sparse import hstack, csr_matrix, csc_matrix, issparse, vstack
+from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse
 
 import utility_1
 import h5py
