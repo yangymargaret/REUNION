@@ -28,7 +28,6 @@ import time
 from timeit import default_timer as timer
 
 from joblib import Parallel, delayed
-from test_annotation_pre1 import _Base2_1
 import train_pre1_1
 import utility_1
 from utility_1 import test_query_index
