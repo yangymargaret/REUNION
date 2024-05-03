@@ -269,8 +269,7 @@ class _Base2_correlation3(_Base2_correlation2):
 				feature_query_vec = feature_query_vec_ori[start_id1:start_id2]
 				df_gene_peak_query_compare = df_gene_peak_query_compare.loc[feature_query_vec,:]
 				print('start_id1: %d, start_id2: %d'%(start_id1,start_id2))
-				# print(df_gene_peak_query_compare.shape)
-				# print(df_gene_peak_query_compare)
+				
 				print('peak-gene links, dataframe of ',df_gene_peak_query_compare.shape)
 				print('preview:')
 				print(df_gene_peak_query_compare[0:2])
@@ -279,24 +278,6 @@ class _Base2_correlation3(_Base2_correlation2):
 
 		# from utility_1 import test_query_index
 		df_gene_peak_query_compare.index = test_query_index(df_gene_peak_query_compare,column_vec=column_idvec)
-		# if len(df_gene_peak_query)>0:
-		# 	print('df_gene_peak_query: ',df_gene_peak_query.shape)
-		# 	print(df_gene_peak_query[0:5])
-		# 	df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=column_idvec)
-
-		# 	column_pval_1 = column_correlation[1]
-		# 	field_query_1 = [column_corr_1,column_pval_ori,column_pval_1]
-
-		# 	query_id1_1 = df_gene_peak_query.index
-		# 	query_id_ori = df_gene_peak_query_compare.index
-		# 	query_id1_2 = query_id1_1.intersection(query_id_ori,sort=False)
-			
-		# 	# df_gene_peak_query_compare.loc[query_id1,field_query_1] = df_gene_peak_query_sub1.loc[query_id1,field_query_1]
-		# 	df_gene_peak_query_compare.loc[query_id1_2,field_query_1] = df_gene_peak_query.loc[query_id1_2,field_query_1]
-		# 	if column_label=='':
-		# 		column_label = 'label_corr'
-		# 	# df_gene_peak_query_compare.loc[query_id1_1,column_label] = -1
-		# 	# df_gene_peak_query_compare.loc[query_id1,column_label] = 1
 		
 		if (column_corr_1 in df_gene_peak_query_compare.columns):
 			# df_compare1 = df_gene_peak_query_compare.assign(spearmanr_abs=df_gene_peak_query_compare[column_corr_1].abs(),

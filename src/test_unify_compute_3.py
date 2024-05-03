@@ -1945,6 +1945,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		print(df_gene_peak_query_1[0:5])
 		return df_gene_peak_query_1
 
+	## ====================================================
 	# query gene_tf_corr_peak p-value corrected
 	def test_gene_tf_corr_peak_pval_corrected_unit1(self,data=[],feature_query_vec=[],feature_id='',column_id_query='',field_query=[],alpha=0.05,method_type_id_correction='fdr_bh',type_id_1=0,interval=1000,save_mode=1,verbose=0,select_config={}):
 
@@ -2253,7 +2254,7 @@ class _Base2_correlation5(_Base2_correlation3):
 										flag_peak_gene_corr=1,
 										flag_gene_tf_corr_peak=1,
 										flag_pval_1=1,
-										flag_pval_2=1,
+										flag_pval_2=0,
 										parallel_mode=1,
 										save_mode=1,
 										output_filename='',
@@ -2310,7 +2311,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return df_gene_peak_query
 
-	## convert wide format dataframe to long format and combine dataframe
+	## ====================================================
+	# convert wide format dataframe to long format and combine dataframe
 	def test_query_feature_combine_format_1(self,df_list,column_idvec=[],field_query=[],dropna=False,select_config={}):
 
 		query_num1 = len(field_query)
@@ -2802,7 +2804,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				print('feature link: ',df_gene_peak_query_2.shape)
 				print(df_gene_peak_query_2[0:2])
 			
-			if flag_save_2>0:				
+			if flag_save_2>0:
 				format_str1 = 'txt.gz'
 				compression = 'infer'
 				if format_str1 in ['txt.gz']:
@@ -3313,7 +3315,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			# return df_query_1, df_query_2
 			return df_query_1
 
-	## score query by specific column of dataframe
+	## ====================================================
+	# score query by specific column of dataframe
 	def test_score_query_1(self,df_query,column_id_query,thresh_vec,quantile_query=1,quantile_vec=[],scale_type_id=0,select_config={}):
 
 		query_id1 = df_query.index
@@ -3352,7 +3355,8 @@ class _Base2_correlation5(_Base2_correlation3):
 		thresh_query_vec = [thresh_1,thresh_1_ori]
 		return (query_id2,id_query,list1_quantile,thresh_query_vec,z_score_1)
 
-	## score query by quantile
+	## ====================================================
+	# score query by quantile
 	def test_score_query_pre2(self,data=[],feature_query='',feature_query_id=0,column_id_query='',column_query_vec=[],column_label_vec=[],verbose=0,select_config={}):
 
 		df_feature = data
@@ -3376,7 +3380,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return score_mtx
 
-	## score query by quantile
+	## ====================================================
+	# score query by quantile
 	def test_score_query_2(self,data=[],feature_query_vec=[],column_id_query='',column_idvec=[],column_query_vec=[],column_label_vec=[],flag_annot=1,reset_index=1,parallel_mode=0,interval=100,verbose=0,select_config={}):
 
 		df_feature = data
@@ -3474,7 +3479,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return df_feature
 
-	## gene-peak-tf association: the difference between gene_tf_corr_peak and gene-tf expression correlation
+	## ====================================================
+	# gene-peak-tf association: the difference between gene_tf_corr_peak and gene-tf expression correlation
 	def test_gene_peak_tf_query_compare_1(self,input_filename='',df_gene_peak_query=[],df_annot=[],thresh_corr_1=0.30,thresh_corr_2=0.05,save_mode=0,output_file_path='',filename_prefix_save='',select_config={}):
 
 		if len(df_gene_peak_query)==0:
@@ -3521,7 +3527,8 @@ class _Base2_correlation5(_Base2_correlation3):
 		# return df_query_1, df_query_2
 		return df_gene_peak_query_pre1, query_id_1, query_id_2
 
-	## parameter configuration for feature score computation
+	## ====================================================
+	# parameter configuration for feature score computation
 	def test_query_score_config_1(self,column_pval_cond='',thresh_corr_1=0.1,thresh_pval_1=0.1,overwrite=False,flag_config_1=1,flag_config_2=1,save_mode=1,verbose=0,select_config={}):
 
 		if flag_config_1>0:
@@ -3644,7 +3651,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return select_config
 
-	## parameter configuration for feature score computation
+	## ====================================================
+	# parameter configuration for feature score computation
 	# parameter configuration for estimating the feature link type
 	def test_query_score_config_2(self,thresh_query_1=[],thresh_query_2=[],overwrite=False,save_mode=1,verbose=0,select_config={}):
 
@@ -3685,7 +3693,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return select_config
 
-	## compute feature link score
+	## ====================================================
+	# compute feature link score
 	def test_query_feature_score_compute_1(self,df_feature_link=[],input_filename='',overwrite=False,iter_mode=1,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		field_query = ['thresh_list_query','thresh_motif_score_neg_1','thresh_motif_score_neg_2','thresh_score_accessibility']
@@ -3802,7 +3811,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			return df_feature_link
 
-	## compute feature link score
+	## ====================================================
+	# compute feature link score
 	# combine the estimated feature link score from different runs
 	def test_query_feature_score_init_pre1_1(self,data=[],input_filename_list=[],recompute=0,iter_mode=1,load_mode=1,save_mode=1,verbose=0,select_config={}):
 
@@ -3965,7 +3975,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return df_feature_link, select_config
 
-	## feature score query
+	## ====================================================
+	# feature score query
 	# perform selection of peak-TF-gene association
 	def test_query_feature_score_init_pre1(self,df_feature_link=[],input_filename_list=[],input_filename='',index_col=0,iter_mode=0,recompute=0,
 												flag_score_quantile_1=1,flag_score_query_1=1,flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=0,flag_select_feature_2=0,
@@ -4241,7 +4252,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		return df_feature_link_pre1, df_feature_link_pre2
 
-	## compute feature score quantile
+	## ====================================================
+	# compute feature score quantile
 	def test_query_feature_score_quantile_compute_1(self,df_feature_link=[],input_filename_list=[],index_col=0,column_idvec=[],iter_mode=1,overwrite=False,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		flag_score_quantile_1 = 1
@@ -4321,7 +4333,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			return df_link_query1, select_config
 
-	## feature score quantile estimation
+	## ====================================================
+	# feature score quantile estimation
 	def test_query_feature_score_quantile_1(self,df_feature_link=[],input_filename_list=[],index_col=0,column_idvec=['peak_id','gene_id','motif_id'],column_vec_query=[],column_score_vec=[],column_label_vec=[],column_id_query='motif_id',iter_mode=0,
 												save_mode=0,filename_prefix_save='',output_file_path='',output_filename_1='',output_filename_2='',compression='gzip',float_format='%.5E',flag_unduplicate=0,verbose=0,select_config={}):
 
@@ -4368,8 +4381,9 @@ class _Base2_correlation5(_Base2_correlation3):
 				
 			return df_link_query_pre1
 
-	## peak-tf-gene link query selection
-	# select feature link with specific score above thresholdds
+	## ====================================================
+	# peak-tf-gene link query selection
+	# select feature link with specific score above thresholds
 	def test_query_feature_link_select_1(self,data=[],flag_select_local=1,save_mode=1,verbose=0,select_config={}):
 
 			# flag_select_thresh1_feature_local=0

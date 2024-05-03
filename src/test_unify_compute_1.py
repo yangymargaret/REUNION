@@ -73,7 +73,8 @@ import pickle
 import itertools
 from itertools import combinations
 
-from test_unify_compute_pre2 import _Base2_correlation2_1
+# from test_unify_compute_pre2 import _Base2_pre2
+from test_reunion_compute_pre2 import _Base_pre2
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 sc.settings.verbosity = 3    # verbosity: errors (0), warnings (1), info (2), hints (3)
@@ -96,16 +97,16 @@ plt.rcParams['axes.titlesize'] = 15
 # plt.rcParams["figure.autolayout"] = True
 # warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
-class _Base2_correlation2(_Base2_correlation2_1):
+class _Base2_correlation2(_Base_pre2):
 	"""Feature association estimation
 	"""
-	def __init__(self,file_path,run_id,species_id=1,cell='ES',
+	def __init__(self,file_path,run_id=1,species_id=1,cell='ES', 
 					generate=1,
 					chromvec=[1],
 					test_chromvec=[2],
 					featureid=1,
-					typeid=1,
 					df_gene_annot_expr=[],
+					typeid=1,
 					method=1,
 					flanking=50,
 					normalize=1,
@@ -114,115 +115,21 @@ class _Base2_correlation2(_Base2_correlation2_1):
 					select_config={}):
 
 		_Base2_correlation2_1.__init__(self,file_path=file_path,
-										run_id=run_id,
-										species_id=species_id,
-										cell=cell,
-										generate=generate,
-										chromvec=chromvec,
-										test_chromvec=test_chromvec,
-										featureid=featureid,
-										df_gene_annot_expr=df_gene_annot_expr,
-										typeid=typeid,
-										method=method,
-										flanking=flanking,
-										normalize=normalize,
-										type_id_feature=type_id_feature,
-										config=config,
-										select_config=select_config)
-
-		# Initializes RepliSeq
-		self.run_id = run_id
-		self.cell = cell
-		self.generate = generate
-		self.train_chromvec = chromvec
-		self.chromosome = chromvec[0]
-
-		# path_1 = '../example_datasets/data1'
-		self.path_1 = file_path
-		self.config = config
-		# self.run_id = run_id
-		# self.select_config = select_config
-
-		# self.save_path_1 = '../data2'
-		self.save_path_1 = file_path
-		self.pre_rna_ad = []
-		self.pre_atac_ad = []
-		self.fdl = []
-		self.motif_data = []
-		self.motif_data_score = []
-		self.motif_query_name_expr = []
-		self.dict_motif_data = dict()
-
-		data_type_id = 1
-		if 'data_type_id' in self.config:
-			data_type_id = self.config['data_type_id']
-
-		if data_type_id==0:
-			# load scRNA-seq data
-			# self.test_init_1()
-			# self.adata = self.rna_ad_1
-			cluster_name1 = 'UpdatedCellType'
-		else:
-			# load multiome scRNA-seq data
-			load_mode = 1
-			# load_mode = self.config['load_mode_metacell']
-			if 'load_mode' in config:
-				load_mode = config['load_mode_metacell']
-			# self.test_init_2(load_mode=load_mode)
-			# self.adata = self.pre_rna_ad
-			cluster_name1 = 'CellType'
-
-			# load_mode_rna, load_mode_atac = 1, 1
-			load_mode_rna, load_mode_atac = 1, 1
-			if 'load_mode_rna' in config:
-				load_mode_rna = config['load_mode_rna']
-			if 'load_mode_atac' in config:
-				load_mode_atac = config['load_mode_atac']
-
-			# use_raw_count, pre_normalize = 1, 0
-			# self.test_motif_peak_estimate_rna_pre1(select_config=config,use_raw_count=use_raw_count,pre_normalize=pre_normalize,load_mode=load_mode_rna)
-
-			# use_raw_count, pre_normalize = 1, 0
-			# self.test_motif_peak_estimate_atac_pre1(select_config=config,use_raw_count=use_raw_count,pre_normalize=pre_normalize,load_mode=load_mode_atac)
-
-		data_file_type = select_config['data_file_type']
-		# input_file_path1 = self.path_1
-		input_file_path1 = self.save_path_1
-		
-		overwrite = False
-		if 'overwrite' in select_config:
-			overwrite = select_config['overwrite']
-		# select_config = self.test_config_query_2(overwrite=overwrite,select_config=select_config)
-		self.select_config = select_config
-		self.gene_name_query_expr_ = []
-		self.gene_highly_variable = []
-		self.peak_dict_ = []
-		self.df_gene_peak_ = []
-		self.df_gene_peak_list_ = []
-		# self.df_gene_peak_distance = []
-		# self.motif_data = []
-		self.gene_expr_corr_ = []
-		self.df_tf_expr_corr_list_pre1 = []	# tf-tf expr correlation
-		self.df_expr_corr_list_pre1 = []	# gene-tf expr correlation
-		self.df_gene_query = []
-		self.df_gene_peak_query = []
-		self.df_gene_annot_1 = []
-		self.df_gene_annot_2 = []
-		# self.df_gene_annot_ori, self.df_gene_annot_expr = [], []
-		self.df_gene_annot_ori = []
-		self.df_gene_annot_expr = df_gene_annot_expr
-		self.df_peak_annot = []
-		self.pre_data_dict_1 = dict()
-		self.df_rna_obs = []
-		self.df_atac_obs = []
-		self.df_rna_var = []
-		self.df_atac_var = []
-		self.df_peak_annot = []
-		self.df_gene_peak_distance = []
-		self.df_gene_tf_expr_corr_ = []
-		self.df_gene_tf_expr_pval_ = []
-		self.df_gene_expr_corr_ = []
-		self.df_gene_expr_pval_ = []
+									run_id=run_id,
+									species_id=species_id,
+									cell=cell,
+									generate=generate,
+									chromvec=chromvec,
+									test_chromvec=test_chromvec,
+									featureid=featureid,
+									df_gene_annot_expr=df_gene_annot_expr,
+									typeid=typeid,
+									method=method,
+									flanking=flanking,
+									normalize=normalize,
+									type_id_feature=type_id_feature,
+									config=config,
+									select_config=select_config)
 
 	## file_path query
 	def test_config_query_1(self,select_config={}):
@@ -521,6 +428,77 @@ class _Base2_correlation2(_Base2_correlation2_1):
 			df_gene_peak_query_group_1, df_gene_peak_query_group_2 = list_query1
 
 		return df_gene_peak_query_group_1, df_gene_peak_query_group_2
+
+	## load data and query configuration parameters
+	# load motif data; load ATAC-seq and RNA-seq data of the metacells
+	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=0,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		method_type_feature_link = select_config['method_type_feature_link']
+
+		# load motif data
+		if flag_motif_data_load_1>0:
+			print('load motif scanning data')
+			if len(method_type_vec_query)==0:
+				method_type_vec_query = [method_type_feature_link]
+
+			input_dir = select_config['input_dir']
+			file_path_1 = input_dir
+			test_estimator1 = _Base2_2(file_path=file_path_1,select_config=select_config)
+			
+			method_type_feature_link = select_config['method_type_feature_link']
+			method_type_vec_query = [method_type_feature_link]
+			data_path_save_local = select_config['data_path_save_local']
+			# data_path_save_motif = select_config['data_path_save_motif']
+			
+			file_path_motif = data_path_save_local
+			select_config.update({'file_path_motif':file_path_motif})
+			save_file_path = data_path_save_local
+			dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
+																			save_mode=1,save_file_path=save_file_path,
+																			select_config=select_config)
+
+
+			self.dict_motif_data = dict_motif_data
+
+		# flag_load_1 = 1
+		# load the ATAC-seq data and RNA-seq data of the metacells
+		if flag_load_1>0:
+			print('load peak accessiblity and gene expression data')
+			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
+			start = time.time()
+			data_path_save_local = select_config['data_path_save_local']
+			output_file_path = data_path_save_local
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori_2(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,
+																													save_mode=1,output_file_path=output_file_path,select_config=select_config)
+
+			# sample_id = meta_scaled_exprs.index
+			# peak_read = peak_read.loc[sample_id,:]
+			sample_id = peak_read.index
+			meta_exprs_2 = meta_exprs_2.loc[sample_id,:]
+			if len(meta_scaled_exprs)>0:
+				meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+				rna_exprs = meta_scaled_exprs	# scaled RNA-seq data
+			else:
+				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
+			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
+			print('ATAC-seq count matrx: ',peak_read.shape)
+			print('data preview: ')
+			print(peak_read[0:2])
+
+			print('RNA-seq count matrx: ',rna_exprs.shape)
+			print('data preview: ')
+			print(rna_exprs[0:2])
+
+			self.peak_read = peak_read
+			self.meta_scaled_exprs = meta_scaled_exprs
+			self.meta_exprs_2 = meta_exprs_2
+			self.rna_exprs = rna_exprs
+			# peak_loc_ori = peak_read.columns
+
+			stop = time.time()
+			print('load peak accessiblity and gene expression data used %.2fs'%(stop-start))
+			
+		return select_config
 
 	## gene-peak association query: search peak-gene association, peak accessibility-gene expr correlation estimation
 	# for each gene query, search for peaks within the distance threshold, estimate peak accessibility-gene expr correlation

@@ -26,22 +26,23 @@ import time
 from timeit import default_timer as timer
 
 from joblib import Parallel, delayed
+from test_reunion_compute_pre2 import _Base_pre2
 import train_pre1_1
 import utility_1
 from utility_1 import test_query_index
 import h5py
 import pickle
 
-class _Base2_2(BaseEstimator):
-	"""Base class for peak-TF-gene link estimation
+class _Base2_2(_Base_pre2):
+	"""Feature association estimation
 	"""
 	def __init__(self,file_path,run_id=1,species_id=1,cell='ES', 
 					generate=1,
 					chromvec=[1],
 					test_chromvec=[2],
 					featureid=1,
-					typeid=1,
 					df_gene_annot_expr=[],
+					typeid=1,
 					method=1,
 					flanking=50,
 					normalize=1,
@@ -49,24 +50,22 @@ class _Base2_2(BaseEstimator):
 					config={},
 					select_config={}):
 
-		self.run_id = run_id
-		self.cell = cell
-		self.generate = generate
-		self.train_chromvec = chromvec
-		self.chromosome = chromvec[0]
-
-		self.path_1 = file_path
-		self.config = config
-		self.run_id = run_id
-
-		self.save_path_1 = file_path
-		self.pre_rna_ad = []
-		self.pre_atac_ad = []
-		self.fdl = []
-		self.motif_data = []
-		self.motif_data_score = []
-		self.motif_query_name_expr = []
-		self.motif_query_name_expr = []
+		_Base_pre1.__init__(self,file_path=file_path,
+									run_id=run_id,
+									species_id=species_id,
+									cell=cell,
+									generate=generate,
+									chromvec=chromvec,
+									test_chromvec=test_chromvec,
+									featureid=featureid,
+									df_gene_annot_expr=df_gene_annot_expr,
+									typeid=typeid,
+									method=method,
+									flanking=flanking,
+									normalize=normalize,
+									type_id_feature=type_id_feature,
+									config=config,
+									select_config=select_config)
 
 	## file_path query
 	# query the basic file path
@@ -397,376 +396,6 @@ class _Base2_2(BaseEstimator):
 				df1.to_csv(output_filename,sep='\t')
 
 		return df1
-
-	## load motif data
-	def test_load_motif_data_pre1(self,input_filename_list1=[],
-										input_filename_list2=[],
-										flag_query1=1,
-										flag_query2=1,
-										overwrite=True,
-										input_file_path='',
-										save_mode=1,
-										save_file_path='',
-										type_id_1=0,
-										type_id_2=1,
-										select_config={}):
-	
-		flag_pre1=0
-		motif_data, motif_data_score = [], []
-		type_id_query = type_id_1
-		df_annot = []
-		if len(input_filename_list1)>0:
-			## load from the processed anndata
-			input_filename1, input_filename2 = input_filename_list1
-			if (os.path.exists(input_filename1)==True) and (os.path.exists(input_filename2)==True):
-				motif_data_ad = sc.read(input_filename1)
-				try:
-					motif_data = pd.DataFrame(index=motif_data_ad.obs_names,columns=motif_data_ad.var_names,data=np.asarray(motif_data_ad.X.toarray()))
-				except Exception as error:
-					print('error! ',error)
-					motif_data = pd.DataFrame(index=motif_data_ad.obs_names,columns=motif_data_ad.var_names,data=np.asarray(motif_data_ad.X))
-
-				motif_data_score_ad = sc.read(input_filename2)
-				try:
-					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X.toarray()),dtype=np.float32)
-				except Exception as error:
-					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X))
-			
-				# print('motif_data ', motif_data)
-				# print('motif_data_score ', motif_data_score)
-				print('motif scanning data (binary), dataframe of ', motif_data.shape)
-				print('data preview: ')
-				print(motif_data[0:2])
-				print('motif scores, dataframe of ', motif_data_score.shape)
-				print('data preview: ')
-				print(motif_data_score[0:2])
-				# motif_data_query, motif_data_score_query = motif_data, motif_data_score
-				flag_pre1 = 1
-
-		# load from the original motif data
-		if flag_pre1==0:
-			print('load the motif data')
-			input_filename1, input_filename2 = input_filename_list2[0:2]
-
-			print('filename of motif scanning data (binary) ',input_filename1)
-			print('filename of motif scores ',input_filename2)
-
-			# motif_data, motif_data_score = [], []
-			if os.path.exists(input_filename1)==False:
-				print('the file does not exist: %s'%(input_filename1))
-			else:
-				b = input_filename1.find('.csv')
-				if b>=0:
-					symbol_1 = ','
-				else:
-					symbol_1 = '\t'
-				motif_data = pd.read_csv(input_filename1,index_col=0,sep=symbol_1)
-				print('motif scanning data, dataframe of ',motif_data.shape)
-				print('data preview: ')
-				print(motif_data[0:2])
-			
-			if os.path.exists(input_filename2)==False:
-				print('the file does not exist: %s'%(input_filename2))
-			else:
-				b = input_filename2.find('.csv')
-				if b>=0:
-					symbol_1 = ','
-				else:
-					symbol_1 = '\t'
-				motif_data_score = pd.read_csv(input_filename2,index_col=0,sep=symbol_1)
-				print('motif scores, dataframe of ',motif_data_score.shape)
-				print('data preview: ')
-				print(motif_data_score[0:2])
-
-			if len(motif_data)==0:
-				if len(motif_data_score)>0:
-					# motif_data = (motif_data_score>0)
-					motif_data = (motif_data_score.abs()>0)
-				else:
-					print('please provide motif scanning data')
-					return
-			else:
-				if len(motif_data_score)>0:
-					motif_data_2 = (motif_data_score.abs()>0)*1.0
-					# difference = np.abs(motif_data-motif_data_1)
-					difference = np.abs(motif_data-motif_data_2)
-					assert np.max(np.max(difference))==0
-
-					## motif name query
-					motif_name_ori = motif_data.columns
-					motif_name_score_ori = motif_data_score.columns
-					peak_loc = motif_data.index
-					peak_loc_1 = motif_data_score.index
-
-					assert list(motif_name_ori)==list(motif_name_score_ori)
-					assert list(peak_loc)==list(peak_loc_1)
-					
-					# print('load motif data', input_filename1, input_filename2, motif_data.shape, motif_data_score.shape)
-					# print('motif_data ', motif_data)
-					# print('motif_data_score ', motif_data_score)
-
-			# motif name conversion
-			input_filename_translation = select_config['filename_translation']
-			df_annot = []
-			type_id_query = 1
-			# overwrite = 0
-			# flag_query1 = 1
-			if os.path.exists(input_filename_translation)==False:
-				print('the file does not exist: %s'%(input_filename_translation))
-
-				# if flag_query1>0:
-				output_filename = input_filename_translation
-				# meta_scaled_exprs = self.meta_scaled_exprs
-				# df_gene_annot = []
-				df_gene_annot = self.df_gene_annot_ori
-				df_annot = self.test_translationTable_pre1(motif_data=motif_data,
-																df_gene_annot=df_gene_annot,
-																save_mode=1,
-																save_file_path=save_file_path,
-																output_filename=output_filename,
-																select_config=select_config)
-			else:
-				print('load TF motif name mapping file')
-				df_annot = pd.read_csv(input_filename_translation,index_col=0,sep='\t')
-
-			## motif name correction for the conversion in R
-			print('perform TF motif name mapping')
-			df_annot.index = np.asarray(df_annot['motif_id'])
-			motif_name_ori = motif_data.columns
-			motif_name_query = np.asarray(df_annot.loc[motif_name_ori,'tf'])
-
-			# motif_data.columns = motif_name_query # TODO: should update
-			column_id = 'tf'
-			motif_data, motif_data_ori = self.test_load_motif_data_pre2(motif_data=motif_data,
-																			df_annot=df_annot,
-																			column_id=column_id,
-																			select_config=select_config)
-
-			print('motif scanning data, dataframe of ',motif_data.shape)
-			print('data preview: ')
-			print(motif_data[0:2])
-
-			# print('motif_data_ori ',motif_data_ori.shape)
-			# print(motif_data_ori[0:2])
-
-			print('perform motif name conversion ')
-			motif_data = self.test_query_motif_name_conversion_1(motif_data)
-
-			if len(motif_data_score)>0:
-				# motif_data_score.columns = motif_name_query # TODO: should update
-				motif_data_score, motif_data_score_ori = self.test_load_motif_data_pre2(motif_data=motif_data_score,
-																						df_annot=df_annot,
-																						column_id=column_id,
-																						select_config=select_config)
-
-				print('motif_data_score ',motif_data_score.shape)
-				print(motif_data_score[0:2])
-
-				# print('motif_data_score_ori ',motif_data_score_ori.shape)
-				# print(motif_data_score_ori[0:2])
-
-				print('perform motif name conversion ')
-				motif_data_score = self.test_query_motif_name_conversion_1(motif_data_score)
-
-			if save_mode>0:
-				# output_filename_list = input_filename_list1
-				column_1 = 'filename_list_save_motif'
-				# the filename to save the motif data
-				if column_1 in select_config:
-					output_filename_list = select_config[column_1]
-				else:
-					data_file_type = select_config['data_file_type']
-					if save_file_path=='':
-						# save_file_path = select_config['file_save_path_1']
-						save_file_path = select_config['file_path_motif']
-
-					output_file_path = save_file_path
-					output_filename1 = '%s/test_motif_data.%s.h5ad'%(output_file_path,data_file_type)
-					output_filename2 = '%s/test_motif_data_score.%s.h5ad'%(output_file_path,data_file_type)
-					output_filename_list = [output_filename1,output_filename2]
-
-				output_filename1, output_filename2 = output_filename_list
-
-				motif_data_ad = utility_1.test_save_anndata(motif_data,sparse_format='csr',obs_names=None,var_names=None,dtype=motif_data.values.dtype)
-
-				if os.path.exists(output_filename1)==True:
-					print('the file exists ', output_filename1)
-
-				if (os.path.exists(output_filename1)==False) or (overwrite==True):
-					motif_data_ad.write(output_filename1)
-					print('save motif scanning data ',motif_data_ad)
-					print(output_filename1)
-
-				if len(motif_data_score)>0:
-					motif_data_score_ad = utility_1.test_save_anndata(motif_data_score,sparse_format='csr',obs_names=None,var_names=None,dtype=motif_data_score.values.dtype)
-
-					if (os.path.exists(output_filename2)==False) or (overwrite==True):
-						motif_data_score_ad.write(output_filename2)
-						print('save motif score data',motif_data_score_ad)
-						print(output_filename2)
-
-		flag_query2=0
-		if flag_query2>0:
-			df1 = (motif_data_score<0)
-			id2 = motif_data_score.columns[df1.sum(axis=0)>0]
-			if len(id2)>0:
-				motif_data_score_ori = motif_data_score.copy()
-				count1 = np.sum(np.sum(df1))
-				# print('there are negative motif scores ',id2,count1)
-				print('there are negative motif scores ',count1)
-				
-		return motif_data, motif_data_score, df_annot, type_id_query
-
-	## load motif data
-	# merge multiple columns that correspond to one TF to one column
-	def test_load_motif_data_pre2(self,motif_data,df_annot,column_id='tf',select_config={}):
-
-		# motif_idvec_1= df_annot1.index
-		motif_idvec = motif_data.columns.intersection(df_annot.index,sort=False)
-		motif_data = motif_data.loc[:,motif_idvec]
-		motif_data_ori = motif_data.copy()
-		motif_data1 = motif_data.T
-		motif_idvec = motif_data1.index  # original motif id
-		motif_data1.loc[:,'tf'] = df_annot.loc[motif_idvec,column_id]
-		motif_data1 = motif_data1.groupby('tf').max()
-		motif_data = motif_data1.T
-		# print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape,method_type)
-		# print('motif_data_ori, motif_data ',motif_data_ori.shape,motif_data.shape)
-		
-		query_idvec = np.asarray(df_annot['motif_id'])
-		query_num1 = len(query_idvec)
-		t_vec_1 = np.random.randint(query_num1,size=5)
-		for iter_id1 in t_vec_1:
-			# column_1 = 'ENSG00000196843_LINE52_ARID5A_I'
-			# column_2 = 'ARID5A'
-			motif_id_query = query_idvec[iter_id1]
-			column_1 = motif_id_query
-			column_2 = np.asarray(df_annot.loc[df_annot['motif_id']==motif_id_query,'tf'])[0]
-			# print('column_1, column_2 ',column_1,column_2,iter_id1)
-
-			difference = (motif_data_ori[column_1].astype(int)-motif_data[column_2].astype(int)).abs().max()
-			# print('difference ',column_1,column_2,difference,iter_id1)
-			assert difference<1E-07
-
-		# print(motif_data[0:5])
-		# field_id = '%s.ori'%(key_query)
-		# if not (field_id in dict_query):
-		# 	dict_query.update({'%s.ori'%(key_query):motif_data_ori})
-		return motif_data, motif_data_ori
-
-	# chromvar score query: chromvar score comparison with TF expression
-	# query correlation and mutual information between chromvar score and TF expression
-	def test_chromvar_score_query_1(self,input_filename,motif_query_name_expr,filename_prefix_save='',output_file_path='',output_filename='',df_query=[],type_id_query=0,select_config={}):
-
-		df1 = df_query
-		# df1.index = np.asarray(df1['motif_name_ori'])
-		df1.index = np.asarray(df1['motif_id'])
-		chromvar_score = pd.read_csv(input_filename,index_col=0,sep=',')
-		print('chromvar_score, dataframe of size ', chromvar_score.shape)
-		sample_id1 = chromvar_score.columns
-		motif_id1 = chromvar_score.index
-		chromvar_score.index = df1.loc[motif_id1,'tf']
-		if type_id_query==1:
-			str_vec_1 = sample_id1.str.split('.')
-			str_query_list = [str_vec_1.str.get(i1) for i1 in range(2)]
-			str_query1, str_query2 = str_query_list
-			query_num2 = len(str_query1)
-			chromvar_score.columns = ['%s-%s'%(str_query1[i2],str_query2[i2]) for i2 in range(query_num2)]
-		else:
-			print('chromvar_score: use the loaded columns')
-
-		rna_ad = self.rna_meta_ad
-		meta_scaled_exprs = self.meta_scaled_exprs
-		assert list(chromvar_score.columns)==list(rna_ad.obs_names)
-		assert list(chromvar_score.columns)==list(meta_scaled_exprs.index)
-		if output_file_path=='':
-			output_file_path = input_file_path
-		
-		if output_filename=='':
-			b = input_filename.find('.csv')
-			output_filename = input_filename[0:b]+'copy1.csv'
-		chromvar_score.to_csv(output_filename)
-		print('chromvar_score ',chromvar_score.shape,chromvar_score)
-
-		chromvar_score = chromvar_score.T
-		sample_id = meta_scaled_exprs.index
-		chromvar_score = chromvar_score.loc[sample_id,:]
-
-		motif_query_vec = motif_query_name_expr
-		motif_query_num = len(motif_query_vec)
-		print('motif_query_vec ',motif_query_num)
-		field_query_1 = ['spearmanr','pval1','pearsonr','pval2','mutual_info']
-		df_1 = pd.DataFrame(index=motif_query_vec,columns=field_query_1)
-		for i1 in range(motif_query_num):
-			motif_query1 = motif_query_vec[i1]
-			tf_expr_1 = np.asarray(meta_scaled_exprs[motif_query1])
-			tf_score_1 = np.asarray(chromvar_score[motif_query1])
-			corr_value_1, pval1 = spearmanr(tf_expr_1,tf_score_1)
-			corr_value_2, pval2 = pearsonr(tf_expr_1,tf_score_1)
-			t_mutual_info = mutual_info_regression(tf_expr_1[:,np.newaxis], tf_score_1, discrete_features=False, n_neighbors=5, copy=True, random_state=0)
-			t_mutual_info = t_mutual_info[0]
-			df_1.loc[motif_query1,:] = [corr_value_1,pval1,corr_value_2,pval2,t_mutual_info]
-
-		df_1 = df_1.sort_values(by=field_query_1,ascending=[False,True,False,True,False])
-		
-		filename = output_filename
-		b = filename.find('.csv')
-		output_filename = '%s.annot1.txt'%(filename[0:b])
-		field_query_2 = ['highly_variable','means','dispersions','dispersions_norm']
-		df_gene_annot_expr = self.df_gene_annot_expr
-		df_gene_annot_expr.index = np.asarray(df_gene_annot_expr['gene_name'])
-		motif_id1 = df_1.index
-		df_1.loc[:,field_query_2] = df_gene_annot_expr.loc[motif_id1,field_query_2]
-		df_1.to_csv(output_filename,sep='\t',float_format='%.6E')
-		mean_value = df_1.mean(axis=0)
-		median_value = df_1.median(axis=0)
-
-		df_2 = df_1.sort_values(by=['highly_variable','dispersions_norm','means','spearmanr','pval1','pearsonr','pval2','mutual_info'],ascending=[False,False,False,False,True,False,True,False])
-		df_2.to_csv(output_filename,sep='\t',float_format='%.6E')
-		id1 = (df_2['highly_variable']==True)
-		motif_id2 = df_2.index
-		motif_query_2 = motif_id2[id1]
-		motif_query_num2 = len(motif_query_2)
-		motif_query_3 = motif_id2[~id1]
-		motif_query_num3 = len(motif_query_3)
-		mean_value = df_2.loc[id1,:].mean(axis=0)
-		median_value = df_2.loc[id1,:].median(axis=0)
-		mean_value_2 = df_2.loc[(~id1),:].mean(axis=0)
-		median_value_2 = df_2.loc[(~id1),:].median(axis=0)
-		print('highly_variable TF expression, mean_value, median_value ',motif_query_num2,mean_value,median_value)
-		print('group 2 TF expressoin, mean_value, median_value ',motif_query_num3,mean_value_2,median_value_2)
-
-		return df_2
-
-	## motif_name conversion
-	def test_query_motif_name_conversion_1(self,data=[],select_config={}):
-
-		motif_data = data
-		dict1 = {'ENSG00000142539':'SPIB',
-					'ENSG00000229544':'NKX1-2',
-					'TBXT':'T',
-					'AC0125311':'HOXC5',
-					'AC2261502':'ANHX',
-					'AC0021266':'BORCS8-MEF2B',
-					'CCDC169-SOHLH2':'C13orf38SOHLH2',
-					'LINE4118':'ZNF75C',
-					'LINE11277':'DUX1',
-					'LINE11282':'DUX3'}
-
-		motif_data = motif_data.rename(columns=dict1)
-		return motif_data
-
-	## query the method type based on the motif data used
-	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],data=[],select_config={}):
-
-		if len(method_annot_vec)==0:
-			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
-
-		flag_1 = False
-		for method_annot_1 in method_annot_vec:
-			flag_1 = (flag_1|(method_type.find(method_annot_1)>-1))
-
-		return flag_1
 	
 	## query file save path
 	# query the filename of the estimated peak-TF-gene link query
@@ -1095,16 +724,12 @@ class _Base2_2(BaseEstimator):
 
 		elif load_mode_2==1:
 			input_file_path_query = output_file_path
-			# annot_str_vec = ['peak_gene','peak_motif','peak_motif_ori']
-			# annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
-			# field_query = ['peak_motif','peak_tf']
 			annot_str_vec = ['peak_motif','peak_tf']
 			field_query_2 = ['df_latent','df_component']
 			dict_query1 = dict()
 
 			# field_num = len(field_query)
 			query_num = len(annot_str_vec)
-			
 			for i2 in range(query_num):
 				method_type_dimension = method_type_vec_dimension[i2]
 				filename_save_annot_2 = '%s_%s'%(method_type_dimension,n_components)
@@ -1281,9 +906,6 @@ class _Base2_2(BaseEstimator):
 				if (flag1+flag2<2):
 					df_overlap_query1 = df_query_1.loc[id_1,:]
 					if verbose_internal>0:
-						# print('the original overlap, the overlap with enrichment above threshold')
-						# print('df_overlap_query, df_overlap_query1: ',df_query_1.shape,df_overlap_query1.shape)
-						# print('the number of paired groups: ',df_query_1.shape[0])
 						print('the number of selected paired groups with enrichment of predicted TF-binding peaks above threshold: ',df_overlap_query1.shape[0])
 				else:
 					df_overlap_query1 = []
