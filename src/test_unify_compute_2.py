@@ -65,106 +65,6 @@ class _Base2_correlation3(_Base2_correlation2):
 										config=config,
 										select_config=select_config)
 
-	## file_path query
-	# def test_config_query_pre1(self,beta_mode=0,save_mode=1,overwrite=False,select_config={}):
-
-	# 	print('test_config_query')
-	# 	flag_query1=1
-	# 	if flag_query1>0:
-	# 		# select_config = self.test_config_query_2(beta_mode=beta_mode,save_mode=save_mode,overwrite=overwrite,select_config=select_config)
-	# 		# self.select_config = select_config
-
-	# 		# thresh1_ratio, thresh1, distance_tol_1 = 1.5, 0.15, -250
-	# 		# thresh1_ratio, thresh1, distance_tol_1 = 1.5, 0.15, -500
-	# 		thresh1_ratio, thresh1, distance_tol_1 = 1.0, 0, -250 # smaller distance and similar or higher correlation
-	# 		thresh2_ratio, thresh2, distance_tol_2 = 1.5, 0.15, 50 # similar distance and higher correlation
-	# 		# thresh3_ratio, thresh3, distance_tol_3 = 0.9, -0.05, -500 # smaller distance and similar or higher correlation
-	# 		# thresh3_ratio, thresh3, distance_tol_3 = 0.95, -0.01, -250
-	# 		thresh3_ratio, thresh3, distance_tol_3 = 0.9, -0.02, -250
-	# 		# thresh5_ratio, thresh5, distance_tol_5 = 0.75, -0.1, -500
-	# 		thresh5_ratio, thresh5, distance_tol_5 = 0.8, -0.1, -500
-	# 		thresh6_ratio, thresh6, distance_tol_6 = 0.9, -0.02, -100
-	# 		# thresh6_ratio, thresh6, distance_tol_6 = 0.9, -0.02, -50
-	# 		thresh7_ratio, thresh7, distance_tol_7 = 1.5, 0.1, 25
-	# 		thresh_vec_1 = [thresh1_ratio, thresh1, distance_tol_1]
-	# 		thresh_vec_2 = [thresh2_ratio, thresh2, distance_tol_2]
-	# 		thresh_vec_3 = [thresh3_ratio, thresh3, distance_tol_3]
-	# 		thresh_vec_5 = [thresh5_ratio, thresh5, distance_tol_5]
-	# 		thresh_vec_6 = [thresh6_ratio, thresh6, distance_tol_6]
-	# 		# thresh_vec_7 = [thresh6_ratio, thresh7, distance_tol_7]
-	# 		thresh_vec_7 = [thresh7_ratio, thresh7, distance_tol_7]
-	# 		# thresh_vec_compare = [thresh_vec_1,thresh_vec_2]
-	# 		# thresh_vec_compare = [thresh_vec_3,thresh_vec_2]
-	# 		# thresh_vec_compare = [thresh_vec_3,thresh_vec_5,thresh_vec_2]
-	# 		# thresh_vec_compare = [thresh_vec_6,thresh_vec_5,thresh_vec_2]
-
-	# 		thresh_vec_compare = [thresh_vec_6,thresh_vec_5,thresh_vec_7]
-	# 		# print('thresh_vec_compare ',thresh_vec_compare)
-	# 		# if 'thresh_vec_compare' in select_config:
-	# 		# 	thresh_vec_compare = select_config['thresh_vec_compare']
-	# 		# else:
-	# 		# 	select_config.update({'thresh_vec_compare':thresh_vec_compare})
-	# 		# select_config.update({'thresh_vec_compare':thresh_vec_compare})
-
-	# 		peak_distance_thresh_compare = 50
-	# 		# select_config.update({'peak_distance_thresh_compare':peak_distance_thresh_compare})
-
-	# 		parallel_mode = 0
-	# 		interval_peak_query = 100
-	# 		# select_config.update({'interval_peak_query':interval_peak_query})
-
-	# 		# used in function: test_peak_score_distance_1()
-	# 		# decay_value_vec = [1,0.9,0.75,0.6]
-	# 		# distance_thresh_vec = [50,500,1000,2000]
-
-	# 		# if 'decay_value_vec' in select_config:
-	# 		# 	decay_value_vec = select_config['decay_value_vec']
-	# 		# else:
-	# 		# 	decay_value_vec = [1,0.9,0.75,0.6]
-
-	# 		# if 'distance_thresh_vec' in select_config:
-	# 		# 	distance_thresh_vec = select_config['distance_thresh_vec']
-	# 		# else:
-	# 		# 	distance_thresh_vec = [50,500,1000,2000]
-
-	# 		# used in function: test_peak_score_distance_1()
-	# 		decay_value_vec = [1,0.9,0.75,0.6]
-	# 		distance_thresh_vec = [50,500,1000,2000]
-	# 		list1 = [thresh_vec_compare,peak_distance_thresh_compare,parallel_mode,interval_peak_query,decay_value_vec,distance_thresh_vec]
-	# 		# select_config.update({'decay_value_vec':decay_value_vec,'distance_thresh_vec':distance_thresh_vec})
-	# 		field_query = ['thresh_vec_compare','peak_distance_thresh_compare','parallel_mode','interval_peak_query',
-	# 						'decay_value_vec','distance_thresh_vec']
-			
-	# 		field_num1 = len(field_query)
-	# 		for i1 in range(field_num1):
-	# 			field_id = field_query[i1]
-	# 			if not (field_id in select_config):
-	# 				select_config.update({field_id:list1[i1]})
-
-	# 		# save_file_path = select_config['data_path_save']
-	# 		save_file_path = select_config['data_path_save_local']
-	# 		# input_file_path2 = '%s/peak_local'%(save_file_path)
-	# 		input_file_path = save_file_path
-	# 		filename_prefix_1 = select_config['filename_prefix_default']
-	# 		filename_prefix_2 = select_config['filename_prefix_save_default']
-	# 		# input_filename_peak_query = '%s/%s.%s.peak_query1.txt'%(input_file_path2,filename_prefix_1,filename_prefix_2)
-	# 		# input_filename_peak_query = '%s/%s.%s.peak_query1.txt'%(input_file_path2,filename_prefix_1,filename_prefix_2)
-	# 		input_filename_peak_query = '%s/%s.%s.peak_basic.txt'%(input_file_path,filename_prefix_1,filename_prefix_2)
-	# 		# if 'input_filename_peak_query' in select_config:
-	# 		# 	input_filename_peak_query = select_config['input_filename_peak_query']
-	# 		# else:
-	# 		# 	input_filename_peak_query = '%s/%s.peak_query1.txt'%(input_file_path,filename_prefix_2)
-	# 		select_config.update({'input_filename_peak_query':input_filename_peak_query})
-	# 		file_path_basic_filter = '%s/temp2'%(save_file_path)
-	# 		if os.path.exists(file_path_basic_filter)==False:
-	# 			print('the directory does not exist:%s'%(file_path_basic_filter))
-	# 			os.mkdir(file_path_basic_filter)
-	# 		select_config.update({'file_path_basic_filter':file_path_basic_filter})
-			
-	# 		self.select_config = select_config
-
-	# 		return select_config
-
 	## ====================================================
 	# compare alternative peak-gene links
 	# estimate peak accessibility-gene expression correlation
@@ -2506,7 +2406,6 @@ class _Base2_correlation3(_Base2_correlation2):
 							for i2 in range(query_num2):
 								df_query = list1[i2]
 								t_columns = df_query.columns.difference(column_vec_2,sort=False)
-								# output_filename = '%s/%s.df_link_query2.2_%d.%d.%d.txt'%(output_file_path,filename_prefix_save_1,(i2+1),type_query,type_id_1)
 								output_filename = '%s/%s.link_query.2_%d.%d.%s.txt'%(output_file_path,filename_prefix_save_1,(i2+1),type_query,filename_annot1)
 								df1 = df_query.loc[:,t_columns]
 								df1.to_csv(output_filename,index=False,sep='\t',float_format=float_format)
