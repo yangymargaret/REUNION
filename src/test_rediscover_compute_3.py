@@ -1112,10 +1112,20 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return df_overlap_query, df_overlap_mtx, dict_group_basic_1
 	
-	## compute feature embeddings
+	## ====================================================
+	# compute feature embeddings
 	def test_query_feature_embedding_pre1(self,data=[],dict_feature=[],feature_type_vec=[],method_type='',field_query=[],peak_read=[],rna_exprs=[],
 												n_components=50,iter_id=-1,config_id_load=-1,flag_config=1,flag_motif_data_load=1,flag_load_1=1,input_file_path='',overwrite=False,
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		compute feature embeddings of peak loci
+		parameters are stored in select_config
+		param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
+		param method_type_dimension: the method for dimension reduction
+		param n_components: the number of latent components used for feature representation
+		return: dict_query1: {feature_type:latent score matrix (feature embedding), feature_type:component matrix}
+		"""
 
 		data_file_type_query = select_config['data_file_type']
 
@@ -1173,13 +1183,12 @@ class _Base2_2_pre1(_Base2_2_1):
 		
 		method_type_dimension = select_config['method_type_dimension']
 		# method_type_vec_dimension = ['SVD','SVD','SVD']
-		num1 = 3
+		feature_type_num1 = len(feature_type_vec)
+		num1 = feature_type_num1
 		method_type_vec_dimension = [method_type_dimension]*num1
 		
-		# n_components = 50
 		motif_group = []
 		load_mode = 0
-		# file_path_query_1 = input_file_path
 		output_file_path_default = output_file_path
 		
 		column_1 = 'file_path_group_query'
@@ -1205,8 +1214,7 @@ class _Base2_2_pre1(_Base2_2_1):
 		output_file_path_2 = file_path_group_query
 
 		# compute feature embedding
-		# dict_query1: {'peak_motif':dict1,'peak_tf':dict1}
-		# dict1:{'df_latent','df_component'}
+		# dict_query1: {feature_type:latent score matrix, feature_type:component matrix}
 		dict_query1 = self.test_query_feature_mtx_1(feature_query_vec=feature_query_vec,
 														feature_type_vec=feature_type_vec,
 														gene_query_vec=motif_query_vec_1,
@@ -1222,12 +1230,20 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return dict_query1, select_config
 
+	## ====================================================
 	# load df_latent and df_component; compute reconstructed matrix
 	def test_query_feature_embedding_load_pre1(self,data=[],dict_file={},method_type_vec=[],feature_type_vec=[],method_type_dimension='SVD',n_components=100,n_component_sel=50,peak_read=[],rna_exprs=[],reconstruct=1,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
+		"""
+		compute feature embeddings of peak loci
+		parameters are stored in select_config
+		param n_component_sel: the number of latent components used for feature representation
+		return: dict_query1: {feature_type: {df_latent(feature embedding), df_component(component matrix), reconstruct_mtx}}
+		"""
+
 		data_file_type_query = select_config['data_file_type']
 
-		load_mode_2 = 1   # use the given filename
+		load_mode_2 = 1  # use the given filename
 		if len(dict_file)==0:
 			load_mode_2 = 0
 	
@@ -1300,10 +1316,16 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return dict_query1
 
-	## compare TF binding prediction
-	# perform clustering of peak and TF
-	# load low_dimension_embedding
+	## ====================================================
+	# load low-dimensional embeddings of peak loci
 	def test_query_feature_embedding_load_1(self,data=[],dict_file={},feature_query_vec=[],motif_id_query='',motif_id='',feature_type_vec=[],feature_type_vec_group=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,n_component_sel=50,reconstruct=1,peak_read=[],rna_exprs=[],flag_combine=1,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		compute feature embeddings of peak loci
+		parameters are stored in select_config
+		param n_component_sel: the number of latent components used for feature representation
+		return: dict_query1: {feature_type:latent score matrix (feature embedding)}
+		"""
 
 		# load df_latent and df_component; compute reconstructed matrix
 		dict_query_1 = self.test_query_feature_embedding_load_pre1(data=data,dict_file=dict_file,
@@ -1340,7 +1362,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			annot_str_vec = ['peak accessibility','peak motif matrix']
 			for i1 in range(feature_type_num):
 				feature_type_query = feature_type_vec[i1]
-				df_query = dict_query_1[feature_type_query]['df_latent']
+				df_query = dict_query_1[feature_type_query]['df_latent'] # load the latent score matrix
 
 				if query_mode>0:
 					df_query = df_query.loc[feature_query_vec,:]
@@ -1381,6 +1403,7 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return dict_query1
 
+	## ====================================================
 	# query peak loci predicted with binding sites using clustering
 	# dict_group: the original group assignment query
 	def test_query_binding_clustering_1(self,data1=[],data2=[],dict_group=[],dict_neighbor=[],dict_group_basic_1=[],df_overlap_1=[],df_overlap_compare=[],group_type_vec=['group1','group2'],feature_type_vec=[],group_vec_query=[],input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -1965,28 +1988,27 @@ class _Base2_2_pre1(_Base2_2_1):
 	# recompute based on training
 	def test_query_compare_binding_compute_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		data_file_type_query = select_config['data_file_type']
+		data_file_type = select_config['data_file_type']
+		data_file_type_query = data_file_type
 		select_config.update({'data_file_type_query':data_file_type_query})
-		# run_id1 = select_config['run_id']
-		print('data_file_type_query: ',data_file_type_query)
-		# print('run_id: ',run_id1)
+		print('data_file_type: ',data_file_type_query)
 		
 		if 'method_type_feature_link' in select_config:
 			method_type_feature_link = select_config['method_type_feature_link']
-			# method_type_feature_link_1 = method_type_feature_link.split('.')[0]
 		
 		filename_save_annot = '1'
-		# the methods used
+		# the methods used to predict peak-TF associations initially
 		method_type_vec = pd.Index(method_type_vec).union([method_type_feature_link],sort=False)
+		method_type_feature_link_query1 = method_type_feature_link
+		method_type_vec_query1 = [method_type_feature_link_query1]
+
+		verbose_internal = self.verbose_internal
 
 		flag_config_1 = 1
 		flag_gene_annot_1 = 1
 		flag_motif_data_load_1 = 1
 		flag_load_1 = 1
-		# method_type_feature_link_query1 = 'Unify'
-		method_type_feature_link_query1 = method_type_feature_link
-		method_type_vec_query1 = [method_type_feature_link_query1]
-
+	
 		root_path_1 = select_config['root_path_1']
 		data_path_save_1 = root_path_1
 
@@ -1994,8 +2016,8 @@ class _Base2_2_pre1(_Base2_2_1):
 		output_dir = select_config['output_dir']
 		input_file_path_pre1 = input_dir
 		output_file_path_pre1 = output_dir
-		print('input_file_path_pre1: ',input_file_path_pre1)
-		print('output_file_path_pre1: ',output_file_path_pre1)
+		print('input_file_path: ',input_file_path_pre1)
+		print('output_file_path: ',output_file_path_pre1)
 
 		file_path_motif = input_file_path_pre1
 		select_config.update({'file_path_motif':file_path_motif})
@@ -2018,7 +2040,6 @@ class _Base2_2_pre1(_Base2_2_1):
 														save_mode=1,verbose=verbose,select_config=select_config)
 
 		dict_query_1 = dict()
-		# feature_type_vec = ['latent_peak_motif','latent_peak_motif_ori','latent_peak_tf','latent_peak_tf_link']
 		feature_type_vec_group = ['latent_peak_tf','latent_peak_motif','latent_peak_motif_ori','latent_peak_tf_link']
 		# type_id_group_2 = select_config['type_id_group_2']
 		type_id_group_2 = 1
@@ -2037,12 +2058,10 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		print('feature type: %s %s'%(feature_type_vec_query[0],feature_type_vec_query[1]))
 
-		# flag_annot_1 = 1
 		method_type_group = select_config['method_type_group']
 		t_vec_1 = method_type_group.split('.')
 		method_type_group_name = t_vec_1[0]
 		n_neighbors_query = int(t_vec_1[1])
-		# print('method_type_group: ',method_type_group)
 		print('peak clustering method: %s, using number of neighbors: %d'%(method_type_group_name,n_neighbors_query))
 
 		method_type_vec_group_ori = [method_type_group_name]
@@ -2050,15 +2069,11 @@ class _Base2_2_pre1(_Base2_2_1):
 		select_config.update({'method_type_group_name':method_type_group_name,
 								'method_type_group_neighbor':method_type_group_neighbor})
 
-		# flag_clustering_1 = 0
-		# flag_clustering_1 = 1
-		output_dir = select_config['output_dir']
-		file_save_path_1 = output_dir
-
 		feature_mode = 1  # with RNA-seq and ATAC-seq data
 		feature_mode_query = feature_mode
 		select_config.update({'feature_mode':feature_mode})
 
+		file_save_path_1 = output_dir
 		file_path_group_query = '%s/group%d'%(file_save_path_1,feature_mode_query)
 		if os.path.exists(file_path_group_query)==False:
 			print('the directory does not exist: %s'%(file_path_group_query))
@@ -2066,11 +2081,7 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		select_config.update({'file_path_group_query':file_path_group_query})
 
-		# n_component_sel = select_config['n_component_sel']
-		# print('n_component_sel ',n_component_sel)
-
 		flag_iter_2 = 0
-		# method_type_vec_group = ['phenograph']
 		method_type_vec_group = method_type_vec_group_ori
 		select_config.update({'method_type_vec_group':method_type_vec_group,
 								'flag_iter_2':flag_iter_2})
@@ -2106,9 +2117,7 @@ class _Base2_2_pre1(_Base2_2_1):
 		n_components = select_config[column_1]
 		n_component_sel = select_config['n_component_sel']
 		method_type_dimension = select_config[column_2]
-		# print('method_type_dimension ',method_type_dimension)
 		# print('n_components ',n_components)
-		# print('n_component_sel ',n_component_sel)
 		print('method for dimension reduction: %s'%(method_type_dimension))
 		print('the number of components: %d'%(n_component_sel))
 
@@ -2144,8 +2153,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			stop = time.time()
 			print('computing feature embeddings used %.2fs'%(stop-start))
 
-		# flag_clustering_1=1
-		# flag_clustering_1=0
 		dict_file_feature = dict()
 		feature_type_vec_2 = feature_type_vec_2_ori
 		feature_type1, feature_type2 = feature_type_vec_2[0:2]
@@ -2166,9 +2173,9 @@ class _Base2_2_pre1(_Base2_2_1):
 		
 		if flag_clustering_1>0:
 			# feature_type_vec = feature_type_vec_query
-			dict_latent_query1 = self.test_query_feature_clustering_pre1(data=dict_query_1,feature_query_vec=peak_loc_ori,feature_type_vec=feature_type_vec_2,save_mode=1,verbose=verbose,select_config=select_config)
-
-			# return
+			dict_latent_query1 = self.test_query_feature_clustering_pre1(data=dict_query_1,feature_query_vec=peak_loc_ori,
+																			feature_type_vec=feature_type_vec_2,
+																			save_mode=1,verbose=verbose,select_config=select_config)
 
 		flag_annot_1 = 1
 		if flag_annot_1>0:
@@ -2178,8 +2185,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				thresh_size_1 = thresh_size_group
 
 			# for selecting the peak loci predicted with TF binding
-			# thresh_score_query_1 = 0.125
-			# thresh_size_1 = 20
 			thresh_score_query_1 = 0.15
 			if 'thresh_score_group_1' in select_config:
 				thresh_score_group_1 = select_config['thresh_score_group_1']
@@ -2188,7 +2193,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			thresh_score_default_1 = thresh_score_query_1
 			thresh_score_default_2 = 0.10
 
-		# flag_group_load_1 = 1
 		input_file_path_2 = file_path_group_query
 		output_file_path_2 = file_path_group_query
 		if flag_group_load_1>0:
@@ -2226,10 +2230,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			flag_load_2 = 1
 			if flag_load_2>0:
 				feature_type_1, feature_type_2 = feature_type_vec_2_ori[0:2]
-			
-				# method_type_dimension = 'SVD'
-				# method_type_dimension = select_config['method_type_dimension']
-				# n_components = 50
+
 				n_components = select_config['n_components']
 				n_component_sel = select_config['n_component_sel']
 				type_id_group = select_config['type_id_group']
@@ -2290,8 +2291,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				motif_data_query1 = motif_data_query1.loc[peak_loc_ori,:]
 				motif_data = motif_data_query1
 				motif_name_ori = motif_data_query1.columns
-				# print('motif_data ',motif_data_query1.shape)
-				# print(motif_data_query1[0:2])
 			else:
 				filename_translation = select_config['filename_translation']
 				df_annot_motif_1 = pd.read_csv(filename_translation,index_col=0,sep='\t')
@@ -2302,8 +2301,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				motif_data_score_query1 = dict_motif_data_query['motif_data_score']
 				motif_data_score_query1 = motif_data_score_query1.loc[peak_loc_ori,:]
 				motif_data_score = motif_data_score_query1
-				# print('motif_score ',motif_data_score_query1[0:2])
-				# print(motif_data_score_query1[0:2])
 
 			motif_data_query1 = motif_data
 			motif_data_score_query1 = motif_data_score
@@ -2341,7 +2338,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				column_motif = t_vec_2[2]
 			
 			column_vec_query = [column_pred1,column_score_1,column_motif]
-			# print('column_vec_query: ',column_vec_query)
 			field_query = ['column_pred1','column_score_query1','column_motif']
 			for (field_id,query_value) in zip(field_query,column_vec_query):
 				select_config.update({field_id:query_value})
@@ -2376,8 +2372,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				model_type_id1 = select_config['model_type_id1']
 
 			beta_mode = select_config['beta_mode']
-			
-			# method_type_feature_link = select_config['method_type_feature_link']
 			method_type_group = select_config['method_type_group']
 			n_neighbors = select_config['neighbor_num']
 
@@ -2392,10 +2386,7 @@ class _Base2_2_pre1(_Base2_2_1):
 				start_id2 = np.min([query_id2,query_num_1])
 				iter_vec_1 = np.arange(start_id1,start_id2)
 				interval_save = False
-			# else:
-			# 	print('query_id1, query_id2: ',query_id1,query_id2)
-			# 	return
-
+			
 			# run_id_2_ori = 1
 			flag_select_1 = 1  # select pseudo positive training sample;
 			flag_select_2 = 1  # select pseudo negative training sample;
@@ -2497,6 +2488,7 @@ class _Base2_2_pre1(_Base2_2_1):
 				motif_id_query = motif_idvec_query[i1]
 				filename_link_query1 = '%s/%s.%s.%s.txt'%(file_path_link,filename_link_prefix,motif_id_query,filename_link_annot)
 				dict_file_load.update({motif_id_query:filename_link_query1})
+			
 			select_config.update({'dict_file_load':dict_file_load})
 			overwrite_2 = False
 			verbose_internal = 1
@@ -2508,6 +2500,8 @@ class _Base2_2_pre1(_Base2_2_1):
 				select_config.update({column_1:verbose_internal})
 			self.verbose_internal = verbose_internal
 
+			save_mode_pre2 = 1
+			dict_file_query_1 = dict()
 			for i1 in iter_vec_query:
 				motif_id_query = motif_idvec_query[i1]
 				motif_id1, motif_id2 = motif_id_query, motif_id_query
@@ -2527,9 +2521,7 @@ class _Base2_2_pre1(_Base2_2_1):
 				try:
 					# load the TF binding prediction file
 					# the possible columns: (signal,motif,predicted binding,motif group)
-					# filename_save_annot2 = '%s.%d'%(filename_save_annot_2,thresh_size_1)
 					start_1 = time.time()
-					# filename_prefix_1 = 'test_motif_query_binding_compare'
 					
 					flag_group_query_1 = 1
 					load_mode_pre1_1 = 1
@@ -2583,15 +2575,10 @@ class _Base2_2_pre1(_Base2_2_1):
 							return
 
 					motif_score = df_query1[column_motif]
-					# print('column_motif: ',column_motif)
-					# print(df_query1[column_motif][0:2])
-					
-					# query_vec_1 = df_query1[column_motif].unique()
+
 					query_vec_1 = np.unique(df_query1[column_motif])
 					if verbose_internal>0:
-						# print('query_vec_1: ',query_vec_1)
 						t_vec_1 = utility_1.test_stat_1(query_vec_1)
-						# print('query_vec_1: ',len(query_vec_1),t_vec_1)
 						print('the number of unique motif scores: %d'%(len(query_vec_1)))
 						print('the maximum, mininum, mean and median of motif scores for TF %s: '%(motif_id_query),t_vec_1)
 
@@ -2639,7 +2626,6 @@ class _Base2_2_pre1(_Base2_2_1):
 					id_pred1 = (df_query1[column_pred1]>0)
 					peak_loc_pre1 = df_query1.index
 					peak_loc_query1 = peak_loc_pre1[id_pred1]
-					# print('peak_loc_pre1, peak_loc_query1 ',len(peak_loc_pre1),len(peak_loc_query1))
 					print('ATAC-seq peak loci: %d'%(len(peak_loc_pre1)))
 					print('peak loci with TF binding predicted by %s: %d'%(method_type_feature_link,len(peak_loc_query1)))
 					
@@ -2693,7 +2679,6 @@ class _Base2_2_pre1(_Base2_2_1):
 							id_pre1 = id2
 
 						df_overlap_query2 = df_overlap_query.loc[id_pre1,:]
-
 						df_overlap_query.loc[id_pre1,'label_1'] = 1
 						group_vec_query_1 = np.asarray(df_overlap_query2.loc[:,['group1','group2']])
 						# print('df_overlap_query, df_overlap_query2: ',df_overlap_query.shape,df_overlap_query2.shape,motif_id_query,i1)
@@ -2705,17 +2690,12 @@ class _Base2_2_pre1(_Base2_2_1):
 						
 						load_mode_2 = load_mode_query2
 						if load_mode_2<2:
-							# filename_save_annot2_query = '%s.%s.%s.%s'%(method_type_query,method_type_group,motif_id_query,data_file_type_query)
-							# output_filename = '%s/test_query_df_overlap.%s.1.txt'%(output_file_path_2,filename_save_annot2_query)
 							output_filename = select_config['filename_overlap_1']
 							df_overlap_query.to_csv(output_filename,sep='\t')
 
 					flag_neighbor_query_1 = 0
 					if flag_group_query_1>0:
 						flag_neighbor_query_1 = 1
-
-					# if flag_select_1 in [2]:
-					# 	flag_neighbor_query_1 = 0
 
 					flag_neighbor = 1
 					flag_neighbor_2 = 1  # query neighbor of selected peak in the paired groups
@@ -2828,8 +2808,8 @@ class _Base2_2_pre1(_Base2_2_1):
 							# output_file_path_query = file_path_query2
 							file_path_save_group = select_config['folder_group_save']
 							output_file_path_query = file_path_save_group
+							
 							# select training sample
-
 							column_1 = 'thresh_overlap_default_1'
 							column_2 = 'thresh_overlap_default_2'
 							column_3 = 'thresh_overlap'
@@ -2845,8 +2825,6 @@ class _Base2_2_pre1(_Base2_2_1):
 									thresh_overlap_default_2 = 0
 									thresh_overlap = 0
 													
-									# thresh_pval_1 = 0.10
-									# thresh_pval_1 = 0.20
 									thresh_pval_group = 0.25
 									# thresh_quantile_overlap = 0.50
 									thresh_quantile_overlap = 0.75
@@ -2963,7 +2941,6 @@ class _Base2_2_pre1(_Base2_2_1):
 						# df_pre1.loc[peak_vec_2,motif_id_query] = 0
 						peak_num1 = len(peak_vec_1)
 						if verbose_internal==2:
-							# print('peak_vec_1: ',peak_num1)
 							print('selected pseudo positive training sample, data preview: ')
 							print(df_pre1.loc[peak_vec_1,[column_motif,motif_id_query]])
 
@@ -2993,10 +2970,10 @@ class _Base2_2_pre1(_Base2_2_1):
 							input_file_path = input_file_path_pre1
 							output_file_path_query = output_file_path_pre2
 
-							flag2=1
-							if flag2>0:
-							# try:
-								# recompute based on training
+							# flag_query2=1
+							# if flag_query2>0:
+							try:
+								# model training for peak-TF link prediction
 								df_pre2 = self.test_query_compare_binding_train_unit1(data=df_pre1,peak_query_vec=peak_loc_pre1,peak_vec_1=peak_vec_1,
 																						motif_id_query=motif_id_query,
 																						dict_feature=dict_feature,feature_type_vec=feature_type_vec_query,
@@ -3006,10 +2983,14 @@ class _Base2_2_pre1(_Base2_2_1):
 																						save_mode=1,output_file_path=output_file_path_query,output_filename=output_filename,
 																						filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot,
 																						verbose=verbose,select_config=select_config)
-							# except Exception as error:
-							# 	print('error! ',error)
-							# 	print('motif query: ',motif_id_query,i1)
-							# 	continue
+
+								if save_mode_pre2>0:
+									dict_file_query_1.update({motif_id_query:df_pre2})
+
+							except Exception as error:
+								print('error! ',error)
+								print('TF: ',motif_id_query,i1)
+								continue
 
 					stop_1 = time.time()
 					# print('TF binding prediction for TF %s (%s) used %.2fs'%(motif_id_query,motif_id2,stop_1-start_1))
@@ -3019,6 +3000,39 @@ class _Base2_2_pre1(_Base2_2_1):
 					 #print('error! ',error, motif_id_query,motif_id1,motif_id2,i1)
 					print('error! ',error, motif_id_query,motif_id2,i1)
 					# return
+
+			flag_score_query_1=0
+
+			return dict_file_query_1
+
+	## recompute based on clustering of peak and TF
+	# recompute based on training
+	def test_query_compare_binding_score_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		data_file_type = select_config['data_file_type']
+		data_file_type_query = data_file_type
+		select_config.update({'data_file_type_query':data_file_type_query})
+		print('data_file_type: ',data_file_type_query)
+		
+		if 'method_type_feature_link' in select_config:
+			method_type_feature_link = select_config['method_type_feature_link']
+			# method_type_feature_link_1 = method_type_feature_link.split('.')[0]
+		
+		filename_save_annot = '1'
+		# the methods used
+		method_type_vec = pd.Index(method_type_vec).union([method_type_feature_link],sort=False)
+		
+		method_type_feature_link_query1 = method_type_feature_link
+		method_type_vec_query1 = [method_type_feature_link_query1]
+
+		verbose_internal = self.verbose_internal
+
+		flag_config_1 = 1
+		flag_gene_annot_1 = 1
+		flag_motif_data_load_1 = 1
+		flag_load_1 = 1
+		
+
 
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',
@@ -3031,9 +3045,9 @@ class _Base2_2_pre1(_Base2_2_1):
 		chromosome = str(chromosome)
 		run_id = int(run_id)
 		species_id = str(species)
-		# cell = str(cell)
 		cell_type_id = int(cell)
-		print('cell_type_id: %d'%(cell_type_id))
+
+		# print('cell_type_id: %d'%(cell_type_id))
 		data_file_type = str(data_file_type)
 		metacell_num = int(metacell_num)
 		peak_distance_thresh = int(peak_distance_thresh)
@@ -3068,11 +3082,6 @@ class _Base2_2_pre1(_Base2_2_1):
 		if filename_prefix=='':
 			filename_prefix = data_file_type
 		
-		# typeid2 = int(typeid2)
-		# folder_id = int(folder_id)
-		# config_id_2 = int(config_id_2)
-		# config_group_annot = int(config_group_annot)
-		
 		ratio_1 = float(ratio_1)
 		ratio_2 = float(ratio_2)
 		flag_group = int(flag_group)
@@ -3081,10 +3090,8 @@ class _Base2_2_pre1(_Base2_2_1):
 		flag_clustering = int(flag_clustering)
 		flag_group_load = int(flag_group_load)
 
-		# train_id1 = int(train_id1)
 		flag_scale_1 = int(flag_scale_1)
 		beta_mode = int(beta_mode)
-		# motif_id_1 = str(motif_id_1)
 		verbose_mode = int(verbose_mode)
 
 		input_dir = str(input_dir)
@@ -3114,7 +3121,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			train_mode = int(train_mode)
 			data_file_type = str(data_file_type)
 
-			# run_id = 1
 			type_id_feature = 0
 
 			root_path_1 = '.'
@@ -3190,7 +3196,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				if flag1>0:
 					# type_query_group = 1
 					type_query_group = 0
-					# parallel_group = 1
 					parallel_group = 0
 					# flag_score_query = 1
 					flag_score_query = 0

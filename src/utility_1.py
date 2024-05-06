@@ -342,8 +342,6 @@ def test_column_query_2(df_list=[],id_column=[],query_idvec=[],column_vec_1=[],c
 # query default parameter
 def test_query_default_parameter_1(field_query=[],default_parameter=[],overwrite=False,select_config={}):
 
-	# field_query1 = ['root_path_1','root_path_2','run_id','type_id_feature']
-	# default_parameter = [file_path1,file_path1,run_id,type_id_feature]
 	field_num = len(field_query)
 	param_vec = default_parameter
 
@@ -355,6 +353,15 @@ def test_query_default_parameter_1(field_query=[],default_parameter=[],overwrite
 			param_vec[i1] = select_config[field_id]
 
 	return select_config, param_vec
+
+## update field query
+def test_field_query_pre1(field_query=[],query_value=[],overwrite=False,select_config={}):
+	# query_num1 = len(query_value)
+	for (field_id,query_value) in zip(field_query,query_value):
+		if (not (field_id in select_config)) or (overwrite==True):
+			select_config.update({field_id:query_value})
+
+	return select_config
 
 def score_function_multiclass1(y_test,y_pred,y_proba=[],average='binary',average_2='macro'):
 
@@ -732,10 +739,7 @@ def test_pvalue_correction(pvals,alpha=0.05,method_type_id='fdr_bh'):
 
 	return (id1, pvals_corrected, alpha_Sidak, alpha_Bonferroni), pval_thresh1
 
-## gene-peak association query: search peak-gene association, peak accessibility-gene expr correlation estimation
-# for each gene query, search for peaks within the distance threshold, estimate peak accessibility-gene expr correlation
-# input: the gene query, the peak distance threshold
-# output: peak accessibility-gene expr correlation (dataframe)
+# compute peak accessibility-TF expression correlation
 def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',
 										pval_correction=1,alpha=0.05,method_type_id_correction='fdr_bh',flag_load=0,field_load=[],parallel_mode=0,
 										save_mode=1,input_file_path='',input_filename_list=[],output_file_path='',
@@ -754,16 +758,11 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 			if file_num==0:
 				input_filename_list = ['%s/%s.%s.1.txt'%(input_file_path,filename_prefix,filename_annot) for filename_annot in field_load]
 
-			# list_query = [pd.read_csv(input_filename,sep='\t') for input_filename in input_filename_list]
 			dict_query = dict()
 			print('load estimated peak accessibility-TF expression correlation and p-value')
 			for i1 in range(field_num):
 				filename_annot1 = field_load[i1]
 				input_filename = input_filename_list[i1]
-				# if file_num>0:
-				# 	input_filename = input_filename_list[i1]
-				# else:
-				# 	input_filename = '%s/%s.%s.1.txt'%(input_file_path,filename_prefix,filename_annot1)
 				if os.path.exists(input_filename)==True:
 					df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 					field_query1 = filename_annot1
@@ -776,14 +775,9 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 					print('the file does not exist: %s'%(input_filename))
 					flag_load = 0
 				
-				# list_query.append(df_query)
-			# dict_query = dict(zip(field_load,list_query))
 			if len(dict_query)==field_num:
 				return dict_query
-			# else:
-			# 	flag_load = 0
-
-		# else:
+			
 		if flag_load==0:
 			# print('peak accessibility-TF expression correlation estimation ')
 			start = time.time()
@@ -807,18 +801,12 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 			query_num1 = len(list_query1)
 			stop = time.time()
 			print('peak accessibility-TF expression correlation estimation used: %.5fs'%(stop-start))
-			# if filename_prefix=='':
-			# 	# filename_prefix_1 = 'test_peak_tf_correlation'
-			# 	filename_prefix = 'test_peak_tf_correlation'
-			# filename_annot_vec = [correlation_type,'pval','pval_corrected','motif_basic']
 			
 			flag_save_text = 1
 			if 'flag_save_text_peak_tf' in select_config:
 				flag_save_text = select_config['flag_save_text_peak_tf']
 			
 			if save_mode>0:
-				# input_file_path2 = '%s/peak_local'%(input_file_path)
-				# output_file_path = input_file_path2
 				if output_file_path=='':
 					output_file_path = select_config['data_path']
 				if flag_save_text>0:
@@ -827,7 +815,6 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 						if len(df_query)>0:
 							filename_annot1 = filename_annot_vec[i1]
 							output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix,filename_annot1)
-							# output_filename = '%s/%s.%s.1.copy1.txt'%(output_file_path,filename_prefix,filename_annot1)
 							if i1 in [3]:
 								df_query.to_csv(output_filename,sep='\t',float_format='%.6f')
 							else:
@@ -852,7 +839,6 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 			motif_query_vec = pd.Index(motif_query_vec).intersection(rna_exprs.columns,sort=False)
 		
 		motif_query_num = len(motif_query_vec)
-		# print('motif_query_vec ',motif_query_num)
 		print('TF number: %d'%(motif_query_num))
 		peak_loc_ori_1 = motif_data.index
 		if len(peak_query_vec)>0:
@@ -962,20 +948,23 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 	return (df_corr_, df_pval_, df_pval_corrected, df_motif_basic)
 
 ## query peak-gene link attributes
-def test_gene_peak_query_attribute_1(df_gene_peak_query=[],df_gene_peak_query_ref=[],field_query=[],column_name=[],reset_index=True,select_config={}):
+def test_gene_peak_query_attribute_1(df_gene_peak_query=[],df_gene_peak_query_ref=[],column_idvec=[],field_query=[],column_name=[],reset_index=True,select_config={}):
 
+	if verbose>0:
 		print('df_gene_peak_query, df_gene_peak_query_ref ',df_gene_peak_query.shape,df_gene_peak_query_ref.shape)
-		query_id1_ori = df_gene_peak_query.index.copy()
-		df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=['peak_id','gene_id'])
-		df_gene_peak_query_ref.index = test_query_index(df_gene_peak_query_ref,column_vec=['peak_id','gene_id'])
-		query_id1 = df_gene_peak_query.index
-		df_gene_peak_query.loc[:,field_query] = df_gene_peak_query_ref.loc[query_id1,field_query]
-		if len(column_name)>0:
-			df_gene_peak_query = df_gene_peak_query.rename(columns=dict(zip(field_query,column_name)))
-		if reset_index==True:
-			df_gene_peak_query.index = query_id1_ori # reset the index
+	query_id1_ori = df_gene_peak_query.index.copy()
+	if len(column_idvec)==0:
+		column_idvec = ['peak_id','gene_id']
+	df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=column_idvec)
+	df_gene_peak_query_ref.index = test_query_index(df_gene_peak_query_ref,column_vec=column_idvec)
+	query_id1 = df_gene_peak_query.index
+	df_gene_peak_query.loc[:,field_query] = df_gene_peak_query_ref.loc[query_id1,field_query]
+	if len(column_name)>0:
+		df_gene_peak_query = df_gene_peak_query.rename(columns=dict(zip(field_query,column_name)))
+	if reset_index==True:
+		df_gene_peak_query.index = query_id1_ori # reset the index
 
-		return df_gene_peak_query
+	return df_gene_peak_query
 
 ## query the feature group
 def test_feature_group_query_basic_1(df_query=[],field_query=[],query_vec=[],column_vec=[],type_id_1=0,select_config={}):
@@ -1373,15 +1362,6 @@ def test_query_feature_link_format_1(data,column_idvec=[],flag_link_score=0,colu
 			df_link_score.loc[feature2_query,feature_id1] = np.asarray(df_link1.loc[feature2_query,column_link_score]) # for example: field_query='peak_tf_corr'; use peak_tf_corr as temporary feature link score
 
 	return df_link, df_link_score
-
-## update field query
-def test_field_query_pre1(field_query=[],query_value=[],overwrite=False,select_config={}):
-	# query_num1 = len(query_value)
-	for (field_id,query_value) in zip(field_query,query_value):
-		if (not (field_id in select_config)) or (overwrite==True):
-			select_config.update({field_id:query_value})
-
-	return select_config
 
 ## convert the long format dataframe to wide format
 def test_query_feature_format_1(df_feature_link=[],feature_query_vec=[],feature_type_vec=[],column_vec=[],column_value='',flag_unduplicate=1,format_type=0,save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=0,select_config={}):

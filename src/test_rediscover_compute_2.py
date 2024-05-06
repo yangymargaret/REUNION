@@ -98,71 +98,71 @@ class _Base2_2_1(_Base2_2):
 
 	# compare TF binding prediction
 	# the prediction performance
-	def test_query_compare_binding_pre1_5_1_unit1(self,data=[],input_filename='',method_type_query='',method_type_vec=[],feature_type_vec=[],column_vec_query=[],iter_num=10,type_id_query=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
+	# def test_query_compare_binding_pre1_5_1_unit1(self,data=[],input_filename='',method_type_query='',method_type_vec=[],feature_type_vec=[],column_vec_query=[],iter_num=10,type_id_query=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
 		
-		file_path_1 = self.save_path_1
-		data_file_type_query = select_config['data_file_type']
+	# 	file_path_1 = self.save_path_1
+	# 	data_file_type_query = select_config['data_file_type']
 		
-		if len(data)==0:
-			if os.path.exists(input_filename)==False:
-				print('the file does not exist: %s'%(input_filename))
-				return 
-			else:
-				df_1 = pd.read_csv(input_filename,index_col=0,sep='\t') # the peak-TF association prediction
-		else:
-			df_1 = data # the peak-TF association prediction
+	# 	if len(data)==0:
+	# 		if os.path.exists(input_filename)==False:
+	# 			print('the file does not exist: %s'%(input_filename))
+	# 			return 
+	# 		else:
+	# 			df_1 = pd.read_csv(input_filename,index_col=0,sep='\t') # the peak-TF association prediction
+	# 	else:
+	# 		df_1 = data # the peak-TF association prediction
 
-		column_motif = '%s.motif'%(method_type_query)
-		column_pred1 = '%s.pred'%(method_type_query)
-		column_score_query1 = '%s.score'%(method_type_query)
+	# 	column_motif = '%s.motif'%(method_type_query)
+	# 	column_pred1 = '%s.pred'%(method_type_query)
+	# 	column_score_query1 = '%s.score'%(method_type_query)
 		
-		type_id_pre1 = type_id_query
-		# type_id_pre1 = 0
+	# 	type_id_pre1 = type_id_query
+	# 	# type_id_pre1 = 0
 
-		# df_1 = data # the peak-TF association prediction
-		id_signal_ori = (df_1['signal']>0)
-		try:
-			id_motif = (df_1[column_motif]>0)
-		except Exception as error:
-			print('error! ',error)
-			id_motif = (df_1[column_motif].isin(['True',True,1,'1']))
+	# 	# df_1 = data # the peak-TF association prediction
+	# 	id_signal_ori = (df_1['signal']>0)
+	# 	try:
+	# 		id_motif = (df_1[column_motif]>0)
+	# 	except Exception as error:
+	# 		print('error! ',error)
+	# 		id_motif = (df_1[column_motif].isin(['True',True,1,'1']))
 
-		peak_loc_1 = df_1.index
-		peak_loc_num1 = len(peak_loc_1)
-		peak_loc_motif = peak_loc_1[id_motif]
-		peak_motif_num = len(peak_loc_motif)
-		print('peak_loc_1, peak with motif: ',peak_loc_num1,peak_motif_num)
+	# 	peak_loc_1 = df_1.index
+	# 	peak_loc_num1 = len(peak_loc_1)
+	# 	peak_loc_motif = peak_loc_1[id_motif]
+	# 	peak_motif_num = len(peak_loc_motif)
+	# 	print('peak_loc_1, peak with motif: ',peak_loc_num1,peak_motif_num)
 
-		# id_motif_2_ori = (df_1[column_pred2]>0)
-		# id_query_1 = (~id_motif)&(id_motif_2_ori)
+	# 	# id_motif_2_ori = (df_1[column_pred2]>0)
+	# 	# id_query_1 = (~id_motif)&(id_motif_2_ori)
 
-		df_2 = df_1.loc[(~id_motif),:] # the peak loci without motif
-		peak_loc_2 = df_2.index
-		peak_loc_num2 = len(peak_loc_2)
-		print('peak_loc_2, peak without motif: ',peak_loc_num2)
+	# 	df_2 = df_1.loc[(~id_motif),:] # the peak loci without motif
+	# 	peak_loc_2 = df_2.index
+	# 	peak_loc_num2 = len(peak_loc_2)
+	# 	print('peak_loc_2, peak without motif: ',peak_loc_num2)
 
-		if len(column_vec_query)==0:
-			# column_vec_query = list_pre1
-			column_vec_query = list_pre1_ori + list_pre2_ori
-			column_vec_query = pd.Index(column_vec_query).intersection(df_2.columns,sort=False)
-			column_vec_2 = pd.Index(column_vec_query).difference(df_2.columns,sort=False)
-			print('the columns not included: ',len(column_vec_2))
+	# 	if len(column_vec_query)==0:
+	# 		# column_vec_query = list_pre1
+	# 		column_vec_query = list_pre1_ori + list_pre2_ori
+	# 		column_vec_query = pd.Index(column_vec_query).intersection(df_2.columns,sort=False)
+	# 		column_vec_2 = pd.Index(column_vec_query).difference(df_2.columns,sort=False)
+	# 		print('the columns not included: ',len(column_vec_2))
 			
-		df_score_query1_2, df_score_query2_2, dict_query1_2 = self.test_query_compare_binding_pre1_5_1_unit1_2(data=df_2,column_vec=column_vec_query,iter_num=iter_num,save_mode=1,verbose=verbose,select_config=select_config)
-		df_score_query1_2['group_motif'] = 0
-		df_score_query2_2['group_motif'] = 0
+	# 	df_score_query1_2, df_score_query2_2, dict_query1_2 = self.test_query_compare_binding_pre1_5_1_unit1_2(data=df_2,column_vec=column_vec_query,iter_num=iter_num,save_mode=1,verbose=verbose,select_config=select_config)
+	# 	df_score_query1_2['group_motif'] = 0
+	# 	df_score_query2_2['group_motif'] = 0
 
-		df_pre2 = df_1.loc[(id_motif),:] # the peak loci with motif
-		peak_loc_pre2 = df_2.index
-		peak_loc_num_2 = len(peak_loc_pre2)
-		print('peak_loc_pre2, peak with motif: ',peak_loc_num_2)
-		df_score_query1_1, df_score_query2_1, dict_query1_1 = self.test_query_compare_binding_pre1_5_1_unit1_2(data=df_pre2,column_vec=column_vec_query,iter_num=iter_num,save_mode=1,verbose=verbose,select_config=select_config)
-		df_score_query1_1['group_motif'] = 1
-		df_score_query2_1['group_motif'] = 1
-		dict_query_1 = {'group_1':dict_query1_1,'group_2':dict_query1_2}
+	# 	df_pre2 = df_1.loc[(id_motif),:] # the peak loci with motif
+	# 	peak_loc_pre2 = df_2.index
+	# 	peak_loc_num_2 = len(peak_loc_pre2)
+	# 	print('peak_loc_pre2, peak with motif: ',peak_loc_num_2)
+	# 	df_score_query1_1, df_score_query2_1, dict_query1_1 = self.test_query_compare_binding_pre1_5_1_unit1_2(data=df_pre2,column_vec=column_vec_query,iter_num=iter_num,save_mode=1,verbose=verbose,select_config=select_config)
+	# 	df_score_query1_1['group_motif'] = 1
+	# 	df_score_query2_1['group_motif'] = 1
+	# 	dict_query_1 = {'group_1':dict_query1_1,'group_2':dict_query1_2}
 
-		# return df_1, df_score_query_1, df_score_query_2, dict_query_1
-		return df_1, df_score_query1_1, df_score_query1_2, dict_query_1
+	# 	# return df_1, df_score_query_1, df_score_query_2, dict_query_1
+	# 	return df_1, df_score_query1_1, df_score_query1_2, dict_query_1
 
 	## compare TF binding prediction
 	# the prediction performance of predicted feature links and background feature links
@@ -189,7 +189,9 @@ class _Base2_2_1(_Base2_2):
 				column_query1 = column_vec[i2]
 				column_vec_query = ['signal',column_query1]
 				iter_mode=0
-				df_score_query1, df_score_query2, contingency_table, dict_query1 = self.test_query_compare_binding_pre1_5_1_unit2(data=df_2,column_vec=column_vec_query,iter_mode=iter_mode,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=verbose,select_config=select_config)
+				# df_score_query1, df_score_query2, contingency_table, dict_query1 = self.test_query_compare_binding_pre1_5_1_unit2(data=df_2,column_vec=column_vec_query,iter_mode=iter_mode,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=verbose,select_config=select_config)
+
+				df_score_query1, df_score_query2, contingency_table, dict_query1 = self.test_query_pred_score_1(data=df_2,column_vec=column_vec_query,iter_mode=iter_mode,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=verbose,select_config=select_config)
 
 				dict_query_1.update({column_query1:dict_query1})
 
@@ -262,161 +264,259 @@ class _Base2_2_1(_Base2_2):
 		return df_score_query_1, df_score_query_2, dict_query_1
 
 	## compare TF binding prediction
-	def test_query_compare_binding_pre1_5_1_unit2(self,data=[],column_vec=[],mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
+	# def test_query_compare_binding_pre1_5_1_unit2(self,data=[],column_vec=[],mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
 		
-		file_path_1 = self.save_path_1
-		t_vec_1 = self.test_query_pred_score_unit1_1(data=data,column_vec=column_vec,mode_query=mode_query,iter_mode=iter_mode,plot_ax=plot_ax,
-														save_mode=save_mode,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save,filename_annot_save=filename_annot_save,output_filename=output_filename,verbose=verbose,select_config=select_config)
+	# 	file_path_1 = self.save_path_1
+	# 	t_vec_1 = self.test_query_pred_score_unit1_1(data=data,column_vec=column_vec,mode_query=mode_query,iter_mode=iter_mode,plot_ax=plot_ax,
+	# 													save_mode=save_mode,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save,filename_annot_save=filename_annot_save,output_filename=output_filename,verbose=verbose,select_config=select_config)
 
-		df_score_query_1, df_score_query_2, contingency_table, dict_query1 = t_vec_1
+	# 	df_score_query_1, df_score_query_2, contingency_table, dict_query1 = t_vec_1
 
-		return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+	# 	return df_score_query_1, df_score_query_2, contingency_table, dict_query1
 
 	## score query for performance comparison
 	# performance comparison for the binary prediction and predicted probability
-	def test_query_compare_binding_pre1_5_1_basic_2_unit1_1(self,data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# def test_query_compare_binding_pre1_5_1_basic_2_unit1_1(self,data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		flag_motif_ori = 0
-		# TF binding prediction based on motif scanning with sequence feature
-		# column_signal = 'signal'
-		df_pre1 = data
+	# 	flag_motif_ori = 0
+	# 	# TF binding prediction based on motif scanning with sequence feature
+	# 	# column_signal = 'signal'
+	# 	df_pre1 = data
 		
-		# id3 = (df_pre1[column_pred2]>0)
-		id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
-		id2 = (~id1)	# peak loci without motif
-		df_query_group1 = df_pre1.loc[id1,:]
-		df_query_group2 = df_pre1.loc[id2,:]
-		df_query_group_1 = df_pre1
-		print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
+	# 	# id3 = (df_pre1[column_pred2]>0)
+	# 	id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
+	# 	id2 = (~id1)	# peak loci without motif
+	# 	df_query_group1 = df_pre1.loc[id1,:]
+	# 	df_query_group2 = df_pre1.loc[id2,:]
+	# 	df_query_group_1 = df_pre1
+	# 	print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
 
-		# list_group = [df_query_group1,df_query_group2]
-		list_group = [df_query_group_1,df_query_group1,df_query_group2]
-		query_num_1 = len(list_group)
-		query_num_2 = len(column_vec_query)
-		n_neighbors = select_config['neighbor_num']
+	# 	# list_group = [df_query_group1,df_query_group2]
+	# 	list_group = [df_query_group_1,df_query_group1,df_query_group2]
+	# 	query_num_1 = len(list_group)
+	# 	query_num_2 = len(column_vec_query)
+	# 	n_neighbors = select_config['neighbor_num']
 
-		list_query1 = []
-		motif_id1 = motif_id_1
-		motif_id2 = motif_id_2
-		group_query_vec = [2,1,0]
-		for i2 in range(query_num_1):
-			df_query_group = list_group[i2]
-			list_query2 = []
-			list_query3 = []
-			for t_id1 in range(query_num_2):
-				column_query_1 = column_vec_query[t_id1]
-				if isinstance(column_query_1,str):
-					column_pred = column_query_1
-					column_proba = []
-				else:
-					column_pred, column_proba = column_query_1[0:2]
+	# 	list_query1 = []
+	# 	motif_id1 = motif_id_1
+	# 	motif_id2 = motif_id_2
+	# 	group_query_vec = [2,1,0]
+	# 	for i2 in range(query_num_1):
+	# 		df_query_group = list_group[i2]
+	# 		list_query2 = []
+	# 		list_query3 = []
+	# 		for t_id1 in range(query_num_2):
+	# 			column_query_1 = column_vec_query[t_id1]
+	# 			if isinstance(column_query_1,str):
+	# 				column_pred = column_query_1
+	# 				column_proba = []
+	# 			else:
+	# 				column_pred, column_proba = column_query_1[0:2]
 
-				column_vec = [column_signal,column_pred,column_proba]
-				t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config=select_config)
+	# 			column_vec = [column_signal,column_pred,column_proba]
+	# 			# query peak-TF link estimation performance score
+	# 			t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config=select_config)
 								
-				df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
-				# print('field_query: ',column_query)
-				# print('df_score_1: \n',df_score_1)
-				# print('contingency_table: \n',contingency_table)
-				list_query2.append(df_score_1)
-				# list_query3.append(column_query)
-				list_query3.append(column_pred)
+	# 			df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
+	# 			# print('field_query: ',column_query)
+	# 			# print('df_score_1: \n',df_score_1)
+	# 			# print('contingency_table: \n',contingency_table)
+	# 			list_query2.append(df_score_1)
+	# 			# list_query3.append(column_query)
+	# 			list_query3.append(column_pred)
 
-			if len(list_query2)>0:
-				df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
-				df_score_query = df_score_query.T
-				column_vec_query_1 = np.asarray(list_query3)
+	# 		if len(list_query2)>0:
+	# 			df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
+	# 			df_score_query = df_score_query.T
+	# 			column_vec_query_1 = np.asarray(list_query3)
 
-				field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
-				# group_id_motif = int(2-i2)
-				group_id_motif = group_query_vec[i2]
-				list_2 = [motif_id_query,motif_id1,motif_id2,group_id_motif,n_neighbors,column_vec_query_1,method_type_group]
-				for (field_id1,query_value) in zip(field_query_2,list_2):
-					df_score_query[field_id1] = query_value
-				list_query1.append(df_score_query)
+	# 			field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
+	# 			# group_id_motif = int(2-i2)
+	# 			group_id_motif = group_query_vec[i2]
+	# 			list_2 = [motif_id_query,motif_id1,motif_id2,group_id_motif,n_neighbors,column_vec_query_1,method_type_group]
+	# 			for (field_id1,query_value) in zip(field_query_2,list_2):
+	# 				df_score_query[field_id1] = query_value
+	# 			list_query1.append(df_score_query)
 
-		if len(list_query1)>0:
-			df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
+	# 	if len(list_query1)>0:
+	# 		df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
 
-		return df_score_query_1
+	# 	return df_score_query_1
 
 	## score query for performance comparison
 	# performance comparison for the binary prediction
-	def test_query_compare_binding_pre1_5_1_basic_2_unit1(self,data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# def test_query_compare_binding_pre1_5_1_basic_2_unit1(self,data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		flag_motif_ori = 0
-		# TF binding prediction based on motif scanning with sequence feature
-		# column_signal = 'signal'
-		df_pre1 = data
-		if column_motif=='':
-			method_type_feature_link = select_config['method_type_feature_link']
-			column_motif = '%s.motif'%(method_type_feature_link)
+	# 	flag_motif_ori = 0
+	# 	# TF binding prediction based on motif scanning with sequence feature
+	# 	# column_signal = 'signal'
+	# 	df_pre1 = data
+	# 	if column_motif=='':
+	# 		method_type_feature_link = select_config['method_type_feature_link']
+	# 		column_motif = '%s.motif'%(method_type_feature_link)
 		
-		# id3 = (df_pre1[column_pred2]>0)
-		id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
-		id2 = (~id1)	# peak loci without motif
-		df_query_group1 = df_pre1.loc[id1,:]
-		df_query_group2 = df_pre1.loc[id2,:]
-		df_query_group_1 = df_pre1
-		print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
+	# 	# id3 = (df_pre1[column_pred2]>0)
+	# 	id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
+	# 	id2 = (~id1)	# peak loci without motif
+	# 	df_query_group1 = df_pre1.loc[id1,:]
+	# 	df_query_group2 = df_pre1.loc[id2,:]
+	# 	df_query_group_1 = df_pre1
+	# 	print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
 
-		# list_group = [df_query_group1,df_query_group2]
-		list_group = [df_query_group_1,df_query_group1,df_query_group2]
-		query_num_1 = len(list_group)
-		query_num_2 = len(column_vec_query)
-		n_neighbors = select_config['neighbor_num']
+	# 	# list_group = [df_query_group1,df_query_group2]
+	# 	list_group = [df_query_group_1,df_query_group1,df_query_group2]
+	# 	query_num_1 = len(list_group)
+	# 	query_num_2 = len(column_vec_query)
+	# 	n_neighbors = select_config['neighbor_num']
 
-		list_query1 = []
-		motif_id1 = motif_id_1
-		motif_id2 = motif_id_2
-		for i2 in range(query_num_1):
-			df_query_group = list_group[i2]
-			list_query2 = []
-			list_query3 = []
+	# 	list_query1 = []
+	# 	motif_id1 = motif_id_1
+	# 	motif_id2 = motif_id_2
+	# 	for i2 in range(query_num_1):
+	# 		df_query_group = list_group[i2]
+	# 		list_query2 = []
+	# 		list_query3 = []
 
-			for t_id1 in range(query_num_2):
-				column_query = column_vec_query[t_id1]
-				column_vec = [column_signal,column_query]
-				t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config=select_config)
+	# 		for t_id1 in range(query_num_2):
+	# 			column_query = column_vec_query[t_id1]
+	# 			column_vec = [column_signal,column_query]
+	# 			# query peak-TF link estimation performance score
+	# 			t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config=select_config)
 								
-				df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
-				# print('field_query: ',column_query)
-				# print('df_score_1: \n',df_score_1)
-				# print('contingency_table: \n',contingency_table)
-				list_query2.append(df_score_1)
-				list_query3.append(column_query)
+	# 			df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
+	# 			# print('field_query: ',column_query)
+	# 			# print('df_score_1: \n',df_score_1)
+	# 			# print('contingency_table: \n',contingency_table)
+	# 			list_query2.append(df_score_1)
+	# 			list_query3.append(column_query)
 
-			if len(list_query2)>0:
-				df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
-				df_score_query = df_score_query.T
-				column_vec_query_1 = np.asarray(list_query3)
+	# 		if len(list_query2)>0:
+	# 			df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
+	# 			df_score_query = df_score_query.T
+	# 			column_vec_query_1 = np.asarray(list_query3)
 				
-				field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
-				group_id_motif = int(2-i2)
-				list_2 = [motif_id_query,motif_id1,motif_id2,group_id_motif,n_neighbors,column_vec_query_1,method_type_group]
-				for (field_id1,query_value) in zip(field_query_2,list_2):
-					df_score_query[field_id1] = query_value
+	# 			field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
+	# 			group_id_motif = int(2-i2)
+	# 			list_2 = [motif_id_query,motif_id1,motif_id2,group_id_motif,n_neighbors,column_vec_query_1,method_type_group]
+	# 			for (field_id1,query_value) in zip(field_query_2,list_2):
+	# 				df_score_query[field_id1] = query_value
 
-				list_query1.append(df_score_query)
+	# 			list_query1.append(df_score_query)
 
-		if len(list_query1)>0:
-			df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)					
-			# output_filename = '%s/test_query_df_score.%s.1.txt'%(output_file_path,filename_save_annot2_2)
-			# df_score_query_1.to_csv(output_filename,sep='\t')
+	# 	if len(list_query1)>0:
+	# 		df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)					
+	# 		# output_filename = '%s/test_query_df_score.%s.1.txt'%(output_file_path,filename_save_annot2_2)
+	# 		# df_score_query_1.to_csv(output_filename,sep='\t')
 
-		return df_score_query_1
+	# 	return df_score_query_1
 
-	## compare TF binding prediction
+	## ====================================================
+	# query peak-TF link estimation performance score
 	def test_query_pred_score_1(self,data=[],column_vec=[],iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
 
-		df_score_query_1, df_score_query_2, contingency_table, dict_query1 = self.test_query_pred_score_unit1_1(data=data,column_vec=column_vec,iter_mode=iter_mode,
+		# query peak-TF link estimation performance score
+		df_score_query_1, contingency_table, dict_query1 = self.test_query_pred_score_unit1_1(data=data,column_vec=column_vec,iter_mode=iter_mode,
 																													save_mode=save_mode,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save,filename_annot_save=filename_annot_save,output_filename=output_filename,
 																													verbose=verbose,select_config=select_config)
 
-		return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+		return df_score_query_1, contingency_table, dict_query1
 
-	## compare TF binding prediction
-	def test_query_pred_score_unit1_1(self,data=[],column_vec=[],mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
+	## ====================================================
+	# query peak-TF link estimation performance score
+	# def test_query_pred_score_unit1_1_ori(self,data=[],column_vec=[],mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
+		
+	# 	df_1 = data
+	# 	column_signal, column_pred = column_vec[0:2]
+	# 	column_proba = []
+	# 	if len(column_vec)>2:
+	# 		column_proba = column_vec[2]
+
+	# 	peak_loc_1 = df_1.index
+	# 	peak_loc_num1 = len(peak_loc_1)
+	# 	# print('peak_loc_1, peak without motif: ',peak_loc_num1)
+
+	# 	# id_signal = (df_1['signal']>0)
+	# 	id_signal = (df_1[column_signal]>0)
+	# 	id_motif_2 = (df_1[column_pred]>0)
+	# 	id_query1_1 = (id_signal&id_motif_2) # with signal and with prediction (tp)
+	# 	id_query2_1 = (id_signal&(~id_motif_2)) # with signal and without prediction (fn)
+	# 	id_query1_2 = ((~id_signal)&id_motif_2)	# without signal and with prediction (fp)
+	# 	id_query2_2 = (~id_signal)&(~id_motif_2) # without signal and without prediction (tn)
+
+	# 	field_query = ['signal','signal_0','motif_2','motif_2_0','signal_motif_2','signal_motif_2_0','signal_0_motif_2','signal_0_motif_2_0']
+	# 	list1 = [id_signal,(~id_signal),id_motif_2,(~id_motif_2),id_query1_1,id_query2_1,id_query1_2,id_query2_2]
+	# 	list2 = [peak_loc_1[id_query] for id_query in list1]
+	# 	dict_query1 = dict(zip(field_query,list2))
+
+	# 	peak_signal_group1, peak_signal_group2, peak_motif_group1, peak_motif_group2, peak_tp, peak_fn, peak_fp, peak_tn = list2
+
+	# 	y_test = (id_signal).astype(int)
+	# 	y_pred = (id_motif_2).astype(int)
+
+	# 	from utility_1 import score_function_multiclass1, score_function_multiclass2
+	# 	if len(column_proba)==0:
+	# 		df_score_query1_1 = score_function_multiclass2(y_test,y_pred,average='binary')
+	# 	else:
+	# 		y_proba = df_1[column_proba]
+	# 		y_proba = y_proba.fillna(0)
+	# 		df_score_query1_1 = score_function_multiclass2(y_test,y_pred,y_proba=y_proba,average='binary',average_2='macro')
+	# 		if mode_query>0:
+	# 			precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
+	# 			fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
+	# 			query_vec_1 = [precision_vec, recall_vec, thresh_value_vec_1]
+	# 			query_vec_2 = [fpr_vec, tpr_vec, thresh_value_vec_2]
+	# 			dict_query1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
+
+	# 	peak_signal_num1 = len(peak_signal_group1)
+	# 	peak_motif_num1 = len(peak_motif_group1)
+	# 	peak_tp_num = len(peak_tp)
+	# 	peak_fn_num = len(peak_fn)
+	# 	peak_fp_num = len(peak_fp)
+	# 	peak_tn_num = len(peak_tn)
+
+	# 	eps = 1E-12
+	# 	precision_1 = peak_tp_num/(peak_motif_num1+eps)
+	# 	recall_1 = peak_tp_num/(peak_signal_num1+eps)
+	# 	f1_score = 2*precision_1*recall_1/(precision_1+recall_1+eps)
+	# 	accuracy = (peak_tp_num+peak_tn_num)/peak_loc_num1
+	# 	t_vec_1 = [accuracy,precision_1,recall_1,f1_score]
+	# 	field_query_pre1 = ['accuracy','precision','recall','F1']
+	# 	df_score_query1_2 = pd.Series(index=field_query_pre1,data=t_vec_1,dtype=np.float32)
+
+	# 	contingency_table = [[peak_tp_num,peak_fn_num],[peak_fp_num,peak_tn_num]]
+	# 	contingency_table = np.asarray(contingency_table)
+
+	# 	try:
+	# 		stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
+	# 	except Exception as error:
+	# 		print('error! ',error)
+	# 		stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = 0, 1, 1, [0,0,0,0]
+
+	# 	try:
+	# 		stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative='greater')
+	# 	except Exception as error:
+	# 		print('error! ',error)
+	# 		stat_fisher_exact_, pval_fisher_exact_ = 0, 1
+
+	# 	if iter_mode==0:
+	# 		field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['ex_chi2_%d'%(id1) for id1 in np.arange(1,5)]+['stat_fisher_exact_','pval_fisher_exact_']
+	# 		query_value_1 = np.ravel(np.asarray(ex_chi2_))
+	# 		t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+ list(query_value_1)+[stat_fisher_exact_, pval_fisher_exact_]
+	# 		df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+	# 	else:
+	# 		field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['stat_fisher_exact_','pval_fisher_exact_']
+	# 		t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+[stat_fisher_exact_, pval_fisher_exact_]
+	# 		df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+		
+	# 	# df_score_query_2 = pd.concat([df_score_query1_2,df_score_query2_2],axis=0,join='outer')
+	# 	df_score_query_1 = pd.concat([df_score_query1_1,df_score_query2_2],axis=0,join='outer')
+	# 	df_score_query_2 = df_score_query1_2
+
+	# 	return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+
+	## ====================================================
+	# query peak-TF link estimation performance score
+	def test_query_pred_score_unit1_1(self,data=[],column_vec=[],score_type=0,mode_query=2,default_value=1,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
 		
 		df_1 = data
 		column_signal, column_pred = column_vec[0:2]
@@ -426,96 +526,114 @@ class _Base2_2_1(_Base2_2):
 
 		peak_loc_1 = df_1.index
 		peak_loc_num1 = len(peak_loc_1)
-		# print('peak_loc_1, peak without motif: ',peak_loc_num1)
 
-		# id_signal = (df_1['signal']>0)
 		id_signal = (df_1[column_signal]>0)
-		id_motif_2 = (df_1[column_pred]>0)
-		id_query1_1 = (id_signal&id_motif_2) # with signal and with prediction (tp)
-		id_query2_1 = (id_signal&(~id_motif_2)) # with signal and without prediction (fn)
-		id_query1_2 = ((~id_signal)&id_motif_2)	# without signal and with prediction (fp)
-		id_query2_2 = (~id_signal)&(~id_motif_2) # without signal and without prediction (tn)
-
-		field_query = ['signal','signal_0','motif_2','motif_2_0','signal_motif_2','signal_motif_2_0','signal_0_motif_2','signal_0_motif_2_0']
-		list1 = [id_signal,(~id_signal),id_motif_2,(~id_motif_2),id_query1_1,id_query2_1,id_query1_2,id_query2_2]
-		list2 = [peak_loc_1[id_query] for id_query in list1]
-		dict_query1 = dict(zip(field_query,list2))
-
-		peak_signal_group1, peak_signal_group2, peak_motif_group1, peak_motif_group2, peak_tp, peak_fn, peak_fp, peak_tn = list2
+		id_pred = (df_1[column_pred]>0)
 
 		y_test = (id_signal).astype(int)
-		y_pred = (id_motif_2).astype(int)
+		y_pred = (id_pred).astype(int)
 
 		from utility_1 import score_function_multiclass1, score_function_multiclass2
+		column_1 = 'score_type'
+		if column_1 in select_config:
+			score_type = select_config[column_1]
+		print('score_type: ',score_type)
 
-		if len(column_proba)==0:
+		dict_query1 = dict()
+		id1 = (column_proba=='')|(column_proba in [-1])|(len(column_proba)==0)
+		if column_proba in df_1.columns:
+			id2 = ((~pd.isna(df_1[column_proba])).sum()==0)
+			id1 = (id1|id2)
+		if id1>0:
+			print('binary prediction')
 			df_score_query1_1 = score_function_multiclass2(y_test,y_pred,average='binary')
 		else:
+			print('binary prediciton and with predicted probability')
 			y_proba = df_1[column_proba]
-			y_proba = y_proba.fillna(0)
-			df_score_query1_1 = score_function_multiclass2(y_test,y_pred,y_proba=y_proba,average='binary',average_2='macro')
-			if mode_query>0:
-				precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
-				fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
-				query_vec_1 = [precision_vec, recall_vec, thresh_value_vec_1]
-				query_vec_2 = [fpr_vec, tpr_vec, thresh_value_vec_2]
-				dict_query1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
-
-		peak_signal_num1 = len(peak_signal_group1)
-		peak_motif_num1 = len(peak_motif_group1)
-		peak_tp_num = len(peak_tp)
-		peak_fn_num = len(peak_fn)
-		peak_fp_num = len(peak_fp)
-		peak_tn_num = len(peak_tn)
-
-		eps = 1E-12
-		precision_1 = peak_tp_num/(peak_motif_num1+eps)
-		recall_1 = peak_tp_num/(peak_signal_num1+eps)
-		f1_score = 2*precision_1*recall_1/(precision_1+recall_1+eps)
-		accuracy = (peak_tp_num+peak_tn_num)/peak_loc_num1
-		t_vec_1 = [accuracy,precision_1,recall_1,f1_score]
-		field_query_pre1 = ['accuracy','precision','recall','F1']
-		df_score_query1_2 = pd.Series(index=field_query_pre1,data=t_vec_1,dtype=np.float32)
-
-		contingency_table = [[peak_tp_num,peak_fn_num],[peak_fp_num,peak_tn_num]]
-		contingency_table = np.asarray(contingency_table)
-
-		try:
-			stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
-		except Exception as error:
-			print('error! ',error)
-			stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = 0, 1, 1, [0,0,0,0]
-
-		try:
-			stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative='greater')
-		except Exception as error:
-			print('error! ',error)
-			stat_fisher_exact_, pval_fisher_exact_ = 0, 1
-
-		if iter_mode==0:
-			field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['ex_chi2_%d'%(id1) for id1 in np.arange(1,5)]+['stat_fisher_exact_','pval_fisher_exact_']
-			query_value_1 = np.ravel(np.asarray(ex_chi2_))
-			t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+ list(query_value_1)+[stat_fisher_exact_, pval_fisher_exact_]
-			df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
-		else:
-			field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['stat_fisher_exact_','pval_fisher_exact_']
-			t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+[stat_fisher_exact_, pval_fisher_exact_]
-			df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+			if score_type>0:
+				y_proba = y_proba.fillna(default_value) # lower score represents higher association strength
+				y_proba = 1-y_proba
+			else:
+				y_proba = y_proba.fillna(0)
 		
-		# df_score_query_2 = pd.concat([df_score_query1_2,df_score_query2_2],axis=0,join='outer')
-		df_score_query_1 = pd.concat([df_score_query1_1,df_score_query2_2],axis=0,join='outer')
-		df_score_query_2 = df_score_query1_2
+			df_score_query1_1 = score_function_multiclass2(y_test,y_pred,y_proba=y_proba,average='binary',average_2='macro')
+			
+			if mode_query>0:
+				column_annot = []
+				dict_annot = []
+				column_1, column_2 = 'column_annot_score', 'dict_annot_score'
+				if column_1 in select_config:
+					column_annot = select_config[column_1]
+				if column_2 in select_config:
+					dict_annot = select_config[column_2]
 
-		return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+				score_type_2 = 0
+				column_3 = 'score_type_2' # label of whether the peak-TF link prediction is dependent on TF binding motif scanning
+				if column_3 in select_config:
+					score_type_2 = select_config[column_3]
 
-	## TF binding prediction performance
-	# recompute AUPR
-	# def test_query_compare_binding_pre1_5_1_basic_pre2(self,y_test=[],y_proba=[],y_depend=[],default_value=None,df_score=[],column_annot=[],dict_annot=[],flag_score=1,save_mode=0,verbose=0,select_config={}):
+				y_depend = []
+				default_value_2 = 0
+				if score_type_2>0:
+					column_motif = column_vec[3]
+					try:
+						id_motif = (df_1[column_motif].abs()>0)
+					except Exception as error:
+						print('error! ',error)
+						id_motif = df_1[column_motif].isin([True,'True',1,'1'])
+
+					y_depend = pd.Series(index=peak_loc_1,data=default_value_2)
+					y_depend.loc[id_motif] = 1
+
+				dict_query1, df_score_query1_1 = self.test_query_compare_precision_recall_1(y_test=y_test,y_proba=y_proba,
+																								y_depend=y_depend,default_value=default_value,
+																								df_score=df_score_query1_1,
+																								column_annot=column_annot,
+																								dict_annot=dict_annot,flag_score=1,
+																								save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+				column_1 = 'df_precision_recall'
+				flag_2 = (mode_query>0)
+				flag_2 = (flag_2)&(column_1 in dict_query1)
+					
+				if (column_1 in dict_query1):
+					df_precision_recall = dict_query1[column_1]
+					df_precision_recall['method_type'] = method_type_query
+					list_query5.append(df_precision_recall)
+
+					print('df_precision_recall: ',df_precision_recall.shape)
+					print(df_precision_recall[0:2])
+
+				if flag_2>0:
+					thresh_vec_query1 = [0.05,0.10,0.20,0.25,0.50] # threshold for precision at given recall
+					thresh_vec_query2 = [0.50,0.70,0.90]	# threshold for recall at given precision
+					thresh_difference = 0.05
+					df_score_query1_1 = self.test_query_compare_precision_recall_2(data=df_precision_recall,df_score=df_score_query1_1,
+																					thresh_vec_1=thresh_vec_query1,
+																					thresh_vec_2=thresh_vec_query2,
+																					thresh_difference=thresh_difference,
+																					save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+		flag_enrichment = (mode_query==2)
+		if flag_enrichment>0:
+			df_score_query2_1 = self.test_query_enrichment_score_1(data=[],idvec_1=id_signal,idvec_2=id_pred,feature_query_vec=peak_loc_1,
+																	save_mode=1,verbose=0,select_config=select_config)
+
+			df_score_query_1 = pd.concat([df_score_query1_1,df_score_query2_1],axis=0,join='outer')
+		
+		else:
+			df_score_query_1 = df_score_query1_1
+
+		return df_score_query_1, contingency_table, dict_query1
+
+	## ====================================================
+	# TF binding prediction performance
+	# recompute AUPR for methods which rely on motif scanning results
 	def test_query_compare_precision_recall_1(self,y_test=[],y_proba=[],y_depend=[],default_value=None,df_score=[],column_annot=[],dict_annot=[],flag_score=1,save_mode=0,verbose=0,select_config={}):
 
 		mode_query = 1
 		if mode_query>0:
-			flag_1 = 0
+			flag_depend = 0
 			signal_ratio = 1
 			column_1 = 'motif_id'
 			column_2 = 'method_type'
@@ -527,7 +645,7 @@ class _Base2_2_1(_Base2_2):
 				method_type_query = dict_annot[column_2]
 
 			if len(y_depend)>0:
-				flag_1 = 1
+				flag_depend = 1
 				if not(default_value is None):
 					# id_1 = (y_depend!=default_value)
 					id_1 = (y_depend>default_value)
@@ -551,6 +669,7 @@ class _Base2_2_1(_Base2_2):
 
 			df1 = []
 			df2 = []
+			verbose_internal = self.verbose_internal
 			if flag_score>0:
 				# if flag_1>0:
 				# 	y_test_ori = y_test.copy()
@@ -561,17 +680,19 @@ class _Base2_2_1(_Base2_2):
 				precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
 				fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
 				
-				if flag_1>0:
+				if flag_depend>0:
 					recall_vec_1 = recall_vec.copy()
 					recall_vec = recall_vec_1*signal_ratio # recompute the recall
 
 				query_vec_1 = [precision_vec, recall_vec, thresh_value_vec_1]
 				query_vec_2 = [fpr_vec, tpr_vec, thresh_value_vec_2]
 
-				print('precision_vec, recall_vec: ',len(precision_vec),len(recall_vec),motif_id_query,method_type_query)
-				# print(precision_vec)
-				# print(recall_vec)
-				# print(thresh_value_vec_1)
+				if verbose_internal>0:
+					print('precision_vec, recall_vec: ',len(precision_vec),len(recall_vec),motif_id_query,method_type_query)
+					# print(precision_vec)
+					# print(recall_vec)
+					# print(thresh_value_vec_1)
+				
 				dict_1 = dict()
 				# dict_1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
 
@@ -584,7 +705,7 @@ class _Base2_2_1(_Base2_2):
 				for (field_id,query_value) in zip(field_query_1,query_vec_1):
 					df1[field_id] = np.asarray(query_value)
 
-				if flag_1>0:
+				if flag_depend>0:
 					df1['recall_1'] = recall_vec_1
 
 				field_query_2 = ['fdr','tpr','thresh']
@@ -608,19 +729,18 @@ class _Base2_2_1(_Base2_2):
 				dict_1.update({'df_precision_recall':df1,'df_roc':df2})
 
 			df_score_query1_1 = df_score
-			if flag_1>0:
+			if flag_depend>0:
 				# aupr_1 = df_score_query1_1['aupr']
 				# df_score_query1_1['aupr_1'] = aupr_1
-				print('df_score_query1_1: ',df_score_query1_1.shape)
+				# print('df_score_query1_1: ',df_score_query1_1.shape)
 				# print(df_score_query1_1.columns)
-				print(df_score_query1_1)
+				# print(df_score_query1_1)
 
 				# df_score_query1_1 = df_score_query1_1.rename(columns={'aupr':'aupr_1'})
 				df_score_query1_1 = df_score_query1_1.rename(index={'aupr':'aupr_1'})
 				aupr_1 = df_score_query1_1['aupr_1']
 				# value_1 = (recall_vec[0]-recall_vec[1])*precision_vec[0]
 				# aupr_2 = aupr_1-value_1
-
 				try:
 					average_2 = 'macro'
 					aupr_2 = average_precision_score(y_test,y_proba,average=average_2)
@@ -631,27 +751,34 @@ class _Base2_2_1(_Base2_2):
 				aupr_query = aupr_2*signal_ratio
 				field_query_pre2 = ['aupr_2','aupr','signal_ratio']
 				list2 = [aupr_2,aupr_query,signal_ratio]
-				# print('aupr_1, aupr_2, signal_ratio: ',aupr_1,aupr_2,signal_ratio,motif_id_query,motif_id_1,motif_id_2,method_type_query)
-				print('aupr_1, aupr_2, aupr_query, signal_ratio: ',aupr_1,aupr_2,aupr_query,signal_ratio,motif_id_query,method_type_query)
+
+				if verbose_internal>0:
+					# print('aupr_1, aupr_2, signal_ratio: ',aupr_1,aupr_2,signal_ratio,motif_id_query,motif_id_1,motif_id_2,method_type_query)
+					print('aupr_1, aupr_2, aupr_query, signal_ratio: ',aupr_1,aupr_2,aupr_query,signal_ratio,motif_id_query,method_type_query)
 			else:
 				field_query_pre2 = []
 				list2 = []
 
-			if flag_score>0:
-				precision_1, precision_2 = precision_vec[0], precision_vec[1]
-				recall_1, recall_2 = recall_vec[0], recall_vec[1]
+			# if flag_score>0:
+			# 	precision_1, precision_2 = precision_vec[0], precision_vec[1]
+			# 	recall_1, recall_2 = recall_vec[0], recall_vec[1]
 
-				field_query_pre2 = field_query_pre2 + ['precision_1','recall_1','precision_2','recall_2']
-				list2 = list2 + [precision_1,recall_1,precision_2,recall_2]
+			# 	field_query_pre2 = field_query_pre2 + ['precision_1','recall_1','precision_2','recall_2']
+			# 	list2 = list2 + [precision_1,recall_1,precision_2,recall_2]
 
 			if len(list2)>0:
 				df_score_query1_2 = pd.Series(index=field_query_pre2,data=np.asarray(list2))
 				df_score_query1_1 = pd.concat([df_score_query1_1,df_score_query1_2],axis=0,join='outer',ignore_index=False)
 
+			if verbose_internal>0:
+				print('peak-TF link estimation performance score for TF %s'%(motif_id_query))
+				print(df_score_query1_1)
+
 			# return dict_1
 			return dict_1, df_score_query1_1
 
-	## TF binding prediction performance
+	## ====================================================
+	# TF binding prediction performance
 	# compute precision at given recall;
 	# compute recall at given precision;
 	def test_query_compare_precision_recall_2(self,data=[],df_score=[],thresh_vec_1=[0.05,0.10],thresh_vec_2=[0.50,0.90],thresh_difference=0.05,save_mode=1,verbose=0,select_config={}):
@@ -697,183 +824,154 @@ class _Base2_2_1(_Base2_2):
 
 		return df_score_1
 
-	## compare TF binding prediction
-	def test_query_pred_score_unit1_pre1(self,data=[],column_vec=[],score_type=0,mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
-		
-		# file_path_1 = self.save_path_1
-		# data_file_type_query = select_config['data_file_type']
-		# run_id1 = select_config['run_id']
-		# thresh_num1 = 5
-		# # method_type_vec = ['insilico_1','TRIPOD','GRaNIE','Pando']+['joint_score.thresh%d'%(i1+1) for i1 in range(thresh_num1)]+['joint_score_2.thresh3']
-		# # method_type_vec = ['insilico_1','GRaNIE','joint_score.thresh1']
-		# # method_type_vec = ['GRaNIE']
-		# # method_type_vec = ['insilico_1','joint_score.thresh1','joint_score.thresh2','joint_score.thresh3']
-		# # method_type_vec = ['insilico_1','GRaNIE']+['joint_score_2.thresh3']
-		# method_type_vec = ['insilico_1','GRaNIE','Pando','TRIPOD']+['joint_score_2.thresh3']
-		df_1 = data
-		column_signal, column_pred = column_vec[0:2]
-		column_proba = []
-		if len(column_vec)>2:
-			column_proba = column_vec[2]
+	## ====================================================
+	# query precision at fixed recall
+	def test_query_precision_with_recall_1(self,data=[],thresh_vec_query=[],thresh_difference=0.05,save_mode=1,verbose=0,select_config={}):
 
-		peak_loc_1 = df_1.index
-		peak_loc_num1 = len(peak_loc_1)
-		# print('peak_loc_1, peak without motif: ',peak_loc_num1)
+		column_vec_query=['recall','precision']
+		df1 = self.test_query_score_unit_1(data=data,column_vec_query=column_vec_query,
+												thresh_vec_query=thresh_vec_query,
+												thresh_difference=thresh_difference,
+												direction=0,
+												save_mode=save_mode,verbose=verbose,select_config=select_config)
+		return df1
 
-		# id_signal = (df_1['signal']>0)
-		# id_motif_2 = (df_1[column_pred2]>0)
-		id_signal = (df_1[column_signal]>0)
-		id_motif_2 = (df_1[column_pred]>0)
-		id_query1_1 = (id_signal&id_motif_2) # with signal and with prediction (tp)
-		id_query2_1 = (id_signal&(~id_motif_2)) # with signal and without prediction (fn)
-		id_query1_2 = ((~id_signal)&id_motif_2)	# without signal and with prediction (fp)
-		id_query2_2 = (~id_signal)&(~id_motif_2) # without signal and without prediction (tn)
+	## ====================================================
+	# query recall at fixed precision
+	def test_query_recall_with_precision_1(self,data=[],thresh_vec_query=[],thresh_difference=0.05,save_mode=1,verbose=0,select_config={}):
 
-		field_query = ['signal','signal_0','motif_2','motif_2_0','signal_motif_2','signal_motif_2_0','signal_0_motif_2','signal_0_motif_2_0']
-		list1 = [id_signal,(~id_signal),id_motif_2,(~id_motif_2),id_query1_1,id_query2_1,id_query1_2,id_query2_2]
-		list2 = [peak_loc_1[id_query] for id_query in list1]
-		# dict_query1 = dict(zip(field_query,list2))
+		column_vec_query=['precision','recall']
+		df1 = self.test_query_score_unit_1(data=data,column_vec_query=column_vec_query,
+												thresh_vec_query=thresh_vec_query,
+												thresh_difference=thresh_difference,
+												direction=1,
+												save_mode=save_mode,verbose=verbose,select_config=select_config)
+		return df1
 
-		# peak_signal_group1, peak_signal_group2 = list2[0:2]
-		peak_signal_group1, peak_signal_group2, peak_motif_group1, peak_motif_group2, peak_tp, peak_fn, peak_fp, peak_tn = list2
+	## ====================================================
+	# compute score 2 given the fixed value of score 1
+	def test_query_score_unit_1(self,data=[],column_vec_query=['precision','recall'],thresh_vec_query=[],thresh_difference=0.025,direction=1,type_query=0,flag_sort=1,save_mode=1,verbose=0,select_config={}):
 
-		y_test = (id_signal).astype(int)
-		y_pred = (id_motif_2).astype(int)
+		column_1, column_2 = column_vec_query[0:2]
+		score_vec_1 = np.asarray(data[column_1])
+		score_vec_2 = np.asarray(data[column_2])
+		if flag_sort>0:
+			id_1 = np.argsort(score_vec_1)
+			score_vec_1 = score_vec_1[id_1]
+			score_vec_2 = score_vec_2[id_1]
 
-		from utility_1 import score_function_multiclass1, score_function_multiclass2
-		# the example
-		# display = PrecisionRecallDisplay(
-		# 		recall=recall["micro"],
-		# 		precision=precision["micro"],
-		# 		average_precision=average_precision["micro"],
-		# 	)
-		# display.plot(ax=ax, name="Micro-average precision-recall", color="gold")
-
-		# score_type = 0
-		column_1 = 'score_type'
-		if column_1 in select_config:
-			score_type = select_config[column_1]
-		print('score_type: ',score_type)
-
-		dict_query1 = dict()
-		id1 = (column_proba=='')|(column_proba in [-1])|(len(column_proba)==0)
-		if column_proba in df_1.columns:
-			id2 = ((~pd.isna(df_1[column_proba])).sum()==0)
-			id1 = (id1|id2)
-		if id1>0:
-			print('binary prediction')
-			df_score_query1_1 = score_function_multiclass2(y_test,y_pred,average='binary')
-		else:
-			print('binary prediciton and with predicted probability')
-			y_proba = df_1[column_proba]
-			if score_type>0:
-				# y_proba = y_proba.fillna(1)
-				eps = 1E-05
-				# default_value = 1+eps
-				default_value = 1
-				y_proba = y_proba.fillna(default_value)
-				y_proba = 1-y_proba
-				# if log_transform==True:
-				# 	y_proba = np.log2(1+y_proba)
+		# thresh_precision_vec = [thresh_precision_1,thresh_precision_2]
+		thresh_num1 = len(thresh_vec_query)
+		list1 = []
+		thresh_difference_2 = 0.10
+		thresh_difference_query = thresh_difference
+		verbose_internal = self.verbose_internal
+		for i1 in range(thresh_num1):
+			thresh_query = thresh_vec_query[i1]
+			if thresh_query<=0.10:
+				thresh_difference_query = np.min([0.01,thresh_difference])
 			else:
-				y_proba = y_proba.fillna(0)
-			# y_proba = y_proba.fillna(0)
+				thresh_difference_query = thresh_difference
 
-			df_score_query1_1 = score_function_multiclass2(y_test,y_pred,y_proba=y_proba,average='binary',average_2='macro')
-			if mode_query>0:
-				# precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
-				# fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
-				# query_vec_1 = [precision_vec, recall_vec, thresh_value_vec_1]
-				# query_vec_2 = [fpr_vec, tpr_vec, thresh_value_vec_2]
-				# dict_query1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
+			diff_query = np.abs(score_vec_1-thresh_query)
+			min_diff_query = np.min(diff_query)
+			print('min_diff_query: ',min_diff_query,thresh_query)
 
-				column_annot = []
-				dict_annot = []
-				column_1, column_2 = 'column_annot_score', 'dict_annot_score'
-				if column_1 in select_config:
-					column_annot = select_config[column_1]
-				if column_2 in select_config:
-					dict_annot = select_config[column_2]
+			thresh_2 = 1E-09
+			thresh_value_1 = 1.0
+			thresh_value_2 = (thresh_value_1-thresh_difference_2)
+			eps = 1E-09
+			b1 = np.where(score_vec_1>=(thresh_value_1-eps))[0]
+			b2 = np.where(score_vec_2[b1]>thresh_2)[0]
+			# recall = 0 if precision = 1
+			id_pre2 = (column_1 in ['precision'])&(len(b2)==0)&(thresh_query>=(thresh_value_2-eps))
 
-				# column_1 = 'motif_id'
-				# column_2 = 'method_type'
-				# motif_id_query, method_type_query = 'motif', 'method_type'
-				# if column_1 in dict_annot:
-				# 	motif_id_query = dict_annot[column_1]
+			query_value_2 = 0
+			if min_diff_query<thresh_difference_query:
+				id_1 = np.argmin(diff_query)
+				query_value_1 = score_vec_1[id_1]
+				if type_query>0:
+					query_value_2 = np.max(score_vec_2[id_1:])
+				else:
+					query_value_2 = score_vec_2[id_1]
+				print(column_1,column_2,query_value_1,query_value_2)
+			else:
+				id1 = np.where(score_vec_1<thresh_query)[0]
+				id2 = np.where(score_vec_1>thresh_query)[0]
 
-				# if column_2 in dict_annot:
-				# 	method_type_query = dict_annot[column_2]
+				if (min_diff_query>thresh_difference_2):	
+					# continue
+					if len(id2)>0:
+						# id_query2 = id2[0]
+						query_value_2 = np.max(score_vec_2[id2])
+					else:
+						print('the threshold not included ',thresh_query)
+				else:
+					if (id_pre2)>0:
+						print('the threshold not included ',thresh_query)
+						# continue
+					else:
+						print('interpolation ',thresh_query,column_1,column_2)
+						if (len(id1)>0) and (len(id2)>0):
+							t_id1 = id1[-1]
+							t_id2 = id2[0]
+							score_query2_1 = score_vec_1[t_id1] # score_1 below the threshold
+							score_query1_1 = score_vec_1[t_id2] # score_1 above the threshold
+							if verbose_internal==2:
+								print('score type 1: score 1: %.5E, score 2: %.5E '%(score_query2_1,score_query1_1))
 
-				score_type_2 = 0
-				column_3 = 'score_type_2'
-				if column_3 in select_config:
-					score_type_2 = select_config[column_3]
+							score_query2_2 = score_vec_2[t_id1]	# score_2 above the threshold
+							score_query1_2 = score_vec_2[t_id2]	# score_2 below the threshold
+							if verbose_internal==2:
+								print('score type 2: score 1: %.5E, score 2: %.5E '%(score_query2_2,score_query1_2))
+							
+							k1 = (score_query2_2-score_query1_2)/(score_query2_1-score_query1_1)
+							query_value_2 = score_query1_2+(thresh_query-score_query1_1)*k1 # interpolation
+							print('the slope: %.5E, the interpolated value: %.5E'%(k1,query_value_2))
+						
+						elif (len(id1)==0) and (len(id2)>0):
+							query_value_2 = np.max(score_vec_2[id2])
+					
+			list1.append(query_value_2)
 
-				y_depend = []
-				default_value = 0
-				if score_type_2>0:
-					column_motif = column_vec[3]
-					try:
-						id_motif = (df_1[column_motif].abs()>0)
-					except Exception as error:
-						print('error! ',error)
-						id_motif = df_1[column_motif].isin([True,'True',1,'1'])
+		query_vec = np.asarray(list1)
+		column_name = column_2
+		df1 = pd.DataFrame(index=thresh_vec_query,columns=[column_name],data=query_vec)
+		column_query1 = '%s_thresh'%(column_1)
+		df1[column_query1] = np.asarray(df1.index).copy()
+		print('df1: ',df1.shape,column_1,column_2)
+		print(df1)
 
-					# default_value = 0
-					y_depend = pd.Series(index=peak_loc_1,data=default_value)
-					y_depend.loc[id_motif] = 1
-					# y_depend = (id_motif).astype(int)
+		return df1
 
-				dict_query1, df_score_query1_1 = self.test_query_compare_precision_recall_1(y_test=y_test,y_proba=y_proba,
-																								y_depend=y_depend,default_value=default_value,
-																								df_score=df_score_query1_1,
-																								column_annot=column_annot,
-																								dict_annot=dict_annot,flag_score=1,
-																								save_mode=save_mode,verbose=verbose,select_config=select_config)
+	## ====================================================
+	# query enrichment of true positive peak-TF link prediction
+	def test_query_enrichment_score_1(self,data=[],idvec_1=[],idvec_2=[],feature_query_vec=[],save_mode=0,verbose=0,select_config={}):
 
-				# if len(plot_ax)>0:
-				# 	display = PrecisionRecallDisplay(
-				# 				recall=recall_vec,
-				# 				precision=precison_vec,
-				# 				average_precision=df_score_query1_1['aupr']
-				# 			)
+		list_query1 = data
+		if len(list_query1)==0:
+			id_signal, id_pred = idvec_1, idvec_2
+			id_query1_1 = (id_signal&id_pred)	# with signal and with prediction (tp)
+			id_query2_1 = (id_signal&(~id_pred))	# with signal and without prediction (fn)
+			id_query1_2 = ((~id_signal)&id_pred)	# without signal and with prediction (fp)
+			id_query2_2 = (~id_signal)&(~id_pred)	# without signal and without prediction (tn)
 
-				# 	ax = plot_ax
-				# 	display.plot(ax=ax, name="Precision-Recall", color="gold")
+			field_query = ['signal','signal_0','pred','pred_0','signal_pred','signal_pred_0','signal_0_pred','signal_0_pred_0']
+			list1 = [id_signal,(~id_signal),id_pred,(~id_pred),id_query1_1,id_query2_1,id_query1_2,id_query2_2]
+			list_query1 = [feature_query_vec[id_query] for id_query in list1]
+			
+		feature_signal_group1, feature_signal_group2, feature_pred_group1, feature_pred_group2, feature_tp, feature_fn, feature_fp, feature_tn = list_query1
 
-		# precison_1 = np.sum(id_query1)/np.sum(id_motif_2)
-		# peak_signal_group1 = dict_query1['signal']
-		# peak_signal_group2 = dict_query1['signal_0']
+		feature_signal_num1 = len(feature_signal_group1) # peak loci with ChIP-seq signal
+		feature_pred_num1 = len(feature_pred_group1)	# peak loci with TF binding prediction
+		tp_num = len(feature_tp)
+		fn_num = len(feature_fn)
+		fp_num = len(feature_fp)
+		tn_num = len(feature_tn)
 
-		# peak_motif_group1 = dict_query1['motif_2']
-		# peak_motif_group2 = dict_query1['motif_2_0']
-		peak_signal_num1 = len(peak_signal_group1)
-		peak_motif_num1 = len(peak_motif_group1)
-		peak_tp_num = len(peak_tp)
-		peak_fn_num = len(peak_fn)
-		peak_fp_num = len(peak_fp)
-		peak_tn_num = len(peak_tn)
-
-		eps = 1E-12
-		precision_1 = peak_tp_num/(peak_motif_num1+eps)
-		recall_1 = peak_tp_num/(peak_signal_num1+eps)
-		f1_score = 2*precision_1*recall_1/(precision_1+recall_1+eps)
-		accuracy = (peak_tp_num+peak_tn_num)/peak_loc_num1
-		t_vec_1 = [accuracy,precision_1,recall_1,f1_score]
-		field_query_pre1 = ['accuracy','precision','recall','F1']
-		df_score_query1_2 = pd.Series(index=field_query_pre1,data=t_vec_1,dtype=np.float32)
-
-		# contingency_table = [[link_num_sel,link_num_bg],[link_num_sel2,link_num_bg2]]
-		# contingency_table = np.asarray(contingency_table)
-		contingency_table = [[peak_tp_num,peak_fn_num],[peak_fp_num,peak_tn_num]]
+		contingency_table = [[tp_num,fn_num],[fp_num,tn_num]]
 		contingency_table = np.asarray(contingency_table)
-
-		# print('contingency table: ')
-		# print(contingency_table)
-
-		# contingency_table_ori = contingency_table.copy()
-		# if type_id_1==1:
-		# 	contingency_table = contingency_table.T
+			
 		try:
 			stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
 		except Exception as error:
@@ -886,25 +984,285 @@ class _Base2_2_1(_Base2_2):
 			print('error! ',error)
 			stat_fisher_exact_, pval_fisher_exact_ = 0, 1
 
-		# print(stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_)
-		# print(stat_fisher_exact_, pval_fisher_exact_)
-		if iter_mode==0:
-			field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['ex_chi2_%d'%(id1) for id1 in np.arange(1,5)]+['stat_fisher_exact_','pval_fisher_exact_']
-			query_value_1 = np.ravel(np.asarray(ex_chi2_))
-			t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+ list(query_value_1)+[stat_fisher_exact_, pval_fisher_exact_]
-			df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
-		else:
-			field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['stat_fisher_exact_','pval_fisher_exact_']
-			t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+[stat_fisher_exact_, pval_fisher_exact_]
-			df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+		field_query = ['stat_chi2_','pval_chi2_']+['stat_fisher_exact_','pval_fisher_exact_'] + ['num1','num2']
+		t_vec_1 = [stat_chi2_, pval_chi2_]+[stat_fisher_exact_, pval_fisher_exact_] + [feature_signal_num1,feature_pred_num1]
+		df_score_query = pd.Series(index=field_query,data=np.asarray(t_vec_1),dtype=np.float32)
+
+		return df_score_query
+
+	## query feature enrichment
+	# df1: the foreground dataframe
+	# df2: the background dataframe (expected dataframe)
+	# column_query: the column of value
+	def test_query_enrichment_pre1(self,df1,df2,column_query='',stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,verbose=0,select_config={}):
 		
-		# df_score_query_2 = pd.concat([df_score_query1_2,df_score_query2_2],axis=0,join='outer')
-		df_score_query_1 = pd.concat([df_score_query1_1,df_score_query2_2],axis=0,join='outer')
-		df_score_query_2 = df_score_query1_2
+		query_idvec = df1.index
+		query_num1 = len(query_idvec)
+		df_query1 = df1
+		df_query_compare = df2
 
-		return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+		column_vec_1 = ['stat_chi2_','pval_chi2_']
+		column_vec_2 = ['stat_fisher_exact_','pval_fisher_exact_']
 
-	## compare TF binding prediction
+		count1 = np.sum(df1[column_query])
+		count2 = np.sum(df2[column_query])
+		for i1 in range(query_num1):
+			query_id1 = query_idvec[i1]
+			num1 = df_query1.loc[query_id1,column_query]
+			num2 = df_query_compare.loc[query_id1,column_query]
+
+			if num2>0:
+				contingency_table = [[num1,count1-num1],[num2,count2-num2]]
+				if verbose>0:
+					print('contingency table: \n')
+					print(contingency_table)
+
+				if not (stat_chi2_correction is None):
+					correction = stat_chi2_correction
+					stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=correction)
+					df_query1.loc[query_id1,column_vec_1] = [stat_chi2_, pval_chi2_]
+
+				if not (stat_fisher_alternative is None):
+					alternative = stat_fisher_alternative
+					stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative=alternative)
+					df_query1.loc[query_id1,column_vec_2] = [stat_fisher_exact_, pval_fisher_exact_]
+
+		return df_query1, contingency_table
+
+	## ====================================================
+	# query peak-TF link estimation performance score
+	# def test_query_pred_score_unit1_pre1(self,data=[],column_vec=[],score_type=0,mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
+		
+	# 	# file_path_1 = self.save_path_1
+	# 	# data_file_type_query = select_config['data_file_type']
+	# 	# run_id1 = select_config['run_id']
+	# 	# thresh_num1 = 5
+	# 	# # method_type_vec = ['insilico_1','TRIPOD','GRaNIE','Pando']+['joint_score.thresh%d'%(i1+1) for i1 in range(thresh_num1)]+['joint_score_2.thresh3']
+	# 	# # method_type_vec = ['insilico_1','GRaNIE','joint_score.thresh1']
+	# 	# # method_type_vec = ['GRaNIE']
+	# 	# # method_type_vec = ['insilico_1','joint_score.thresh1','joint_score.thresh2','joint_score.thresh3']
+	# 	# # method_type_vec = ['insilico_1','GRaNIE']+['joint_score_2.thresh3']
+	# 	# method_type_vec = ['insilico_1','GRaNIE','Pando','TRIPOD']+['joint_score_2.thresh3']
+	# 	df_1 = data
+	# 	column_signal, column_pred = column_vec[0:2]
+	# 	column_proba = []
+	# 	if len(column_vec)>2:
+	# 		column_proba = column_vec[2]
+
+	# 	peak_loc_1 = df_1.index
+	# 	peak_loc_num1 = len(peak_loc_1)
+	# 	# print('peak_loc_1, peak without motif: ',peak_loc_num1)
+
+	# 	# id_signal = (df_1['signal']>0)
+	# 	# id_motif_2 = (df_1[column_pred2]>0)
+	# 	id_signal = (df_1[column_signal]>0)
+	# 	id_motif_2 = (df_1[column_pred]>0)
+	# 	id_query1_1 = (id_signal&id_motif_2) # with signal and with prediction (tp)
+	# 	id_query2_1 = (id_signal&(~id_motif_2)) # with signal and without prediction (fn)
+	# 	id_query1_2 = ((~id_signal)&id_motif_2)	# without signal and with prediction (fp)
+	# 	id_query2_2 = (~id_signal)&(~id_motif_2) # without signal and without prediction (tn)
+
+	# 	field_query = ['signal','signal_0','motif_2','motif_2_0','signal_motif_2','signal_motif_2_0','signal_0_motif_2','signal_0_motif_2_0']
+	# 	list1 = [id_signal,(~id_signal),id_motif_2,(~id_motif_2),id_query1_1,id_query2_1,id_query1_2,id_query2_2]
+	# 	list2 = [peak_loc_1[id_query] for id_query in list1]
+	# 	# dict_query1 = dict(zip(field_query,list2))
+
+	# 	# peak_signal_group1, peak_signal_group2 = list2[0:2]
+	# 	peak_signal_group1, peak_signal_group2, peak_motif_group1, peak_motif_group2, peak_tp, peak_fn, peak_fp, peak_tn = list2
+
+	# 	y_test = (id_signal).astype(int)
+	# 	y_pred = (id_motif_2).astype(int)
+
+	# 	from utility_1 import score_function_multiclass1, score_function_multiclass2
+	# 	# the example
+	# 	# display = PrecisionRecallDisplay(
+	# 	# 		recall=recall["micro"],
+	# 	# 		precision=precision["micro"],
+	# 	# 		average_precision=average_precision["micro"],
+	# 	# 	)
+	# 	# display.plot(ax=ax, name="Micro-average precision-recall", color="gold")
+
+	# 	# score_type = 0
+	# 	column_1 = 'score_type'
+	# 	if column_1 in select_config:
+	# 		score_type = select_config[column_1]
+	# 	print('score_type: ',score_type)
+
+	# 	dict_query1 = dict()
+	# 	id1 = (column_proba=='')|(column_proba in [-1])|(len(column_proba)==0)
+	# 	if column_proba in df_1.columns:
+	# 		id2 = ((~pd.isna(df_1[column_proba])).sum()==0)
+	# 		id1 = (id1|id2)
+	# 	if id1>0:
+	# 		print('binary prediction')
+	# 		df_score_query1_1 = score_function_multiclass2(y_test,y_pred,average='binary')
+	# 	else:
+	# 		print('binary prediciton and with predicted probability')
+	# 		y_proba = df_1[column_proba]
+	# 		if score_type>0:
+	# 			# y_proba = y_proba.fillna(1)
+	# 			eps = 1E-05
+	# 			# default_value = 1+eps
+	# 			default_value = 1
+	# 			y_proba = y_proba.fillna(default_value)
+	# 			y_proba = 1-y_proba
+	# 			# if log_transform==True:
+	# 			# 	y_proba = np.log2(1+y_proba)
+	# 		else:
+	# 			y_proba = y_proba.fillna(0)
+	# 		# y_proba = y_proba.fillna(0)
+
+	# 		df_score_query1_1 = score_function_multiclass2(y_test,y_pred,y_proba=y_proba,average='binary',average_2='macro')
+	# 		if mode_query>0:
+	# 			# precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
+	# 			# fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
+	# 			# query_vec_1 = [precision_vec, recall_vec, thresh_value_vec_1]
+	# 			# query_vec_2 = [fpr_vec, tpr_vec, thresh_value_vec_2]
+	# 			# dict_query1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
+
+	# 			column_annot = []
+	# 			dict_annot = []
+	# 			column_1, column_2 = 'column_annot_score', 'dict_annot_score'
+	# 			if column_1 in select_config:
+	# 				column_annot = select_config[column_1]
+	# 			if column_2 in select_config:
+	# 				dict_annot = select_config[column_2]
+
+	# 			# column_1 = 'motif_id'
+	# 			# column_2 = 'method_type'
+	# 			# motif_id_query, method_type_query = 'motif', 'method_type'
+	# 			# if column_1 in dict_annot:
+	# 			# 	motif_id_query = dict_annot[column_1]
+
+	# 			# if column_2 in dict_annot:
+	# 			# 	method_type_query = dict_annot[column_2]
+
+	# 			score_type_2 = 0
+	# 			column_3 = 'score_type_2'
+	# 			if column_3 in select_config:
+	# 				score_type_2 = select_config[column_3]
+
+	# 			y_depend = []
+	# 			default_value = 0
+	# 			if score_type_2>0:
+	# 				column_motif = column_vec[3]
+	# 				try:
+	# 					id_motif = (df_1[column_motif].abs()>0)
+	# 				except Exception as error:
+	# 					print('error! ',error)
+	# 					id_motif = df_1[column_motif].isin([True,'True',1,'1'])
+
+	# 				# default_value = 0
+	# 				y_depend = pd.Series(index=peak_loc_1,data=default_value)
+	# 				y_depend.loc[id_motif] = 1
+	# 				# y_depend = (id_motif).astype(int)
+
+	# 			# recompute AUPR
+	# 			dict_query1, df_score_query1_1 = self.test_query_compare_precision_recall_1(y_test=y_test,y_proba=y_proba,
+	# 																							y_depend=y_depend,default_value=default_value,
+	# 																							df_score=df_score_query1_1,
+	# 																							column_annot=column_annot,
+	# 																							dict_annot=dict_annot,flag_score=1,
+	# 																							save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+	# 			# if len(plot_ax)>0:
+	# 			# 	display = PrecisionRecallDisplay(
+	# 			# 				recall=recall_vec,
+	# 			# 				precision=precison_vec,
+	# 			# 				average_precision=df_score_query1_1['aupr']
+	# 			# 			)
+
+	# 			# 	ax = plot_ax
+	# 			# 	display.plot(ax=ax, name="Precision-Recall", color="gold")
+
+	# 			column_1 = 'df_precision_recall'
+	# 			flag_2 = 1
+	# 			flag_2 = (flag_2)&(column_1 in dict_query1)
+					
+	# 			if (column_1 in dict_query1):
+	# 				df_precision_recall = dict_query1[column_1]
+	# 				df_precision_recall['method_type'] = method_type_query
+	# 				list_query5.append(df_precision_recall)
+
+	# 				print('df_precision_recall: ',df_precision_recall.shape)
+	# 				print(df_precision_recall[0:2])
+
+	# 			if flag_2>0:
+	# 				thresh_vec_query1 = [0.05,0.10,0.20,0.25,0.50] # threshold for precision at given recall
+	# 				thresh_vec_query2 = [0.50,0.70,0.90]	# threshold for recall at given precision
+	# 				thresh_difference = 0.05
+	# 				df_score_1 = self.test_query_compare_precision_recall_2(data=df_precision_recall,df_score=df_score_1,
+	# 																				thresh_vec_1=thresh_vec_query1,
+	# 																				thresh_vec_2=thresh_vec_query2,
+	# 																				thresh_difference=thresh_difference,
+	# 																				save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+
+	# 	# precison_1 = np.sum(id_query1)/np.sum(id_motif_2)
+	# 	# peak_signal_group1 = dict_query1['signal']
+	# 	# peak_signal_group2 = dict_query1['signal_0']
+
+	# 	# peak_motif_group1 = dict_query1['motif_2']
+	# 	# peak_motif_group2 = dict_query1['motif_2_0']
+	# 	peak_signal_num1 = len(peak_signal_group1)
+	# 	peak_motif_num1 = len(peak_motif_group1)
+	# 	peak_tp_num = len(peak_tp)
+	# 	peak_fn_num = len(peak_fn)
+	# 	peak_fp_num = len(peak_fp)
+	# 	peak_tn_num = len(peak_tn)
+
+	# 	eps = 1E-12
+	# 	precision_1 = peak_tp_num/(peak_motif_num1+eps)
+	# 	recall_1 = peak_tp_num/(peak_signal_num1+eps)
+	# 	f1_score = 2*precision_1*recall_1/(precision_1+recall_1+eps)
+	# 	accuracy = (peak_tp_num+peak_tn_num)/peak_loc_num1
+	# 	t_vec_1 = [accuracy,precision_1,recall_1,f1_score]
+	# 	field_query_pre1 = ['accuracy','precision','recall','F1']
+	# 	df_score_query1_2 = pd.Series(index=field_query_pre1,data=t_vec_1,dtype=np.float32)
+
+	# 	# contingency_table = [[link_num_sel,link_num_bg],[link_num_sel2,link_num_bg2]]
+	# 	# contingency_table = np.asarray(contingency_table)
+	# 	contingency_table = [[peak_tp_num,peak_fn_num],[peak_fp_num,peak_tn_num]]
+	# 	contingency_table = np.asarray(contingency_table)
+
+	# 	# print('contingency table: ')
+	# 	# print(contingency_table)
+
+	# 	# contingency_table_ori = contingency_table.copy()
+	# 	# if type_id_1==1:
+	# 	# 	contingency_table = contingency_table.T
+	# 	try:
+	# 		stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
+	# 	except Exception as error:
+	# 		print('error! ',error)
+	# 		stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = 0, 1, 1, [0,0,0,0]
+
+	# 	try:
+	# 		stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative='greater')
+	# 	except Exception as error:
+	# 		print('error! ',error)
+	# 		stat_fisher_exact_, pval_fisher_exact_ = 0, 1
+
+	# 	# print(stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_)
+	# 	# print(stat_fisher_exact_, pval_fisher_exact_)
+	# 	if iter_mode==0:
+	# 		field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['ex_chi2_%d'%(id1) for id1 in np.arange(1,5)]+['stat_fisher_exact_','pval_fisher_exact_']
+	# 		query_value_1 = np.ravel(np.asarray(ex_chi2_))
+	# 		t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+ list(query_value_1)+[stat_fisher_exact_, pval_fisher_exact_]
+	# 		df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+	# 	else:
+	# 		field_query_pre2 = ['stat_chi2_','pval_chi2_','dof_chi2_']+['stat_fisher_exact_','pval_fisher_exact_']
+	# 		t_vec_2 = [stat_chi2_, pval_chi2_, dof_chi2_]+[stat_fisher_exact_, pval_fisher_exact_]
+	# 		df_score_query2_2 = pd.Series(index=field_query_pre2,data=np.asarray(t_vec_2),dtype=np.float32)
+		
+	# 	# df_score_query_2 = pd.concat([df_score_query1_2,df_score_query2_2],axis=0,join='outer')
+	# 	df_score_query_1 = pd.concat([df_score_query1_1,df_score_query2_2],axis=0,join='outer')
+	# 	df_score_query_2 = df_score_query1_2
+
+	# 	return df_score_query_1, df_score_query_2, contingency_table, dict_query1
+
+	## ====================================================
+	# compare TF binding prediction
 	def test_query_pred_score_unit1_pre2(self,data=[],column_vec=[],score_type=0,mode_query=1,iter_mode=0,plot_ax=[],save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config={}):
 		
 		df_1 = data
@@ -997,7 +1355,6 @@ class _Base2_2_1(_Base2_2):
 				# aupr_2 = aupr_1-value_1
 
 				df1['recall_2'] = df1['recall']*signal_ratio
-
 				aupr_2 = aupr_1*signal_ratio
 				
 				field_query2_2 = ['aupr_2','signal_ratio','precision_1','recall_1','precision_2','recall_2']
@@ -1106,7 +1463,8 @@ class _Base2_2_1(_Base2_2):
 
 		return df_score_query_1, df_score_query_2, contingency_table, dict_query1
 
-	## score query for performance comparison
+	## ====================================================
+	# score query for performance comparison
 	# performance comparison for each TF motif
 	# def test_query_compare_binding_pre1_5_1_basic_2_unit1_2(self,data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',group_query_vec=[2],column_signal='signal',column_motif='',column_vec_query=[],dict_method_type=[],score_type_vec=[],log_transform=False,feature_type_vec=[],method_type_vec=[],method_type_group='',mode_query=1,flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 	def test_query_pred_score_unit1_2(data=[],dict_feature=[],motif_id_query='',motif_id_1='',motif_id_2='',group_query_vec=[2],column_signal='signal',column_motif='',column_vec_query=[],dict_method_type=[],score_type_vec=[],log_transform=False,feature_type_vec=[],method_type_vec=[],method_type_group='',mode_query=1,flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -1349,9 +1707,10 @@ class _Base2_2_1(_Base2_2):
 
 		return df_score_query_1, dict_query_1
 
-	## score query for performance comparison
-	# performance comparison for the binary prediction and predicted probability
-	def test_query_compare_binding_basic_unit1_1(self,data1=[],data2=[],motif_id_query='',group_query_vec=[2],df_annot_motif=[],dict_motif=[],dict_method_type=[],column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	## ====================================================
+	# query peak-TF link estimation performance score for performance comparison
+	# performance comparison using the binary prediction and predicted probability
+	def test_query_compare_binding_basic_unit1_1_ori(self,data1=[],data2=[],motif_id_query='',group_query_vec=[2],df_annot_motif=[],dict_motif=[],dict_method_type=[],column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		df_signal = data1
 		df_pre1 = data2
@@ -1406,6 +1765,7 @@ class _Base2_2_1(_Base2_2):
 					column_pred, column_proba = column_query_1[0:2]
 
 				column_vec = [column_signal,column_pred,column_proba]
+				# query peak-TF link estimation performance score
 				t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=0,save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',verbose=0,select_config=select_config)
 								
 				df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
@@ -1439,19 +1799,240 @@ class _Base2_2_1(_Base2_2):
 
 		return df_score_query_1
 
-	## score query for performance comparison
+	## ====================================================
+	# query peak-TF link estimation performance score for performance comparison
+	# performance comparison using the binary prediction and predicted probability
+	def test_query_compare_binding_basic_unit1_1(self,data1=[],data2=[],motif_id_query='',group_query_vec=[2],df_annot_motif=[],dict_motif=[],dict_method_type=[],column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		df_signal = data1
+		df_pre1 = data2
+		if flag_compare_1==0:
+			list_group = [df_pre1]
+			group_query_vec_1 = [2]
+			group_query_vec = group_query_vec_1
+			# query_num_1 = 1
+			print('df_pre1: ',df_pre1.shape)
+		else:
+			id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
+			id2 = (~id1)	# peak loci without motif
+			df_query_group1 = df_pre1.loc[id1,:]
+			df_query_group2 = df_pre1.loc[id2,:]
+			df_query_group_1 = df_pre1
+			print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
+
+			# list_group = [df_query_group1,df_query_group2]
+			list_group = [df_query_group_1,df_query_group1,df_query_group2]
+			group_query_vec_1 = [2,1,0]
+		
+		dict_group_query = dict(zip(group_query_vec_1,list_group))
+		
+		# query_num_1 = len(list_group)
+		query_num_1 = len(group_query_vec)
+		query_num_2 = len(column_vec_query)
+
+		if method_type_group=='':
+			method_type_group = select_config['method_type_group']
+
+		list_query1 = []
+		list_query1_1 = []
+		score_type_2 = 0
+		if 'score_type_2' in select_config:
+			score_type_2 = select_config['score_type_2']
+
+		# group_query_vec = [2,1,0]
+		for i2 in range(query_num_1):
+			# df_query_group = list_group[i2]
+			group_id_motif = group_query_vec[i2]
+			df_query_group = dict_group_query[group_id_motif]
+
+			# query the signal
+			peak_loc_pre1 = df_query_group.index
+			df_query_group[column_signal] = df_signal.loc[peak_loc_pre1,:]
+			print('df_query_group, group_motif: ',df_query_group.shape,group_id_motif)
+			print(df_query_group[0:2])
+
+			list_query2 = []
+			list_query3 = []
+			list_query5 = []
+
+			score_type_2_query = score_type_2
+			for t_id1 in range(query_num_2):
+				column_query_1 = column_vec_query[t_id1]
+				if isinstance(column_query_1,str):
+					column_pred = column_query_1
+					# column_proba = []
+					column_proba = ''
+					column_motif = ''
+				else:
+					column_pred = column_query_1[0]
+					if len(column_query_1)>1:
+						# column_pred, column_proba = column_query_1[0:2]
+						column_proba = column_query_1[1]
+						if score_type_2_query>0:
+							if len(column_query_1)<3:
+								score_type_2_query = 0
+							else:
+								column_motif = column_query_1[2]
+					else:
+						column_proba = ''
+						column_motif = ''
+
+				print('column_signal, column_pred, column_proba ',column_signal,column_pred,column_proba)
+				column_vec = [column_signal,column_pred,column_proba]
+				if score_type_2_query>0:
+					column_vec = column_vec + [column_motif]
+					print('column_motif ',column_motif)
+
+				# query peak-TF link estimation performance score
+				t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,iter_mode=1,
+															save_mode=1,output_file_path='',filename_prefix_save='',filename_annot_save='',output_filename='',
+															verbose=verbose,select_config=select_config)
+				
+				# df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
+				df_score_1, contingency_table, dict_query1 = t_vec_1
+
+				# print('field_query: ',column_query)
+				# print('df_score_1: \n',df_score_1)
+				# print('contingency_table: \n',contingency_table)
+				# list_query2.append(df_score_1)
+				# list_query3.append(column_query)
+				# list_query3.append(column_pred)
+
+				if len(dict_method_type)==0:
+					method_type_query = column_pred
+				else:
+					method_type_query = dict_method_type[column_pred]
+
+				# print('dict_query1: ',dict_query1)
+				# if len(dict_query1)>0:
+				# 	key_vec_1 = list(dict_query1.keys())
+				# 	print('dict_query1: ',key_vec_1)
+
+				# 	column_1 = 'df_precision_recall'
+				# 	flag_2 = 1
+				# 	flag_2 = (flag_2)&(column_1 in dict_query1)
+					
+				# 	if (column_1 in dict_query1):
+				# 		df_precision_recall = dict_query1[column_1]
+				# 		df_precision_recall['method_type'] = method_type_query
+				# 		list_query5.append(df_precision_recall)
+
+				# 		print('df_precision_recall: ',df_precision_recall.shape)
+				# 		print(df_precision_recall[0:2])
+
+				# 	if flag_2>0:
+				# 		# print('df_precision_recall: ',df_precision_recall.shape)
+				# 		# print(df_precision_recall[0:2])
+
+				# 		# thresh_difference = 0.05
+				# 		# thresh_vec_query1 = [0.05,0.10,0.20,0.25,0.50]
+				# 		# column_vec_query1=['recall','precision']
+				# 		# df1 = self.test_query_precision_with_recall_1(data=df_precision_recall,thresh_vec_query=thresh_vec_query1,
+				# 		# 												thresh_difference=thresh_difference,
+				# 		# 												save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+				# 		# thresh_vec_query2 = [0.50,0.70,0.90]
+				# 		# column_vec_query2=['precision','recall']
+				# 		# df2 = self.test_query_recall_with_precision_1(data=df_precision_recall,thresh_vec_query=thresh_vec_query2,
+				# 		# 												thresh_difference=thresh_difference,
+				# 		# 												save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+				# 		# column_thresh_1, column_value_1 = column_vec_query1[0], column_vec_query1[1]
+				# 		# column_thresh_2, column_value_2 = column_vec_query2[0], column_vec_query2[1]
+
+				# 		# query_id_1 = df1.index
+				# 		# query_id_2 = df2.index
+				# 		# t_vec_1 = ['%s_%s'%(column_thresh_1,thresh_query) for thresh_query in query_id_1]
+				# 		# t_vec_2 = ['%s_%s'%(column_thresh_2,thresh_query) for thresh_query in query_id_2]
+				# 		# df1.index = t_vec_1
+				# 		# df2.index = t_vec_2
+
+				# 		# list1 = [df_score_1,df1[column_value_1],df2[column_value_2]]
+				# 		# df_score_1 = pd.concat(list1,axis=0,join='outer',ignore_index=False)
+
+				# 		thresh_vec_query1 = [0.05,0.10,0.20,0.25,0.50] # threshold for precision at given recall
+				# 		thresh_vec_query2 = [0.50,0.70,0.90]	# threshold for recall at given precision
+				# 		thresh_difference = 0.05
+				# 		df_score_1 = self.test_query_compare_precision_recall_2(data=df_precision_recall,df_score=df_score_1,
+				# 																	thresh_vec_1=thresh_vec_query1,
+				# 																	thresh_vec_2=thresh_vec_query2,
+				# 																	thresh_difference=thresh_difference,
+				# 																	save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+				list_query2.append(df_score_1)
+				list_query3.append(column_pred)
+
+			# list_2 = [motif_id_query,motif_id1,motif_id2,group_id_motif,n_neighbors,column_vec_query_1,method_type_group]
+			motif_id2 = motif_id_query
+			# motif_id_ori, motif_id1 = dict_motif[motif_id_query][0:2]
+			motif_id_ori = df_annot_motif.loc[motif_id2,'motif_id']
+			# if 'motif_id1' in df_annot_motif.columns:
+			# 	motif_id1 = df_annot_motif.loc[motif_id2,'motif_id1']
+			# else:
+			# 	motif_id1 = motif_id_ori
+			
+			# query prediction score
+			if len(list_query2)>0:
+				df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
+				df_score_query = df_score_query.T
+
+				column_vec_query_1 = np.asarray(list_query3)
+				if len(dict_method_type)==0:
+					method_type_vec_query = column_vec_query_1
+				else:
+					method_type_vec_query = [dict_method_type[column_query] for column_query in column_vec_query_1]
+
+				# field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
+				# field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','method_type','method_type_group']
+				field_query_2 = ['motif_id','motif_id2','group_motif','method_type','method_type_group']
+				# group_id_motif = int(2-i2)
+				# group_id_motif = group_query_vec[i2]
+
+				# list_2 = [motif_id_ori,motif_id1,motif_id2,group_id_motif,method_type_vec_query,method_type_group]
+				list_2 = [motif_id_ori,motif_id2,group_id_motif,method_type_vec_query,method_type_group]
+				
+				for (field_id1,query_value) in zip(field_query_2,list_2):
+					df_score_query[field_id1] = query_value
+				list_query1.append(df_score_query)
+
+			# query precision and recall
+			if len(list_query5)>0:
+				df_precision_recall_query = pd.concat(list_query5,axis=0,join='outer',ignore_index=False)
+				field_query_pre2 = ['motif_id','motif_id2','group_motif']
+				list_pre2 = [motif_id_ori,motif_id2,group_id_motif]
+				for (field_id,query_value) in zip(field_query_pre2,list_pre2):
+					df_precision_recall_query[field_id] = query_value
+
+				list_query1_1.append(df_precision_recall_query)
+
+		df_score_query_1 = []
+		if len(list_query1)>0:
+			df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
+
+		df_score_query_2 = []
+		if len(list_query1_1)>0:
+			df_score_query_2 = pd.concat(list_query1_1,axis=0,join='outer',ignore_index=False)
+
+		return df_score_query_1, df_score_query_2
+
+	## ====================================================
+	# query peak-TF link estimation performance score for performance comparison
 	def test_query_compare_binding_basic_1(self,data1=[],data2=[],motif_query_vec=[],motif_query_vec_2=[],df_annot_motif=[],dict_motif=[],dict_method_type=[],feature_type_vec=[],column_vec_query=[],column_signal='signal',column_motif='',method_type_vec=[],method_type_group='',flag_score_1=0,flag_score_2=0,flag_compare_1=0,type_id_1=0,parallel=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		dict_signal = data1
-		dict_query = data2
+		# dict_signal = data1
+		# dict_query = data2
+		data_signal = data1
+		data_pred_query = data2
 		motif_query_num = len(motif_query_vec)
 
 		query_res = []
 		if parallel==0:
 			for i1 in range(motif_query_num):
 				motif_query = motif_query_vec[i1] # motif_id2_query
-				if (motif_query in dict_signal) and (motif_query in dict_query):
-					t_query_res = self.test_query_compare_binding_basic_unit1_1(data1=dict_signal[motif_query],data2=dict_query[motif_query],
+				if (motif_query in data_signal) and (motif_query in data_pred_query):
+					df_signal_query = data_signal[motif_query]
+					df_pred_query = data_pred_query[motif_query]
+					t_query_res = self.test_query_compare_binding_basic_unit1_1(data1=df_signal_query,data2=df_pred_query,
 																					motif_id_query=motif_query,
 																					df_annot_motif=df_annot_motif,
 																					dict_method_type=dict_method_type,
@@ -1461,9 +2042,8 @@ class _Base2_2_1(_Base2_2):
 						query_res.append(t_query_res)
 				else:
 					print('motif query not included ',motif_query)
-
 		else:
-			query_res_local = Parallel(n_jobs=-1)(delayed(self.test_query_compare_binding_basic_unit1_1)(data1=dict_signal[motif_query],data2=dict_query[motif_query],
+			query_res_local = Parallel(n_jobs=-1)(delayed(self.test_query_compare_binding_basic_unit1_1)(data1=data_signal[motif_query],data2=data_pred_query[motif_query],
 																											motif_id_query=motif_query,
 																											df_annot_motif=df_annot_motif,
 																											dict_method_type=dict_method_type,
@@ -1485,7 +2065,352 @@ class _Base2_2_1(_Base2_2):
 		return df_score_query_1
 
 	## TF binding prediction performance
-	def test_query_compare_binding_pre1_5_1_basic_1(self,data=[],feature_query_vec=[],method_type_vec=[],type_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# def test_query_compare_binding_pre1_5_1_basic_1(self,data=[],feature_query_vec=[],method_type_vec=[],type_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+	# 	data_file_type_query = select_config['data_file_type']
+	# 	select_config.update({'data_file_type_query':data_file_type_query})
+	# 	# run_id1 = select_config['run_id']
+
+	# 	# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh22']
+	# 	method_type_feature_link = select_config['method_type_feature_link']
+	# 	method_type_group = select_config['method_type_group']
+
+	# 	flag_config_1=1
+	# 	if flag_config_1>0:
+	# 		root_path_1 = select_config['root_path_1']
+	# 		root_path_2 = select_config['root_path_2']
+	# 		select_config = self.test_query_config_pre1_1(data_file_type=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
+
+	# 	file_save_path_1 = select_config['file_path_peak_tf']
+	# 	if data_file_type_query in ['pbmc']:
+	# 		dict_file_annot1 = select_config['dict_file_annot1']
+	# 		dict_file_annot2 = select_config['dict_file_annot2']
+	# 		dict_config_annot1 = select_config['dict_config_annot1']
+
+	# 	folder_id_query = 2 # the folder to save annotation files
+	# 	file_path_query1 = dict_file_annot1[folder_id_query]
+	# 	file_path_query2 = dict_file_annot2[folder_id_query]
+	# 	input_file_path_query = file_path_query1
+	# 	input_file_path_query_2 = '%s/vbak1'%(file_path_query1)
+
+	# 	dict_query_1 = dict()
+	# 	feature_type_vec_group = ['latent_peak_tf','latent_peak_motif']
+
+	# 	# type_id_group_2 = select_config['type_id_group_2']
+	# 	type_id_group_2 = 1
+	# 	feature_type_query_1 = feature_type_vec_group[type_id_group_2]
+	# 	feature_type_query_2 = 'latent_peak_tf'
+	# 	feature_type_vec_query = [feature_type_query_1,feature_type_query_2]
+
+	# 	column_signal = 'signal'
+	# 	column_motif = '%s.motif'%(method_type_feature_link)
+
+	# 	# query the column of the prediction
+	# 	model_type_id1 = 'LogisticRegression'
+	# 	method_type_query1 = method_type_feature_link
+	# 	method_type_query2 = 'latent_peak_motif_peak_gene_combine_%s'%(model_type_id1)
+	# 	method_type_annot1 = 'Unify'
+	# 	method_type_annot2 = 'REUNION'
+
+	# 	annot_str_vec = ['pred','proba_1']
+	# 	t_vec_1 = ['%s.pred'%(method_type_query1),[]]
+	# 	t_vec_2 = ['%s_%s'%(method_type_query2,annot_str1) for annot_str1 in annot_str_vec]
+	# 	column_vec_query = [t_vec_1,t_vec_2]
+	# 	column_vec_query1 = [column_motif] + [t_vec_1[0]] + t_vec_2
+
+	# 	method_type_vec_query1 = [query_vec[0] for query_vec in column_vec_query]
+	# 	method_type_vec_annot1 = [method_type_annot1,method_type_annot2]
+	# 	dict_method_type = dict(zip(method_type_vec_query1,method_type_vec_annot1))
+
+	# 	input_filename = select_config['file_motif_annot']
+	# 	df_annot_ori = pd.read_csv(input_filename,index_col=0,sep='\t')
+	# 	df_annot1_1 = df_annot_ori.drop_duplicates(subset=['motif_id'])
+
+	# 	df_annot_1 = df_annot1_1
+	# 	print('df_annot_ori, df_annot_1: ',df_annot_ori.shape,df_annot_1.shape)
+
+	# 	# motif_idvec_query = df_annot_1.index.unique()
+	# 	motif_idvec_query = df_annot_1['motif_id'].unique()
+
+	# 	# dict_motif = []
+	# 	df_annot_motif = df_annot_1
+	# 	verbose_internal = self.verbose_internal
+	# 	if verbose_internal>0:
+	# 		# print('df_annot_motif: ',df_annot_motif.shape)
+	# 		print('annotation file, dataframe of size ',df_annot_motif.shape)
+	# 		print(df_annot_motif)
+	# 		print('dict_method_type: ',dict_method_type)
+
+	# 	if len(feature_query_vec)>0:
+	# 		motif_query_vec_1 = feature_query_vec
+	# 	else:
+	# 		motif_query_vec_1 = motif_idvec_query
+
+	# 	motif_query_num1 = len(motif_query_vec_1)
+	# 	list1 = []
+	# 	dict_signal_1 = dict()
+	# 	dict_query_1 = dict()
+
+	# 	ratio_1, ratio_2 = select_config['ratio_1'], select_config['ratio_2']
+	# 	n_neighbors = select_config['neighbor_num']
+	# 	run_id2 = 2
+	# 	folder_id_1 = 2
+	# 	# type_query = 0
+	# 	# type_query = 1
+	# 	filename_save_annot_pre1 = '%s.0.1'%(data_file_type_query)
+	# 	input_file_path_1 = input_file_path_query_2
+	# 	start = time.time()
+	# 	dict_file_signal = select_config['dict_file_signal']
+	# 	dict_file_pred = select_config['dict_file_pred']
+	# 	for i1 in range(motif_query_num1):
+	# 		motif_id = motif_query_vec_1[i1]
+	# 		motif_id_query = motif_id
+	# 		motif_id2_query = df_annot_1.loc[df_annot_1['motif_id']==motif_id,'motif_id2']
+	# 		motif_id2_num = len(motif_id2_query)
+	# 		print('motif_id, motif_id2: ',motif_id,motif_id2_query,motif_id2_num,i1)
+	# 		list1.extend(motif_id2_query)
+
+	# 		for i2 in range(motif_id2_num):
+	# 			motif_id2 = motif_id2_query[i2]
+	# 			motif_id1 = df_annot_1.loc[motif_id2,'motif_id1']
+	# 			folder_id = df_annot_1.loc[motif_id2,'folder_id']
+	# 			config_id_2 = dict_config_annot1[folder_id]
+
+	# 			filename_annot_train_pre1 = '%s_%s.%d'%(ratio_1,ratio_2,config_id_2)
+	# 			filename_save_annot_query = '%s.%s.neighbor%d'%(method_type_group,filename_annot_train_pre1,n_neighbors)
+
+	# 			file_path_query_2 = dict_file_annot2[folder_id]
+	# 			input_file_path_1 = file_path_query_2
+				
+	# 			input_filename_1 = dict_file_signal[motif_id2] # the ChIP-seq signal file
+	# 			input_filename_2 = dict_file_pred[motif_id_query]	# the peak-TF association estimation file
+				
+	# 			if os.path.exists(input_filename_2)==False:
+	# 				print('the file does not exist: ',input_filename_2)
+	# 				continue
+
+	# 			df_query_pre1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
+	# 			df_query_pre1 = df_query_pre1.loc[(~df_query_pre1.index.duplicated(keep='first')),:]
+	# 			# print(input_filename_1)
+				
+	# 			df_query_1 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+	# 			df_query_1 = df_query_1.loc[(~df_query_1.index.duplicated(keep='first')),:]
+	# 			t_columns_1 = df_query_1.columns.difference([column_signal],sort=False)
+	# 			# print(input_filename_2)
+
+	# 			peak_loc_pre1 = df_query_1.index
+	# 			df_signal = df_query_pre1.loc[peak_loc_pre1,[column_signal]]
+	# 			df_query1 = df_query_1.loc[:,column_vec_query1]
+
+	# 			if verbose_internal>0:
+	# 				print('load annotation of ATAC-seq peaks overlapping with ChIP-seq peaks from: %s, dataframe of size '%(input_filename_1),df_signal.shape)
+	# 				print('data preview: ')
+	# 				print(df_signal[0:2])
+	# 				print('load peak-TF link estimation from: %s, dataframe of size '%(input_filename_2),df_query1.shape)
+	# 				print('data preview: ')
+	# 				print(df_query1[0:2])
+	# 				# print('df_signal,df_query1,motif_id: ',df_signal.shape,df_query1.shape,motif_id,motif_id1,motif_id2)
+				
+	# 			dict_signal_1.update({motif_id2:df_signal})
+	# 			dict_query_1.update({motif_id2:df_query1})
+
+	# 	motif_query_vec = list1
+	# 	stop = time.time()
+	# 	print('load data used %.2fs'%(stop-start))
+
+	# 	# score query for performance comparison
+	# 	start = time.time()
+	# 	flag_compare_1=0
+	# 	parallel = 0
+	# 	# parallel = 1
+	# 	df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,data2=dict_query_1,motif_query_vec=motif_query_vec,motif_query_vec_2=[],
+	# 																df_annot_motif=df_annot_motif,dict_method_type=dict_method_type,
+	# 																feature_type_vec=[],column_vec_query=column_vec_query,
+	# 																column_signal=column_signal,column_motif=column_motif,
+	# 																method_type_vec=[],method_type_group='',
+	# 																flag_score_1=0,flag_score_2=0,flag_compare_1=flag_compare_1,
+	# 																type_id_1=0,parallel=parallel,input_file_path='',
+	# 																save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=verbose,select_config=select_config)
+
+	# 	stop = time.time()
+	# 	print('performance comparison used %.2fs'%(stop-start))
+
+	# 	output_file_path = input_file_path_query_2
+	# 	output_filename = '%s/test_query_df_score.beta.%s.1.txt'%(output_file_path,filename_save_annot_1)
+	# 	df_score_query_1.to_csv(output_filename,sep='\t')
+	# 	print(output_filename)
+
+	# 	return df_score_query_1
+
+	## TF binding prediction performance
+	# def test_query_compare_binding_pre1_5_1_basic_unit1(self,data_1=[],data_2=[],df_annot=[],dict_method_type=[],feature_query_vec=[],column_vec_query=[],column_signal='',column_motif='',type_query=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+	# 	data_file_type_query = select_config['data_file_type']
+	# 	select_config.update({'data_file_type_query':data_file_type_query})
+	# 	# run_id1 = select_config['run_id']
+
+	# 	# motif_query_vec = list1
+	# 	motif_query_vec = feature_query_vec
+	# 	motif_query_num1 = len(motif_query_vec)
+	# 	if column_signal=='':
+	# 		column_signal = 'signal'
+	# 	if column_motif=='':
+	# 		method_type_feature_link = select_config['method_type_feature_link']
+	# 		column_motif = '%s.motif'%(method_type_feature_link)
+	# 	column_vec_pre1 = column_vec_query
+
+	# 	start = time.time()
+	# 	dict_query_pre1 = data_1
+	# 	dict_query_pre2 = data_2
+	# 	load_mode = 1
+	# 	dict_signal_1 = dict()
+	# 	dict_query_1 = dict()
+
+	# 	for i1 in range(motif_query_num1):
+	# 		motif_id2 = motif_query_vec[i1]
+	# 		motif_id_query = df_annot.loc[motif_id2,'motif_id']
+	# 		motif_id = motif_id_query
+	# 		motif_id1 = df_annot.loc[motif_id2,'motif_id1']
+
+	# 		df_query_1 = dict_query_pre2[motif_id_query]
+	# 		# df_query_1 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+	# 		df_query_1 = df_query_1.loc[(~df_query_1.index.duplicated(keep='first')),:]
+	# 		t_columns_1 = df_query_1.columns.difference([column_signal],sort=False)
+	# 		# print(df_query_1.columns)
+	# 		# print(input_filename_2)
+
+	# 		peak_loc_pre1 = df_query_1.index
+	# 		# df_query_pre1_1 = df_query_pre1.loc[peak_loc_pre1,:]
+	# 		if load_mode>0:
+	# 			df_query_pre1 = dict_query_pre1[motif_id2] # the signal are different for different celltypes
+	# 		else:
+	# 			df_query_pre1 = df_query_1
+
+	# 		# df_signal = df_query_1.loc[:,[column_signal]]
+	# 		# df_query1 = df_query_1.loc[:,t_columns_1]
+	# 		df_signal = df_query_pre1.loc[peak_loc_pre1,[column_signal]]
+	# 		column_vec_query1 = np.ravel(column_vec_query)
+	# 		df_query1 = df_query_1.loc[:,column_vec_query1]
+
+	# 		# print('df_signal,df_query1,motif_id: ',df_signal.shape,df_query1.shape,motif_id,motif_id1,motif_id2,i1)
+	# 		# print(df_signal[0:2])
+	# 		# print(df_query1[0:2])
+				
+	# 		dict_signal_1.update({motif_id2:df_signal})
+	# 		dict_query_1.update({motif_id2:df_query1})
+
+	# 	stop = time.time()
+	# 	print('load data used %.2fs'%(stop-start))
+
+	# 	# score query for performance comparison
+	# 	start = time.time()
+	# 	df_annot_motif = df_annot
+	# 	flag_compare_1=0
+	# 	parallel = 0
+	# 	# parallel = 1
+	# 	df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,data2=dict_query_1,motif_query_vec=motif_query_vec,motif_query_vec_2=[],
+	# 																df_annot_motif=df_annot_motif,dict_method_type=dict_method_type,
+	# 																feature_type_vec=[],column_vec_query=column_vec_query,
+	# 																column_signal=column_signal,column_motif=column_motif,
+	# 																method_type_vec=[],method_type_group='',
+	# 																flag_score_1=0,flag_score_2=0,flag_compare_1=flag_compare_1,
+	# 																type_id_1=0,parallel=parallel,input_file_path='',
+	# 																save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=verbose,select_config=select_config)
+
+	# 	stop = time.time()
+	# 	print('performance comparison used %.2fs'%(stop-start))
+
+	# 	if (save_mode>0) and (output_filename!=''):
+	# 		df_score_query_1.to_csv(output_filename,sep='\t')
+	# 		print(output_filename)
+
+	# 	return df_score_query_1
+
+	## ====================================================
+	# query estimated peak-TF association
+	def test_query_feature_link_2(self,data=[],dict_file={},df_annot=[],feature_query_vec=[],type_query=0,append=True,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		# load the peak-TF association estimation
+		# dict_file_query = data
+		motif_idvec_query = feature_query_vec
+		motif_query_num1 = len(motif_idvec_query)
+
+		dict_file_query = dict_file
+		dict_query_1 = []
+		if type_query in [0,1]:
+			if (len(dict_file_query)==0) or (append>0):
+				field_query = ['path_save_link','filename_prefix_pred','filename_annot_pred']
+				list_query1 = [select_config[field_id] for field_id in field_query]
+				input_file_path_query,filename_prefix_1,filename_save_annot1 = list_query1[0:3]
+
+				for i1 in range(motif_query_num1):
+					motif_id = motif_idvec_query[i1]
+					motif_id_query = motif_id
+					input_filename = '%s/%s.%s.%s.txt'%(input_file_path_query,filename_prefix_1,motif_id_query,filename_save_annot1)
+					
+					if os.path.exists(input_filename)==False:
+						print('the file does not exist: %s'%(input_filename))
+						continue
+					dict_file_query.update({motif_id:input_filename})
+		
+			if type_query in [1]:
+				dict_query_1 = self.test_query_feature_link_load_1(data=data,dict_file=dict_file_query,df_annot=df_annot,feature_query_vec=feature_query_vec,save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+		return dict_file_query, dict_query_1
+
+	## ====================================================
+	# query estimated peak-TF association
+	def test_query_feature_link_load_1(self,data=[],dict_file={},df_annot=[],feature_query_vec=[],load_mode=1,save_mode=1,verbose=0,select_config={}):
+
+		dict_file_query = dict_file
+		motif_query_vec_1 = feature_query_vec
+		motif_query_num1 = len(feature_query_vec)
+		dict_query_1 = dict()
+		verbose_internal = self.verbose_internal
+
+		for i1 in range(motif_query_num1):
+			motif_id = motif_query_vec_1[i1]
+			motif_id_query = motif_id
+			
+			motif_id2_query = df_annot_1.loc[df_annot_1['motif_id']==motif_id,'motif_id2']
+			motif_id2_num = len(motif_id2_query)
+			print('motif_id, motif_id2: ',motif_id,motif_id2_query,motif_id2_num,i1)
+
+			if load_mode>0:
+				if not (motif_id_query in dict_file_query):
+					print('the estimation not included: ',motif_id2_query,i1)
+					continue
+
+				query_value = dict_file_query[motif_id_query]
+				if isinstance(query_value,str):
+					input_filename = query_value
+					if os.path.exists(input_filename)==False:
+						print('the file does not exist: ',input_filename)
+						continue
+
+					df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t') # load peak-TF link prediction
+					if verbose_internal>0:
+						print('load peak-TF link estimation from %s'%(input_filename))
+				else:
+					df_query_1 = query_value
+
+				df_query_1 = df_query_1.loc[(~df_query_1.index.duplicated(keep='first')),:]
+				
+				peak_loc_pre1 = df_query_1.index
+				peak_num = len(peak_loc_pre1)
+				if verbose_internal>0:
+					print('peak-TF link estimation, dataframe of size ',df_query_1.shape)
+					print('preview: ')
+					print(df_query_1[0:2])
+					print('peak number: %d'%(peak_num))
+
+				for motif_id2 in motif_id2_query:
+					dict_query_1.update({motif_id2:df_query_1})
+
+		return dict_query_1
+
+	## TF binding prediction performance
+	def test_query_compare_binding_pre1(self,data=[],dict_signal={},df_signal=[],dict_file_pred={},feature_query_vec=[],method_type_vec=[],type_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		data_file_type_query = select_config['data_file_type']
 		select_config.update({'data_file_type_query':data_file_type_query})
@@ -1495,11 +2420,18 @@ class _Base2_2_1(_Base2_2):
 		method_type_feature_link = select_config['method_type_feature_link']
 		method_type_group = select_config['method_type_group']
 
-		flag_config_1=1
-		if flag_config_1>0:
-			root_path_1 = select_config['root_path_1']
-			root_path_2 = select_config['root_path_2']
-			select_config = self.test_query_config_pre1_1(data_file_type=data_file_type_query,method_type_vec=method_type_vec,flag_config_1=flag_config_1,select_config=select_config)
+		load_mode_signal = 0
+		if len(dict_signal)>0:
+			load_mode_signal = 1
+		elif len(df_signal)>0:
+			load_mode_signal = 2
+
+		if load_mode_signal==0:
+			df_signal_query1, dict_signal_query1 = self.test_query_signal_overlap_format_1(input_filename='',input_filename_list=[],feature_query='',feature_query_vec=[],peak_query_vec=[],column_vec=[],type_id_1=0,type_query=0,save_mode=1,filename_prefix_save='',filename_save_annot='annot',output_filename='',verbose=0,select_config=select_config)
+
+			df_signal = df_signal_query1
+			dict_signal = dict_signal_query1
+			load_mode_signal = 2
 
 		file_save_path_1 = select_config['file_path_peak_tf']
 		if data_file_type_query in ['pbmc']:
@@ -1514,7 +2446,7 @@ class _Base2_2_1(_Base2_2):
 		input_file_path_query_2 = '%s/vbak1'%(file_path_query1)
 
 		dict_query_1 = dict()
-		feature_type_vec_group = ['latent_peak_tf','latent_peak_motif']
+		feature_type_vec_group = ['latent_peak_tf','latent_peak_motif','latent_peak_motif_ori']
 
 		# type_id_group_2 = select_config['type_id_group_2']
 		type_id_group_2 = 1
@@ -1527,10 +2459,14 @@ class _Base2_2_1(_Base2_2):
 
 		# query the column of the prediction
 		model_type_id1 = 'LogisticRegression'
+		column_1 = 'model_type_id1'
+		if column_1 in select_config:
+			model_type_id1 = select_config[column_1]
+
 		method_type_query1 = method_type_feature_link
 		method_type_query2 = 'latent_peak_motif_peak_gene_combine_%s'%(model_type_id1)
-		method_type_annot1 = 'Unify'
-		method_type_annot2 = 'REUNION'
+		# method_type_annot1 = 'Unify'
+		# method_type_annot2 = 'REUNION'
 
 		annot_str_vec = ['pred','proba_1']
 		t_vec_1 = ['%s.pred'%(method_type_query1),[]]
@@ -1544,22 +2480,21 @@ class _Base2_2_1(_Base2_2):
 
 		input_filename = select_config['file_motif_annot']
 		df_annot_ori = pd.read_csv(input_filename,index_col=0,sep='\t')
-		df_annot1_1 = df_annot_ori.drop_duplicates(subset=['motif_id'])
+		df_annot_motif = df_annot_ori.drop_duplicates(subset=['motif_id'])
 
-		df_annot_1 = df_annot1_1
-		print('df_annot_ori, df_annot_1: ',df_annot_ori.shape,df_annot_1.shape)
+		# print('df_annot_ori, df_annot_1: ',df_annot_ori.shape,df_annot_1.shape)
+		print('data annotation for TFs, dataframe of size ',df_annot_motif.shape)
 
-		# motif_idvec_query = df_annot_1.index.unique()
 		motif_idvec_query = df_annot_1['motif_id'].unique()
 
-		# dict_motif = []
-		df_annot_motif = df_annot_1
 		verbose_internal = self.verbose_internal
 		if verbose_internal>0:
-			# print('df_annot_motif: ',df_annot_motif.shape)
 			print('annotation file, dataframe of size ',df_annot_motif.shape)
 			print(df_annot_motif)
-			print('dict_method_type: ',dict_method_type)
+			if verbose_internal==2:
+				print('method type annotation: ')
+				# print('dict_method_type: ',dict_method_type)
+				print(dict_method_type)
 
 		if len(feature_query_vec)>0:
 			motif_query_vec_1 = feature_query_vec
@@ -1571,78 +2506,97 @@ class _Base2_2_1(_Base2_2):
 		dict_signal_1 = dict()
 		dict_query_1 = dict()
 
-		ratio_1, ratio_2 = select_config['ratio_1'], select_config['ratio_2']
-		n_neighbors = select_config['neighbor_num']
-		run_id2 = 2
-		folder_id_1 = 2
+		# ratio_1, ratio_2 = select_config['ratio_1'], select_config['ratio_2']
+		# n_neighbors = select_config['neighbor_num']
+		# run_id2 = 2
+		# folder_id_1 = 2
 		# type_query = 0
 		# type_query = 1
-		filename_save_annot_pre1 = '%s.0.1'%(data_file_type_query)
-		input_file_path_1 = input_file_path_query_2
+		# filename_save_annot_pre1 = '%s.0.1'%(data_file_type_query)
+		# input_file_path_1 = input_file_path_query_2
 		start = time.time()
-		dict_file_signal = select_config['dict_file_signal']
-		dict_file_pred = select_config['dict_file_pred']
+		# dict_file_signal = select_config['dict_file_signal']
+		# dict_file_pred = select_config['dict_file_pred']
+		
+		# dict_file_query_1 = dict()
+		# dict_file_query_1 = dict_file_query
+		dict_file_query_1 = dict_file_pred
+
+		# load the peak-TF association estimation
+		if len(dict_file_query_1)==0:
+			field_query = ['file_save_link','filename_prefix_pred','filename_annot_pred']
+			list_query1 = [select_config[field_id] for field_id in field_query]
+			input_file_path_query,filename_prefix_1,filename_save_annot1 = list_query1[0:3]
+
+			for i1 in range(motif_query_num1):
+				motif_id = motif_idvec_query[i1]
+				motif_id_query = motif_id
+				# input_filename = '%s/test_query_train.joint_score_pre1.thresh22.phenograph.20.0.25_1.5.neighbor100.ZSCAN26.pbmc.0.1.1_1_1_1.1.txt'%(input_file_path_pre2)
+				# input_filename_query = 'test_query_train.%s.%s.%s.1.txt'%(filename_prefix_1,motif_id_query,filename_save_annot)
+				# input_filename_query = '%s/%s.%s.%s.txt'%(input_file_path,filename_prefix_1,motif_id_query,filename_save_annot)
+				# input_filename = '%s/%s'%(input_file_path,input_filename_query)
+				input_filename = '%s/%s.%s.%s.txt'%(input_file_path_query,filename_prefix_1,motif_id_query,filename_save_annot1)
+				
+				if os.path.exists(input_filename)==False:
+					# input_filename = '%s/test_query_train.%s.%s.%s_%s.neighbor%d.%s.%s.1_1_1_1.1.txt'%(input_file_path_pre1)
+					print('the file does not exist: %s'%(input_filename))
+					# input_filename = '%s/%s'%(input_file_path_2,input_filename_query)
+					# if os.path.exists(input_filename)==False:
+					# 	print('estimation not included ',motif_id_query,i1)
+					# 	continue
+					continue
+
+				dict_file_query_1.update({motif_id:input_filename})
+
+		dict_file_query = dict_file_query_1
+		load_mode_query = 1
 		for i1 in range(motif_query_num1):
 			motif_id = motif_query_vec_1[i1]
 			motif_id_query = motif_id
+			
 			motif_id2_query = df_annot_1.loc[df_annot_1['motif_id']==motif_id,'motif_id2']
 			motif_id2_num = len(motif_id2_query)
 			print('motif_id, motif_id2: ',motif_id,motif_id2_query,motif_id2_num,i1)
-			list1.extend(motif_id2_query)
 
-			for i2 in range(motif_id2_num):
-				motif_id2 = motif_id2_query[i2]
-				motif_id1 = df_annot_1.loc[motif_id2,'motif_id1']
-				folder_id = df_annot_1.loc[motif_id2,'folder_id']
-				config_id_2 = dict_config_annot1[folder_id]
-
-				filename_annot_train_pre1 = '%s_%s.%d'%(ratio_1,ratio_2,config_id_2)
-				filename_save_annot_query = '%s.%s.neighbor%d'%(method_type_group,filename_annot_train_pre1,n_neighbors)
-
-				file_path_query_2 = dict_file_annot2[folder_id]
-				input_file_path_1 = file_path_query_2
-				
-				input_filename_1 = dict_file_signal[motif_id2] # the ChIP-seq signal file
-				input_filename_2 = dict_file_pred[motif_id_query]	# the peak-TF association estimation file
-				
-				if os.path.exists(input_filename_2)==False:
-					print('the file does not exist: ',input_filename_2)
+			if load_mode_query>0:
+				if not (motif_id_query in dict_file_query):
+					print('the estimation not included: ',motif_id2_query,i1)
 					continue
 
-				df_query_pre1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
-				df_query_pre1 = df_query_pre1.loc[(~df_query_pre1.index.duplicated(keep='first')),:]
-				# print(input_filename_1)
-				
-				df_query_1 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+				query_value = dict_file_query[motif_id_query]
+				if isinstance(query_value,str):
+					# input_filename_2 = dict_file_query[motif_id_query]
+					input_filename_2 = query_value
+					if os.path.exists(input_filename_2)==False:
+						print('the file does not exist: ',input_filename_2)
+						continue
+
+					df_query_1 = pd.read_csv(input_filename_2,index_col=0,sep='\t') # load peak-TF link prediction
+					if verbose_internal>0:
+						print('load peak-TF link estimation from %s'%(input_filename_2))
+				else:
+					df_query_1 = query_value
+
 				df_query_1 = df_query_1.loc[(~df_query_1.index.duplicated(keep='first')),:]
-				t_columns_1 = df_query_1.columns.difference([column_signal],sort=False)
-				# print(input_filename_2)
-
-				peak_loc_pre1 = df_query_1.index
-				df_signal = df_query_pre1.loc[peak_loc_pre1,[column_signal]]
-				df_query1 = df_query_1.loc[:,column_vec_query1]
-
-				if verbose_internal>0:
-					print('load annotation of ATAC-seq peaks overlapping with ChIP-seq peaks from: %s, dataframe of size '%(input_filename_1),df_signal.shape)
-					print('data preview: ')
-					print(df_signal[0:2])
-					print('load peak-TF link estimation from: %s, dataframe of size '%(input_filename_2),df_query1.shape)
-					print('data preview: ')
-					print(df_query1[0:2])
-					# print('df_signal,df_query1,motif_id: ',df_signal.shape,df_query1.shape,motif_id,motif_id1,motif_id2)
+				# t_columns_1 = df_query_1.columns.difference([column_signal],sort=False)
 				
-				dict_signal_1.update({motif_id2:df_signal})
-				dict_query_1.update({motif_id2:df_query1})
+				peak_loc_pre1 = df_query_1.index
+				peak_num = len(peak_loc_pre1)
+				if verbose_internal>0:
+					print('peak-TF link estimation, dataframe of size ',df_query_1.shape)
+					print('preview: ')
+					print(df_query_1[0:2])
+					print('peak number: %d'%(peak_num))
 
-		motif_query_vec = list1
-		stop = time.time()
-		print('load data used %.2fs'%(stop-start))
+				for motif_id2 in motif_id2_query:
+					dict_query_1.update({motif_id2:df_query_1})
 
 		# score query for performance comparison
 		start = time.time()
 		flag_compare_1=0
 		parallel = 0
 		# parallel = 1
+		dict_signal_1 = dict_signal
 		df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,data2=dict_query_1,motif_query_vec=motif_query_vec,motif_query_vec_2=[],
 																	df_annot_motif=df_annot_motif,dict_method_type=dict_method_type,
 																	feature_type_vec=[],column_vec_query=column_vec_query,
@@ -1659,105 +2613,6 @@ class _Base2_2_1(_Base2_2):
 		output_filename = '%s/test_query_df_score.beta.%s.1.txt'%(output_file_path,filename_save_annot_1)
 		df_score_query_1.to_csv(output_filename,sep='\t')
 		print(output_filename)
-
-		return df_score_query_1
-
-	## TF binding prediction performance
-	def test_query_compare_binding_pre1_5_1_basic_unit1(self,data_1=[],data_2=[],df_annot=[],dict_method_type=[],feature_query_vec=[],column_vec_query=[],column_signal='',column_motif='',type_query=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-		data_file_type_query = select_config['data_file_type']
-		select_config.update({'data_file_type_query':data_file_type_query})
-		# run_id1 = select_config['run_id']
-
-		# motif_query_vec = list1
-		motif_query_vec = feature_query_vec
-		motif_query_num1 = len(motif_query_vec)
-		if column_signal=='':
-			column_signal = 'signal'
-		if column_motif=='':
-			method_type_feature_link = select_config['method_type_feature_link']
-			column_motif = '%s.motif'%(method_type_feature_link)
-		column_vec_pre1 = column_vec_query
-
-		start = time.time()
-		dict_query_pre1 = data_1
-		dict_query_pre2 = data_2
-		load_mode = 1
-		dict_signal_1 = dict()
-		dict_query_1 = dict()
-
-		for i1 in range(motif_query_num1):
-			motif_id2 = motif_query_vec[i1]
-			motif_id_query = df_annot.loc[motif_id2,'motif_id']
-			motif_id = motif_id_query
-			motif_id1 = df_annot.loc[motif_id2,'motif_id1']
-
-			df_query_1 = dict_query_pre2[motif_id_query]
-			# df_query_1 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
-			df_query_1 = df_query_1.loc[(~df_query_1.index.duplicated(keep='first')),:]
-			t_columns_1 = df_query_1.columns.difference([column_signal],sort=False)
-			# print(df_query_1.columns)
-			# print(input_filename_2)
-
-			peak_loc_pre1 = df_query_1.index
-			# df_query_pre1_1 = df_query_pre1.loc[peak_loc_pre1,:]
-			if load_mode>0:
-				df_query_pre1 = dict_query_pre1[motif_id2] # the signal are different for different celltypes
-			else:
-				df_query_pre1 = df_query_1
-
-			# df_signal = df_query_1.loc[:,[column_signal]]
-			# df_query1 = df_query_1.loc[:,t_columns_1]
-			df_signal = df_query_pre1.loc[peak_loc_pre1,[column_signal]]
-			column_vec_query1 = np.ravel(column_vec_query)
-			df_query1 = df_query_1.loc[:,column_vec_query1]
-
-			# print('df_signal,df_query1,motif_id: ',df_signal.shape,df_query1.shape,motif_id,motif_id1,motif_id2,i1)
-			# print(df_signal[0:2])
-			# print(df_query1[0:2])
-				
-			dict_signal_1.update({motif_id2:df_signal})
-			dict_query_1.update({motif_id2:df_query1})
-
-		stop = time.time()
-		print('load data used %.2fs'%(stop-start))
-
-		# score query for performance comparison
-		start = time.time()
-		df_annot_motif = df_annot
-		flag_compare_1=0
-		parallel = 0
-		# parallel = 1
-		df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,data2=dict_query_1,motif_query_vec=motif_query_vec,motif_query_vec_2=[],
-																	df_annot_motif=df_annot_motif,dict_method_type=dict_method_type,
-																	feature_type_vec=[],column_vec_query=column_vec_query,
-																	column_signal=column_signal,column_motif=column_motif,
-																	method_type_vec=[],method_type_group='',
-																	flag_score_1=0,flag_score_2=0,flag_compare_1=flag_compare_1,
-																	type_id_1=0,parallel=parallel,input_file_path='',
-																	save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=verbose,select_config=select_config)
-
-		stop = time.time()
-		print('performance comparison used %.2fs'%(stop-start))
-
-		if (save_mode>0) and (output_filename!=''):
-			df_score_query_1.to_csv(output_filename,sep='\t')
-			print(output_filename)
-
-		return df_score_query_1
-
-	## TF binding prediction performance
-	def test_query_compare_binding_pre1(self,data=[],feature_query_vec=[],method_type_vec=[],type_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-		data_file_type_query = select_config['data_file_type']
-		select_config.update({'data_file_type_query':data_file_type_query})
-		# run_id1 = select_config['run_id']
-
-		# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh22']
-		method_type_feature_link = select_config['method_type_feature_link']
-		method_type_group = select_config['method_type_group']
-
-		df_signal_query1, dict_signal_query1 = self.test_query_signal_overlap_format_1(input_filename='',input_filename_list=[],feature_query='',feature_query_vec=[],peak_query_vec=[],column_vec=[],type_id_1=0,type_query=0,save_mode=1,filename_prefix_save='',filename_save_annot='annot',output_filename='',verbose=0,select_config=select_config)
 
 	##  prepare annotation of the genome-wide peak loci overlapping with peak loci with ChIP-seq signals
 	# prepare annotation of the genome-wide peak loci overlapping with peak loci with ChIP-seq signals
@@ -2008,146 +2863,106 @@ class _Base2_2_1(_Base2_2):
 	# df1: the foreground dataframe
 	# df2: the background dataframe (expected dataframe)
 	# column_query: the column of value
-	def test_query_enrichment_pre1(self,df1,df2,column_query='',stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,verbose=0,select_config={}):
+	# def test_query_enrichment_pre2_unit1(self,feature_query_vec=[],celltype_vec_query=[],dict_file={},dict_annot={},input_file_path='',input_filename='',save_mode=1,output_file_path='',verbose=0,select_config={}):
+
+	# 	filename_translation = select_config['filename_translation']
+	# 	df_annot_motif = pd.read_csv(filename_translation,index_col=0,sep='\t')
+	# 	print('df_annot_motif: ',df_annot_motif.shape)
+	# 	print(df_annot_motif[0:2])
+
+	# 	motif_query_vec = feature_query_vec
+	# 	if len(feature_query_vec)==0:
+	# 		motif_query_vec = np.unique(df_annot_motif['tf'])
+	# 		motif_query_num = len(motif_query_vec)
+	# 		celltype_vec_query = ['Bcell']*motif_query_num
 		
-		query_idvec = df1.index
-		query_num1 = len(query_idvec)
-		df_query1 = df1
-		df_query_compare = df2
+	# 	# motif_id = 'STAT1'
+	# 	# motif_query_vec = [motif_id]
+	# 	motif_query_num = len(motif_query_vec)
 
-		column_vec_1 = ['stat_chi2_','pval_chi2_']
-		column_vec_2 = ['stat_fisher_exact_','pval_fisher_exact_']
+	# 	load_mode = 0
+	# 	if len(dict_file)>0:
+	# 		load_mode = 1
 
-		count1 = np.sum(df1[column_query])
-		count2 = np.sum(df2[column_query])
-		for i1 in range(query_num1):
-			query_id1 = query_idvec[i1]
-			num1 = df_query1.loc[query_id1,column_query]
-			num2 = df_query_compare.loc[query_id1,column_query]
+	# 	column_vec_query = ['TFBS_chr','TFBS_start','TFBS_end','region_query','TFBS_score','TFBS_strand']
+	# 	list_1 = []
+	# 	for i1 in range(motif_query_num):
+	# 		motif_id = motif_query_vec[i1]
 
-			if num2>0:
-				contingency_table = [[num1,count1-num1],[num2,count2-num2]]
-				if verbose>0:
-					print('contingency table: \n')
-					print(contingency_table)
+	# 		id1 = (df_annot_motif['tf']==motif_id)
+	# 		motif_id_1 = np.asarray(df_annot_motif.loc[id1,'motif_id'])[0]
 
-				if not (stat_chi2_correction is None):
-					correction = stat_chi2_correction
-					stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=correction)
-					df_query1.loc[query_id1,column_vec_1] = [stat_chi2_, pval_chi2_]
+	# 		if load_mode==0:
+	# 			celltype_query = celltype_vec_query[i1]
+	# 			path_save_query = dict_annot[celltype_query]
+	# 			input_file_path_query = '%s/%s/%s_%s'%(input_file_path,path_save_query,motif_id_1,motif_id)
+	# 			input_filename = '%s/%s_%s_overview.txt'%(input_file_path_query,motif_id_1,motif_id)
+	# 		else:
+	# 			input_filename = dict_file[motif_id]
 
-				if not (stat_fisher_alternative is None):
-					alternative = stat_fisher_alternative
-					stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative=alternative)
-					df_query1.loc[query_id1,column_vec_2] = [stat_fisher_exact_, pval_fisher_exact_]
-
-		return df_query1, contingency_table
-
-	## query feature enrichment
-	# df1: the foreground dataframe
-	# df2: the background dataframe (expected dataframe)
-	# column_query: the column of value
-	def test_query_enrichment_pre2_unit1(self,feature_query_vec=[],celltype_vec_query=[],dict_file={},dict_annot={},input_file_path='',input_filename='',save_mode=1,output_file_path='',verbose=0,select_config={}):
-
-		filename_translation = select_config['filename_translation']
-		df_annot_motif = pd.read_csv(filename_translation,index_col=0,sep='\t')
-		print('df_annot_motif: ',df_annot_motif.shape)
-		print(df_annot_motif[0:2])
-
-		motif_query_vec = feature_query_vec
-		if len(feature_query_vec)==0:
-			motif_query_vec = np.unique(df_annot_motif['tf'])
-			motif_query_num = len(motif_query_vec)
-			celltype_vec_query = ['Bcell']*motif_query_num
-		
-		# motif_id = 'STAT1'
-		# motif_query_vec = [motif_id]
-		motif_query_num = len(motif_query_vec)
-
-		load_mode = 0
-		if len(dict_file)>0:
-			load_mode = 1
-
-		column_vec_query = ['TFBS_chr','TFBS_start','TFBS_end','region_query','TFBS_score','TFBS_strand']
-		list_1 = []
-		for i1 in range(motif_query_num):
-			motif_id = motif_query_vec[i1]
-
-			id1 = (df_annot_motif['tf']==motif_id)
-			motif_id_1 = np.asarray(df_annot_motif.loc[id1,'motif_id'])[0]
-
-			if load_mode==0:
-				celltype_query = celltype_vec_query[i1]
-				path_save_query = dict_annot[celltype_query]
-				input_file_path_query = '%s/%s/%s_%s'%(input_file_path,path_save_query,motif_id_1,motif_id)
-				input_filename = '%s/%s_%s_overview.txt'%(input_file_path_query,motif_id_1,motif_id)
-			else:
-				input_filename = dict_file[motif_id]
-
-			df_1 = pd.read_csv(input_filename,index_col=False,sep='\t')
+	# 		df_1 = pd.read_csv(input_filename,index_col=False,sep='\t')
 			
-			column_query1 = 'TFBS_query'
-			column_vec_1 = ['TFBS_chr','TFBS_start','TFBS_end']
-			df_1[column_query1] = test_query_index(df_1,column_vec=column_vec_1,symbol_vec=[':','-'])
+	# 		column_query1 = 'TFBS_query'
+	# 		column_vec_1 = ['TFBS_chr','TFBS_start','TFBS_end']
+	# 		df_1[column_query1] = test_query_index(df_1,column_vec=column_vec_1,symbol_vec=[':','-'])
 
-			df_1['motif_id'] = motif_id
-			column_query2 = 'region_query'
-			column_vec_2 = ['TFBS_query','peak_id','motif_id']
-			df_1[column_query2] = test_query_index(df_1,column_vec=column_vec_2,symbol_vec=[';',';'])
+	# 		df_1['motif_id'] = motif_id
+	# 		column_query2 = 'region_query'
+	# 		column_vec_2 = ['TFBS_query','peak_id','motif_id']
+	# 		df_1[column_query2] = test_query_index(df_1,column_vec=column_vec_2,symbol_vec=[';',';'])
 
-			df_2 = df_1.loc[:,column_vec_query]
-			print('df_1, df_2: ',df_1.shape,df_2.shape)
+	# 		df_2 = df_1.loc[:,column_vec_query]
+	# 		print('df_1, df_2: ',df_1.shape,df_2.shape)
 
-			list_1.append(df_2)
+	# 		list_1.append(df_2)
 
-		df_query1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)
-		output_filename = '%s/test_motif_region.1.bed'%(output_file_path)
-		df_query1.to_csv(output_filename,index=False,header=False,sep='\t')
+	# 	df_query1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)
+	# 	output_filename = '%s/test_motif_region.1.bed'%(output_file_path)
+	# 	df_query1.to_csv(output_filename,index=False,header=False,sep='\t')
 
-		return df_query1
+	# 	return df_query1
 
 	## query feature enrichment
 	# df1: the foreground dataframe
 	# df2: the background dataframe (expected dataframe)
 	# column_query: the column of value
-	def test_query_enrichment_pre2_unit2(self,input_filename='',df1=[],df2=[],column_query='',stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,verbose=0,select_config={}):
+	# def test_query_enrichment_pre2_unit2(self,input_filename='',df1=[],df2=[],column_query='',stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,verbose=0,select_config={}):
 		
-		data_file_type = select_config['data_file_type']
-		data_file_type_query = data_file_type
+	# 	data_file_type = select_config['data_file_type']
+	# 	data_file_type_query = data_file_type
 
-		filename_translation = select_config['filename_translation']
-		df_annot_motif = pd.read_csv(filename_translation,index_col=0,sep='\t')
-		print('df_annot_motif: ',df_annot_motif.shape)
-		print(df_annot_motif[0:2])
+	# 	filename_translation = select_config['filename_translation']
+	# 	df_annot_motif = pd.read_csv(filename_translation,index_col=0,sep='\t')
+	# 	print('df_annot_motif: ',df_annot_motif.shape)
+	# 	print(df_annot_motif[0:2])
 
-		motif_id = 'STAT1'
-		motif_query_vec = [motif_id]
-		motif_query_num = len(motif_query_vec)
-		fliename_annot = ''
-		df_annot_1 = []
+	# 	motif_id = 'STAT1'
+	# 	motif_query_vec = [motif_id]
+	# 	motif_query_num = len(motif_query_vec)
+	# 	fliename_annot = ''
+	# 	df_annot_1 = []
 
-		typd_id_feature, type_id_compute = 0,1
-		filename_save_annot_1 = '%s.%d.%d'%(data_file_type_query,type_id_feature,type_id_compute)
+	# 	typd_id_feature, type_id_compute = 0,1
+	# 	filename_save_annot_1 = '%s.%d.%d'%(data_file_type_query,type_id_feature,type_id_compute)
 
-		method_type_feature_link = 'Unify'
-		method_type_query = method_type_feature_link
-		annot_str_vec = ['motif','pred','score']
-		column_vec_query1 = ['%s.%s'%(method_type_query,annot_str1) for annot_str1 in annot_str_vec]
+	# 	method_type_feature_link = 'Unify'
+	# 	method_type_query = method_type_feature_link
+	# 	annot_str_vec = ['motif','pred','score']
+	# 	column_vec_query1 = ['%s.%s'%(method_type_query,annot_str1) for annot_str1 in annot_str_vec]
 		
-		column_signal = 'signal'
-		column_motif = column_vec_query1[0]
-		for i1 in range(motif_query_num):
-			motif_id = motif_query_vec[i1]
-			df_signal = []
+	# 	column_signal = 'signal'
+	# 	column_motif = column_vec_query1[0]
+	# 	for i1 in range(motif_query_num):
+	# 		motif_id = motif_query_vec[i1]
+	# 		df_signal = []
 
-			# input_filename = '%s/test_query_train.STAT1.pbmc.0.1'%(input_file_path)
-			input_filename = '%s/test_query_train.%s.%s.txt'%(input_file_path,motif_id,filename_save_annot_1)
-			df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t')
-			df_query1 = df_query_1.loc[:,column_vec_query1]
+	# 		# input_filename = '%s/test_query_train.STAT1.pbmc.0.1'%(input_file_path)
+	# 		input_filename = '%s/test_query_train.%s.%s.txt'%(input_file_path,motif_id,filename_save_annot_1)
+	# 		df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t')
+	# 		df_query1 = df_query_1.loc[:,column_vec_query1]
 
-			query_idvec = df_query1.index
-			# df_query1[column_signal] = df_signal.loc[query_idvec,column_signal]
-
+	# 		query_idvec = df_query1.index
+	# 		# df_query1[column_signal] = df_signal.loc[query_idvec,column_signal]
 
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,upstream=100,downstream=100,type_id_query=1,thresh_fdr_peak_tf=0.2,path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=0,
@@ -2159,7 +2974,7 @@ class _Base2_2_1(_Base2_2):
 		species_id = str(species)
 		# cell = str(cell)
 		cell_type_id = int(cell)
-		print('cell_type_id: %d'%(cell_type_id))
+
 		metacell_num = int(metacell_num)
 		peak_distance_thresh = int(peak_distance_thresh)
 		highly_variable = int(highly_variable)
@@ -2212,7 +3027,6 @@ class _Base2_2_1(_Base2_2):
 			run_id = 1
 			type_id_feature = 0
 			metacell_num = 500
-			# print('query_id1, query_id2: ',query_id1,query_id2)
 
 			root_path_1 = '.'
 			root_path_2 = '.'
@@ -2253,7 +3067,6 @@ class _Base2_2_1(_Base2_2):
 								'config_id_load':config_id_load,
 								'save_file_path_default':save_file_path_default}
 			
-			# self.test_peak_motif_query_1(select_config)
 			verbose = 1
 			flag_score_1 = 0
 			flag_score_2 = 0

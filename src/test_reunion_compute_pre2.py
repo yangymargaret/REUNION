@@ -61,7 +61,8 @@ class _Base_pre2(_Base_pre1):
 									config=config,
 									select_config=select_config)
 
-	## load motif data
+	## ====================================================
+	# load motif data
 	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,save_file_path='',verbose=0,select_config={}):
 		
 		flag_query1=1
@@ -121,7 +122,8 @@ class _Base_pre2(_Base_pre1):
 
 		return dict_motif_data, select_config
 
-	## query the method type based on the motif data used
+	## ====================================================
+	# query the method type based on the motif data used
 	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],data=[],select_config={}):
 
 		if len(method_annot_vec)==0:
@@ -133,7 +135,8 @@ class _Base_pre2(_Base_pre1):
 
 		return flag_1
 
-	## load motif data
+	## ====================================================
+	# load motif data
 	def test_load_motif_data_pre1(self,input_filename_list1=[],input_filename_list2=[],flag_query1=1,flag_query2=1,overwrite=True,input_file_path='',
 										save_mode=1,save_file_path='',type_id_1=0,type_id_2=1,select_config={}):
 	
@@ -336,7 +339,8 @@ class _Base_pre2(_Base_pre1):
 				
 		return motif_data, motif_data_score, df_annot, type_id_query
 
-	## prepare translationTable
+	## ====================================================
+	# prepare translationTable
 	def test_translationTable_pre1(self,motif_data=[],
 										motif_data_score=[],
 										df_gene_annot=[],
@@ -431,13 +435,8 @@ class _Base_pre2(_Base_pre1):
 				df1.index = np.asarray(df1['gene_id'])
 				self.motif_query_name_expr = motif_query_name_expr
 
-				# print('motif_query_id_expr ',len(motif_query_id_expr))
-				# df1.loc[motif_query_id_expr,'tf_expr'] = 1
 				print('motif_query_name_expr ',len(motif_query_name_expr))
 
-			# df.loc[:,'tf_ori'] = df.loc[:,'tf'].copy()
-			# df1.loc[motif_query_id_expr,'tf'] = df_gene_annot_expr.loc[motif_query_id_expr,'gene_name']
-			# df1.index = np.asarray(df1['tf'])
 			if save_mode>0:
 				if output_filename=='':
 					output_filename = '%s/translationTable.csv'%(save_file_path)
@@ -445,7 +444,8 @@ class _Base_pre2(_Base_pre1):
 
 		return df1
 
-	## load motif data
+	## ====================================================
+	# load motif data
 	# merge multiple columns that correspond to one TF to one column
 	def test_load_motif_data_pre2(self,motif_data,df_annot,column_id='tf',select_config={}):
 
@@ -467,7 +467,6 @@ class _Base_pre2(_Base_pre1):
 			column_2 = np.asarray(df_annot.loc[df_annot['motif_id']==motif_id_query,'tf'])[0]
 
 			difference = (motif_data_ori[column_1].astype(int)-motif_data[column_2].astype(int)).abs().max()
-			# print('difference ',column_1,column_2,difference,iter_id1)
 			assert difference<1E-07
 
 		# print('data preview: ')
@@ -477,7 +476,8 @@ class _Base_pre2(_Base_pre1):
 		# 	dict_query.update({'%s.ori'%(key_query):motif_data_ori})
 		return motif_data, motif_data_ori
 
-	## motif_name conversion for motifs in the used curated CIS-BP motif collection
+	## ====================================================
+	# motif_name conversion for motifs in the used curated CIS-BP motif collection
 	def test_query_motif_name_conversion_1(self,data=[],select_config={}):
 
 		motif_data = data
@@ -495,7 +495,8 @@ class _Base_pre2(_Base_pre1):
 		motif_data = motif_data.rename(columns=dict1)
 		return motif_data
 
-	## load motif data
+	## ====================================================
+	# load motif data
 	def test_load_motif_data_2(self,data=[],dict_motif_data={},save_mode=1,verbose=0,select_config={}):
 		
 		motif_data = self.motif_data
@@ -509,14 +510,13 @@ class _Base_pre2(_Base_pre1):
 					dict_motif_data = dict_motif_data_query_1[method_type_query]
 
 			if len(dict_motif_data)==0:
-				print('load motif data')
+				print('load motif scanning data')
 				input_dir = select_config['input_dir']
 				file_path_1 = input_dir
 				
 				method_type_feature_link = select_config['method_type_feature_link']
 				method_type_vec_query = [method_type_feature_link]
 				data_path_save_local = select_config['data_path_save_local']
-				# data_path_save_motif = select_config['data_path_save_motif']
 				file_path_motif = data_path_save_local
 				select_config.update({'file_path_motif':file_path_motif})
 				save_file_path = data_path_save_local
@@ -532,8 +532,6 @@ class _Base_pre2(_Base_pre1):
 				# field_query = ['motif_data','motif_data_score','motif_query_name_expr']
 				field_query = ['motif_data','motif_data_score']
 				list1 = [dict_motif_data[field1] for field1 in field_query]
-
-				# motif_data, motif_data_score, motif_query_name_expr = list1
 				motif_data, motif_data_score = list1[0:2]
 
 				column_1 = 'motif_query_name_expr'
@@ -552,6 +550,7 @@ class _Base_pre2(_Base_pre1):
 
 		return motif_data, motif_data_score, motif_query_name_expr
 
+	## ====================================================
 	# chromvar score query: chromvar score comparison with TF expression
 	# query correlation and mutual information between chromvar score and TF expression
 	def test_chromvar_score_query_1(self,input_filename,motif_query_name_expr,filename_prefix_save='',output_file_path='',output_filename='',df_query=[],type_id_query=0,select_config={}):
@@ -636,69 +635,12 @@ class _Base_pre2(_Base_pre1):
 		print('the other TF expressoin, mean_value, median_value ',motif_query_num3,mean_value_2,median_value_2)
 
 		return df_2
-
-	## load motif data
-	def test_load_motif_data_2(self,data=[],dict_motif_data={},save_mode=1,verbose=0,select_config={}):
-		
-		# motif_data, motif_data_score = [],[]
-		motif_data = self.motif_data
-		if len(motif_data)>0:
-			motif_data_score = self.motif_data_score
-			motif_query_name_expr = self.motif_query_name_expr
-		else:
-			if len(dict_motif_data)==0:
-				dict_motif_data_query_1 = self.dict_motif_data
-				if len(dict_motif_data_query_1)>0:				
-					dict_motif_data = dict_motif_data_query_1[method_type_query]
-
-			if len(dict_motif_data)==0:
-				print('load motif data')
-				input_dir = select_config['input_dir']
-				file_path_1 = input_dir
-				test_estimator1 = _Base2_2(file_path=file_path_1,select_config=select_config)
-					
-				method_type_feature_link = select_config['method_type_feature_link']
-				method_type_vec_query = [method_type_feature_link]
-				data_path_save_local = select_config['data_path_save_local']
-				# data_path_save_motif = select_config['data_path_save_motif']
-				file_path_motif = data_path_save_local
-				select_config.update({'file_path_motif':file_path_motif})
-				save_file_path = data_path_save_local
-				dict_motif_data_query_1, select_config = test_estimator1.test_load_motif_data_1(method_type_vec=method_type_vec_query,
-																								save_mode=1,save_file_path=save_file_path,
-																								select_config=select_config)
-
-				self.dict_motif_data = dict_motif_data_query_1
-				dict_motif_data = dict_motif_data_query_1[method_type_query]
-
-			if len(dict_motif_data)>0:
-				# field_query = ['motif_data','motif_data_score','motif_query_name_expr']
-				field_query = ['motif_data','motif_data_score']
-				list1 = [dict_motif_data[field1] for field1 in field_query]
-
-				# motif_data, motif_data_score, motif_query_name_expr = list1
-				motif_data, motif_data_score = list1[0:2]
-
-				column_1 = 'motif_query_name_expr'
-				if column_1 in dict_motif_data:
-					motif_query_name_expr = dict_motif_data[column_1]
-				else:
-					motif_query_vec_pre1 = motif_data.columns
-					gene_query_name_ori = rna_exprs.columns
-					motif_query_name_expr = motif_query_vec_pre1.intersection(gene_query_name_ori,sort=False)
-
-				motif_data = motif_data.loc[:,motif_query_name_expr]
-				motif_data_score = motif_data_score.loc[:,motif_query_name_expr]
-				self.motif_data = motif_data
-				self.motif_data_score = motif_data_score
-				self.motif_query_name_expr = motif_query_name_expr
-
-		return motif_data, motif_data_score, motif_query_name_expr
-
-	## query gene annotations
+	
+	## ====================================================
+	# query gene annotations
 	def test_gene_annotation_query_pre1(self,flag_query1=0,flag_query2=0,flag_query3=0,select_config={}):
 
-		## gene name query and matching between the gene annotation file and gene name in the gene expression file
+		# gene name query and matching between the gene annotation file and gene name in the gene expression file
 		flag_gene_annot_query_1=flag_query1
 		df_gene_annot1, df_gene_annot2, df_gene_annot3 = [], [], []
 		if flag_gene_annot_query_1>0:	
@@ -731,7 +673,7 @@ class _Base_pre2(_Base_pre1):
 
 		flag_gene_annot_query_2=flag_query2
 		if flag_gene_annot_query_2>0:
-			## gene_name annotation
+			# gene_name annotation
 			filename_prefix_1 = 'hg38'
 			filename_prefix_2 = 'Homo_sapiens.GRCh38.108'
 			input_filename_1 = '%s/test_gene_annot_expr.%s.1.txt'%(input_file_path,filename_prefix_1)
@@ -782,9 +724,8 @@ class _Base_pre2(_Base_pre1):
 
 		flag_gene_annot_query_3=flag_query3
 		if flag_gene_annot_query_3>0:
-			## gene_name annotation
+			# gene_name annotation
 			# filename_prefix_1 = 'hg38'
-			# filename_prefix_2 = 'Homo_sapiens.GRCh38.108'
 			filename_prefix_1 = 'Homo_sapiens.GRCh38.108'
 			input_filename_1 = '%s/test_gene_annot_expr.%s.combine.1.txt'%(input_file_path,filename_prefix_1)
 			input_filename_1_2 = '%s/test_gene_annot_expr_2.%s.2.copy1.txt'%(input_file_path,filename_prefix_1)
@@ -808,21 +749,11 @@ class _Base_pre2(_Base_pre1):
 			df_query2['length'] = df_query2['stop']-df_query2['start']
 			query_num_1 = df_query2.shape[0]
 			query_id1 = df_query2.index
-			# for i1 in range(query_num_1):
-			# 	id_pre1 = query_id1[id1]
-			# 	try:
-			# 		length_1 = np.int32(df_query2.loc[id_pre1,'stop'])-np.int32(df_query2.loc[id_pre1,'start'])
-			# 		df_query2.loc[id_pre1,'length'] = length_1
-			# 		print('gene_id_1 ',id_pre1,i1,length_1)
-			# 	except Exception as error:
-			# 		print('error! ',error,id_pre1,i1)
 
 			df_query_1 = pd.concat([df1,df_query2],axis=0,join='outer',ignore_index=False)
-			print('df1, df2, df_query2 ',df1.shape,df2.shape,df_query2.shape)
-			print('df_query_1 ',df_query_1.shape)
 			id_query1 = (df_query_1.duplicated(subset=['gene_name']))
 			query_num1 = np.sum(id_query1)
-			print('df_query_1 gene_name duplicated ',query_num1)
+			print('gene_name duplicated: %d'%(query_num1))
 			df_query_1_duplicated = df_query_1.loc[id_query1,:]
 			print(df_query_1_duplicated)
 
@@ -834,7 +765,8 @@ class _Base_pre2(_Base_pre1):
 
 		return df_gene_annot1, df_gene_annot2, df_gene_annot3
 
-	## query gene annotations
+	## ====================================================
+	# query gene annotations
 	def test_gene_annotation_query1(self,select_config={}):
 
 		flag_gene_annot_query=1
@@ -885,7 +817,8 @@ class _Base_pre2(_Base_pre1):
 				
 			return df_gene_annot_expr
 
-	## load genome annotation load
+	## ====================================================
+	# load genome annotation
 	# input: the genome annotation filename; if not given, use default genome annotation filename
 	# output: genome annotation (dataframe); gene position, strand, tss, transcript num
 	# dataframe1: genes original; dataframe 2: genes with expr in the dataset
@@ -900,7 +833,7 @@ class _Base_pre2(_Base_pre1):
 		meta_scaled_exprs = self.meta_scaled_exprs
 		
 		if type_id_1==0:
-			## gene query by gene name; keep gene name unduplicated
+			# gene query by gene name; keep gene name unduplicated
 			df_gene_annot = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
 			df_gene_annot.index = np.asarray(df_gene_annot['gene_name'])
 			df_gene_annot = df_gene_annot.sort_values(by=['chrom','start','stop','gene_name'],ascending=True)
@@ -944,7 +877,7 @@ class _Base_pre2(_Base_pre1):
 				gene_name_expr_1, gene_name_expr_2 = gene_query_1, gene_query_2
 
 		else:
-			## gene query by gene id; gene id are supposed to be unduplicated
+			# gene query by gene id; gene id are supposed to be unduplicated
 			df_gene_annot = df_gene_annot_ori
 			df_gene_annot.index = np.asarray(df_gene_annot['gene_id'])
 			df_annot1 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
@@ -967,7 +900,6 @@ class _Base_pre2(_Base_pre1):
 			df_gene_annot_expr.loc[gene_query_1,'gene_name'] = np.asarray(df_var.loc[gene_query_1,'gene_name'])
 			
 			field_query = ['highly_variable', 'means', 'dispersions', 'dispersions_norm']
-
 			column_vec_1 = df_var.columns
 			column_vec_2 = pd.Index(field_query).intersection(column_vec_1,sort=False)
 			
@@ -1001,7 +933,7 @@ class _Base_pre2(_Base_pre1):
 			gene_name_expr_1 = df_var.loc[gene_query_1,'gene_name']
 			gene_name_expr_2 = df_var.loc[gene_query_2,'gene_name']
 
-		## query how many genes are highly variable but not match the gene name in the used gene annotation version
+		# query how many genes are highly variable but not match the gene name in the used gene annotation version
 		gene_query_2 = df_gene_annot_expr_2.index
 		
 		if load_mode>0:
@@ -1017,7 +949,8 @@ class _Base_pre2(_Base_pre1):
 
 		return df_gene_annot, df_gene_annot_expr, df_gene_annot_expr_2
 
-	## query gene annotation for genes with expression in the given data
+	## ====================================================
+	# query gene annotation for genes with expression in the given data
 	# input: the gene annotation filenames; if not given, use default gene annotation filenames
 	# output: gene annotation (dataframe); gene features in the dataset
 	def test_motif_peak_estimate_gene_annot_load_2(self,input_filename='',input_filename_1='',input_file_path='',save_mode=1,verbose=0,select_config={}):
