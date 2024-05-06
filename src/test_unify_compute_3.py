@@ -3,7 +3,6 @@
 import numpy as np
 import pandas as pd
 import scanpy as sc
-import anndata as ad
 from anndata import AnnData
 import scanpy.external as sce
 
@@ -19,24 +18,14 @@ import seaborn as sns
 import pyranges as pr
 import warnings
 
-# import palantir 
-import phenograph
-
 import sys
 from tqdm.notebook import tqdm
 
-import csv
 import os
 import os.path
-import shutil
 from optparse import OptionParser
 
 import sklearn
-from sklearn.linear_model import LinearRegression, ElasticNet
-from sklearn.base import BaseEstimator, _pprint
-from sklearn.utils import check_array, check_random_state
-from sklearn.utils.validation import check_is_fitted
-from sklearn.neighbors import NearestNeighbors
 
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
@@ -46,17 +35,11 @@ from sklearn.pipeline import make_pipeline
 from scipy import stats
 from scipy.stats import multivariate_normal, skew, pearsonr, spearmanr
 from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact, chi2_contingency
-from scipy.stats.contingency import expected_freq
 from scipy.stats import gaussian_kde, zscore, poisson, multinomial, norm, rankdata
 import scipy.sparse
-from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse, hstack, vstack
-from scipy import signal
-from scipy.optimize import minimize
+from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse
 from scipy.cluster.hierarchy import dendrogram, linkage
-from statsmodels.stats.multitest import multipletests
-import statsmodels.api as sm
 import pingouin as pg
-import gc
 from joblib import Parallel, delayed
 
 import time
@@ -64,13 +47,8 @@ from timeit import default_timer as timer
 
 import utility_1
 from utility_1 import pyranges_from_strings, test_file_merge_1, test_query_index
-from utility_1 import spearman_corr, pearson_corr
 import h5py
-import json
 import pickle
-
-import itertools
-from itertools import combinations
 
 import test_unify_compute_2
 from test_unify_compute_2 import _Base2_correlation3
@@ -81,20 +59,6 @@ from test_reunion_correlation_1 import _Base2_correlation
 sc.settings.verbosity = 3 # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=80, facecolor='white')
-
-# %matplotlib inline
-# sns.set_style('ticks')
-# matplotlib.rcParams['figure.figsize'] = [5, 5]
-# matplotlib.rcParams['figure.dpi'] = 100
-# matplotlib.rcParams['image.cmap'] = 'Spectral_r'
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
-
-# matplotlib.rc('xtick', labelsize=10)
-# matplotlib.rc('ytick', labelsize=10)
-# plt.rcParams['axes.labelsize'] = 12
-# plt.rcParams['axes.titlesize'] = 15
-# plt.rcParams["figure.autolayout"] = True
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
 class _Base2_correlation5(_Base2_correlation3):
 	"""Base class for peak-TF-gene link estimation
@@ -129,28 +93,6 @@ class _Base2_correlation5(_Base2_correlation3):
 										type_id_feature=type_id_feature,
 										config=config,
 										select_config=select_config)
-
-	## file_path query
-	# def test_config_query_pre2(self,beta_mode=0,save_mode=1,overwrite=False,select_config={}):
-
-	# 	# print('test_config_query')
-	# 	correlation_type = 'spearmanr'
-
-	# 	column_idvec = ['motif_id','peak_id','gene_id']
-	# 	column_gene_tf_corr_peak =  ['gene_tf_corr_peak','gene_tf_corr_peak_pval','gene_tf_corr_peak_pval_corrected1']
-	# 	thresh_insilco_ChIP_seq = 0.1
-	# 	flag_save_text = 1
-
-	# 	field_query = ['column_idvec','correlation_type','column_gene_tf_corr_peak','thresh_insilco_ChIP-seq','flag_save_text']
-	# 	list1 = [column_idvec,correlation_type,column_gene_tf_corr_peak,thresh_insilco_ChIP_seq,flag_save_text]
-	# 	field_num1 = len(field_query)
-	# 	for i1 in range(field_num1):
-	# 		field1 = field_query[i1]
-	# 		select_config.update({field1:list1[i1]})
-
-	# 	self.select_config = select_config
-
-	# 	return select_config
 
 	## ====================================================
 	# peak accessibility-TF expression correlation estimation
@@ -635,44 +577,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				df_motif_access_basic1.to_csv(output_filename3,sep='\t',float_format='%.6f')
 
 			return df_motif_score_query, df_motif_score_basic1, df_motif_access_basic1
-
-	## load dataframe
-	# def test_load_peak_gene_query(self,input_filename='',column_vec=[],select_config={}):
-
-	# 	df_gene_peak_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-	# 	if len(column_vec)>0:
-	# 		# df_gene_peak_query.index = self.test_query_index(df_gene_peak_query,column_vec=column_vec)
-	# 		df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=column_vec)
-
-	# 	return df_gene_peak_query
-
-	## ====================================================
-	# load the ATAC-seq and RNA-seq datad
-	# def test_query_load_data_1(self,atac_ad=[],rna_ad=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],motif_data=[],motif_data_score=[],flag_format=1,save_mode=1,verbose=0,select_config={}):
-
-	# 	self.atac_meta_ad = atac_ad
-	# 	self.rna_meta_ad = rna_ad
-	# 	self.peak_read = peak_read
-	# 	self.rna_exprs = rna_exprs
-	# 	self.rna_exprs_unscaled = rna_exprs_unscaled
-
-	# 	if len(motif_data)>0:
-	# 		self.motif_data = motif_data
-	# 		data_file_type_query = select_config['data_file_type_query']
-	# 		if flag_format>0:
-	# 			motif_query_vec = motif_data.columns.str.upper()
-	# 			gene_query_name_ori = rna_ad.var_names.str.upper()
-	# 		else:
-	# 			motif_query_vec = motif_data.columns
-	# 			gene_query_name_ori = rna_ad.var_names
-			
-	# 		motif_query_name_expr = pd.Index(motif_query_vec).intersection(gene_query_name_ori,sort=False)
-	# 		motif_query_num_1, gene_query_num_1, motif_query_num1 = len(motif_query_vec),len(gene_query_name_ori),len(motif_query_name_expr)
-	# 		print('motif_query_vec, gene_query_name_ori, motif_query_name_expr: ',motif_query_num_1, gene_query_num_1, motif_query_num1)
-	# 		self.motif_query_name_expr = motif_query_name_expr
-		
-	# 	if len(motif_data_score)>0:
-	# 		self.motif_data_score = motif_data_score
 
 	## ====================================================
 	# gene-peak association query: search peak-gene association, peak accessibility-gene expr correlation estimation
@@ -1711,7 +1615,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			# p-value correction for gene-TF expression partial correlation given peak accessibility
 			column_id_pre1 = 'gene_tf_corr_peak_pval_corrected1'
 			if flag_query1>0:
-				# df_gene_peak_query_1.index = np.asarray(df_gene_peak_query_1['motif_id'])
 				if verbose>0:
 					print('pvalue correction')
 				
@@ -1735,8 +1638,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				if parallel_mode==0:
 					df_gene_peak_query_1 = self.test_gene_tf_corr_peak_pval_corrected_unit1(data=df_gene_peak_query_1,feature_query_vec=feature_query_vec,feature_id='',column_id_query=column_id_query,field_query=field_query_2,alpha=alpha,method_type_id_correction=method_type_id_correction,type_id_1=1,interval=interval_1,save_mode=1,verbose=verbose,select_config=select_config)
 				else:
-					# feature_query_num1 = feature_query_num
-					# feature_query_num1 = 500
 					query_res_local = Parallel(n_jobs=-1)(delayed(self.test_gene_tf_corr_peak_pval_corrected_unit1)(data=df_pval_query1,feature_query_vec=feature_query_vec[i2:(i2+1)],column_id_query=column_id_query,field_query=field_query_2,
 																														alpha=alpha,method_type_id_correction=method_type_id_correction,interval=interval_1,save_mode=1,verbose=(i2%interval_1),select_config=select_config) for i2 in tqdm(np.arange(feature_query_num)))
 					
@@ -1750,7 +1651,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				stop = time.time()
 				print('pvalue correction ',stop-start)
 
-		print(df_gene_peak_query_1[0:5])
+		print('peak-TF-gene links, data preview: \n',df_gene_peak_query_1[0:5])
 		return df_gene_peak_query_1
 
 	## ====================================================
@@ -2066,7 +1967,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
 				input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
 			
-			# input_filename_list1 = ['%s/%s.%s.1.txt'%(input_file_path_2,filename_prefix_1,filename_annot1) for filename_annot1 in filename_annot_vec[0:2]]
 			# filename_gene_expr_corr = input_filename_list1
 			filename_gene_expr_corr = [input_filename_1,input_filename_2]
 			select_config.update({'filename_gene_expr_corr':filename_gene_expr_corr})
@@ -2096,7 +1996,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				filename_save_annot_peak_tf = select_config['filename_save_annot_peak_tf']
 
 			filename_prefix = filename_prefix_peak_tf
-			# input_filename_list2 = ['%s/%s.%s.1.copy1.txt'%(file_save_path_2,filename_prefix,filename_annot1) for filename_annot1 in filename_annot_vec[0:2]]
 			input_filename_list2 = ['%s/%s.%s.%s.txt'%(file_save_path_2,filename_prefix,filename_annot1,filename_save_annot_peak_tf) for filename_annot1 in filename_annot_vec[0:2]]
 			filename_peak_tf_corr = input_filename_list2
 			select_config.update({'filename_peak_tf_corr':filename_peak_tf_corr})
@@ -2134,7 +2033,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				field_id1 = field_query[1]
 				df_query = adata.obsm[field_id1]
 				df_query_2 = pd.DataFrame(index=feature_query1,columns=feature_query2,data=df_query.toarray(),dtype=np.float32)
-				 #list1 = [df_query_1,df_query_2]
 			else:
 				df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t') # the correlation value
 				input_filename_2 = filename_query_1[1]
@@ -2432,7 +2330,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			df_gene_peak_query_pre2.index = np.asarray(df_gene_peak_query_pre2['gene_id'])
 
-			# flag_annot_2=0
 			field_query_pre1 = list(column_idvec) + field_query_1 + field_query_2 # link type annotation
 			
 			field_query_3 = ['ratio_1','ratio_cond1','motif_score_log_normalize_bound','score_accessibility']
@@ -2485,9 +2382,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		# initial calculation of peak-tf-gene association score
 		# add the columns: 'score_pred1_1'
 		flag_init_score_1=1
-		# flag_init_score_1=0
 		if flag_init_score_1>0:
-			# filename_save_annot_2 = 'annot1'
 			if len(df_gene_peak_query_pre2)==0:
 				filename_query_1 = select_config['filename_gene_tf_peak_query_2']
 				from utility_1 import test_file_merge_column
@@ -2929,8 +2824,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			## repression with peak-tf correlation under zero
 			id2 = (peak_tf_link<0)&(peak_gene_link>0)&(gene_tf_link>0)	# contradiction
-			# df_query_1.loc[id2,'lambda_gene_tf_cond2'] = -lambda_gene_tf_cond2
-			# df_query_1.loc[id2,'lambda_gene_tf_cond'] = -lambda_gene_tf_cond
 			df_query_1.loc[id2,'lambda_gene_tf_cond2'] = 0
 			df_query_1.loc[id2,'lambda_gene_tf_cond'] = 0
 
@@ -2938,8 +2831,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			id_2_ori = (peak_tf_link<0)&(peak_gene_link>=0)&(gene_tf_link<0)	# pos-neg: repression (positive peak accessibility-gene expr. correlation, negative peak accessibility-tf expr. correlation)
 			id_link_2 = (id_2_ori&id_motif_score_2&id_score_accessibility)	# use higher threshold
 			
-			# id_2 = (id_2&id_peak_tf_corr_2&id_gene_tf_corr_2) # the previous threshold
-			# id_2 = (id_link_2&id_peak_tf_corr_neg_thresh2&id_gene_tf_corr_peak_neg_thresh2&id_gene_tf_corr_neg_thresh1) # change the threshold to be stricter
 			id_2 = (id_link_2&id_peak_tf_corr_neg_thresh2&id_gene_tf_corr_peak_neg_thresh2&id_gene_tf_corr_neg_thresh_query) # change the threshold to be stricter
 			df_query_1.loc[id_2,'lambda_gene_tf_cond2'] = -lambda_gene_tf_cond2
 			df_query_1.loc[id_2,'lambda_peak_tf'] = -lambda_peak_tf
@@ -2973,7 +2864,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				df_query_1.loc[id_query,'group'] = (i2+1)
 				print('group %d: %d'%(i2+1,t_value_1))
 
-			# return df_query_1, df_query_2
 			return df_query_1
 
 	## ====================================================
@@ -3021,10 +2911,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		df_feature = data
 		id1 = (df_feature[column_id_query]==feature_query)
-		# df_query1 = df_feature.loc[feature_query1,:]
 		df_query1 = df_feature.loc[id1,:]
 
-		# query_id1 = df_query1['query_id']
 		query_id_1 = df_feature.index
 		query_id1 = query_id_1[id1]
 		query_num1 = len(query_id1)
@@ -3034,7 +2922,6 @@ class _Base2_correlation5(_Base2_correlation3):
 		normalize_type = 'uniform'
 		score_query = df_query1.loc[:,column_query_vec]
 		num_quantiles = np.min([query_num1,1000])
-		# score_mtx = quantile_transform(score_query,n_quantiles=1000,output_distribution=normalize_type)
 		score_mtx = quantile_transform(score_query,n_quantiles=num_quantiles,output_distribution=normalize_type)
 		score_mtx = pd.DataFrame(index=query_id1,columns=column_label_vec,data=np.asarray(score_mtx),dtype=np.float32)
 
@@ -3090,7 +2977,6 @@ class _Base2_correlation5(_Base2_correlation3):
 						df_feature.loc[query_id1,column_label_vec] = score_mtx
 		else:
 			for i1 in range(feature_query_num):
-			# for i1 in range(10):
 				feature_query1 = feature_query_vec[i1]
 				feature_query_id1 = i1
 				
@@ -4108,7 +3994,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		flag_query1=1
 		if flag_query1>0:
-			## pre-selection of peak-tf-gene link query by not strict thresholds to filter link query with relatively low estimated scores
+			# pre-selection of peak-tf-gene link query by not strict thresholds to filter link query with relatively low estimated scores
 			flag_select_thresh1_1=0
 			# flag_select_thresh1=0
 
@@ -4120,8 +4006,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			thresh_score_1, thresh_corr_1, thresh_corr_2, thresh_pval_1, thresh_pval_2 = 0.10, 0.10, 0.30, 0.25, 0.5
 			filename_annot_thresh = '%s_%s_%s_%s'%(thresh_score_1,thresh_corr_1,pval_thresh_1,thresh_corr_2)
 			
-			# file_save_path = select_config['data_path_save']
-			# input_file_path2 = file_save_path
 			input_file_path2 = input_file_path
 			output_file_path = input_file_path2
 			df_gene_peak_query_1 = df_gene_peak_query
@@ -4133,7 +4017,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				select_config.update({'column_idvec':column_idvec})
 			
 			print('column_idvec ',column_idvec)
-			# from utility_1 import test_query_index
 			df_gene_peak_query_1.index = test_query_index(df_gene_peak_query_1,column_vec=column_idvec)
 			df_gene_peak_query_1 = df_gene_peak_query_1.fillna(0)
 			query_id_ori = df_gene_peak_query_1.index.copy()
@@ -4319,60 +4202,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			return df_link_query_1, df_link_query1, df_link_query2
 
 	## ====================================================
-	# query tf-(peak,gene) link type: 1: positive regulation; -1: negative regulation
-	# add the columns: 'peak_gene_link','gene_tf_link','peak_tf_link'
-	# use the link type for selection
-	# def test_link_type_query_1(self,df_gene_peak_query=[],df_link_type=[],input_filename='',field_query=[],link_query=0,type_id_1=0,type_id_2=0,reset_index=True,verbose=0,select_config={}):
-
-	# 	if len(df_link_type)==0:
-	# 		if (input_filename!=''):
-	# 			if os.path.exists(input_filename)==True:
-	# 				# df_link_type = pd.read_csv(input_filename,index_col=0,sep='\t')
-	# 				df_link_type = pd.read_csv(input_filename,index_col=False,sep='\t')
-	# 			else:
-	# 				print('the file does not exist: %s'%(input_filename))
-	# 				return
-	# 		else:
-	# 			print('please provide link type annotation')
-	# 			return
-	# 	print('df_link_type ',df_link_type.shape)
-
-	# 	column_vec_1 = ['motif_id','peak_id','gene_id']
-	# 	if reset_index==True:
-	# 		query_id_ori = df_gene_peak_query.index.copy()
-	# 		df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=column_vec_1)
-		
-	# 	df_link_type.index = test_query_index(df_link_type,column_vec=column_vec_1)
-	# 	query_id_1 = df_gene_peak_query.index
-	# 	query_id_2 = df_link_type.index
-	# 	query_id_pre1 = query_id_1.intersection(query_id_2,sort=False)
-	# 	if len(field_query)==0:
-	# 		field_query = ['peak_gene_link','gene_tf_link','peak_tf_link']
-		
-	# 	df_query = df_gene_peak_query
-	# 	df_query.loc[query_id_pre1,field_query] = df_link_type.loc[query_id_pre1,field_query]
-	# 	if link_query>0:
-	# 		# filter peak-tf-gene link query based on link type
-	# 		# filter link query uncertain to explain
-	# 		peak_gene_link, gene_tf_link, peak_tf_link = df_query['peak_gene_link'],df_query['gene_tf_link'],df_query['peak_tf_link']
-	# 		id1 = ((peak_gene_link*gene_tf_link*peak_tf_link)>=0)	# lower threshold
-	# 		id2 = ((peak_gene_link*gene_tf_link*peak_tf_link)>0)	# higher threshold
-	# 		query_id1 = query_id_1[id1]
-	# 		query_id2 = query_id_1[id2]
-	# 		df_query.loc[id1,'link_query'] = 1
-	# 		df_query.loc[id2,'link_query'] = 2
-	# 		id_2 = (~id1)
-	# 		df_query.loc[id_2,'link_query'] = -1
-	# 		df_query1 = df_query.loc[id1,:]
-	# 		df_query2 = df_query.loc[id2,:]
-	# 		print('df_gene_peak_query, df_query1, df_query2 ',df_gene_peak_query.shape,df_query1.shape,df_query2.shape)
-
-	# 	if reset_index==True:
-	# 		df_query.index = query_id_ori
-
-	# 	return df_query, df_query1
-
-	## ====================================================
 	# compare between scores of peaks with the multiple genes
 	# query the maximum score for peak-gene link query based on scores of peak-TF-gene link query
 	def test_query_link_score_pre1(self,df_feature_link=[],feature_type_query='',column_vec_query=[],column_distance='distance',score_bin_value=0.05,thresh_vec=[],type_id_1=0,flag_annot_1=1,flag_annot_2=1,flag_load=0,flag_compare_1=1,flag_thresh_1=1,input_filename='',save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=0,select_config={}):
@@ -4383,10 +4212,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		if (len(df_feature_link)==0) or (flag_load>0):
 			df_feature_link = pd.read_csv(input_filename,index_col=False,sep='\t')
 
-		# df_link_query1 = df_feature_link
 		if len(column_vec_query)==0:
-			# column_query1 = 'score_pred2_recompute'
-			# column_query2 = 'score_pred3'
 			column_query1 = 'score_pred1'
 			column_query2 = 'score_pred2'
 			column_vec_query = [column_query1,column_query2]
@@ -4464,7 +4290,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			print(df_link_query_1.columns)
 			print(df_link_query_1[0:2])
 
-		# flag_annot_2 = 1
 		if flag_annot_2>0:
 			peak_distance_thresh_1 = 2050
 			distance_bin_value = 50
@@ -4528,9 +4353,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			
 		flag_query2=1
 		if flag_query2>0:
-			# type_query = 0
-			# thresh_type = 3
-			# type_query_compare = 2
 			flag_config=1
 			if flag_config>0:
 				thresh_value_1 = 100 # distance threshold
@@ -4538,7 +4360,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				thresh_value_2 = 0.01 # correlation threshold
 
 				thresh_value_1_2 = 500 # distance threshold
-				# thresh_value_2_2 = 0 # correlation threshold
 				thresh_value_2_2 = -0.05 # correlation threshold
 
 				thresh_vec_query = [[thresh_value_1,thresh_value_2],[thresh_value_1_2,thresh_value_2_2]]
@@ -4546,7 +4367,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				select_config.update({'thresh_vec_group1':thresh_vec_query})
 			
 				thresh_value_1_3 = -50 # distance threshold
-				# thresh_value_2_2 = 0 # correlation threshold
 				thresh_value_2_3 = 0.20 # correlation threshold
 
 				# thresh_vec_query_1 = [150,[0.3,0.1]]

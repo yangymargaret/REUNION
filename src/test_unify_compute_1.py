@@ -69,9 +69,6 @@ import h5py
 import json
 import pickle
 
-# import itertools
-# from itertools import combinations
-
 from test_reunion_compute_pre2 import _Base_pre2
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
@@ -81,19 +78,18 @@ sc.settings.set_figure_params(dpi=80, facecolor='white')
 
 # %matplotlib inline
 sns.set_style('ticks')
-# matplotlib.rcParams['figure.figsize'] = [5, 5]
+matplotlib.rcParams['figure.figsize'] = [5, 5]
 matplotlib.rcParams['figure.dpi'] = 100
 matplotlib.rcParams['image.cmap'] = 'Spectral_r'
 warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
 matplotlib.rc('xtick', labelsize=10)
 matplotlib.rc('ytick', labelsize=10)
-# matplotlib.rc('xlabel', labelsize=12)
-# matplotlib.rc('ylabel', labelsize=12)
+matplotlib.rc('xlabel', labelsize=12)
+matplotlib.rc('ylabel', labelsize=12)
 plt.rcParams['axes.labelsize'] = 12
 plt.rcParams['axes.titlesize'] = 15
-# plt.rcParams["figure.autolayout"] = True
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
+plt.rcParams["figure.autolayout"] = True
 
 class _Base2_correlation2(_Base_pre2):
 	"""Feature association estimation
@@ -128,132 +124,6 @@ class _Base2_correlation2(_Base_pre2):
 									type_id_feature=type_id_feature,
 									config=config,
 									select_config=select_config)
-
-	## file_path query
-	# def test_config_query_1(self,select_config={}):
-
-	# 	print('test_config_query')
-	# 	if 'data_file_type' in select_config:
-	# 		data_file_type = select_config['data_file_type']
-	# 		input_file_path1 = self.path_1
-	# 		if 'root_path_1' in select_config:
-	# 			root_path_1 = select_config['root_path_1']
-	# 		else:
-	# 			root_path_1 = input_file_path1
-	# 			select_config.update({'root_path_1':root_path_1})
-	# 		if 'root_path_2' in select_config:
-	# 			root_path_2 = select_config['root_path_2']
-	# 		else:
-	# 			root_path_2 = root_path_1
-	# 			select_config.update({'root_path_2':root_path_2})
-			
-	# 		print('data_file_type:%s'%(data_file_type))
-
-	# 		human_cell_type = ['pbmc']
-	# 		if data_file_type in human_cell_type:
-	# 			self.species_id = 'hg38'
-	# 		else:
-	# 			self.species_id = 'mm10'
-
-	# 	return select_config
-
-	## file_path query
-	# def test_config_query_2(self,beta_mode=0,save_mode=1,overwrite=False,select_config={}):
-
-	# 	print('test_config_query')
-	# 	file_path_dict = select_config['file_path_dict']
-		# filename_prefix_1 = select_config['filename_prefix_default']
-		# filename_prefix_save_1 = select_config['filename_prefix_save_local']
-		# filename_annot_vec = select_config['filename_annot_local']
-	# 	data_file_type = select_config['data_file_type']
-	# 	root_path_2 = select_config['root_path_2']
-	# 	file_path_annot = file_path_dict[data_file_type]
-	# 	# data_dir = '%s/%s'%(input_file_path1,file_path_annot)
-	# 	data_dir = '%s/%s'%(root_path_2,file_path_annot)
-	# 	run_id = select_config['run_id']
-	# 	type_id_feature = select_config['type_id_feature']
-	# 	metacell_num = select_config['metacell_num']
-	# 	input_file_path = '%s/metacell_%d/run%d'%(data_dir,metacell_num,run_id)
-	# 	print('root_path_2: %s \n file_path_annot: %s \n data_dir: %s \n'%(root_path_2,file_path_annot,data_dir))
-	# 	print('input_file_path: %s'%(input_file_path))
-
-	# 	filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
-	# 	data_path_1 = select_config['data_path']
-	# 	select_config.update({'data_path':input_file_path,
-	# 							'data_path_1':data_path_1,
-	# 							'filename_save_annot_1':filename_save_annot_1,
-	# 							'filename_save_annot_pre1':filename_save_annot_1})
-
-	# 	filename_prefix_1 = select_config['filename_prefix_default']
-	# 	filename_prefix_save_1 = select_config['filename_prefix_save_default']
-	# 	filename_prefix = '%s.%s'%(filename_prefix_1,filename_prefix_save_1)
-	# 	filename_annot1 = filename_annot_default
-	# 	select_config.update({'filename_prefix_peak_gene':filename_prefix})
-
-	# 	input_filename_pre1 = '%s/%s.combine.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-	# 	input_filename_pre2 = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-
-	# 	# output_filename_1 = input_filename_pre2
-	# 	# output_filename_2 = '%s/%s.combine.thresh2.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-	# 	filename_peak_gene_thresh2 = '%s/%s.combine.thresh2.%s.txt'%(save_file_path,filename_prefix,filename_annot1)
-
-	# 	filename_save_annot_pre1 = select_config['filename_save_annot_pre1']
-	# 	filename_distance_annot = '%s/df_gene_peak_distance_annot.%s.txt'%(save_file_path,filename_save_annot_pre1)
-
-	# 	# column_highly_variable = 'highly_variable_thresh0.5'
-	# 	# correlation_type = 'spearmanr'
-	# 	highly_variable = True
-	# 	highly_variable_thresh = 0.5
-	# 	column_correlation = ['spearmanr','pval1','pval1_ori']
-	# 	correlation_type_1 = column_correlation[0]
-	# 	column_distance = 'distance'
-	# 	column_thresh2 = 'label_thresh2'
-	# 	column_highly_variable = 'highly_variable_thresh%s'%(highly_variable_thresh)
-	# 	# correlation_type = 'spearmanr'
-
-	# 	## threshold for pre-selection of peak-gene links to estimate empirical p-values
-	# 	# thresh_distance_1 = 50 # to update
-	# 	thresh_distance_1 = 100
-	# 	thresh_corr_distance_1 = [[0,thresh_distance_1,0],
-	# 								[thresh_distance_1,500,0.01],
-	# 								[500,1000,0.1],
-	# 								[1000,2050,0.15]]
-
-	# 	## threshold for pre-selection of peak-gene links as candidate peaks
-	# 	# thresh_distance_1_2 = 50
-	# 	thresh_distance_1_2 = 100
-	# 	thresh_corr_distance_2 = [[0,thresh_distance_1_2,[[0,1,0,1]]],
-	# 								[thresh_distance_1_2,500,[[0.01,0.1,-0.01,0.1],[0.15,0.15,-0.15,0.15]]],
-	# 								[500,1000,[[0.1,0.1,-0.1,0.1]]],
-	# 								[1000,2050,[[0.15,0.1,-0.15,0.1]]]]
-
-	# 	thresh_corr_retain = [0.3,0.35]
-
-	# 	list2 = [input_filename_pre1,input_filename_pre2,filename_peak_gene_thresh2,filename_distance_annot,
-	# 				column_correlation,correlation_type_1,column_distance,column_highly_variable,column_thresh2,
-	# 				thresh_distance_1,thresh_corr_distance_1,
-	# 				thresh_distance_1_2,thresh_corr_distance_2,thresh_corr_retain,beta_mode]
-
-	# 	field_query2 = ['input_filename_pre1','input_filename_pre2','filename_save_thresh2','filename_distance_annot',
-	# 					'column_correlation','correlation_type_1','column_distance','column_highly_variable','column_thresh2',
-	# 					'thresh_distance_default_1','thresh_corr_distance_1','thresh_distance_default_2','thresh_corr_distance_2',
-	# 					'thresh_corr_retain','beta_mode']
-
-	# 	query_num2 = len(field_query2)
-	# 	for i1 in range(query_num2):
-	# 		field_id = field_query2[i1]
-	# 		query_value = list2[i1]
-	# 		select_config.update({field_id:query_value})
-
-	# 	return select_config
-
-	## update field query
-	# def test_field_query_pre1(self,field_query=[],query_value=[],select_config={}):
-	# 	# query_num1 = len(query_value)
-	# 	for (field_id,query_value) in zip(field_query,query_value):
-	# 		select_config.update({field_id:query_value})
-
-	# 	return select_config
 
 	## ====================================================
 	# query peak-gene link attributes
@@ -575,14 +445,6 @@ class _Base2_correlation2(_Base_pre2):
 		df_gene_peak_query['distance'] = np.asarray(peak_distance/bin_size)
 
 		return df_gene_peak_query
-
-	## load peak-gene distance;
-	# def test_gene_peak_query_distance_load(self,input_filename_distance='',peak_distance_thresh=2000,select_config={}):
-
-	# 	df_gene_peak_query_distance = pd.read_csv(input_filename_distance,index_col=0,sep='\t')
-	# 	print('df_gene_peak_query_distance ',df_gene_peak_query_distance.shape)
-
-	# 	return df_gene_peak_query_distance
 
 	## ====================================================
 	# load background peak loci

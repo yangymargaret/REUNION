@@ -111,7 +111,8 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		self.test_config_query_1(run_id=run_id,type_id_feature=type_id_feature,select_config=select_config)
 
-	## file_path query
+	## ====================================================
+	# file_path query and paramter configuration
 	def test_config_query_1(self,run_id=1,type_id_feature=0,select_config={}):
 
 		print('test_config_query')
@@ -2150,7 +2151,6 @@ class _Base2_pre_2(_Base2_correlation5):
 				type_combine = 0
 				float_format='%.5f'
 				column_label = 'label_compare'
-				# output_filename = '%s/%s.link_query.2_1.combine.%s.2.txt.gz'%(output_file_path,filename_prefix_save,filename_save_annot)
 				output_filename = select_config['filename_save_link_select2']
 				
 				# pre-selection of feature links
