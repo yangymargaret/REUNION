@@ -1133,7 +1133,6 @@ class _Base2_correlation2(_Base_pre2):
 				field_query_vec = ['filename_list_pre1','filename_list_bg']
 				id1 = int((compute_mode-1)/2)
 				field_query = field_query_vec[id1]
-
 				if field_query in select_config:
 					input_filename_list1 = select_config[field_query]
 					print('load estimations from the file ',len(input_filename_list1))

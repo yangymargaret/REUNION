@@ -68,14 +68,19 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		self.verbose_internal = 1
 
-	## perform peak clustering based on the low-dimensional embeddings
+	## ====================================================
+	# perform peak clustering based on the low-dimensional embeddings
 	def test_query_feature_clustering_pre1(self,data=[],feature_query_vec=[],feature_type_vec=[],save_mode=1,verbose=0,select_config={}):
 
+		"""
+		perform peak clustering based on the low-dimensional embeddings
+		:param data:
+		:return: 
+		"""
 		flag_clustering_1=1
 		if flag_clustering_1>0:
 			data_file_type_query = select_config['data_file_type']
 			metric = 'euclidean'
-			# n_components = 100
 			n_components = select_config['n_components']
 			n_component_sel = select_config['n_component_sel']
 			feature_mode_query = select_config['feature_mode']
@@ -148,11 +153,14 @@ class _Base2_2_pre1(_Base2_2_1):
 			filename_prefix_save_pre2 = filename_prefix_save
 			filename_save_annot_2 = '%s_%d.1'%(method_type_dimension,n_component_sel)
 			feature_type_vec_pre1 = ['gene','peak']
-			self.test_query_feature_clustering_1(data=dict_latent_query1,dict_feature=dict_latent_query1,feature_type_vec=feature_type_vec_pre1,feature_type_vec_2=feature_type_vec_2,
-													method_type_vec_group=method_type_vec_group,feature_mode=feature_mode_query,type_id_group=type_id_group,
+			self.test_query_feature_clustering_1(dict_feature=dict_latent_query1,
+													feature_type_vec=feature_type_vec_pre1,
+													feature_type_vec_2=feature_type_vec_2,
+													method_type_vec_group=method_type_vec_group,
+													feature_mode=feature_mode_query,
+													type_id_group=type_id_group,
 													n_components=n_components,metric=metric,
-													subsample_ratio=-1,subsample_ratio_vec=[],
-													peak_read=[],rna_exprs=[],
+													subsample_ratio=-1,
 													flag_cluster_1=flag_cluster_1,flag_cluster_2=flag_cluster_2,flag_combine=flag_combine,
 													overwrite=overwrite,overwrite_2=overwrite_2,
 													input_file_path=input_file_path,save_mode=1,output_file_path=output_file_path,
@@ -165,26 +173,31 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	# perform peak clustering based on the low-dimensional embeddings
 	# to update
-	def test_query_feature_clustering_pre1_1(self,data=[],dict_feature=[],feature_type_vec_1=['gene','peak'],feature_type_vec_2=[],method_type_vec_dimension=['SVD'],method_type_vec_group=['phenograph'],feature_mode=1,type_id_group=0,n_components=50,metric='euclidean',subsample_ratio=-1,subsample_ratio_vec=[],peak_read=[],rna_exprs=[],flag_cluster_1=1,flag_cluster_2=0,flag_combine=0,overwrite=False,overwrite_2=False,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# def test_query_feature_clustering_pre1_1(self,data=[],dict_feature=[],feature_type_vec_1=['gene','peak'],feature_type_vec_2=[],method_type_vec_dimension=['SVD'],method_type_vec_group=['phenograph'],feature_mode=1,type_id_group=0,n_components=50,metric='euclidean',subsample_ratio=-1,subsample_ratio_vec=[],peak_read=[],rna_exprs=[],flag_cluster_1=1,flag_cluster_2=0,flag_combine=0,overwrite=False,overwrite_2=False,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		flag_query_1 = 1
-		if flag_query_1>0:
-			file_path1 = self.save_path_1
-			run_id = select_config['run_id']
-			flag_cluster_query_1 = flag_cluster_1
-			flag_cluster_query_2 = flag_cluster_2
+	# 	flag_query_1 = 1
+	# 	if flag_query_1>0:
+	# 		file_path1 = self.save_path_1
+	# 		run_id = select_config['run_id']
+	# 		flag_cluster_query_1 = flag_cluster_1
+	# 		flag_cluster_query_2 = flag_cluster_2
 
-	# perform clustering of peak loci or peak loci and TFs based on the low-dimensional embeddings
-	def test_query_feature_clustering_1(self,data=[],dict_feature=[],feature_type_vec=['gene','peak'],feature_type_vec_2=[],method_type_vec_dimension=['SVD'],method_type_vec_group=['phenograph'],feature_mode=3,type_id_group=0,n_components=50,metric='euclidean',subsample_ratio=-1,subsample_ratio_vec=[],peak_read=[],rna_exprs=[],flag_cluster_1=1,flag_cluster_2=0,flag_combine=0,overwrite=False,overwrite_2=False,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	## ====================================================
+	# perform clustering of peak loci based on the low-dimensional embeddings
+	def test_query_feature_clustering_1(self,dict_feature=[],feature_type_vec=['gene','peak'],feature_type_vec_2=[],method_type_vec_dimension=['SVD'],method_type_vec_group=['phenograph'],type_id_group=0,n_components=50,metric='euclidean',subsample_ratio=-1,flag_cluster_1=1,flag_cluster_2=0,flag_combine=0,overwrite=False,overwrite_2=False,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		perform clustering of peak loci based on the low-dimensional embeddings
+		:param dict_feature:
+		:return: 
+		"""
 
 		flag_query_1 = 1
 		if flag_query_1>0:
 			flag_cluster_query_1 = 1
 			flag_cluster_query_2 = 0
-			# n_components = 50
 
 			feature_type_query = 'peak'
-			# dict_feature = []
 			feature_type_vec = ['gene','peak']
 			method_type_query = method_type_vec_dimension[0]
 		
@@ -193,12 +206,20 @@ class _Base2_2_pre1(_Base2_2_1):
 			field_query_2 = ['latent_%s'%(feature_type_query) for feature_type_query in feature_type_vec_2]
 			annot_str_vec = field_query_2
 
+			feature_type_annot = ['peak-motif sequence feature']*2+['accessibility feature']*2
+			feature_type_vec_pre1 = ['peak_motif','peak_motif_ori','peak_tf','peak_mtx']
+			feature_type_vec_pre2 = ['latent_%s'%(feature_type_query) for feature_type_query in feature_type_vec_pre1]
+			dict_feature_type_annot1 = dict(zip(feature_type_vec_pre1,feature_type_annot))
+			dict_feature_type_annot2 = dict(zip(feature_type_vec_pre2,feature_type_annot))
+			self.dict_feature_type_annot1 = dict_feature_type_annot1
+			self.dict_feature_type_annot2 = dict_feature_type_annot2
+		
 			iter_id = -1
 			config_id_load = -1
 			overwrite_2 = False
+			verbose_internal = self.verbose_internal
 
 			dict_query_1 = dict()
-			# list_query1 = [latent_peak,latent_peak_motif,latent_peak_motif_ori,latent_peak_tf_link]
 			column_1 = 'type_id_group_2'
 			type_id_group_2 = -1
 			if column_1 in select_config:
@@ -212,7 +233,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				type_vec_group_2 = np.arange(field_num_2)
 			# print('type_vec_group_2: ',type_vec_group_2)
 
-			# method_type_vec_1 = ['MiniBatchKMeans','phenograph']
 			method_type_group_name = select_config['method_type_group_name']
 			method_type_group_neighbor = select_config['method_type_group_neighbor']
 			neighbor_num_1 = method_type_group_neighbor
@@ -250,35 +270,52 @@ class _Base2_2_pre1(_Base2_2_1):
 				# print(field_id2,latent_peak_query.shape,type_id_query)
 				# print(latent_peak_query[0:2])
 
-				subsample_ratio = -1
-				# subsample_ratio = 0.1
-				if subsample_ratio>0:
-					latent_peak_ori = latent_peak_query.copy()
-					peak_query_vec = np.asarray(latent_peak_query.index)
-					np.random.shuffle(peak_query_vec)
-					peak_num_ori = len(peak_query_vec)
-					peak_num1 = int(peak_num_ori*subsample_ratio)
-					latent_peak_query = latent_peak_ori.loc[peak_query_vec[0:peak_num1],:]
-					# print('latent_peak_query: ',latent_peak_query.shape)
+				# if subsample_ratio>0:
+				# 	latent_peak_ori = latent_peak_query.copy()
+				# 	peak_query_vec = np.asarray(latent_peak_query.index)
+				# 	np.random.shuffle(peak_query_vec)
+				# 	peak_num_ori = len(peak_query_vec)
+				# 	peak_num1 = int(peak_num_ori*subsample_ratio)
+				# 	latent_peak_query = latent_peak_ori.loc[peak_query_vec[0:peak_num1],:]
 
 				df_latent_1 = latent_peak_query
-				# print('df_latent_1: ',df_latent_1.shape)
-				# dict_query_1.update({field_id1:df_latent_1})
 				dict_query_1.update({field_id2:df_latent_1})
 				field_query = [field_id2]
+				if verbose_internal==2:
+					annot_str1 = dict_feature_type_annot2[field_id2]
+					print('feature embeddings of peak loci, dataframe of size ',df_latent_1.shape, ' %s'%(annot_str1))
+					print('preview:\n',df_latent_1[0:2])
 
 				# perform group estimation
-				self.test_query_association_pre1_group1_1(data=dict_query_1,feature_type_query=feature_type_query,dict_feature=[],feature_type_vec=feature_type_vec,method_type=method_type_query,field_query=field_query,
+				self.test_query_association_group_1(data=dict_query_1,feature_type_query=feature_type_query,
+															dict_feature=[],
+															feature_type_vec=feature_type_vec,
+															method_type=method_type_query,
+															field_query=field_query,
 															peak_read=peak_read,rna_exprs=rna_exprs,
-															flag_cluster_query_1=flag_cluster_query_1,flag_cluster_query_2=flag_cluster_query_2,n_components=n_components,iter_id=iter_id,config_id_load=config_id_load,input_file_path=input_file_path,overwrite=overwrite_2,
-															save_mode=save_mode,output_file_path=output_file_path_2,output_filename='',filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot_2,verbose=verbose,select_config=select_config)
+															flag_cluster_query_1=flag_cluster_query_1,
+															flag_cluster_query_2=flag_cluster_query_2,
+															n_components=n_components,
+															iter_id=iter_id,config_id_load=config_id_load,
+															overwrite=overwrite_2,
+															input_file_path=input_file_path,
+															save_mode=save_mode,output_file_path=output_file_path_2,output_filename='',filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot_2,
+															verbose=verbose,select_config=select_config)
 
-	## group query
-	def test_query_association_pre1_group1_1(self,data=[],feature_type_query='',dict_feature=[],feature_type_vec=[],method_type='',field_query=[],peak_read=[],rna_exprs=[],flag_cluster_query_1=1,flag_cluster_query_2=0,n_components=50,iter_id=-1,config_id_load=-1,input_file_path='',overwrite=True,
+	## ====================================================
+	# perform group estimation of peak loci
+	def test_query_association_group_1(self,data=[],feature_type_query='',dict_feature=[],feature_type_vec=[],method_type='',field_query=[],peak_read=[],rna_exprs=[],flag_cluster_query_1=1,flag_cluster_query_2=0,n_components=50,iter_id=-1,config_id_load=-1,overwrite=True,input_file_path='',
 												save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
+		"""
+		perform clustering of peak loci based on the low-dimensional embeddings
+		:param data:
+		:return: 
+		"""
+
 		file_path1 = self.save_path_1
-		test_estimator_1 = _Base2_group1(file_path=file_path1,select_config=select_config)
+		test_estimator_group = _Base2_group1(file_path=file_path1,select_config=select_config)
+		self.test_estimator_group = test_estimator_group
 
 		# perform feature clustering
 		type_id_compute, type_id_feature = 0, 0
@@ -289,6 +326,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			type_id_feature = select_config['type_id_feature']
 
 		filename_prefix_default_1 = filename_prefix_save
+		verbose_internal = self.verbose_internal
 		if flag_cluster_query_1>0:
 			if feature_type_query=='':
 				feature_type_query = 'peak'
@@ -319,7 +357,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				method_type = method_type_dimension
 
 			method_type_query = method_type
-			# print('feature_mtx, method_type_query: ',feature_mtx_query.shape,method_type_query)
 			
 			flag_iter_2 = 1
 			flag_clustering_1 = 1
@@ -363,7 +400,6 @@ class _Base2_2_pre1(_Base2_2_1):
 				method_type_vec_1 = method_type_vec_group
 				
 			method_type_vec_1 = np.asarray(method_type_vec_1)
-			
 			if flag_config1>0:
 				neighbors_vec = [20, 30] # the neighbors in phenograph clustering
 				column_1 = 'method_type_group_neighbor'
@@ -386,19 +422,18 @@ class _Base2_2_pre1(_Base2_2_1):
 						select_config.update({field1: dict_config1[field1]})
 
 				distance_threshold_pre, linkage_type_id_pre, neighbors_pre, n_clusters_pre = -1, 0, 20, 100
-				list_config = test_estimator_1.test_cluster_query_config_1(method_type_vec=method_type_vec_1,
-																			distance_threshold=distance_threshold_pre,
-																			linkage_type_id=linkage_type_id_pre,
-																			neighbors=neighbors_pre,
-																			n_clusters=n_clusters_pre,
-																			metric=metric,
-																			select_config=select_config)
+				list_config = test_estimator_group.test_cluster_query_config_1(method_type_vec=method_type_vec_1,
+																				distance_threshold=distance_threshold_pre,
+																				linkage_type_id=linkage_type_id_pre,
+																				neighbors=neighbors_pre,
+																				n_clusters=n_clusters_pre,
+																				metric=metric,
+																				select_config=select_config)
 
 			# perform feature group estimation
-			test_estimator_1.test_query_group_1(data=feature_mtx_query,adata=[],feature_type_query=feature_type_query,list_config=list_config,flag_iter_2=flag_iter_2,flag_clustering_1=flag_clustering_1,
+			test_estimator_group.test_query_group_1(data=feature_mtx_query,adata=[],feature_type_query=feature_type_query,list_config=list_config,flag_iter_2=flag_iter_2,flag_clustering_1=flag_clustering_1,
 												save_mode=1,output_file_path=output_file_path,output_filename=output_filename,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,verbose=verbose,select_config=select_config)
 
-		# flag_cluster_query_2 = 0
 		# query signal value of each cluster
 		dict_feature_2 = dict()
 		if flag_cluster_query_2>0:
@@ -435,7 +470,7 @@ class _Base2_2_pre1(_Base2_2_1):
 						select_config.update({field1: dict_config1[field1]})
 			
 				distance_threshold_pre, linkage_type_id_pre, neighbors_pre, n_clusters_pre = -1, 0, 20, 100
-				list_config2 = test_estimator_1.test_cluster_query_config_1(method_type_vec=method_type_vec_1,
+				list_config2 = test_estimator_group.test_cluster_query_config_1(method_type_vec=method_type_vec_1,
 																			distance_threshold=distance_threshold_pre,
 																			linkage_type_id=linkage_type_id_pre,
 																			neighbors=neighbors_pre,
@@ -498,137 +533,31 @@ class _Base2_2_pre1(_Base2_2_1):
 					# thresh_group_size = 10
 					thresh_group_size = 5
 					flag_ratio = 1
-					dict_feature_2 = test_estimator_1.test_query_cluster_signal_1(method_type=method_type_annot_query,
-																					feature_mtx=feature_mtx_query,
-																					cluster_query=cluster_query,
-																					df_obs=df_obs,
-																					thresh_group_size=thresh_group_size,
-																					scale_type=scale_type,
-																					type_id_query=1,
-																					flag_plot=flag_plot,
-																					flag_ratio=flag_ratio,
-																					filename_prefix='',
-																					filename_prefix_save=filename_prefix_save_2,
-																					save_mode=save_mode_2,
-																					output_file_path=output_file_path,
-																					output_filename='',
-																					select_config=select_config)
+					dict_feature_2 = test_estimator_group.test_query_cluster_signal_1(method_type=method_type_annot_query,
+																						feature_mtx=feature_mtx_query,
+																						cluster_query=cluster_query,
+																						df_obs=df_obs,
+																						thresh_group_size=thresh_group_size,
+																						scale_type=scale_type,
+																						type_id_query=1,
+																						flag_plot=flag_plot,
+																						flag_ratio=flag_ratio,
+																						filename_prefix='',
+																						filename_prefix_save=filename_prefix_save_2,
+																						save_mode=save_mode_2,
+																						output_file_path=output_file_path,
+																						output_filename='',
+																						select_config=select_config)
 
-	## query neighbors of feature
-	# query neighbors of peak loci
-	def test_query_feature_neighbor_pre1_1(self,data=[],n_neighbors=20,return_distance=True,save_mode=1,verbose=0,select_config={}):
-
-		from sklearn.neighbors import NearestNeighbors
-		from scipy.stats import poisson, multinomial
-
-		# Metacell neighbors
-		# peak feature neighbors
-		# nbrs = NearestNeighbors(n_neighbors=n_neighbors, radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2, metric_params=None, n_jobs=None)
-		nbrs = NearestNeighbors(n_neighbors=n_neighbors,radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2)
-		
-		feature_mtx = data
-		nbrs.fit(feature_mtx)
-		# sample_id = feature_mtx.index
-		query_id_1 = feature_mtx.index
-		neighbor_dist, neighbor_id = nbrs.kneighbors(feature_mtx)
-		column_vec = ['neighbor%d'%(id1) for id1 in np.arange(n_neighbors)]
-		feature_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=query_id_1.values[neighbor_id])
-		dist_nbrs = []
-		if return_distance>0:
-			dist_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=neighbor_dist)
-
-		return feature_nbrs, dist_nbrs
-
-	# load neighbors of feature query
-	def test_query_feature_neighbor_load_1(self,dict_feature=[],feature_type_vec=[],n_neighbors=30,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-		data_file_type_query = select_config['data_file_type']
-		if 'neighbor_num' in select_config:
-			n_neighbors = select_config['neighbor_num']
-			
-		n_neighbors_query = n_neighbors+1
-		flag_neighbor_query = 1
-		feature_type_vec_query = feature_type_vec
-			
-		if flag_neighbor_query>0:
-			query_num = 2
-			# load_mode_pre2 = 0
-			load_mode_pre2 = 1
-			
-			filename_annot1 = '%d.%s'%(n_neighbors,data_file_type_query)
-			if load_mode_pre2>0:
-				list1 = []
-				list2 = []
-				for i2 in range(query_num):
-					feature_type_query = feature_type_vec_query[i2]
-					input_filename_1 = '%s/test_feature_nbrs_%d.%s.txt'%(input_file_path,i2+1,filename_annot1)
-					if os.path.exists(input_filename_1)==True:
-						feature_nbrs_query = pd.read_csv(input_filename_1,index_col=0,sep='\t')
-						print('feature_nbrs_query: ',feature_nbrs_query.shape,feature_type_query)
-						print(input_filename_1)
-						list1.append(feature_nbrs_query)
-					else:
-						load_mode_pre2 = 0
-
-					input_filename_2 = '%s/test_dist_nbrs_%d.%s.txt'%(input_file_path,i2+1,filename_annot1)
-					if os.path.exists(input_filename_2)==True:
-						dist_nbrs_query = pd.read_csv(input_filename_2,index_col=0,sep='\t')
-						print('dist_nbrs_query: ',dist_nbrs_query.shape,feature_type_query)
-						# print(output_filename_1)
-						print(input_filename_2)
-						list2.append(dist_nbrs_query)
-					else:
-						load_mode_pre2 = 0
-
-			if load_mode_pre2>0:
-				feature_nbrs_1, feature_nbrs_2 = list1[0:2]
-				dist_nbrs_1, dist_nbrs_2 = list2[0:2]
-				list_query1 = [[feature_nbrs_1,dist_nbrs_1],[feature_nbrs_2,dist_nbrs_2]]
-			else:
-				feature_type_num = len(feature_type_vec_query)
-				list_query1 = []
-				for i1 in range(feature_type_num):
-					feature_type_query = feature_type_vec_query[i1]
-			
-					print('find nearest neighbors of peak loci')
-					print('neighbor number: %d'%(n_neighbors_query))
-					start = time.time()
-					df_feature_1 = dict_feature[feature_type_query]
-					# print('df_feature_1: ',df_feature_1.shape,feature_type_query)
-					# print(df_feature_1.shape)
-					print('feature matrix for %s, dataframe of size '%(feature_type_query),df_feature_1.shape)
-					subsample_num = -1
-					if subsample_num>0:
-						df_feature_1 = df_feature_1[0:subsample_num]
-						print('df_feature_1 sub_sample: ',df_feature_1.shape)
-					feature_nbrs_1, dist_nbrs_1 = self.test_query_feature_neighbor_pre1_1(data=df_feature_1,n_neighbors=n_neighbors_query,return_distance=True,save_mode=1,verbose=0,select_config=select_config)
-
-					stop = time.time()
-					print('find nearest neighbors of peak loci using feature %s used %.2fs'%(feature_type_query,stop-start))
-					list_query1.append([feature_nbrs_1, dist_nbrs_1])
-
-				query_num = len(list_query1)
-				for i2 in range(query_num):
-					list_query2 = list_query1[i2]
-					feature_type_query = feature_type_vec_query[i2]
-					feature_nbrs_query, dist_nbrs_query = list_query2[0:2]
-					output_filename_1 = '%s/test_feature_nbrs_%d.%s.txt'%(output_file_path,i2+1,filename_annot1)
-					feature_nbrs_query = feature_nbrs_query.round(7)
-					feature_nbrs_query.to_csv(output_filename_1,sep='\t')
-					print('estimated nearest neighbors using feature %s, dataframe of size '%(feature_type_query),feature_nbrs_query.shape)
-					print('save data: %s'%(output_filename_1))
-
-					output_filename_2 = '%s/test_dist_nbrs_%d.%s.txt'%(output_file_path,i2+1,filename_annot1)
-					dist_nbrs_query = dist_nbrs_query.round(7)
-					dist_nbrs_query.to_csv(output_filename_2,sep='\t')
-					print('distances between nearest neighbors and the given peak loci using feature %s, dataframe of size '%(feature_type_query),dist_nbrs_query.shape)
-					print('save data: %s'%(output_filename_2))
-
-			return list_query1
-
-	## load the feature group query and the peak query
-	# load the estimated group label
+	## ====================================================
+	# query the estimated group labels of peak loci
 	def test_query_feature_group_load_pre1(self,data=[],peak_query_vec=[],feature_type_vec=[],method_type_vec=[],peak_read=[],rna_exprs=[],thresh_size=20,type_id_group=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		query the estimated group labels of peak loci
+		:param data:
+		:return: 
+		"""
 
 		data_file_type_query = select_config['data_file_type']
 		column_idvec = ['motif_id','peak_id','gene_id']
@@ -700,12 +629,20 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return dict_query1, dict_query2
 
-	# load feature group estimation for peak or peak and TF
+	## ====================================================
+	# load feature group estimation of peak loci
+	# query the estimated group labels of peak loci
 	# input: the method_type_group annotation
 	# df_group_1, df_group_2: the group assignment of genome-wide peak loci
 	# df_overlap_compare: the overlap between the pairs of groups of genome-wide peak loci
 	# dict_group_basic_1: the group size of the group of each feature type
 	def test_query_feature_group_load_1(self,data=[],feature_type_vec=[],feature_query_vec=[],method_type_group='',input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
+
+		"""
+		query the estimated group labels of peak loci
+		:param data:
+		:return: 
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
@@ -796,8 +733,15 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return df_overlap_compare, dict_group_basic_1, df_group_1, df_group_2
 
-	## group frequency query
+	## ====================================================
+	# group frequency query
 	def test_group_frequency_query(self,feature_id,group_id,count_query=0,verbose=0,select_config={}):
+
+		"""
+		group frequency query
+		:param feature_id:
+		:return: 
+		"""
 
 		group_vec = np.unique(group_id)
 		group_num = len(group_vec)
@@ -813,9 +757,17 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return df_query_frequency
 
-	## query the overlap between groups
+	## ====================================================
+	# query the overlap between members in two groups in the two feature spaces
 	def test_query_group_overlap_1(self,df1=[],df2=[],feature_query_vec=[],column_query='',query_mode=0,parallel=0,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
+		"""
+		query the overlap between members in two groups in the two feature spaces
+		:param df1:
+		:param df2:
+		:return: 
+		"""
+		
 		flag_query1 = 1
 		if flag_query1>0:
 			if column_query=='':
@@ -893,11 +845,19 @@ class _Base2_2_pre1(_Base2_2_1):
 			else:
 				return df_overlap
 
-	## query feature enrichment
+	## ====================================================
+	# query feature enrichment
 	# df1: the foreground dataframe; df2: the background dataframe (expected dataframe)
 	# column_query: the column of value
 	def test_query_enrichment_pre1(self,df1,df2,column_query='',stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,verbose=0,select_config={}):
 		
+		"""
+		query query feature enrichment
+		:param df1:
+		:param df2:
+		:return: 
+		"""
+
 		query_idvec = df1.index
 		query_num1 = len(query_idvec)
 		df_query1 = df1
@@ -930,8 +890,16 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return df_query1, contingency_table
 
-	## query the overlap between groups
+	## ====================================================
+	# query enrichment of peaks in the groups in the specific feature space
 	def test_query_group_overlap_pre1_1(self,df_group_1=[],df_group_2=[],df_overlap_1=[],df_query_compare=[],feature_query_vec=[],column_query='',flag_shuffle=0,stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
+
+		"""
+		query enrichment of peaks with TF binding predicted in the groups in the feature space
+		:param df_group_1:
+		:param df_group_2:
+		:return: 
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
@@ -943,7 +911,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			# query the overlap between groups
 			df1 = df_group_1
 			df2 = df_group_2
-			# query the overlap
 			df_overlap = self.test_query_group_overlap_1(df1=df1,df2=df2,feature_query_vec=feature_query_vec,save_mode=1,select_config=select_config)
 
 			column_1 = 'group1'
@@ -970,7 +937,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			
 				df_overlap_1[column_1] = np.asarray(df_overlap_1.index)
 
-				# convert wide format to long format
+				# convert wide format dataframe to long format dataframe
 				idvec = [column_1]
 				df_query_compare = df_overlap_1.melt(id_vars=idvec,var_name=column_2,value_name='overlap')
 			
@@ -1010,8 +977,17 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return df_query1, contingency_table, df_overlap
 
-	## query the overlap between groups
+	## ====================================================
+	# query enrichment of peaks in the paired groups
 	def test_query_group_overlap_pre1_2(self,data=[],dict_group_compare=[],df_group_1=[],df_group_2=[],df_overlap_1=[],df_query_compare=[],column_sort=[],flag_sort=1,flag_sort_2=1,flag_group=1,flag_annot=1,stat_chi2_correction=True,stat_fisher_alternative='greater',save_mode=1,output_file_path='',output_filename='',output_filename_2='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		
+		"""
+		query enrichment of peaks in the paired groups
+		:param df_group_1:
+		:param df_group_2:
+		:return: 
+		"""
 
 		flag_signal_query=1
 		flag_query1=1
@@ -1111,20 +1087,338 @@ class _Base2_2_pre1(_Base2_2_1):
 				dict_group_basic_1.update({'combine':df_query_pre2})
 
 			return df_overlap_query, df_overlap_mtx, dict_group_basic_1
-	
+
+	## ====================================================
+	# estimate enrichment of peak loci with detected TF motif in the paired groups
+	# query enrichment of peaks with the TF motif detected in the paired groups
+	def test_query_feature_overlap_1(self,data=[],motif_id_query='',motif_id1='',column_motif='',df_overlap_compare=[],input_file_path='',save_mode=1,verbose=0,output_file_path='',filename_prefix_save='',filename_save_annot='',select_config={}):
+
+		"""
+		query enrichment of peaks with the TF motif detected in the paired groups
+		:param data:
+		:param motif_id_query:
+		:return: 
+		"""
+
+		flag_motif_query=1
+		data_file_type_query = select_config['data_file_type']
+		method_type_group = select_config['method_type_group']
+		df_query1 = data
+
+		if flag_motif_query>0:
+			# df_query1_motif = df_query1.loc[id_motif,:] # peak loci with motif
+			df_query1_motif = df_query1
+			peak_loc_motif = df_query1_motif.index
+			filename_save_annot2_2 = '%s.%s.%s'%(method_type_group,motif_id_query,data_file_type_query)
+			filename_query = '%s/test_query_df_overlap.%s.motif.1.txt' % (input_file_path, filename_save_annot2_2)
+			filename_query_2 = '%s/test_query_df_overlap.%s.motif.2.txt' % (input_file_path, filename_save_annot2_2)
+			
+			column_1 = 'filename_overlap_motif_1'
+			column_2 = 'filename_overlap_motif_2'
+			if column_1 in select_config:
+				filename_query = select_config[column_1]
+
+			if column_2 in select_config:
+				filename_query_2 = select_config[column_2]
+
+			input_filename = filename_query
+			input_filename_2 = filename_query_2
+			load_mode = 0
+			# overwrite_2 = False
+			overwrite_2 = True
+			df_group_basic_motif = []
+			dict_group_basic_motif = dict()
+			
+			if os.path.exists(input_filename)==True:
+				if (overwrite_2==False):
+					df_overlap_motif = pd.read_csv(input_filename,index_col=0,sep='\t')
+					load_mode = load_mode+1
+			else:
+				print('the file does not exist: %s'%(input_filename))
+
+			if os.path.exists(input_filename_2)==True:
+				if (overwrite_2==False):
+					df_group_basic_motif = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+					load_mode = load_mode+1
+					self.df_group_basic_motif = df_group_basic_motif
+			else:
+				print('the file does not exist: %s'%(input_filename))
+
+			if load_mode<2:
+				dict_group_basic_1 = self.dict_group_basic_1
+				df_group_1 = self.df_group_pre1
+				df_group_2 = self.df_group_pre2
+				
+				if len(df_overlap_compare)==0:
+					df_overlap_compare = self.df_overlap_compare
+
+				stat_chi2_correction = True
+				stat_fisher_alternative = 'greater'
+				output_filename = filename_query
+				output_filename_2 = filename_query_2
+				df_overlap_motif, df_overlap_mtx_motif, dict_group_basic_motif = self.test_query_group_overlap_pre1_2(data=df_query1_motif,dict_group_compare=dict_group_basic_1,
+																														df_group_1=df_group_1,df_group_2=df_group_2,
+																														df_overlap_1=[],df_query_compare=df_overlap_compare,
+																														flag_sort=1,flag_group=1,
+																														stat_chi2_correction=stat_chi2_correction,
+																														stat_fisher_alternative=stat_fisher_alternative,
+																														save_mode=1,output_filename=output_filename,output_filename_2=output_filename_2,
+																														verbose=verbose,select_config=select_config)
+				self.dict_group_basic_motif = dict_group_basic_motif
+						
+			self.df_overlap_motif = df_overlap_motif
+
+			load_mode_query = load_mode
+			return df_overlap_motif, df_group_basic_motif, df_group_basic_motif, load_mode_query
+
+	## ====================================================
+	# estimate enrichment of peak loci with predicted TF binding in the paired groups
+	# query enrichment of peaks with TF binding predicted in the paired groups
+	def test_query_feature_overlap_2(self,data=[],motif_id_query='',motif_id1='',column_motif='',df_overlap_compare=[],input_file_path='',save_mode=1,verbose=0,output_file_path='',filename_prefix_save='',filename_save_annot='',select_config={}):
+
+		"""
+		query enrichment of peaks with TF binding predicted in the paired groups
+		:param data:
+		:param motif_id_query:
+		:return: 
+		"""
+
+		flag_select_query=1
+		data_file_type_query = select_config['data_file_type']
+		method_type_group = select_config['method_type_group']
+		# method_type_feature_link = select_config['method_type_feature_link']
+		df_query1 = data
+
+		if flag_select_query>0:
+			# select the peak loci predicted with TF binding
+			# the selected peak loci
+			df_pred1 = df_query1
+						
+			peak_loc_query_group2 = df_pred1.index
+			peak_num_group2 = len(peak_loc_query_group2)
+			# print('peak_loc_query_group2: ',peak_num_group2)
+
+			# feature_query_vec_2 = peak_loc_query_group2
+			peak_query_vec = peak_loc_query_group2
+		
+			method_type_query = select_config['method_type_query']
+			filename_save_annot2_2 = '%s.%s.%s.%s'%(method_type_query,method_type_group,motif_id_query,data_file_type_query)
+			filename_query = '%s/test_query_df_overlap.%s.1.txt' % (input_file_path, filename_save_annot2_2)
+			filename_query_2 = '%s/test_query_df_overlap.%s.2.txt' % (input_file_path, filename_save_annot2_2)
+						
+			column_1 = 'filename_overlap_1'
+			column_2 = 'filename_overlap_2'
+			if column_1 in select_config:
+				filename_query = select_config[column_1]
+
+			if column_2 in select_config:
+				filename_query_2 = select_config[column_2]
+
+			input_filename = filename_query
+			input_filename_2 = filename_query_2
+			load_mode_2 = 0
+			# overwrite_2 = False
+			overwrite_2 = True
+			df_group_basic_query_2 = []
+			dict_group_basic_2 = dict()
+			if (os.path.exists(input_filename)==True):
+				if (overwrite_2==False):
+					df_overlap_query = pd.read_csv(input_filename,index_col=0,sep='\t')
+					load_mode_2 = load_mode_2+1
+			else:
+				print('the file does not exist: %s'%(input_filename))
+
+			if (os.path.exists(input_filename_2)==True):
+				if (overwrite_2==False):
+					df_group_basic_query_2 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+					load_mode_2 = load_mode_2+1
+					self.df_group_basic_query_2 = df_group_basic_query_2
+			else:
+				print('the file does not exist: %s'%(input_filename_2))
+
+			if load_mode_2<2:
+				dict_group_basic_1 = self.dict_group_basic_1
+				df_group_1 = self.df_group_pre1
+				df_group_2 = self.df_group_pre2
+				if len(df_overlap_compare)==0:
+					self.df_overlap_compare = df_overlap_compare
+
+				stat_chi2_correction = True
+				stat_fisher_alternative = 'greater'
+			
+				output_filename = filename_query
+				output_filename_2 = filename_query_2
+				df_overlap_query, df_overlap_mtx, dict_group_basic_2 = self.test_query_group_overlap_pre1_2(data=df_pred1,dict_group_compare=dict_group_basic_1,
+																												df_group_1=df_group_1,df_group_2=df_group_2,
+																												df_overlap_1=[],df_query_compare=df_overlap_compare,
+																												flag_sort=1,flag_group=1,
+																												stat_chi2_correction=stat_chi2_correction,
+																												stat_fisher_alternative=stat_fisher_alternative,
+																												save_mode=1,output_filename=output_filename,
+																												output_filename_2=output_filename_2,
+																												verbose=verbose,select_config=select_config)
+
+				list_query1 = []
+				group_vec_query = ['group1','group2']
+				for group_type in group_vec_query:
+					df_query = dict_group_basic_2[group_type]
+					df_query['group_type'] = group_type
+					list_query1.append(df_query)
+
+				df_query = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
+				flag_sort_2=1
+				if flag_sort_2>0:
+					df_query = df_query.sort_values(by=['group_type','stat_fisher_exact_','pval_fisher_exact_'],ascending=[True,False,True])
+				
+				output_filename = filename_query_2
+				df_query = df_query.round(7)
+				df_query.to_csv(output_filename,sep='\t')
+				df_group_basic_query_2 = df_query
+
+				self.dict_group_basic_2 = dict_group_basic_2
+							
+			self.df_overlap_query = df_overlap_query						
+			load_mode_query = load_mode_2
+
+			return df_overlap_query, df_group_basic_query_2, dict_group_basic_2, load_mode_query
+
+	## ====================================================
+	# query neighbors of samples in the feature space
+	def test_query_feature_neighbor_pre1(self,data=[],n_neighbors=20,return_distance=True,save_mode=1,verbose=0,select_config={}):
+
+		"""
+		query neighbors of samples in the feature space
+		:param data:
+		:param n_neighbors:
+		:return: 
+		"""
+
+		from sklearn.neighbors import NearestNeighbors
+		from scipy.stats import poisson, multinomial
+
+		# query neighbors of the observations in the feature space
+		# nbrs = NearestNeighbors(n_neighbors=n_neighbors, radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2, metric_params=None, n_jobs=None)
+		nbrs = NearestNeighbors(n_neighbors=n_neighbors,radius=1.0, algorithm='auto', leaf_size=30, metric='minkowski', p=2)
+		
+		feature_mtx = data
+		nbrs.fit(feature_mtx)
+		query_id_1 = feature_mtx.index
+		neighbor_dist, neighbor_id = nbrs.kneighbors(feature_mtx)
+		column_vec = ['neighbor%d'%(id1) for id1 in np.arange(n_neighbors)]
+		feature_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=query_id_1.values[neighbor_id])
+		dist_nbrs = []
+		if return_distance>0:
+			dist_nbrs = pd.DataFrame(index=query_id_1,columns=column_vec,data=neighbor_dist)
+
+		return feature_nbrs, dist_nbrs
+
+	## ====================================================
+	# query neighbors of samples in the feature space
+	def test_query_feature_neighbor_load_1(self,dict_feature=[],feature_type_vec=[],n_neighbors=30,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		query neighbors of samples in the feature space
+		:param dict_feature:
+		:param feature_type_vec:
+		:return: 
+		"""
+
+		data_file_type_query = select_config['data_file_type']
+		if 'neighbor_num' in select_config:
+			n_neighbors = select_config['neighbor_num']
+			
+		n_neighbors_query = n_neighbors+1
+		flag_neighbor_query = 1
+		feature_type_vec_query = feature_type_vec
+			
+		if flag_neighbor_query>0:
+			query_num = 2
+			# load_mode_pre2 = 0
+			load_mode_pre2 = 1
+			
+			filename_annot1 = '%d.%s'%(n_neighbors,data_file_type_query)
+			if load_mode_pre2>0:
+				list1 = []
+				list2 = []
+				for i2 in range(query_num):
+					feature_type_query = feature_type_vec_query[i2]
+					input_filename_1 = '%s/test_feature_nbrs_%d.%s.txt'%(input_file_path,i2+1,filename_annot1)
+					if os.path.exists(input_filename_1)==True:
+						feature_nbrs_query = pd.read_csv(input_filename_1,index_col=0,sep='\t')
+						print('feature_nbrs_query: ',feature_nbrs_query.shape,feature_type_query)
+						print('data loaded from %s'%(input_filename_1))
+						list1.append(feature_nbrs_query)
+					else:
+						load_mode_pre2 = 0
+
+					input_filename_2 = '%s/test_dist_nbrs_%d.%s.txt'%(input_file_path,i2+1,filename_annot1)
+					if os.path.exists(input_filename_2)==True:
+						dist_nbrs_query = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+						print('dist_nbrs_query: ',dist_nbrs_query.shape,feature_type_query)
+						print('data loaded from %s'%(input_filename_2))
+						list2.append(dist_nbrs_query)
+					else:
+						load_mode_pre2 = 0
+
+			if load_mode_pre2>0:
+				feature_nbrs_1, feature_nbrs_2 = list1[0:2]
+				dist_nbrs_1, dist_nbrs_2 = list2[0:2]
+				list_query1 = [[feature_nbrs_1,dist_nbrs_1],[feature_nbrs_2,dist_nbrs_2]]
+			else:
+				feature_type_num = len(feature_type_vec_query)
+				list_query1 = []
+				for i1 in range(feature_type_num):
+					feature_type_query = feature_type_vec_query[i1]
+			
+					print('find nearest neighbors of peak loci')
+					print('neighbor number: %d'%(n_neighbors_query))
+					start = time.time()
+					df_feature_1 = dict_feature[feature_type_query]
+					# print('df_feature_1: ',df_feature_1.shape,feature_type_query)
+					# print(df_feature_1.shape)
+					print('feature matrix for %s, dataframe of size '%(feature_type_query),df_feature_1.shape)
+					subsample_num = -1
+					if subsample_num>0:
+						df_feature_1 = df_feature_1[0:subsample_num]
+						print('df_feature_1 sub_sample: ',df_feature_1.shape)
+					feature_nbrs_1, dist_nbrs_1 = self.test_query_feature_neighbor_pre1(data=df_feature_1,n_neighbors=n_neighbors_query,return_distance=True,save_mode=1,verbose=0,select_config=select_config)
+
+					stop = time.time()
+					print('find nearest neighbors of peak loci using feature %s used %.2fs'%(feature_type_query,stop-start))
+					list_query1.append([feature_nbrs_1, dist_nbrs_1])
+
+				query_num = len(list_query1)
+				for i2 in range(query_num):
+					list_query2 = list_query1[i2]
+					feature_type_query = feature_type_vec_query[i2]
+					feature_nbrs_query, dist_nbrs_query = list_query2[0:2]
+					output_filename_1 = '%s/test_feature_nbrs_%d.%s.txt'%(output_file_path,i2+1,filename_annot1)
+					feature_nbrs_query = feature_nbrs_query.round(7)
+					feature_nbrs_query.to_csv(output_filename_1,sep='\t')
+					print('estimated nearest neighbors using feature %s, dataframe of size '%(feature_type_query),feature_nbrs_query.shape)
+					print('save data: %s'%(output_filename_1))
+
+					output_filename_2 = '%s/test_dist_nbrs_%d.%s.txt'%(output_file_path,i2+1,filename_annot1)
+					dist_nbrs_query = dist_nbrs_query.round(7)
+					dist_nbrs_query.to_csv(output_filename_2,sep='\t')
+					print('distances between nearest neighbors and the given peak loci using feature %s, dataframe of size '%(feature_type_query),dist_nbrs_query.shape)
+					print('save data: %s'%(output_filename_2))
+
+			return list_query1
+
 	## ====================================================
 	# compute feature embeddings
-	def test_query_feature_embedding_pre1(self,data=[],dict_feature=[],feature_type_vec=[],method_type='',field_query=[],peak_read=[],rna_exprs=[],
+	def test_query_feature_embedding_pre1(self,data=[],dict_feature=[],feature_type_vec=[],method_type='',
 												n_components=50,iter_id=-1,config_id_load=-1,flag_config=1,flag_motif_data_load=1,flag_load_1=1,input_file_path='',overwrite=False,
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
 		compute feature embeddings of peak loci
-		parameters are stored in select_config
-		param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
-		param method_type_dimension: the method for dimension reduction
-		param n_components: the number of latent components used for feature representation
-		return: dict_query1: {feature_type:latent score matrix (feature embedding), feature_type:component matrix}
+		:param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
+		:param method_type_dimension: the method for dimension reduction
+		:param n_components: the number of latent components used for feature representation
+		:param select_config: dictionary storing other parameters
+		:return: dict_query1: {feature_type:latent score matrix (feature embedding), feature_type:component matrix}
 		"""
 
 		data_file_type_query = select_config['data_file_type']
@@ -1150,7 +1444,6 @@ class _Base2_2_pre1(_Base2_2_1):
 		verbose_internal = self.verbose_internal
 		key_vec = list(dict_motif_data.keys())
 		if verbose_internal==2:
-			# print('dict_motif_data: ',key_vec)
 			print('annotation of motif scanning data ',key_vec)
 			print(dict_motif_data)
 
@@ -1236,9 +1529,9 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		"""
 		compute feature embeddings of peak loci
-		parameters are stored in select_config
-		param n_component_sel: the number of latent components used for feature representation
-		return: dict_query1: {feature_type: {df_latent(feature embedding), df_component(component matrix), reconstruct_mtx}}
+		:param n_component_sel: the number of latent components used for feature representation
+		:return: dict_query1: {feature_type: {df_latent(feature embedding), df_component(component matrix), reconstruct_mtx}}
+		:select_config: dictionary storing other parameters
 		"""
 
 		data_file_type_query = select_config['data_file_type']
@@ -1299,19 +1592,10 @@ class _Base2_2_pre1(_Base2_2_1):
 				df_latent_query = df_latent_query_ori
 				df_component_query = df_component_query_ori
 
-			# print('df_latent_query_ori, df_latent_query: ',df_latent_query_ori.shape,df_latent_query.shape)
-			# print(df_latent_query_ori[0:2])
-			# print(df_latent_query[0:2])
-
-			# print('df_component_query_ori, df_component_query: ',df_component_query_ori.shape,df_component_query.shape)
-			# print(df_component_query_ori[0:2])
-			# print(df_component_query[0:2])
-		
 			dict_query1[feature_type_query].update({'df_latent':df_latent_query,'df_component':df_component_query})
 
 			if reconstruct>0:
 				reconstruct_mtx = df_latent_query.dot(df_component_query.T)
-				# dict_query1.update({feature_type_query:reconstruct_mtx})
 				dict_query1[feature_type_query].update({'reconstruct_mtx':reconstruct_mtx})
 
 		return dict_query1
@@ -1418,7 +1702,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			type_query_group = select_config['type_query_group']
 
 		if type_query_group==0:
-			df_pre1 = self.test_query_feature_group_neighbor_pre1_2(data=df_pre1,dict_group=dict_group,dict_neighbor=dict_neighbor,
+			df_pre1 = self.test_query_feature_group_neighbor_pre1(data=df_pre1,dict_group=dict_group,dict_neighbor=dict_neighbor,
 																		group_type_vec=group_type_vec,feature_type_vec=feature_type_vec,
 																		group_vec_query=group_vec_query,column_vec_query=[],n_neighbors=30,input_file_path='',
 																		save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
@@ -1426,16 +1710,17 @@ class _Base2_2_pre1(_Base2_2_1):
 			parallel=0
 			if 'parallel_group' in select_config:
 				parallel = select_config['parallel_group']
-			df_pre1 = self.test_query_feature_group_neighbor_pre1_2_unit1(data=df_pre1,dict_group=dict_group,dict_neighbor=dict_neighbor,
+			df_pre1 = self.test_query_feature_group_neighbor_pre1_unit1(data=df_pre1,dict_group=dict_group,dict_neighbor=dict_neighbor,
 																			group_type_vec=group_type_vec,feature_type_vec=feature_type_vec,
 																			group_vec_query=group_vec_query,column_vec_query=[],n_neighbors=30,parallel=parallel,input_file_path='',
 																			save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
 
 		return df_pre1
 
+	## ====================================================
 	# feature group query and feature neighbor query
 	# TF binding prediction by feature group query and feature neighbor query
-	def test_query_feature_group_neighbor_pre1_2(self,data=[],dict_group=[],dict_neighbor=[],group_type_vec=['group1','group2'],feature_type_vec=[],group_vec_query=[],column_vec_query=[],n_neighbors=30,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	def test_query_feature_group_neighbor_pre1(self,data=[],dict_group=[],dict_neighbor=[],group_type_vec=['group1','group2'],feature_type_vec=[],group_vec_query=[],column_vec_query=[],n_neighbors=30,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={})
 
 		df_pre1 = data
 		list_query1 = [dict_group[group_type_query] for group_type_query in group_type_vec]
@@ -1477,8 +1762,6 @@ class _Base2_2_pre1(_Base2_2_1):
 		peak_loc_ori = df_pre1.index
 
 		if flag_neighbor>0:
-			# column_pred2 = '%s.pred_sel'%(method_type_feature_link) # selected peak loci with predicted binding sites
-			# column_pred_2 = '%s.pred_group_2'%(method_type_feature_link)
 			field_id1 = 'feature_nbrs'
 			list_query2 = [dict_neighbor[feature_type_query][field_id1] for feature_type_query in feature_type_vec]
 			feature_nbrs_1, feature_nbrs_2 = list_query2[0:2]
@@ -1497,16 +1780,15 @@ class _Base2_2_pre1(_Base2_2_1):
 				# id1 = (df_group_1['group']==group_id_1)&(df_group_2['group']==group_id_2)
 				id1 = (df_pre1[column_annot1]==group_id2)
 				
-				peak_query_pre1 = peak_loc_ori[id1]
-				peak_query_pre1_1 = peak_loc_ori[(id1&id2)]
-				peak_query_pre1_2 = peak_loc_ori[id1&(~id2)]
+				peak_query_pre1 = peak_loc_ori[id1]	# peaks with the paired group assignment	
+				peak_query_pre1_1 = peak_loc_ori[(id1&id2)]	# peaks in the paired group and with predicted TF binding
+				peak_query_pre1_2 = peak_loc_ori[id1&(~id2)]	# peaks in the paired group and without predicted TF binding
 				# df_pre1.loc[peak_query_pre1_2,column_pred_2] = 1
 				df_pre1.loc[peak_query_pre1,column_pred_2] = 1
 
 				flag_neighbor_pre2 = 1
 				if flag_neighbor_pre2>0:
 					# start = time.time()
-					# start_1 = time.time()
 					peak_neighbor_1 = np.ravel(feature_nbrs_1.loc[peak_query_pre1_1,column_neighbor]) # 0.25s
 					peak_neighbor_1 = pd.Index(peak_neighbor_1).unique()
 					peak_query_1 = pd.Index(peak_neighbor_1).intersection(peak_query_pre1_2,sort=False)
@@ -1514,10 +1796,7 @@ class _Base2_2_pre1(_Base2_2_1):
 					peak_neighbor_2 = np.ravel(feature_nbrs_2.loc[peak_query_pre1_1,column_neighbor])
 					peak_neighbor_2 = pd.Index(peak_neighbor_2).unique()
 					peak_query_2 = pd.Index(peak_neighbor_2).intersection(peak_query_pre1_2,sort=False)
-						
-					# stop_1 = time.time()
-					# print('query neighbor of peak loci ',stop_1-start_1)
-
+					
 					df_pre1.loc[peak_neighbor_1,column_query1] = 1
 					df_pre1.loc[peak_neighbor_2,column_query2] = 1
 
@@ -1525,7 +1804,7 @@ class _Base2_2_pre1(_Base2_2_1):
 					df_pre1.loc[peak_query_2,column_2] = 1
 
 					# stop = time.time()
-					# print('query neighbors of peak loci within paired group',group_id_1,group_id_2,stop-start)
+					# print('query neighbors of peak loci within paired groups',group_id_1,group_id_2,stop-start)
 
 					# start = time.time()
 					peak_query_vec_2 = pd.Index(peak_query_1).intersection(peak_query_2,sort=False)
@@ -1538,7 +1817,7 @@ class _Base2_2_pre1(_Base2_2_1):
 					# df_pre1[column_pred_5] = ((df_pre1[column_pred_2]>0)&((df_pre1[column_1]>0)|(df_pre1[column_2]>0))).astype(int)
 
 					# stop = time.time()
-					# print('query neighbors of peak loci 1',group_id_1,group_id_2,stop-start)
+					# print('query neighbors of peak loci',group_id_1,group_id_2,stop-start)
 
 					if flag_neighbor_2>0:
 						peak_neighbor_pre2 = pd.Index(peak_neighbor_1).intersection(peak_neighbor_2,sort=False)
@@ -1550,13 +1829,175 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			# df_pre1[column_pred_5] = ((df_pre1[column_pred_2]>0)&((df_pre1[column_1]>0)|(df_pre1[column_2]>0))).astype(int)
 				
-		flag_neighbor_3 = 1  # query neighbor of selected peak
-		if (flag_neighbor_3>0):
-			# column_query1 = '%s_neighbor'%(feature_type_query_1)	# query neighbor in feature space 1, without restriction in the same group of the selected peak
-			# column_query2 = '%s_neighbor'%(feature_type_query_2)	# query neighbor in feature space 2, without restriction in the same group of the selected peak
+		flag_neighbor_2 = 1  # query neighbor of selected peak
+		if (flag_neighbor_2>0):
+
+			list_feature = [feature_nbrs_1,feature_nbrs_2]
+			column_vec_query = [column_query1,column_query2,column_pred_7,column_pred_8]
+			df_pre1 = self.test_query_feature_neighbor_pre1_2(data=df_pre1,column_query=column_pred2,list_feature=list_feature,
+																	column_neighbor=column_neighbor,column_vec_query=column_vec_query,verbose=verbose,select_config=select_config)
+
+		return df_pre1
+
+	## ====================================================
+	# feature group query and feature neighbor query
+	# TF binding prediction by feature group query and feature neighbor query
+	def test_query_feature_group_neighbor_pre1_unit1(self,data=[],dict_group=[],dict_neighbor=[],group_type_vec=['group1','group2'],feature_type_vec=[],group_vec_query=[],column_vec_query=[],n_neighbors=30,parallel=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	
+		df_pre1 = data
+		list_query1 = [dict_group[group_type_query] for group_type_query in group_type_vec]
+		df_group_1, df_group_2 = list_query1[0:2] # group annation of feature query in sequence feature space and peak accessibility feature space
+
+		flag_neighbor = 1
+		flag_neighbor_2 = 1 	# query neighbor of selected peak in the paired groups
+		# flag_neighbor_2 = 0 	# query neighbor of selected peak in the paired groups
+		column_neighbor = ['neighbor%d'%(id1) for id1 in np.arange(1,n_neighbors+1)]
+
+		if len(feature_type_vec)==0:
+			feature_type_vec = ['latent_peak_motif','latent_peak_tf']
+		feature_type_query_1, feature_type_query_2 = feature_type_vec[0:2]
+
+		method_type_feature_link = select_config['method_type_feature_link']
+		column_1 = '%s_group_neighbor'%(feature_type_query_1)
+		column_2 = '%s_group_neighbor'%(feature_type_query_2)
+
+		column_query1 = '%s_neighbor'%(feature_type_query_1)	# query neighbor in feature space 1, without restriction in the same group of the selected peaks
+		column_query2 = '%s_neighbor'%(feature_type_query_2)	# query neighbor in feature space 2, without restriction in the same group of the selected peaks
+
+		if len(column_vec_query)==0:	
+			# column_pred2 = '%s.pred_sel'%(method_type_feature_link) # selected peak loci with predicted binding sites
+			column_pred2 = '%s.pred'%(method_type_feature_link) # selected peak loci with predicted binding sites
+			column_pred_2 = '%s.pred_group_2'%(method_type_feature_link)
+
+			column_pred_3 = '%s.pred_group_neighbor'%(method_type_feature_link)
+			column_pred_5 = '%s.pred_group_neighbor_1'%(method_type_feature_link)
+			column_pred_6 = '%s.pred_neighbor_2_group'%(method_type_feature_link)
+			column_pred_7 = '%s.pred_neighbor_2'%(method_type_feature_link)
+			column_pred_8 = '%s.pred_neighbor_1'%(method_type_feature_link)
+		else:
+			column_pred2, column_pred_2, column_pred_3, column_pred_5, column_pred_6, column_pred_7, column_pred_8 = column_vec_query[0:7]
+
+		id_query1 = (df_pre1[column_pred2]>0)
+		df_pre1.loc[id_query1,column_vec_query] = 1
+		peak_loc_ori = df_pre1.index
+		column_vec_query1 = [column_pred_2,column_pred_3,column_pred_5,column_pred_6,column_query1,column_query2,column_1,column_2]
+
+		if flag_neighbor>0:
+			field_id1 = 'feature_nbrs'
+			list_query2 = [dict_neighbor[feature_type_query][field_id1] for feature_type_query in feature_type_vec]
+			feature_nbrs_1, feature_nbrs_2 = list_query2[0:2]
+
 			id2 = (df_pre1[column_pred2]>0)
-			peak_query_pre1_1 = peak_loc_ori[id2] # selected peak loci
-					
+			column_annot1 = 'group_id2'
+			column_vec_2 = ['%s_group'%(feature_type_query) for feature_type_query in feature_type_vec]
+			if not (column_annot1) in df_pre1:
+				# column_vec_2 = ['latent_peak_motif_group','latent_peak_tf_group']
+				# column_vec_2 = ['%s_group'%(feature_type_query) for feature_type_query in feature_type_vec]
+				df_pre1[column_annot1] = utility_1.test_query_index(df_pre1,column_vec=column_vec_2,symbol_vec='_')
+
+			column_id2 = 'peak_id'
+			column_vec_1 = ['group1','group2']
+			df_group1 = pd.DataFrame(columns=column_vec_1,data=np.asarray(group_vec_query))
+			df_group1.index = utility_1.test_query_index(df_group1,column_vec=column_vec_1)
+			group_vec_1 = df_group1['group1'].unique()
+			group_vec_2 = df_group1['group2'].unique()
+			group_num1, group_num2 = len(group_vec_1), len(group_vec_2)
+			print('group_vec_1, group_vec_2: ',group_num1,group_num2)
+			df_pre1.loc[:,column_vec_query1] = False
+			
+			parallel = 0
+			# cnt1=0
+			for group_id_1 in group_vec_1:
+				start = time.time()
+				id1 = (df_group1['group1']==group_id_1)
+				df_query1 = df_group1.loc[id1,:]
+				group_vec_2_query = df_query1['group2'].unique()
+
+				# column_vec_query_1 = column_vec_2 + [column_annot1]
+				column_vec_query_1 = [column_annot1]
+				if parallel==0:
+					for group_id_2 in group_vec_2_query:
+						start = time.time()
+						group_id2 = '%s_%s'%(group_id_1,group_id_2)
+						# id1 = (df_group_1['group']==group_id_1)&(df_group_2['group']==group_id_2)
+						id1 = (df_pre1[column_annot1]==group_id2)
+						
+						peak_query_pre1 = peak_loc_ori[id1]
+						peak_query_pre1_1 = peak_loc_ori[(id1&id2)]
+						peak_query_pre1_2 = peak_loc_ori[id1&(~id2)]
+						# df_pre1.loc[peak_query_pre1_2,column_pred_2] = 1
+						df_pre1.loc[peak_query_pre1,column_pred_2] = 1
+
+						flag_neighbor_pre2 = 1
+						if flag_neighbor_pre2>0:
+							# start = time.time()
+							peak_neighbor_1 = np.ravel(feature_nbrs_1.loc[peak_query_pre1_1,column_neighbor]) # 0.25s
+							peak_neighbor_1 = pd.Index(peak_neighbor_1).unique()
+							peak_query_1 = pd.Index(peak_neighbor_1).intersection(peak_query_pre1_2,sort=False)
+
+							peak_neighbor_2 = np.ravel(feature_nbrs_2.loc[peak_query_pre1_1,column_neighbor])
+							peak_neighbor_2 = pd.Index(peak_neighbor_2).unique()
+							peak_query_2 = pd.Index(peak_neighbor_2).intersection(peak_query_pre1_2,sort=False)
+
+							df_pre1.loc[peak_neighbor_1,column_query1] = 1
+							df_pre1.loc[peak_neighbor_2,column_query2] = 1
+
+							df_pre1.loc[peak_query_1,column_1] = 1
+							df_pre1.loc[peak_query_2,column_2] = 1
+
+							# stop = time.time()
+							# print('query neighbors of peak loci in the paired group',group_id_1,group_id_2,stop-start)
+
+							peak_query_vec_2 = pd.Index(peak_query_1).intersection(peak_query_2,sort=False)
+							df_pre1.loc[peak_query_vec_2,column_pred_3] = 1
+
+							# peaks within the same groups with the selected peak in the two feature space and peaks are neighbors of the selected peaks
+							peak_query_vec_3 = pd.Index(peak_query_1).union(peak_query_2,sort=False)
+							df_pre1.loc[peak_query_vec_3,column_pred_5] = 1
+
+							if flag_neighbor_2>0:
+								peak_neighbor_pre2 = pd.Index(peak_neighbor_1).intersection(peak_neighbor_2,sort=False)
+								df_pre1.loc[peak_neighbor_pre2,column_pred_6] = 1
+
+						stop = time.time()
+						if (group_id_1%10==0) and (group_id_2%10==0):
+							print('query neighbors of peak loci',group_id_1,group_id_2,stop-start)
+				
+				stop = time.time()
+				group_num_2 = len(group_vec_2_query)
+				print('query neighbors of peak loci',group_id_1,group_num_2,stop-start)
+			
+			if parallel>0:
+				df_pre1.loc[:,column_vec_query1] = df_pre1.loc[:,column_vec_query1].astype(int)
+
+		flag_neighbor_2 = 1  # query neighbor of selected peak
+		if (flag_neighbor_2>0):
+			list_feature = [feature_nbrs_1,feature_nbrs_2]
+			column_vec_query = [column_query1,column_query2,column_pred_7,column_pred_8]
+			df_pre1 = self.test_query_feature_neighbor_pre1_2(data=df_pre1,column_query=column_pred2,list_feature=list_feature,
+																	column_neighbor=column_neighbor,column_vec_query=column_vec_query,verbose=verbose,select_config=select_config)
+
+		return df_pre1
+
+	## ====================================================
+	# query neighbors of feature query
+	def test_query_feature_neighbor_pre1_2(self,data=[],column_query='',list_feature=[],column_neighbor='',column_vec_query=[],verbose=0,select_config={}):
+
+		flag_neighbor = 1  # query neighbor of selected peak
+		if (flag_neighbor>0):
+			df_pre1 = data
+			peak_loc_ori = df_pre1.index
+
+			column_pred2 = column_query
+			id_query1 = (df_pre1[column_pred2]>0)
+			peak_query_pre1_1 = peak_loc_ori[id_query1] # selected peak loci
+			
+			if len(list_feature)==0:
+				feature_nbrs_1 = self.feature_nbrs_1
+				feature_nbrs_2 = self.feature_nbrs_2
+			else:
+				feature_nbrs_1, feature_nbrs_2 = list_feature[0:2]
+
 			peak_neighbor_1 = np.ravel(feature_nbrs_1.loc[peak_query_pre1_1,column_neighbor])
 			peak_neighbor_1 = pd.Index(peak_neighbor_1).unique()
 			peak_neighbor_num1 = len(peak_neighbor_1)
@@ -1565,13 +2006,15 @@ class _Base2_2_pre1(_Base2_2_1):
 			peak_neighbor_2 = pd.Index(peak_neighbor_2).unique()
 			peak_neighbor_num2 = len(peak_neighbor_2)
 
-			df_pre1.loc[peak_neighbor_1,column_query1] = 1
-			df_pre1.loc[peak_neighbor_2,column_query2] = 1
+			column_query1, column_query2, column_pred_neighbor_2, column_pred_neighbor_1 = column_vec_query
+			df_pre1.loc[peak_neighbor_1,column_query1] = 1  # neighbors of the selected peaks in feature space 1
+			df_pre1.loc[peak_neighbor_2,column_query2] = 1  # neighbors of the selected peaks in feature space 2
+			# df_pre1['neighbor_num'] = 0
 
-			df_pre1.loc[:,[column_query1,column_query2,column_pred_7,column_pred_8]] = 0
+			df_pre1.loc[:,[column_query1,column_query2,column_pred_neighbor_2,column_pred_neighbor_1]] = 0
 
 			peak_num1 = len(peak_query_pre1_1)
-			print('peak_query_pre1_1, peak_neighbor_1, peak_neighbor_2: ',peak_num1,peak_neighbor_num1,peak_neighbor_num2)
+			print('selected peak loci: %d, neighbors in feature space 1: %d, neighbors in feature space 2: %d'%(peak_num1,peak_neighbor_num1,peak_neighbor_num2))
 			for i2 in range(peak_num1):
 				peak_query = peak_query_pre1_1[i2]
 				peak_neighbor_query1 = np.ravel(feature_nbrs_1.loc[peak_query,column_neighbor])
@@ -1582,20 +2025,21 @@ class _Base2_2_pre1(_Base2_2_1):
 				if i2%1000==0:
 					peak_neighbor_num_1 = len(peak_neighbor_pre2_1)
 					# peak_neighbor_num_2 = len(peak_neighbor_pre2_2)
-					print('peak_neighbor_pre2_1: ',peak_neighbor_num_1,i2,peak_query)
-					# print('peak_neighbor_pre2_1, peak_neighbor_pre2_2: ',peak_neighbor_num_1,peak_neighbor_num_2,i2,peak_query)
+					print('neighbors of the peak in two feature spaces: ',peak_neighbor_num_1,i2,peak_query)
+					# print('peak_neighbor_pre2_2: ',peak_neighbor_num,i2,peak_query)
 						
 				df_pre1.loc[peak_neighbor_query1,column_query1] += 1
 				df_pre1.loc[peak_neighbor_query2,column_query2] += 1
 
-				df_pre1.loc[peak_neighbor_pre2_1,column_pred_7] += 1
-				# df_pre1.loc[peak_neighbor_pre2_2,column_pred_8] += 1
+				df_pre1.loc[peak_neighbor_pre2_1,column_pred_neighbor_2] += 1
+				# df_pre1.loc[peak_neighbor_pre2_2,column_pred_neighbor_1] += 1
 
-			df_pre1[column_pred_8] = df_pre1[column_query1]+df_pre1[column_query2]-df_pre1[column_pred_7]
+			df_pre1[column_pred_neighbor_1] = df_pre1[column_query1]+df_pre1[column_query2]-df_pre1[column_pred_neighbor_2]
 
-		return df_pre1
+			return df_pre1
 
-	## add score annotation to peak loci
+	## ====================================================
+	# add score annotation to peak loci
 	def test_query_peak_annot_score_1(self,data=[],df_annot=[],method_type='',motif_id='',column_score='',column_name_vec=[],ascending=False,format_type=0,flag_binary=1,flag_sort=0,flag_unduplicate=1,thresh_vec=[],save_mode=1,verbose=0,select_config={}):
 
 		df_pre1 = data
@@ -1646,192 +2090,20 @@ class _Base2_2_pre1(_Base2_2_1):
 		
 		return df_pre1
 
-	## estimate enrichment of peak loci with detected TF motif in the paired groups
-	def test_query_feature_overlap_1(self,data=[],motif_id_query='',motif_id1='',column_motif='',df_overlap_compare=[],input_file_path='',save_mode=1,verbose=0,output_file_path='',filename_prefix_save='',filename_save_annot='',select_config={}):
-
-		flag_motif_query=1
-		data_file_type_query = select_config['data_file_type']
-		method_type_group = select_config['method_type_group']
-		df_query1 = data
-
-		if flag_motif_query>0:
-			# df_query1_motif = df_query1.loc[id_motif,:] # peak loci with motif
-			df_query1_motif = df_query1
-			peak_loc_motif = df_query1_motif.index
-			# peak_num_motif = len(peak_loc_motif)
-			# print('peak_loc_motif ',peak_num_motif)
-			filename_save_annot2_2 = '%s.%s.%s'%(method_type_group,motif_id_query,data_file_type_query)
-			filename_query = '%s/test_query_df_overlap.%s.motif.1.txt' % (input_file_path, filename_save_annot2_2)
-			filename_query_2 = '%s/test_query_df_overlap.%s.motif.2.txt' % (input_file_path, filename_save_annot2_2)
-			
-			column_1 = 'filename_overlap_motif_1'
-			column_2 = 'filename_overlap_motif_2'
-			if column_1 in select_config:
-				filename_query = select_config[column_1]
-
-			if column_2 in select_config:
-				filename_query_2 = select_config[column_2]
-
-			input_filename = filename_query
-			input_filename_2 = filename_query_2
-			load_mode = 0
-			# overwrite_2 = False
-			overwrite_2 = True
-			df_group_basic_motif = []
-			dict_group_basic_motif = dict()
-			
-			if os.path.exists(input_filename)==True:
-				if (overwrite_2==False):
-					df_overlap_motif = pd.read_csv(input_filename,index_col=0,sep='\t')
-					load_mode = load_mode+1
-			else:
-				print('the file does not exist: %s'%(input_filename))
-
-			if os.path.exists(input_filename_2)==True:
-				if (overwrite_2==False):
-					df_group_basic_motif = pd.read_csv(input_filename_2,index_col=0,sep='\t')
-					load_mode = load_mode+1
-					self.df_group_basic_motif = df_group_basic_motif
-			else:
-				print('the file does not exist: %s'%(input_filename))
-
-			if load_mode<2:
-				dict_group_basic_1 = self.dict_group_basic_1
-				df_group_1 = self.df_group_pre1
-				df_group_2 = self.df_group_pre2
-				
-				if len(df_overlap_compare)==0:
-					df_overlap_compare = self.df_overlap_compare
-
-				stat_chi2_correction = True
-				stat_fisher_alternative = 'greater'
-				output_filename = filename_query
-				output_filename_2 = filename_query_2
-				df_overlap_motif, df_overlap_mtx_motif, dict_group_basic_motif = self.test_query_group_overlap_pre1_2(data=df_query1_motif,dict_group_compare=dict_group_basic_1,
-																														df_group_1=df_group_1,df_group_2=df_group_2,
-																														df_overlap_1=[],df_query_compare=df_overlap_compare,
-																														flag_sort=1,flag_group=1,
-																														stat_chi2_correction=stat_chi2_correction,
-																														stat_fisher_alternative=stat_fisher_alternative,
-																														save_mode=1,output_filename=output_filename,output_filename_2=output_filename_2,
-																														verbose=verbose,select_config=select_config)
-				self.dict_group_basic_motif = dict_group_basic_motif
-						
-			self.df_overlap_motif = df_overlap_motif
-
-			load_mode_query = load_mode
-			return df_overlap_motif, df_group_basic_motif, df_group_basic_motif, load_mode_query
-
-	## estimate enrichment of peak loci with predicted TF binding in the paired groups
-	def test_query_feature_overlap_2(self,data=[],motif_id_query='',motif_id1='',column_motif='',df_overlap_compare=[],input_file_path='',save_mode=1,verbose=0,output_file_path='',filename_prefix_save='',filename_save_annot='',select_config={}):
-
-		flag_select_query=1
-		data_file_type_query = select_config['data_file_type']
-		method_type_group = select_config['method_type_group']
-		# method_type_feature_link = select_config['method_type_feature_link']
-		df_query1 = data
-
-		if flag_select_query>0:
-			# select the peak loci predicted with TF binding
-			# the selected peak loci
-			df_pred1 = df_query1
-						
-			peak_loc_query_group2 = df_pred1.index
-			peak_num_group2 = len(peak_loc_query_group2)
-			# print('peak_loc_query_group2: ',peak_num_group2)
-
-			# feature_query_vec_2 = peak_loc_query_group2
-			peak_query_vec = peak_loc_query_group2
-		
-			method_type_query = select_config['method_type_query']
-			filename_save_annot2_2 = '%s.%s.%s.%s'%(method_type_query,method_type_group,motif_id_query,data_file_type_query)
-			filename_query = '%s/test_query_df_overlap.%s.1.txt' % (input_file_path, filename_save_annot2_2)
-			filename_query_2 = '%s/test_query_df_overlap.%s.2.txt' % (input_file_path, filename_save_annot2_2)
-						
-			column_1 = 'filename_overlap_1'
-			column_2 = 'filename_overlap_2'
-			if column_1 in select_config:
-				filename_query = select_config[column_1]
-
-			if column_2 in select_config:
-				filename_query_2 = select_config[column_2]
-
-			input_filename = filename_query
-			input_filename_2 = filename_query_2
-			load_mode_2 = 0
-			# overwrite_2 = False
-			overwrite_2 = True
-			df_group_basic_query_2 = []
-			dict_group_basic_2 = dict()
-			if (os.path.exists(input_filename)==True):
-				if (overwrite_2==False):
-					df_overlap_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-					load_mode_2 = load_mode_2+1
-			else:
-				print('the file does not exist: %s'%(input_filename))
-
-			if (os.path.exists(input_filename_2)==True):
-				if (overwrite_2==False):
-					df_group_basic_query_2 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
-					load_mode_2 = load_mode_2+1
-					self.df_group_basic_query_2 = df_group_basic_query_2
-			else:
-				print('the file does not exist: %s'%(input_filename_2))
-
-			if load_mode_2<2:
-				dict_group_basic_1 = self.dict_group_basic_1
-				df_group_1 = self.df_group_pre1
-				df_group_2 = self.df_group_pre2
-				if len(df_overlap_compare)==0:
-					self.df_overlap_compare = df_overlap_compare
-
-				stat_chi2_correction = True
-				stat_fisher_alternative = 'greater'
-			
-				output_filename = filename_query
-				output_filename_2 = filename_query_2
-				df_overlap_query, df_overlap_mtx, dict_group_basic_2 = self.test_query_group_overlap_pre1_2(data=df_pred1,dict_group_compare=dict_group_basic_1,
-																												df_group_1=df_group_1,df_group_2=df_group_2,
-																												df_overlap_1=[],df_query_compare=df_overlap_compare,
-																												flag_sort=1,flag_group=1,
-																												stat_chi2_correction=stat_chi2_correction,
-																												stat_fisher_alternative=stat_fisher_alternative,
-																												save_mode=1,output_filename=output_filename,
-																												output_filename_2=output_filename_2,
-																												verbose=verbose,select_config=select_config)
-
-				list_query1 = []
-				group_vec_query = ['group1','group2']
-				for group_type in group_vec_query:
-					df_query = dict_group_basic_2[group_type]
-					df_query['group_type'] = group_type
-					list_query1.append(df_query)
-
-				df_query = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
-				flag_sort_2=1
-				if flag_sort_2>0:
-					df_query = df_query.sort_values(by=['group_type','stat_fisher_exact_','pval_fisher_exact_'],ascending=[True,False,True])
-				
-				output_filename = filename_query_2
-
-				df_query = df_query.round(7)
-				df_query.to_csv(output_filename,sep='\t')
-				df_group_basic_query_2 = df_query
-
-				self.dict_group_basic_2 = dict_group_basic_2
-							
-			self.df_overlap_query = df_overlap_query						
-			load_mode_query = load_mode_2
-			return df_overlap_query, df_group_basic_query_2, dict_group_basic_2, load_mode_query
-
-	## compute peak-TF correlation
+	## ====================================================
+	# compute peak accessibility-TF expression correlation
 	def test_query_compare_peak_tf_corr_1(self,data=[],motif_id_query='',motif_id1='',motif_id2='',column_signal='signal',column_value='',thresh_value=-0.05,motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],flag_query=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
+
+		"""
+		compute peak accessibility-TF expression correlation
+		:param data:
+		:param motif_id_query:
+		:return: 
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
 			df_pre1 = data
-			# field_id1 = 'peak_tf_corr'
-			# field_id2 = 'peak_tf_pval_corrected'
 			# query peak accessibility-TF expression correlation
 			# flag_peak_tf_corr = 0
 			flag_peak_tf_corr = 1
@@ -1861,26 +2133,31 @@ class _Base2_2_pre1(_Base2_2_1):
 				if column_1 in select_config:
 					correlation_type = select_config[column_1]
 				alpha = 0.05
-				method_type_id_correction = 'fdr_bh'
+				method_type_correction = 'fdr_bh'
 				filename_prefix = filename_prefix_save
 				save_mode_2 = 1
 				# field_query = ['peak_tf_corr','peak_tf_pval','peak_tf_pval_corrected','motif_basic']
 				field_load = [correlation_type,'pval','pval_corrected']
-				dict_peak_tf_corr_ = utility_1.test_peak_tf_correlation_query_1(motif_data=motif_data_query,
-																				peak_query_vec=[],
-																				motif_query_vec=motif_query_vec,
-																				peak_read=peak_read,
-																				rna_exprs=rna_exprs,
-																				correlation_type=correlation_type,
-																				pval_correction=1,
-																				alpha=alpha,method_type_id_correction=method_type_id_correction,
-																				flag_load=flag_load_1,field_load=field_load,
-																				save_mode=save_mode_2,
-																				input_file_path=input_file_path,
-																				input_filename_list=input_filename_list1,
-																				output_file_path=output_file_path,
-																				filename_prefix=filename_prefix,
-																				select_config=select_config)
+
+				from test_reunion_correlation_1 import _Base2_correlation
+				file_path1 = self.save_path_1
+				test_estimator_correlation = _Base2_correlation(file_path=file_path1)
+				dict_peak_tf_corr_ = test_estimator_correlation.test_peak_tf_correlation_query_1(motif_data=motif_data_query,
+																									peak_query_vec=[],
+																									motif_query_vec=motif_query_vec,
+																									peak_read=peak_read,
+																									rna_exprs=rna_exprs,
+																									correlation_type=correlation_type,
+																									pval_correction=1,
+																									alpha=alpha,method_type_correction=method_type_correction,
+																									flag_load=flag_load_1,field_load=field_load,
+																									parallel_mode=0,
+																									save_mode=save_mode_2,
+																									input_file_path=input_file_path,
+																									input_filename_list=input_filename_list1,
+																									output_file_path=output_file_path,
+																									filename_prefix=filename_prefix,
+																									select_config=select_config)
 
 				# self.dict_peak_tf_corr_ = dict_peak_tf_corr_
 				# select_config = self.select_config
@@ -1912,58 +2189,66 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return df_pre1, df_annot_peak_tf
 
+
 	## compute peak-TF correlation
 	# compute peak-TF correlation in peak loci with ChIP-seq signal
-	def test_query_compare_peak_tf_corr_2(self,data=[],motif_id_query='',motif_id1='',motif_id2='',column_signal='signal',column_value='',thresh_value=-0.05,motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],flag_query=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
+	# def test_query_compare_peak_tf_corr_2(self,data=[],motif_id_query='',motif_id1='',motif_id2='',column_signal='signal',column_value='',thresh_value=-0.05,motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],flag_query=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
 
-		# flag_query1 = 1
-		df_annot_peak_tf = []
-		df_pre1 = data
-		if column_signal in df_pre1.columns:
-			peak_loc_pre1 = df_pre1.index
-			id_signal = (df_pre1[column_signal]>0)
-			peak_signal = peak_loc_pre1[id_signal]
+	# 	# flag_query1 = 1
+	# 	df_annot_peak_tf = []
+	# 	df_pre1 = data
+	# 	if column_signal in df_pre1.columns:
+	# 		peak_loc_pre1 = df_pre1.index
+	# 		id_signal = (df_pre1[column_signal]>0)
+	# 		peak_signal = peak_loc_pre1[id_signal]
 
-			# thresh_1 = -0.01
-			# thresh_1 = -0.05
-			thresh_1 = thresh_value
-			id_1 = (df_pre1[column_peak_tf_corr]>thresh_1)&(id_signal)
-			id_2 = (~id_1)&(id_signal)
-			peak_query_1 = peak_loc_pre1[id_1]
-			peak_query_2 = peak_loc_pre1[id_2]
+	# 		# thresh_1 = -0.01
+	# 		# thresh_1 = -0.05
+	# 		thresh_1 = thresh_value
+	# 		id_1 = (df_pre1[column_peak_tf_corr]>thresh_1)&(id_signal)
+	# 		id_2 = (~id_1)&(id_signal)
+	# 		peak_query_1 = peak_loc_pre1[id_1]
+	# 		peak_query_2 = peak_loc_pre1[id_2]
 
-			peak_tf_corr_1 = df_pre1.loc[peak_signal,column_query]
-			peak_tf_corr_2 = df_pre1.loc[peak_query_1,column_query]
-			peak_tf_corr_3 = df_pre1.loc[peak_query_2,column_query]
-			list1 = [peak_tf_corr_1,peak_tf_corr_2,peak_tf_corr_3]
+	# 		peak_tf_corr_1 = df_pre1.loc[peak_signal,column_query]
+	# 		peak_tf_corr_2 = df_pre1.loc[peak_query_1,column_query]
+	# 		peak_tf_corr_3 = df_pre1.loc[peak_query_2,column_query]
+	# 		list1 = [peak_tf_corr_1,peak_tf_corr_2,peak_tf_corr_3]
 					
-			peak_num_1, peak_num_2, peak_num_3 = len(peak_signal),len(peak_query_1),len(peak_query_2)
-			list2 = [peak_num_1,peak_num_2,peak_num_3]
-			list_query1 = []
-			query_num = len(list1)
+	# 		peak_num_1, peak_num_2, peak_num_3 = len(peak_signal),len(peak_query_1),len(peak_query_2)
+	# 		list2 = [peak_num_1,peak_num_2,peak_num_3]
+	# 		list_query1 = []
+	# 		query_num = len(list1)
 					
-			for i2 in range(query_num):
-				peak_tf_corr_query = list1[i2]
-				peak_num_query = list2[i2]
-				t_vec_1 = [peak_num_query,np.max(peak_tf_corr_query),np.min(peak_tf_corr_query),np.median(peak_tf_corr_query),np.mean(peak_tf_corr_query),np.std(peak_tf_corr_query)]
-				list_query1.append(t_vec_1)
+	# 		for i2 in range(query_num):
+	# 			peak_tf_corr_query = list1[i2]
+	# 			peak_num_query = list2[i2]
+	# 			t_vec_1 = [peak_num_query,np.max(peak_tf_corr_query),np.min(peak_tf_corr_query),np.median(peak_tf_corr_query),np.mean(peak_tf_corr_query),np.std(peak_tf_corr_query)]
+	# 			list_query1.append(t_vec_1)
 
-			mtx_1 = np.asarray(list_query1)
-			group_vec_peak_tf = ['peak_signal','peak_signal_1','peak_signal_2']
-			column_vec = ['peak_num','corr_max','corr_min','corr_median','corr_mean','corr_std']
-			df_annot_peak_tf = pd.DataFrame(index=group_vec_peak_tf,columns=column_vec,data=mtx_1)
-			df_annot_peak_tf['group'] = [0,1,2]
-			field_query = ['motif_id','motif_id1','motif_id2']
-			list_value = [motif_id_query,motif_id1,motif_id2]
-			field_num = len(field_query)
-			for i2 in range(field_num):
-				field_id, query_value = field_query[i2], list_value[i2]
-				df_annot_peak_tf[field_id] = query_value
+	# 		mtx_1 = np.asarray(list_query1)
+	# 		group_vec_peak_tf = ['peak_signal','peak_signal_1','peak_signal_2']
+	# 		column_vec = ['peak_num','corr_max','corr_min','corr_median','corr_mean','corr_std']
+	# 		df_annot_peak_tf = pd.DataFrame(index=group_vec_peak_tf,columns=column_vec,data=mtx_1)
+	# 		df_annot_peak_tf['group'] = [0,1,2]
+	# 		field_query = ['motif_id','motif_id1','motif_id2']
+	# 		list_value = [motif_id_query,motif_id1,motif_id2]
+	# 		field_num = len(field_query)
+	# 		for i2 in range(field_num):
+	# 			field_id, query_value = field_query[i2], list_value[i2]
+	# 			df_annot_peak_tf[field_id] = query_value
 
-			return df_annot_peak_tf
+	# 		return df_annot_peak_tf
 
-	## load gene annotation data
-	def test_query_gene_annot_1(self,data=[],input_filename='',save_mode=1,verbose=0,select_config={}):
+	## ====================================================
+	# load gene annotations
+	def test_query_gene_annot_1(self,input_filename='',save_mode=1,verbose=0,select_config={}):
+
+		"""
+		load gene annotations
+		:param input_filename:
+		:return: 
+		"""
 
 		if input_filename=='':
 			input_filename_annot = select_config['filename_gene_annot']
@@ -1984,9 +2269,16 @@ class _Base2_2_pre1(_Base2_2_1):
 
 		return df_gene_annot_ori
 
-	## recompute based on clustering of peak and TF
-	# recompute based on training
+	## ====================================================
+	# model training for peak-TF association prediction
 	def test_query_compare_binding_compute_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		model training for peak-TF association prediction
+		:param data:
+		:param dict_feature: 
+		:return: 
+		"""
 
 		data_file_type = select_config['data_file_type']
 		data_file_type_query = data_file_type
@@ -2057,6 +2349,9 @@ class _Base2_2_pre1(_Base2_2_1):
 			feature_type_vec_2_ori.append(feature_type)
 
 		print('feature type: %s %s'%(feature_type_vec_query[0],feature_type_vec_query[1]))
+
+		self.feature_type_vec_query = feature_type_vec_query
+		self.feature_type_vec_2_ori = feature_type_vec_2_ori
 
 		method_type_group = select_config['method_type_group']
 		t_vec_1 = method_type_group.split('.')
@@ -2129,8 +2424,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			method_type_query = method_type_feature_link
 			type_combine = 0
 			select_config.update({'type_combine':type_combine})
-			
-			feature_mode_vec = [1]
+			# feature_mode_vec = [1]
 
 			input_file_path = input_file_path_pre1
 			output_file_path = file_path_group_query
@@ -2139,11 +2433,9 @@ class _Base2_2_pre1(_Base2_2_1):
 			flag_peak_tf_combine = 0
 			select_config.update({'flag_peak_tf_combine':flag_peak_tf_combine})
 
-			for feature_mode_query in feature_mode_vec:
-				select_config.update({'feature_mode':feature_mode_query})
-				dict_query_1, select_config = self.test_query_feature_embedding_pre1(data=[],dict_feature=[],feature_type_vec=[],
+			# compute feature embeddings
+			dict_query_1, select_config = self.test_query_feature_embedding_pre1(data=[],dict_feature=[],feature_type_vec=[],
 																						method_type=method_type_query,
-																						field_query=[],peak_read=[],rna_exprs=[],
 																						n_components=n_components,
 																						iter_id=-1,config_id_load=-1,
 																						flag_config=1,flag_motif_data_load=0,
@@ -2337,7 +2629,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			if len(t_vec_2)>2:
 				column_motif = t_vec_2[2]
 			
-			column_vec_query = [column_pred1,column_score_1,column_motif]
+			column_vec_query = [column_pred1,column_score_query1,column_motif]
 			field_query = ['column_pred1','column_score_query1','column_motif']
 			for (field_id,query_value) in zip(field_query,column_vec_query):
 				select_config.update({field_id:query_value})
@@ -2367,9 +2659,10 @@ class _Base2_2_pre1(_Base2_2_1):
 			type_query_scale = flag_scale_1
 
 			model_type_id1 = 'LogisticRegression'
-			# select_config.update({'model_type_id1':model_type_id1})
 			if 'model_type_id1' in select_config:
 				model_type_id1 = select_config['model_type_id1']
+			else:
+				select_config.update({model_type_id1:model_type_id1})
 
 			beta_mode = select_config['beta_mode']
 			method_type_group = select_config['method_type_group']
@@ -2560,7 +2853,8 @@ class _Base2_2_pre1(_Base2_2_1):
 					column_vec = df_query_1.columns
 					df_query1 = pd.DataFrame(index=peak_loc_ori)
 					df_query1.loc[peak_loc_1,column_vec] = df_query_1
-					# print('df_query1: ',df_query1.shape)
+					if verbose_internal==2:
+						print('the dataframe, size of ',df_query1.shape)
 
 					flag_motif_query=1
 					flag_select_query=1
@@ -2575,7 +2869,6 @@ class _Base2_2_pre1(_Base2_2_1):
 							return
 
 					motif_score = df_query1[column_motif]
-
 					query_vec_1 = np.unique(df_query1[column_motif])
 					if verbose_internal>0:
 						t_vec_1 = utility_1.test_stat_1(query_vec_1)
@@ -2591,13 +2884,11 @@ class _Base2_2_pre1(_Base2_2_1):
 					df_query1_motif = df_query1.loc[id_motif,:]	# the peak loci with binding motif identified
 					peak_loc_motif = df_query1_motif.index
 					peak_num_motif = len(peak_loc_motif)
-					# print('peak_loc_motif ',peak_num_motif)
 					print('peak loci with the motif of TF %s: %d'%(motif_id_query,peak_num_motif))
 						
 					if peak_num_motif==0:
 						continue
 				
-					# input_file_path_2 = '%s/folder_group_save'%(output_file_path_pre1)
 					column_query = 'folder_group_save'
 					input_file_path_2 = select_config[column_query]
 					output_file_path_2 = input_file_path_2
@@ -2607,7 +2898,6 @@ class _Base2_2_pre1(_Base2_2_1):
 					method_type_query = method_type_feature_link
 					if flag_motif_query>0:
 						print('estimate enrichment of peak loci with TF motif in the paired groups')
-
 						filename_save_annot2_1 = '%s.%s.%s'%(method_type_group,motif_id_query,data_file_type_query)
 						for query_id1 in [1,2]:
 							column_1 = 'filename_overlap_motif_%d'%(query_id1)
@@ -2671,7 +2961,6 @@ class _Base2_2_pre1(_Base2_2_1):
 						
 						id1 = (df_overlap_query[field_id1]>thresh_value_overlap)
 						id2 = (df_overlap_query[field_id2]<thresh_pval_1)
-
 						type_group_select = 0
 						if type_group_select==0:
 							id_pre1 = id1
@@ -2680,13 +2969,13 @@ class _Base2_2_pre1(_Base2_2_1):
 
 						df_overlap_query2 = df_overlap_query.loc[id_pre1,:]
 						df_overlap_query.loc[id_pre1,'label_1'] = 1
-						group_vec_query_1 = np.asarray(df_overlap_query2.loc[:,['group1','group2']])
-						# print('df_overlap_query, df_overlap_query2: ',df_overlap_query.shape,df_overlap_query2.shape,motif_id_query,i1)
+						group_vec_query_1 = np.asarray(df_overlap_query2.loc[:,['group1','group2']]) # the paired group with selected peaks (peaks with predicted TF binding)
 						print('the number of paired groups for TF %s: %d'%(motif_id_query,df_overlap_query.shape[0]))
 						print('the number of selected paired groups for TF %s: %d'%(motif_id_query,df_overlap_query2.shape[0]))
 
 						self.df_overlap_query = df_overlap_query
 						self.df_overlap_query2 = df_overlap_query2
+						self.df_group_basic_query_2 = df_group_basic_query_2
 						
 						load_mode_2 = load_mode_query2
 						if load_mode_2<2:
@@ -2719,7 +3008,7 @@ class _Base2_2_pre1(_Base2_2_1):
 						df_pre1[group_type_query1] = df_group_1.loc[peak_loc_pre1,method_type_group]
 						df_pre1[group_type_query2] = df_group_2.loc[peak_loc_pre1,method_type_group]
 
-						# query peak loci predicted with binding sites using clustering
+						# query peak loci predicted with TF binding sites using clustering
 						start = time.time()
 						df_overlap_1 = []
 						group_type_vec = ['group1','group2']
@@ -2730,12 +3019,13 @@ class _Base2_2_pre1(_Base2_2_1):
 						dict_neighbor = self.dict_neighbor
 						dict_group_basic_1 = self.dict_group_basic_1
 						# the overlap and the selected overlap above count and p-value thresholds
-						# group_vec_query_1: the group enriched with selected peak loci
+						# group_vec_query_1: the group with selected peak loci or enriched with selected peak loci
 						column_id2 = 'peak_id'
 						df_pre1[column_id2] = np.asarray(df_pre1.index)
 						df_pre1 = self.test_query_binding_clustering_1(data1=df_pre1,data2=df_pred1,dict_group=dict_group,dict_neighbor=dict_neighbor,dict_group_basic_1=dict_group_basic_1,
 																		df_overlap_1=df_overlap_1,df_overlap_compare=df_overlap_compare,
-																		group_type_vec=group_type_vec,feature_type_vec=feature_type_vec,group_vec_query=group_vec_query_1,input_file_path='',																												
+																		group_type_vec=group_type_vec,feature_type_vec=feature_type_vec,
+																		group_vec_query=group_vec_query_1,input_file_path='',																												
 																		save_mode=1,output_file_path=output_file_path,output_filename='',
 																		filename_prefix_save='',filename_save_annot=filename_save_annot2_2,verbose=verbose,select_config=select_config)
 						
@@ -2782,222 +3072,161 @@ class _Base2_2_pre1(_Base2_2_1):
 					if flag_query_2>0:
 						# column_corr_1 = field_id1
 						# column_pval = field_id2
-						column_corr_1 = 'peak_tf_corr'
-						column_pval = 'peak_tf_pval_corrected'
-						thresh_corr_1, thresh_pval_1 = 0.30, 0.05
-						thresh_corr_2, thresh_pval_2 = 0.1, 0.1
-						thresh_corr_3, thresh_pval_2 = 0.05, 0.1
+						# column_corr_1 = 'peak_tf_corr'
+						# column_pval = 'peak_tf_pval_corrected'
+						# thresh_corr_1, thresh_pval_1 = 0.30, 0.05
+						# thresh_corr_2, thresh_pval_2 = 0.1, 0.1
+						# thresh_corr_3, thresh_pval_2 = 0.05, 0.1
 						
-						peak_loc_pre1 = df_query1.index
-						if flag_select_1==1:
-							print('select pseudo positive training sample ')
-							# select training sample in class 1
-							# find the paired groups with enrichment
-							df_annot_vec = [df_group_basic_query_2,df_overlap_query]
-							dict_group_basic_2 = self.dict_group_basic_2
-							dict_group_annot_1 = {'df_group_basic_query_2':df_group_basic_query_2,'df_overlap_query':df_overlap_query,
-													'dict_group_basic_2':dict_group_basic_2}
+						# peak_loc_pre1 = df_query1.index
+						# if flag_select_1==1:
+						# 	print('select pseudo positive training sample ')
+						# 	# select training sample in class 1
+						# 	# find the paired groups with enrichment
+						# 	df_annot_vec = [df_group_basic_query_2,df_overlap_query]
+						# 	dict_group_basic_2 = self.dict_group_basic_2
+						# 	dict_group_annot_1 = {'df_group_basic_query_2':df_group_basic_query_2,'df_overlap_query':df_overlap_query,
+						# 							'dict_group_basic_2':dict_group_basic_2}
 
-							if verbose_internal==2:
-								key_vec_query = list(dict_group_annot_1.keys())
-								print('the fields in dict_group_annot_1: ')
-								for field_id in key_vec_query:
-									print(field_id)
-									print(dict_group_annot_1[field_id])
+						# 	if verbose_internal==2:
+						# 		key_vec_query = list(dict_group_annot_1.keys())
+						# 		print('the fields in dict_group_annot_1: ')
+						# 		for field_id in key_vec_query:
+						# 			print(field_id)
+						# 			print(dict_group_annot_1[field_id])
 
-							# output_file_path_query = file_path_query2
-							file_path_save_group = select_config['folder_group_save']
-							output_file_path_query = file_path_save_group
+						# 	# output_file_path_query = file_path_query2
+						# 	file_path_save_group = select_config['folder_group_save']
+						# 	output_file_path_query = file_path_save_group
 							
-							# select training sample
-							column_1 = 'thresh_overlap_default_1'
-							column_2 = 'thresh_overlap_default_2'
-							column_3 = 'thresh_overlap'
-							column_pval_group = 'thresh_pval_1'
-							column_quantile = 'thresh_quantile_overlap'
-							column_thresh_query = [column_1,column_2,column_3,column_pval_group,column_quantile]
+						# 	# select training sample
+						# 	column_1 = 'thresh_overlap_default_1'
+						# 	column_2 = 'thresh_overlap_default_2'
+						# 	column_3 = 'thresh_overlap'
+						# 	column_pval_group = 'thresh_pval_1'
+						# 	column_quantile = 'thresh_quantile_overlap'
+						# 	column_thresh_query = [column_1,column_2,column_3,column_pval_group,column_quantile]
 
-							dict_thresh = dict()
-							thresh_vec = []
-							if len(dict_thresh)==0:
-								if len(thresh_vec)==0:
-									thresh_overlap_default_1 = 0
-									thresh_overlap_default_2 = 0
-									thresh_overlap = 0
+						# 	dict_thresh = dict()
+						# 	thresh_vec = []
+						# 	if len(dict_thresh)==0:
+						# 		if len(thresh_vec)==0:
+						# 			thresh_overlap_default_1 = 0
+						# 			thresh_overlap_default_2 = 0
+						# 			thresh_overlap = 0
 													
-									thresh_pval_group = 0.25
-									# thresh_quantile_overlap = 0.50
-									thresh_quantile_overlap = 0.75
-									thresh_vec = [thresh_overlap_default_1,thresh_overlap_default_2,thresh_overlap,thresh_pval_group,thresh_quantile_overlap]
+						# 			thresh_pval_group = 0.25
+						# 			# thresh_quantile_overlap = 0.50
+						# 			thresh_quantile_overlap = 0.75
+						# 			thresh_vec = [thresh_overlap_default_1,thresh_overlap_default_2,thresh_overlap,thresh_pval_group,thresh_quantile_overlap]
 								
-								dict_thresh = dict(zip(column_thresh_query,thresh_vec))
+						# 		dict_thresh = dict(zip(column_thresh_query,thresh_vec))
 
-							# select pseudo positive training sample
-							df_query1 = self.test_query_training_group_pre1(data=df_query1,motif_id=motif_id_query,dict_annot=dict_group_annot_1,
-																				method_type_feature_link=method_type_feature_link,
-																				dict_thresh=dict_thresh,thresh_vec=thresh_vec,input_file_path='',
-																				save_mode=1,output_file_path=output_file_path_query,verbose=verbose,select_config=select_config)
+						# 	# select pseudo positive training sample
+						# 	df_query1 = self.test_query_training_group_pre1(data=df_query1,motif_id=motif_id_query,dict_annot=dict_group_annot_1,
+						# 														method_type_feature_link=method_type_feature_link,
+						# 														dict_thresh=dict_thresh,thresh_vec=thresh_vec,input_file_path='',
+						# 														save_mode=1,output_file_path=output_file_path_query,verbose=verbose,select_config=select_config)
 
-							column_corr_1 = 'peak_tf_corr'
-							column_pval = 'peak_tf_pval_corrected'
-							column_vec_query = [column_corr_1,column_pval,column_score_query1]
+						# 	column_corr_1 = 'peak_tf_corr'
+						# 	column_pval = 'peak_tf_pval_corrected'
+						# 	column_vec_query = [column_corr_1,column_pval,column_score_query1]
 
-							# column_pred1 = '%s.pred'%(method_type_feature_link)
-							id_pred1 = (df_query1[column_pred1]>0)
-							df_pre2 = df_query1.loc[id_pred1,:]
-							# select training sample based on quantile of score query
-							df_pre2, select_config = self.test_query_feature_quantile_1(data=df_pre2,query_idvec=[],column_vec_query=column_vec_query,save_mode=1,verbose=verbose,select_config=select_config)
+						# 	id_pred1 = (df_query1[column_pred1]>0)
+						# 	df_pre2 = df_query1.loc[id_pred1,:]
+						# 	# select training sample based on quantile of score query
+						# 	df_pre2, select_config = self.test_query_feature_quantile_1(data=df_pre2,query_idvec=[],column_vec_query=column_vec_query,save_mode=1,verbose=verbose,select_config=select_config)
 
-							peak_loc_query_1 = []
-							peak_loc_query_2 = []
-							flag_corr_1 = 1
-							flag_score_query_1 = 0
-							flag_enrichment_sel = 1
-							peak_loc_query_group2_1 = self.test_query_training_select_pre1(data=df_pre2,column_vec_query=[],
-																								flag_corr_1=flag_corr_1,flag_score_1=flag_score_query_1,
-																								flag_enrichment_sel=flag_enrichment_sel,input_file_path='',
-																								save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
-																								verbose=verbose,select_config=select_config)
+						# 	peak_loc_query_1 = []
+						# 	peak_loc_query_2 = []
+						# 	flag_corr_1 = 1
+						# 	flag_score_query_1 = 0
+						# 	flag_enrichment_sel = 1
+						# 	peak_loc_query_group2_1 = self.test_query_training_select_pre1(data=df_pre2,column_vec_query=[],
+						# 																		flag_corr_1=flag_corr_1,flag_score_1=flag_score_query_1,
+						# 																		flag_enrichment_sel=flag_enrichment_sel,input_file_path='',
+						# 																		save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
+						# 																		verbose=verbose,select_config=select_config)
 							
-							peak_num_group2_1 = len(peak_loc_query_group2_1)
-							peak_query_vec = peak_loc_query_group2_1  # the peak loci in class 1
+						# 	peak_num_group2_1 = len(peak_loc_query_group2_1)
+						# 	peak_query_vec = peak_loc_query_group2_1  # the peak loci in class 1
 						
-						elif flag_select_1==2:
-							# include each peak predicted with TF binding by the first method as pseudo positive training sample
-							df_pre2 = df_query1.loc[id_pred1,:]
-							peak_query_vec = df_pre2.index
-							peak_query_num_1 = len(peak_query_vec)
+						# elif flag_select_1==2:
+						# 	# include each peak predicted with TF binding by the first method as pseudo positive training sample
+						# 	df_pre2 = df_query1.loc[id_pred1,:]
+						# 	peak_query_vec = df_pre2.index
+						# 	peak_query_num_1 = len(peak_query_vec)
 
-						if flag_select_2==1:
-							# select training sample in class 2
-							# select pseudo negative training sample
-							# print('feature_type_vec_query: ',feature_type_vec_query)
-							peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2(data=df_pre1,motif_id_query=motif_id_query,
-																									peak_query_vec_1=peak_query_vec,
-																									feature_type_vec=feature_type_vec_query,
-																									save_mode=save_mode,verbose=verbose,select_config=select_config)
+						# if flag_select_2==1:
+						# 	# select training sample in class 2
+						# 	# select pseudo negative training sample
+						# 	# print('feature_type_vec_query: ',feature_type_vec_query)
+						# 	peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2(data=df_pre1,motif_id_query=motif_id_query,
+						# 																			peak_query_vec_1=peak_query_vec,
+						# 																			feature_type_vec=feature_type_vec_query,
+						# 																			save_mode=save_mode,verbose=verbose,select_config=select_config)
 
-							peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
+						# 	peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
 
-						elif flag_select_2 in [2,3]:
-							peak_vec_2, peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2_2(data=df_pre1,id_query=id_pred1,method_type_query=method_type_feature_link,
-																												flag_sample=flag_sample,flag_select_2=flag_select_2,
-																												save_mode=1,verbose=verbose,select_config=select_config)
+						# elif flag_select_2 in [2,3]:
+						# 	peak_vec_2, peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2_2(data=df_pre1,id_query=id_pred1,method_type_query=method_type_feature_link,
+						# 																						flag_sample=flag_sample,flag_select_2=flag_select_2,
+						# 																						save_mode=1,verbose=verbose,select_config=select_config)
 
-						if flag_select_1>0:
-							df_pre1.loc[peak_query_vec,'class'] = 1
+						# if flag_select_1>0:
+						# 	df_pre1.loc[peak_query_vec,'class'] = 1
 
-						if flag_select_2 in [1,3]:
-							df_pre1.loc[peak_vec_2_1,'class'] = -1
-							df_pre1.loc[peak_vec_2_2,'class'] = -2
+						# if flag_select_2 in [1,3]:
+						# 	df_pre1.loc[peak_vec_2_1,'class'] = -1
+						# 	df_pre1.loc[peak_vec_2_2,'class'] = -2
 
-							peak_num_2_1 = len(peak_vec_2_1)
-							peak_num_2_2 = len(peak_vec_2_2)
-							# print('peak_vec_2_1, peak_vec_2_2: ',peak_num_2_1,peak_num_2_2)
-							print('selected pseudo negative training sample from peak loci with detected TF motif: %d'%(peak_num_2_1))
-							print('selected pseudo negative training sample from peak loci without detected TF motif: %d'%(peak_num_2_2))
+						# 	peak_num_2_1 = len(peak_vec_2_1)
+						# 	peak_num_2_2 = len(peak_vec_2_2)
+						# 	# print('peak_vec_2_1, peak_vec_2_2: ',peak_num_2_1,peak_num_2_2)
+						# 	print('selected pseudo negative training sample from peak loci with detected TF motif: %d'%(peak_num_2_1))
+						# 	print('selected pseudo negative training sample from peak loci without detected TF motif: %d'%(peak_num_2_2))
 							
-							peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
+						# 	peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
 
-						elif flag_select_2 in [2]:
-							df_pre1.loc[peak_vec_2,'class'] = -1
+						# elif flag_select_2 in [2]:
+						# 	df_pre1.loc[peak_vec_2,'class'] = -1
 
-						peak_num_2 = len(peak_vec_2)
-						# print('peak_vec_2: ',peak_num_2)
+						# peak_num_2 = len(peak_vec_2)
+						# # print('peak_vec_2: ',peak_num_2)
 
-						peak_query_num_1 = len(peak_query_vec)
-						# print('peak_query_vec: ',peak_query_num_1)
+						# peak_query_num_1 = len(peak_query_vec)
+						# # print('peak_query_vec: ',peak_query_num_1)
 
-						print('selected pseudo positive training sample: %d'%(peak_query_num_1))
-						print('selected pseudo negative training sample: %d'%(peak_num_2))
+						# print('selected pseudo positive training sample: %d'%(peak_query_num_1))
+						# print('selected pseudo negative training sample: %d'%(peak_num_2))
 
-						peak_vec_1 = peak_query_vec
-						sample_id_train = pd.Index(peak_vec_1).union(peak_vec_2,sort=False)
+						# peak_vec_1 = peak_query_vec
+						# sample_id_train = pd.Index(peak_vec_1).union(peak_vec_2,sort=False)
 
-						df_query_pre1 = df_pre1.loc[sample_id_train,:]
-						
-						# flag_shuffle=False
+						df_pre1,feature_query_1,dict_peak_query = self.test_query_binding_compute_select_1(data=df_pre1,dict_feature=[],feature_type_vec=[],method_type_vec=[],flag_select_1=1,flag_select_2=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config=select_config)
+
+						sample_id_train = feature_query_1
 						flag_shuffle=True
-						if flag_shuffle>0:
-							sample_num_train = len(sample_id_train)
-							id_query1 = np.random.permutation(sample_num_train)
-							sample_id_train = sample_id_train[id_query1]
+						filename_prefix_save = filename_link_prefix
+						filename_save_annot = filename_link_annot
+						output_filename = filename_save_link_pre1
+						input_file_path = input_file_path_pre1
+						output_file_path_query = output_file_path_pre2
 
-						train_valid_mode_2 = 0
-						if 'train_valid_mode_2' in select_config:
-							train_valid_mode_2 = select_config['train_valid_mode_2']
-						
-						if train_valid_mode_2>0:
-							sample_id_train_ori = sample_id_train.copy()
-							sample_id_train, sample_id_valid, sample_id_train_, sample_id_valid_ = train_test_split(sample_id_train_ori,sample_id_train_ori,test_size=0.1,random_state=0)
-						else:
-							sample_id_valid = []
-						
-						sample_id_test = peak_loc_ori
-						sample_idvec_query = [sample_id_train,sample_id_valid,sample_id_test]
-
-						df_pre1[motif_id_query] = 0
-						df_pre1.loc[peak_vec_1,motif_id_query] = 1
-						# df_pre1.loc[peak_vec_2,motif_id_query] = 0
-						peak_num1 = len(peak_vec_1)
-						if verbose_internal==2:
-							print('selected pseudo positive training sample, data preview: ')
-							print(df_pre1.loc[peak_vec_1,[column_motif,motif_id_query]])
-
-						iter_num = 1
-						flag_train1 = 1
-						if flag_train1>0:
-							# print('feature_type_vec_query: ',feature_type_vec_query)
-							if verbose_internal==2:
-								key_vec = np.asarray(list(dict_feature.keys()))
-								print('dict_feature: ',key_vec)
-							peak_loc_pre1 = df_pre1.index
-							id1 = (df_pre1['class']==1)
-							peak_vec_1 = peak_loc_pre1[id1]
-							peak_query_num1 = len(peak_vec_1)
-
-							# config_id_2: configuration for selecting class 0 sample
-							# flag_scale_1: 0, without feature scaling; 1, with feature scaling
-							# train_id1 = 1
-							# train_id1 = select_config['train_id1']
-							flag_scale_1 = select_config['flag_scale_1']
-							type_query_scale = flag_scale_1
-
-							iter_id1 = 0
-							filename_prefix_save = filename_link_prefix
-							filename_save_annot = filename_link_annot
-							output_filename = filename_save_link_pre1
-							input_file_path = input_file_path_pre1
-							output_file_path_query = output_file_path_pre2
-
-							# flag_query2=1
-							# if flag_query2>0:
-							try:
-								# model training for peak-TF link prediction
-								df_pre2 = self.test_query_compare_binding_train_unit1(data=df_pre1,peak_query_vec=peak_loc_pre1,peak_vec_1=peak_vec_1,
-																						motif_id_query=motif_id_query,
-																						dict_feature=dict_feature,feature_type_vec=feature_type_vec_query,
-																						sample_idvec_query=sample_idvec_query,
-																						motif_data=motif_data_query1,
-																						flag_scale=flag_scale_1,input_file_path=input_file_path,
-																						save_mode=1,output_file_path=output_file_path_query,output_filename=output_filename,
-																						filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot,
-																						verbose=verbose,select_config=select_config)
-
-								if save_mode_pre2>0:
-									dict_file_query_1.update({motif_id_query:df_pre2})
-
-							except Exception as error:
-								print('error! ',error)
-								print('TF: ',motif_id_query,i1)
-								continue
+						dict_file_query_1 = self.test_query_binding_compute_train_1(data=df_pre1,sample_id_train=sample_id_train,
+																							peak_query_vec=peak_loc_pre1,
+																							feature_query=motif_id_query,
+																							dict_feature=dict_feature,dict_file_query=dict_file_query_1,
+																							feature_type_vec=feature_type_vec_query,motif_data=motif_data_query1,
+																							flag_shuffle=flag_shuffle,input_file_path=input_file_path,
+																							save_mode=1,output_file_path=output_file_path_query,output_filename=output_filename,
+																							filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot,
+																							verbose=verbose,select_config=select_config)
 
 					stop_1 = time.time()
-					# print('TF binding prediction for TF %s (%s) used %.2fs'%(motif_id_query,motif_id2,stop_1-start_1))
 					print('TF binding prediction for TF %s used %.2fs'%(motif_id_query,stop_1-start_1))
 				
 				except Exception as error:
-					 #print('error! ',error, motif_id_query,motif_id1,motif_id2,i1)
 					print('error! ',error, motif_id_query,motif_id2,i1)
 					# return
 
@@ -3005,35 +3234,258 @@ class _Base2_2_pre1(_Base2_2_1):
 
 			return dict_file_query_1
 
-	## recompute based on clustering of peak and TF
-	# recompute based on training
-	def test_query_compare_binding_score_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	## ====================================================
+	# training sample selection
+	def test_query_binding_compute_select_1(self,data=[],feature_query='',feature_type_vec=[],method_type='',dict_thresh={},thresh_vec=[],flag_select_1=1,flag_select_2=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		data_file_type = select_config['data_file_type']
-		data_file_type_query = data_file_type
-		select_config.update({'data_file_type_query':data_file_type_query})
-		print('data_file_type: ',data_file_type_query)
-		
-		if 'method_type_feature_link' in select_config:
+		flag_query1=1
+		if method_type=='':
 			method_type_feature_link = select_config['method_type_feature_link']
-			# method_type_feature_link_1 = method_type_feature_link.split('.')[0]
+		else:
+			method_type_feature_link = method_type
+
+		if flag_query1>0:
+			df_query1 = data
+			column_corr_1 = 'peak_tf_corr'
+			column_pval = 'peak_tf_pval_corrected'
+			thresh_corr_1, thresh_pval_1 = 0.30, 0.05
+			thresh_corr_2, thresh_pval_2 = 0.1, 0.1
+			thresh_corr_3, thresh_pval_2 = 0.05, 0.1
+						
+			peak_loc_pre1 = df_query1.index
+			df_group_basic_query_2 = self.df_group_basic_query_2
+			df_overlap_query = self.df_overlap_query
+			verbose_internal = self.verbose_internal
+			if flag_select_1==1:
+				print('select pseudo positive training sample ')
+				# select training sample in class 1
+				# find the paired groups with enrichment
+				df_annot_vec = [df_group_basic_query_2,df_overlap_query]
+				dict_group_basic_2 = self.dict_group_basic_2
+				dict_group_annot_1 = {'df_group_basic_query_2':df_group_basic_query_2,'df_overlap_query':df_overlap_query,
+										'dict_group_basic_2':dict_group_basic_2}
+
+				if verbose_internal==2:
+					key_vec_query = list(dict_group_annot_1.keys())
+					print('the fields in dict_group_annot_1: ')
+					for field_id in key_vec_query:
+						print(field_id)
+						print(dict_group_annot_1[field_id])
+
+				file_path_save_group = select_config['folder_group_save']
+				output_file_path_query = file_path_save_group
+							
+				# select training sample
+				column_1 = 'thresh_overlap_default_1'
+				column_2 = 'thresh_overlap_default_2'
+				column_3 = 'thresh_overlap'
+				column_pval_group = 'thresh_pval_1'
+				column_quantile = 'thresh_quantile_overlap'
+				column_thresh_query = [column_1,column_2,column_3,column_pval_group,column_quantile]
+
+				if len(dict_thresh)==0:
+					if len(thresh_vec)==0:
+						thresh_overlap_default_1 = 0
+						thresh_overlap_default_2 = 0
+						thresh_overlap = 0
+													
+						thresh_pval_group = 0.25
+						# thresh_quantile_overlap = 0.50
+						thresh_quantile_overlap = 0.75
+						thresh_vec = [thresh_overlap_default_1,thresh_overlap_default_2,thresh_overlap,thresh_pval_group,thresh_quantile_overlap]
+								
+					dict_thresh = dict(zip(column_thresh_query,thresh_vec))
+
+				# select pseudo positive training sample
+				motif_id_query = feature_query
+				df_query1 = self.test_query_training_group_pre1(data=df_query1,motif_id=motif_id_query,dict_annot=dict_group_annot_1,
+																	method_type_feature_link=method_type_feature_link,
+																	dict_thresh=dict_thresh,thresh_vec=thresh_vec,input_file_path='',
+																	save_mode=1,output_file_path=output_file_path_query,verbose=verbose,select_config=select_config)
+
+				column_corr_1 = 'peak_tf_corr'
+				column_pval = 'peak_tf_pval_corrected'
+				column_score_query1 = select_config['column_score_query1']
+				column_vec_query = [column_corr_1,column_pval,column_score_query1]
+
+				column_pred1 = select_config['column_pred1']
+				id_pred1 = (df_query1[column_pred1]>0)
+				df_pre2 = df_query1.loc[id_pred1,:]
+				# select training sample based on quantile of score query
+				df_pre2, select_config = self.test_query_feature_quantile_1(data=df_pre2,query_idvec=[],column_vec_query=column_vec_query,
+																					save_mode=1,verbose=verbose,select_config=select_config)
+
+				peak_loc_query_1 = []
+				peak_loc_query_2 = []
+				flag_corr_1 = 1
+				flag_score_query_1 = 0
+				flag_enrichment_sel = 1
+				peak_loc_query_group2_1 = self.test_query_training_select_pre1(data=df_pre2,column_vec_query=[],
+																					flag_corr_1=flag_corr_1,flag_score_1=flag_score_query_1,
+																					flag_enrichment_sel=flag_enrichment_sel,input_file_path='',
+																					save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
+																					verbose=verbose,select_config=select_config)
+							
+				peak_num_group2_1 = len(peak_loc_query_group2_1)
+				peak_query_vec = peak_loc_query_group2_1  # the peak loci in class 1
+						
+			elif flag_select_1==2:
+				# include each peak predicted with TF binding by the first method as pseudo positive training sample
+				df_pre2 = df_query1.loc[id_pred1,:]
+				peak_query_vec = df_pre2.index
+				peak_query_num_1 = len(peak_query_vec)
+
+			if flag_select_2==1:
+				# select training sample in class 2
+				# select pseudo negative training sample
+				# print('feature_type_vec_query: ',feature_type_vec_query)
+				peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2(data=df_pre1,motif_id_query=motif_id_query,
+																						peak_query_vec_1=peak_query_vec,
+																						feature_type_vec=feature_type_vec_query,
+																						save_mode=save_mode,verbose=verbose,select_config=select_config)
+
+				peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
+
+			elif flag_select_2 in [2,3]:
+				peak_vec_2, peak_vec_2_1, peak_vec_2_2 = self.test_query_training_select_group2_2(data=df_pre1,id_query=id_pred1,method_type_query=method_type_feature_link,
+																										flag_sample=flag_sample,
+																										flag_select_2=flag_select_2,
+																										save_mode=1,verbose=verbose,select_config=select_config)
+
+			if flag_select_1>0:
+				df_pre1.loc[peak_query_vec,'class'] = 1
+
+			if flag_select_2 in [1,3]:
+				df_pre1.loc[peak_vec_2_1,'class'] = -1
+				df_pre1.loc[peak_vec_2_2,'class'] = -2
+
+				peak_num_2_1 = len(peak_vec_2_1)
+				peak_num_2_2 = len(peak_vec_2_2)
+				# print('peak_vec_2_1, peak_vec_2_2: ',peak_num_2_1,peak_num_2_2)
+				print('selected pseudo negative training sample from peak loci with detected TF motif: %d'%(peak_num_2_1))
+				print('selected pseudo negative training sample from peak loci without detected TF motif: %d'%(peak_num_2_2))
+							
+				peak_vec_2 = pd.Index(peak_vec_2_1).union(peak_vec_2_2,sort=False)
+
+			elif flag_select_2 in [2]:
+				df_pre1.loc[peak_vec_2,'class'] = -1
+
+			peak_num_2 = len(peak_vec_2)
+			# print('peak_vec_2: ',peak_num_2)
+
+			peak_query_num_1 = len(peak_query_vec)
+			# print('peak_query_vec: ',peak_query_num_1)
+
+			print('selected pseudo positive training sample: %d'%(peak_query_num_1))
+			print('selected pseudo negative training sample: %d'%(peak_num_2))
+
+			peak_vec_1 = peak_query_vec
+			sample_id_train = pd.Index(peak_vec_1).union(peak_vec_2,sort=False)
+
+			feature_query_1 = sample_id_train
+			field_query = ['group1','group2','group2_1','group2_2']
+			list1 = [peak_vec_1,peak_vec_2,peak_vec_2_1,peak_vec_2_2]
+			dict_feature_query = dict(zip(field_query,list1))
+
+			return df_pre1,feature_query_1,dict_feature_query
+
+	## ====================================================
+	# model training for peak-TF association prediction
+	def test_query_binding_compute_train_1(self,data=[],sample_id_train=[],peak_query_vec=[],feature_query='',dict_feature={},dict_file_query={},feature_type_vec=[],motif_data=[],flag_shuffle=True,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		df_pre1 = data
+		if flag_shuffle>0:
+			sample_num_train = len(sample_id_train)
+			id_query1 = np.random.permutation(sample_num_train)
+			sample_id_train = sample_id_train[id_query1]
+
+		train_valid_mode_2 = 0
+		if 'train_valid_mode_2' in select_config:
+			train_valid_mode_2 = select_config['train_valid_mode_2']
+						
+		if train_valid_mode_2>0:
+			sample_id_train_ori = sample_id_train.copy()
+			sample_id_train, sample_id_valid, sample_id_train_, sample_id_valid_ = train_test_split(sample_id_train_ori,sample_id_train_ori,test_size=0.1,random_state=0)
+		else:
+			sample_id_valid = []
 		
-		filename_save_annot = '1'
-		# the methods used
-		method_type_vec = pd.Index(method_type_vec).union([method_type_feature_link],sort=False)
+		peak_loc_pre1 = df_pre1.index
+		if len(peak_query_vec)==0:
+			peak_query_vec = peak_loc_pre1
 		
-		method_type_feature_link_query1 = method_type_feature_link
-		method_type_vec_query1 = [method_type_feature_link_query1]
+		sample_id_test = peak_query_vec
+		sample_idvec_query = [sample_id_train,sample_id_valid,sample_id_test]
+		motif_id_query = feature_query
+		feature_type_vec_query = feature_type_vec
+
+		id1 = (df_pre1['class']==1)
+		peak_vec_1 = peak_loc_pre1[id1]
+		peak_query_num1 = len(peak_vec_1)
+
+		df_pre1[motif_id_query] = 0
+		df_pre1.loc[peak_vec_1,motif_idvec_query] = 1
 
 		verbose_internal = self.verbose_internal
+		if (verbose_internal==2) and (column_motif in df_pre1.columns):
+			print('selected pseudo positive training sample, data preview: ')
+			print(df_pre1.loc[peak_vec_1,[column_motif,motif_id_query]])
 
-		flag_config_1 = 1
-		flag_gene_annot_1 = 1
-		flag_motif_data_load_1 = 1
-		flag_load_1 = 1
+		iter_num = 1
+		flag_train1 = 1
+		if flag_train1>0:
+			if verbose_internal==2:
+				key_vec = np.asarray(list(dict_feature.keys()))
+				print('dict_feature: ',key_vec)
+
+			# flag_scale_1: 0, without feature scaling; 1, with feature scaling
+			flag_scale_1 = select_config['flag_scale_1']
+
+			iter_id1 = 0
+			output_file_path_query = output_file_path
+
+			# model training for peak-TF link prediction
+			df_pre2 = self.test_query_compare_binding_train_unit1(data=df_pre1,peak_query_vec=peak_loc_pre1,peak_vec_1=peak_vec_1,
+																		motif_id_query=motif_id_query,
+																		dict_feature=dict_feature,feature_type_vec=feature_type_vec_query,
+																		sample_idvec_query=sample_idvec_query,
+																		motif_data=motif_data,
+																		flag_scale=flag_scale_1,input_file_path=input_file_path,
+																		save_mode=save_mode,output_file_path=output_file_path_query,output_filename=output_filename,
+																		filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot,
+																		verbose=verbose,select_config=select_config)
+
+			if save_mode>0:
+				dict_file_query.update({motif_id_query:df_pre2})
+
+			return dict_file_query
+
+	## recompute based on clustering of peak and TF
+	# recompute based on training
+	# def test_query_compare_binding_score_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],flag_score_1=0,flag_score_2=0,flag_compare_1=0,load_mode=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+	# 	data_file_type = select_config['data_file_type']
+	# 	data_file_type_query = data_file_type
+	# 	select_config.update({'data_file_type_query':data_file_type_query})
+	# 	print('data_file_type: ',data_file_type_query)
 		
+	# 	if 'method_type_feature_link' in select_config:
+	# 		method_type_feature_link = select_config['method_type_feature_link']
+	# 		# method_type_feature_link_1 = method_type_feature_link.split('.')[0]
+		
+	# 	filename_save_annot = '1'
+	# 	# the methods used
+	# 	method_type_vec = pd.Index(method_type_vec).union([method_type_feature_link],sort=False)
+		
+	# 	method_type_feature_link_query1 = method_type_feature_link
+	# 	method_type_vec_query1 = [method_type_feature_link_query1]
 
+	# 	verbose_internal = self.verbose_internal
 
+	# 	flag_config_1 = 1
+	# 	flag_gene_annot_1 = 1
+	# 	flag_motif_data_load_1 = 1
+	# 	flag_load_1 = 1
+		
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',
 						method_type_feature_link='',tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',

@@ -95,144 +95,6 @@ class _Base2_correlation5(_Base2_correlation3):
 										select_config=select_config)
 
 	## ====================================================
-	# peak accessibility-TF expression correlation estimation
-	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
-									peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
-									alpha=0.05,method_type_id_correction = 'fdr_bh',verbose=1,select_config={}):
-
-		if len(motif_query_vec)==0:
-			motif_query_name_ori = motif_data.columns
-			motif_query_name_expr = motif_query_name_ori.intersection(rna_exprs.columns,sort=False)
-			print('motif_query_name_ori, motif_query_name_expr ',len(motif_query_name_ori),len(motif_query_name_expr))
-			motif_query_vec = motif_query_name_expr
-		else:
-			motif_query_vec_1 = motif_query_vec
-			motif_query_vec = pd.Index(motif_query_vec).intersection(rna_exprs.columns,sort=False)
-		
-		motif_query_num = len(motif_query_vec)
-		print('TF number: %d'%(motif_query_num))
-		peak_loc_ori_1 = motif_data.index
-		if len(peak_query_vec)>0:
-			peak_query_1 = pd.Index(peak_query_vec).intersection(peak_loc_ori_1,sort=False)
-			motif_data_query = motif_data.loc[peak_query_1,:]
-		else:
-			motif_data_query = motif_data
-
-		peak_loc_ori = motif_data_query.index
-		feature_query_vec_1, feature_query_vec_2 = peak_loc_ori, motif_query_vec
-		df_corr_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
-		df_pval_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
-		flag_pval_correction = pval_correction
-		if flag_pval_correction>0:
-			df_pval_corrected = df_pval_.copy()
-		else:
-			df_pval_corrected = []
-		df_motif_basic = pd.DataFrame(index=feature_query_vec_2,columns=['peak_num','corr_max','corr_min'])
-
-		for i1 in range(motif_query_num):
-			motif_id = motif_query_vec[i1]
-			peak_loc_query = peak_loc_ori[motif_data_query.loc[:,motif_id]>0]
-
-			df_feature_query1 = peak_read.loc[:,peak_loc_query]
-			df_feature_query2 = rna_exprs.loc[:,[motif_id]]
-			df_corr_1, df_pval_1 = utility_1.test_correlation_pvalues_pair(df_feature_query1,df_feature_query2,correlation_type=correlation_type,float_precision=6)
-			
-			df_corr_.loc[peak_loc_query,motif_id] = df_corr_1.loc[peak_loc_query,motif_id]
-			df_pval_.loc[peak_loc_query,motif_id] = df_pval_1.loc[peak_loc_query,motif_id]
-
-			corr_max, corr_min = df_corr_1.max().max(), df_corr_1.min().min()
-			peak_num = len(peak_loc_query)
-			df_motif_basic.loc[motif_id] = [peak_num,corr_max,corr_min]
-			if verbose>0:
-				if i1%10==0:
-					print('motif_id: %s, id_query: %d, peak_num: %s, maximum peak accessibility-TF expr. correlation: %s, minimum correlation: %s'%(motif_id,i1,peak_num,corr_max,corr_min))
-			if flag_pval_correction>0:
-				pvals = df_pval_1.loc[peak_loc_query,motif_id]
-				pvals_correction_vec1, pval_thresh1 = utility_1.test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_id_correction)
-				id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
-				df_pval_corrected.loc[peak_loc_query,motif_id] = pvals_corrected1
-				if (verbose>0) and (i1%100==0):
-					print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
-
-		return df_corr_, df_pval_, df_pval_corrected, df_motif_basic
-
-	## ====================================================
-	# compute peak accessibility-TF expression correlation
-	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',flag_load=0,field_load=[],
-											save_mode=1,input_file_path='',input_filename_list=[],output_file_path='',
-											filename_prefix='',verbose=0,select_config={}):
-
-		if filename_prefix=='':
-			filename_prefix = 'test_peak_tf_correlation'
-		if flag_load>0:
-			if len(field_load)==0:
-				field_load = [correlation_type,'pval','pval_corrected']
-			field_num = len(field_load)
-
-			file_num = len(input_filename_list)
-			list_query = []
-			if file_num==0:
-				input_filename_list = ['%s/%s.%s.1.txt'%(input_file_path,filename_prefix,filename_annot) for filename_annot in field_load]
-
-			dict_query = dict()
-			for i1 in range(field_num):
-				filename_annot1 = field_load[i1]
-				input_filename = input_filename_list[i1]
-				if os.path.exists(input_filename)==True:
-					df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-					field_query1 = filename_annot1
-					dict_query.update({field_query1:df_query})
-					print('df_query ',df_query.shape,filename_annot1)
-				else:
-					print('the file does not exist: %s'%(input_filename))
-					flag_load = 0
-				
-			if len(dict_query)==field_num:
-				return dict_query
-
-		if flag_load==0:
-			print('peak accessibility-TF expr correlation estimation ')
-			start = time.time()
-			df_peak_tf_corr_, df_peak_tf_pval_, df_peak_tf_pval_corrected, df_motif_basic = self.test_peak_tf_correlation_1(motif_data=motif_data,
-																															peak_query_vec=peak_query_vec,
-																															motif_query_vec=motif_query_vec,
-																															peak_read=peak_read,
-																															rna_exprs=rna_exprs,
-																															correlation_type=correlation_type,
-																															select_config=select_config)
-
-			field_query = ['peak_tf_corr','peak_tf_pval','peak_tf_pval_corrected','motif_basic']
-			list_query1 = [df_peak_tf_corr_, df_peak_tf_pval_, df_peak_tf_pval_corrected, df_motif_basic]
-			dict_query = dict(zip(field_query,list_query1))
-			query_num1 = len(list_query1)
-			stop = time.time()
-			print('peak accessibility-TF expr correlation estimation used: %.5fs'%(stop-start))
-
-			filename_annot_vec = [correlation_type,'pval','pval_corrected','motif_basic']
-			
-			flag_save_text = 1
-			if 'flag_save_text_peak_tf' in select_config:
-				flag_save_text = select_config['flag_save_text_peak_tf']
-			
-			if save_mode>0:
-				if output_file_path=='':
-					output_file_path = select_config['data_path']
-				if flag_save_text>0:
-					for i1 in range(query_num1):
-						df_query = list_query1[i1]
-						if len(df_query)>0:
-							filename_annot1 = filename_annot_vec[i1]
-							output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix,filename_annot1)
-							# output_filename = '%s/%s.%s.1.copy1.txt'%(output_file_path,filename_prefix,filename_annot1)
-							if i1 in [3]:
-								df_query.to_csv(output_filename,sep='\t',float_format='%.6f')
-							else:
-								df_query.to_csv(output_filename,sep='\t',float_format='%.5E')
-							print('df_query ',df_query.shape,filename_annot1)
-				
-		return dict_query
-
-	## ====================================================
 	# the in silico ChIP-seq library method
 	# TF binding score with normalization
 	def test_peak_tf_score_normalization_1(self,peak_query_vec=[],motif_query_vec=[],motif_data=[],motif_data_score=[],
@@ -1339,22 +1201,22 @@ class _Base2_correlation5(_Base2_correlation3):
 		print('estimate gene expression correlation for %d genes'%(gene_num))
 
 		file_path1 = self.save_path_1
-		test_estimator1 = _Base2_correlation(file_path=file_path1)
-		self.test_estimator1 = test_estimator1
-		dict_query_1 = test_estimator1.test_feature_correlation_1(df_feature_query_1=df_feature_query1,
-																	df_feature_query_2=df_feature_query2,
-																	feature_vec_1=feature_vec_1,
-																	feature_vec_2=feature_vec_2,
-																	correlation_type_vec=correlation_type_vec,
-																	symmetry_mode=symmetry_mode,
-																	type_id_pval_correction=type_id_pval_correction,
-																	type_id_1=type_id_1,
-																	thresh_corr_vec=thresh_corr_vec,
-																	filename_prefix=filename_prefix,
-																	save_mode=save_mode,
-																	save_symmetry=save_symmetry,
-																	output_file_path=output_file_path,
-																	select_config=select_config)
+		test_estimator_correlation = _Base2_correlation(file_path=file_path1)
+		self.test_estimator_correlation = test_estimator_correlation
+		dict_query_1 = test_estimator_correlation.test_feature_correlation_1(df_feature_query_1=df_feature_query1,
+																				df_feature_query_2=df_feature_query2,
+																				feature_vec_1=feature_vec_1,
+																				feature_vec_2=feature_vec_2,
+																				correlation_type_vec=correlation_type_vec,
+																				symmetry_mode=symmetry_mode,
+																				type_id_pval_correction=type_id_pval_correction,
+																				type_id_1=type_id_1,
+																				thresh_corr_vec=thresh_corr_vec,
+																				filename_prefix=filename_prefix,
+																				save_mode=save_mode,
+																				save_symmetry=save_symmetry,
+																				output_file_path=output_file_path,
+																				select_config=select_config)
 
 		stop = time.time()
 		print('estimating gene expression correlation for %d genes used %.5fs'%(gene_num,stop-start))
@@ -1586,7 +1448,7 @@ class _Base2_correlation5(_Base2_correlation3):
 	## ====================================================
 	# compute adjusted p-value for gene-TF expression partial correlation given peak accessibility
 	def test_gene_tf_corr_peak_pval_corrected_query_1(self,df_gene_peak_query=[],gene_query_vec=[],motif_query_vec=[],alpha=0.05,
-														method_type_id_correction='fdr_bh',type_id_1=0,parallel_mode=0,save_mode=1,verbose=0,select_config={}):
+														method_type_correction='fdr_bh',type_id_1=0,parallel_mode=0,save_mode=1,verbose=0,select_config={}):
 
 		flag_query1=1
 		if len(df_gene_peak_query)>0:
@@ -1632,14 +1494,14 @@ class _Base2_correlation5(_Base2_correlation3):
 				feature_query_num = len(feature_query_vec)
 
 				alpha=0.05
-				method_type_id_correction='fdr_bh'
+				method_type_correction='fdr_bh'
 				field_query_2 = [field_id2,field_id_query]
 				interval_1 = 100
 				if parallel_mode==0:
-					df_gene_peak_query_1 = self.test_gene_tf_corr_peak_pval_corrected_unit1(data=df_gene_peak_query_1,feature_query_vec=feature_query_vec,feature_id='',column_id_query=column_id_query,field_query=field_query_2,alpha=alpha,method_type_id_correction=method_type_id_correction,type_id_1=1,interval=interval_1,save_mode=1,verbose=verbose,select_config=select_config)
+					df_gene_peak_query_1 = self.test_gene_tf_corr_peak_pval_corrected_unit1(data=df_gene_peak_query_1,feature_query_vec=feature_query_vec,feature_id='',column_id_query=column_id_query,field_query=field_query_2,alpha=alpha,method_type_correction=method_type_correction,type_id_1=1,interval=interval_1,save_mode=1,verbose=verbose,select_config=select_config)
 				else:
 					query_res_local = Parallel(n_jobs=-1)(delayed(self.test_gene_tf_corr_peak_pval_corrected_unit1)(data=df_pval_query1,feature_query_vec=feature_query_vec[i2:(i2+1)],column_id_query=column_id_query,field_query=field_query_2,
-																														alpha=alpha,method_type_id_correction=method_type_id_correction,interval=interval_1,save_mode=1,verbose=(i2%interval_1),select_config=select_config) for i2 in tqdm(np.arange(feature_query_num)))
+																														alpha=alpha,method_type_correction=method_type_correction,interval=interval_1,save_mode=1,verbose=(i2%interval_1),select_config=select_config) for i2 in tqdm(np.arange(feature_query_num)))
 					
 					for t_query_res in query_res_local:
 						# dict_query = t_query_res
@@ -1656,7 +1518,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute adjusted p-value for gene-TF expression partial correlation given peak accessibility
-	def test_gene_tf_corr_peak_pval_corrected_unit1(self,data=[],feature_query_vec=[],feature_id='',column_id_query='',field_query=[],alpha=0.05,method_type_id_correction='fdr_bh',type_id_1=0,interval=1000,save_mode=1,verbose=0,select_config={}):
+	def test_gene_tf_corr_peak_pval_corrected_unit1(self,data=[],feature_query_vec=[],feature_id='',column_id_query='',field_query=[],alpha=0.05,method_type_correction='fdr_bh',type_id_1=0,interval=1000,save_mode=1,verbose=0,select_config={}):
 
 		df_query_1 = data
 		feature_query_num = len(feature_query_vec)
@@ -1668,7 +1530,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			field_id, field_id_query = field_query[0:2]
 			# pvals = np.asarray(df_query_1.loc[query_id1,field_id])
 			pvals = df_query_1.loc[query_id1,field_id]
-			pvals_correction_vec1, pval_thresh1 = utility_1.test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_id_correction)
+			pvals_correction_vec1, pval_thresh1 = utility_1.test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_correction)
 			id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
 							
 			if type_id_1==1:

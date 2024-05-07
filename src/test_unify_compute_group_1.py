@@ -511,26 +511,26 @@ class _Base2_pre_2(_Base2_correlation5):
 
 	## ====================================================
 	# load gene annotation data
-	def test_query_gene_annot_1(self,data=[],input_filename='',save_mode=1,verbose=0,select_config={}):
+	# def test_query_gene_annot_1(self,data=[],input_filename='',save_mode=1,verbose=0,select_config={}):
 
-		if input_filename=='':
-			input_filename_annot = select_config['filename_gene_annot']
-		else:
-			input_filename_annot = input_filename
+	# 	if input_filename=='':
+	# 		input_filename_annot = select_config['filename_gene_annot']
+	# 	else:
+	# 		input_filename_annot = input_filename
 
-		df_gene_annot_ori = pd.read_csv(input_filename_annot,index_col=False,sep='\t')
-		df_gene_annot_ori = df_gene_annot_ori.sort_values(by=['length'],ascending=False)
-		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
-		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_id'])
-		df_gene_annot_ori.index = np.asarray(df_gene_annot_ori['gene_name'])
-		print('gene annotation, dataframe of size ',df_gene_annot_ori.shape)
-		verbose_internal = self.verbose_internal
-		if verbose_internal==2:
-			print('columns: ',np.asarray(df_gene_annot_ori.columns))
-			print('data preview: ')
-			print(df_gene_annot_ori[0:2])
+	# 	df_gene_annot_ori = pd.read_csv(input_filename_annot,index_col=False,sep='\t')
+	# 	df_gene_annot_ori = df_gene_annot_ori.sort_values(by=['length'],ascending=False)
+	# 	df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
+	# 	df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_id'])
+	# 	df_gene_annot_ori.index = np.asarray(df_gene_annot_ori['gene_name'])
+	# 	print('gene annotation, dataframe of size ',df_gene_annot_ori.shape)
+	# 	verbose_internal = self.verbose_internal
+	# 	if verbose_internal==2:
+	# 		print('columns: ',np.asarray(df_gene_annot_ori.columns))
+	# 		print('data preview: ')
+	# 		print(df_gene_annot_ori[0:2])
 
-		return df_gene_annot_ori
+	# 	return df_gene_annot_ori
 
 	## ====================================================
 	# peak-TF-gene associaton estimation
@@ -1015,12 +1015,10 @@ class _Base2_pre_2(_Base2_correlation5):
 	# query peak-gene distance
 	def test_query_distance_annot_1(self,data=[],df_annot=[],column_distance='distance',column_idvec = ['peak_id','gene_id'],column_vec_sort=[],ascending_vec=[],flag_sort=1,save_mode=1,verbose=0,select_config={}):
 
-		# column_idvec = ['peak_id','gene_id']
 		column_id2, column_id1 = column_idvec
-
-		# column_distance = 'distance'
 		flag_distance = 1
 		df_query1 = data
+		verbose_internal = self.verbose_internal
 		if (column_distance in df_query1.columns):
 			id1 = (pd.isna(df_query1[column_distance])==True)
 			df_query2 = df_query1.loc[id1,:]
@@ -1034,8 +1032,9 @@ class _Base2_pre_2(_Base2_correlation5):
 				df_gene_peak_distance = self.df_gene_peak_distance
 			else:
 				df_gene_peak_distance = df_annot
-			# print('peak-gene link by distance: ',df_gene_peak_distance.shape)
-			# print('peak-gene links by distance threshold, dataframe of size ',df_gene_peak_distance.shape)
+
+			if verbose_internal==2:
+				print('peak-gene links by distance threshold, dataframe of size ',df_gene_peak_distance.shape)
 			df_list = [df_query1,df_gene_peak_distance]
 			column_query_1 = [column_distance]
 			reset_index = True
@@ -1053,7 +1052,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			if len(ascending_vec)==0:
 				query_num1 = len(column_vec_sort)
 				ascending_vec = [True]*query_num1
-			# df_query1 = df_query1.sort_values(by=[column_id2,column_distance_abs],ascending=[True,True])
+
 			df_query1 = df_query1.sort_values(by=column_vec_sort,ascending=ascending_vec)
 			t_columns = df_query1.columns.difference([column_distance_abs],sort=False)
 			df_query1 = df_query1.loc[:,t_columns]
@@ -1945,7 +1944,6 @@ class _Base2_pre_2(_Base2_correlation5):
 	# perform feature link selection
 	def test_feature_link_query_select_pre1(self,thresh_vec_query=[],atac_ad=[],rna_exprs=[],save_mode=1,save_mode_2=1,save_file_path='',verbose=0,select_config={}):
 
-		# flag_query_3 = 1
 		flag_query1=1
 		if flag_query1>0:
 			if iter_mode>0:
@@ -2085,7 +2083,6 @@ class _Base2_pre_2(_Base2_correlation5):
 
 			if len(data)==0:
 				if input_filename=='':
-					# input_filename = '%s/%s.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path,filename_prefix_save)
 					input_filename = select_config['filename_feature_link_pre2']
 
 				if os.path.exists(input_filename)==False:

@@ -189,42 +189,44 @@ def density_2d(x, y):
 	i = np.argsort(z)
 	return np.ravel(x)[i], np.ravel(y)[i], z[i]
 
-def score_2a(y, y_predicted):
+# prediction performance score
+# def score_2a(y, y_predicted):
 
-	score1 = mean_squared_error(y, y_predicted)
-	score2 = pearsonr(y, y_predicted)
-	score3 = explained_variance_score(y, y_predicted)
-	score4 = mean_absolute_error(y, y_predicted)
-	score5 = median_absolute_error(y, y_predicted)
-	score6 = r2_score(y, y_predicted)
-	score7, pvalue = spearmanr(y,y_predicted)
-	# vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6]
-	vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6, score7, pvalue]
+# 	score1 = mean_squared_error(y, y_predicted)
+# 	score2 = pearsonr(y, y_predicted)
+# 	score3 = explained_variance_score(y, y_predicted)
+# 	score4 = mean_absolute_error(y, y_predicted)
+# 	score5 = median_absolute_error(y, y_predicted)
+# 	score6 = r2_score(y, y_predicted)
+# 	score7, pvalue = spearmanr(y,y_predicted)
+# 	# vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6]
+# 	vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6, score7, pvalue]
 
-	return vec1
+# 	return vec1
 
-def score_2a_1(y,y_predicted,feature_name=''):
+# prediction performance score
+# def score_2a_1(y,y_predicted,feature_name=''):
 
-	score1 = mean_squared_error(y, y_predicted)
-	score2 = pearsonr(y, y_predicted)
-	score3 = explained_variance_score(y, y_predicted)
-	score4 = mean_absolute_error(y, y_predicted)
-	score5 = median_absolute_error(y, y_predicted)
-	score6 = r2_score(y, y_predicted)
-	score7, pvalue = spearmanr(y,y_predicted)
-	t_mutual_info = mutual_info_regression(y[:,np.newaxis], y_predicted, discrete_features=False, n_neighbors=5, copy=True, random_state=0)
-	t_mutual_info = t_mutual_info[0]
+# 	score1 = mean_squared_error(y, y_predicted)
+# 	score2 = pearsonr(y, y_predicted)
+# 	score3 = explained_variance_score(y, y_predicted)
+# 	score4 = mean_absolute_error(y, y_predicted)
+# 	score5 = median_absolute_error(y, y_predicted)
+# 	score6 = r2_score(y, y_predicted)
+# 	score7, pvalue = spearmanr(y,y_predicted)
+# 	t_mutual_info = mutual_info_regression(y[:,np.newaxis], y_predicted, discrete_features=False, n_neighbors=5, copy=True, random_state=0)
+# 	t_mutual_info = t_mutual_info[0]
 
-	# vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6]
-	vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6, score7, pvalue, t_mutual_info]
+# 	# vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6]
+# 	vec1 = [score1, score2[0], score2[1], score3, score4, score5, score6, score7, pvalue, t_mutual_info]
 
-	field_query_1 = ['mse','pearsonr','pvalue1','explained_variance','mean_absolute_error','median_absolute_error','r2','spearmanr','pvalue2','mutual_info']
-	df_score_pred = pd.Series(index=field_query_1,data=vec1,dtype=np.float32)
-	if feature_name!='':
-		df_score_pred.name = feature_name
+# 	field_query_1 = ['mse','pearsonr','pvalue1','explained_variance','mean_absolute_error','median_absolute_error','r2','spearmanr','pvalue2','mutual_info']
+# 	df_score_pred = pd.Series(index=field_query_1,data=vec1,dtype=np.float32)
+# 	if feature_name!='':
+# 		df_score_pred.name = feature_name
 		
-	# return vec1
-	return df_score_pred
+# 	# return vec1
+# 	return df_score_pred
 	
 ## reset dataframe index
 def test_query_index(df_query,column_vec,symbol_vec=['.','.']):
@@ -355,13 +357,13 @@ def test_query_default_parameter_1(field_query=[],default_parameter=[],overwrite
 	return select_config, param_vec
 
 ## update field query
-def test_field_query_pre1(field_query=[],query_value=[],overwrite=False,select_config={}):
-	# query_num1 = len(query_value)
-	for (field_id,query_value) in zip(field_query,query_value):
-		if (not (field_id in select_config)) or (overwrite==True):
-			select_config.update({field_id:query_value})
+# def test_field_query_pre1(field_query=[],query_value=[],overwrite=False,select_config={}):
+# 	# query_num1 = len(query_value)
+# 	for (field_id,query_value) in zip(field_query,query_value):
+# 		if (not (field_id in select_config)) or (overwrite==True):
+# 			select_config.update({field_id:query_value})
 
-	return select_config
+# 	return select_config
 
 def score_function_multiclass1(y_test,y_pred,y_proba=[],average='binary',average_2='macro'):
 
@@ -620,79 +622,79 @@ def test_file_merge_column(input_filename_list,input_file_path='',column_idvec=[
 
 ## load peak-gene link query
 # peak-gene link for feature query vec and peak-gene link by distance
-def test_query_feature_link_1(feature_query_vec=[],df_feature_link=[],input_filename='',column_id_query1='gene_id',column_id_query2='distance',thresh_distance=-1,type_id_query=0,verbose=0,select_config={}):
+# def test_query_feature_link_1(feature_query_vec=[],df_feature_link=[],input_filename='',column_id_query1='gene_id',column_id_query2='distance',thresh_distance=-1,type_id_query=0,verbose=0,select_config={}):
 		
-		if len(df_feature_link)==0:
-			if os.path.exists(input_filename)==False:
-				print('the file does not exist: %s'%(input_filename))
-				return
-			else:
-				df_feature_link = pd.read_csv(input_filename,index_col=0,sep='\t')
-				print('feature_link: ',df_feature_link.shape,input_filename)
+# 		if len(df_feature_link)==0:
+# 			if os.path.exists(input_filename)==False:
+# 				print('the file does not exist: %s'%(input_filename))
+# 				return
+# 			else:
+# 				df_feature_link = pd.read_csv(input_filename,index_col=0,sep='\t')
+# 				print('feature_link: ',df_feature_link.shape,input_filename)
 
-		feature_link = df_feature_link
-		column_id1 = column_id_query1
-		if verbose>0:
-			print('feature_link: ',df_feature_link.shape)
-		if len(feature_query_vec)==0:
-			feature_query_vec = pd.Index(feature_link[column_id1].unique())
-		else:
-			feature_query_vec_ori = feature_query_vec
-			feature_vec_1 = feature_link[column_id1].unique()
-			if type_id_query==2:
-				feature_query_vec_2 = pd.Index(feature_query_vec).difference(feature_vec_1,sort=False)
-			feature_query_vec = pd.Index(feature_query_vec_ori).intersection(feature_vec_1,sort=False)
-			feature_num = len(feature_query_vec)
-			feature_link['id_ori'] = feature_link.index.copy()
-			feature_link.index = np.asarray(feature_link[column_id1])
-			feature_link = feature_link.loc[feature_query_vec,:]
-			feature_link.index = np.asarray(feature_link['id_ori'])
-			t_columns = feature_link.columns.difference(['id_ori'],sort=False)
-			feature_link = feature_link.loc[:,t_columns]
+# 		feature_link = df_feature_link
+# 		column_id1 = column_id_query1
+# 		if verbose>0:
+# 			print('feature_link: ',df_feature_link.shape)
+# 		if len(feature_query_vec)==0:
+# 			feature_query_vec = pd.Index(feature_link[column_id1].unique())
+# 		else:
+# 			feature_query_vec_ori = feature_query_vec
+# 			feature_vec_1 = feature_link[column_id1].unique()
+# 			if type_id_query==2:
+# 				feature_query_vec_2 = pd.Index(feature_query_vec).difference(feature_vec_1,sort=False)
+# 			feature_query_vec = pd.Index(feature_query_vec_ori).intersection(feature_vec_1,sort=False)
+# 			feature_num = len(feature_query_vec)
+# 			feature_link['id_ori'] = feature_link.index.copy()
+# 			feature_link.index = np.asarray(feature_link[column_id1])
+# 			feature_link = feature_link.loc[feature_query_vec,:]
+# 			feature_link.index = np.asarray(feature_link['id_ori'])
+# 			t_columns = feature_link.columns.difference(['id_ori'],sort=False)
+# 			feature_link = feature_link.loc[:,t_columns]
 
-		column_id2 = column_id_query2
-		if thresh_distance>0:
-			feature_link = feature_link.loc[feature_link[column_id2].abs()<thresh_distance]
+# 		column_id2 = column_id_query2
+# 		if thresh_distance>0:
+# 			feature_link = feature_link.loc[feature_link[column_id2].abs()<thresh_distance]
 
-		if type_id_query==1:
-			return feature_link, feature_query_vec
-		elif type_id_query==2:
-			return feature_link, feature_query_vec, feature_query_vec_2
-		else:
-			return feature_link
+# 		if type_id_query==1:
+# 			return feature_link, feature_query_vec
+# 		elif type_id_query==2:
+# 			return feature_link, feature_query_vec, feature_query_vec_2
+# 		else:
+# 			return feature_link
 
 ## retain feature link by peak group and gene group query
-def test_query_feature_group_2(self,df_link_query,df_group,column_id_query1='',column_id_query2='',group_label=[],verbose=0,select_config={}):
+# def test_query_feature_group_2(self,df_link_query,df_group,column_id_query1='',column_id_query2='',group_label=[],verbose=0,select_config={}):
 		
-	flag_query1=1
-	if flag_query1>0:
-		if column_id_query2!='':
-			df_group = df_group[column_id_query2]
+# 	flag_query1=1
+# 	if flag_query1>0:
+# 		if column_id_query2!='':
+# 			df_group = df_group[column_id_query2]
 
-		feature_query_1 = df_link_query[column_id_query1].unique()
-		feature_query_1 = pd.Index(feature_query_1)
-		feature_idvec = df_group.index
-		list1 = []
-		for group_query in group_label:
-			list1.extend(feature_idvec[df_group==group_query])
+# 		feature_query_1 = df_link_query[column_id_query1].unique()
+# 		feature_query_1 = pd.Index(feature_query_1)
+# 		feature_idvec = df_group.index
+# 		list1 = []
+# 		for group_query in group_label:
+# 			list1.extend(feature_idvec[df_group==group_query])
 
-		feature_query_pre1 = pd.Index(list1)
-		feature_query1 = feature_query_1.intersection(feature_query_pre1,sort=False)
-		feature_query2 = feature_query_1.difference(feature_query_pre1,sort=False)
+# 		feature_query_pre1 = pd.Index(list1)
+# 		feature_query1 = feature_query_1.intersection(feature_query_pre1,sort=False)
+# 		feature_query2 = feature_query_1.difference(feature_query_pre1,sort=False)
 
-		df_link_query.index = np.asarray(df_link_query[column_id_query1])
-		# df_link_query.loc[feature_query1,'label_query'] = 1
+# 		df_link_query.index = np.asarray(df_link_query[column_id_query1])
+# 		# df_link_query.loc[feature_query1,'label_query'] = 1
 			
-		df_link_query1 = df_link_query.loc[feature_query2,:]
-		df_link_query2 = df_link_query.loc[feature_query1,:]
+# 		df_link_query1 = df_link_query.loc[feature_query2,:]
+# 		df_link_query2 = df_link_query.loc[feature_query1,:]
 
-		if verbose>0:
-			feature_num_1 = len(feature_query_pre1)
-			feature_num1, feature_num2 = len(feature_query1), len(feature_query2)
-			print('feature_query_pre1, feature_query1, feature_query2: ',feature_num_1,feature_num1,feature_num2)
-			print('feature_link 1, feature_link 2: ',df_link_query1.shape,df_link_query2.shape)
+# 		if verbose>0:
+# 			feature_num_1 = len(feature_query_pre1)
+# 			feature_num1, feature_num2 = len(feature_query1), len(feature_query2)
+# 			print('feature_query_pre1, feature_query1, feature_query2: ',feature_num_1,feature_num1,feature_num2)
+# 			print('feature_link 1, feature_link 2: ',df_link_query1.shape,df_link_query2.shape)
 
-		return df_link_query1, df_link_query2
+# 		return df_link_query1, df_link_query2
 
 ## correlation and pvalue calculation 
 # from the website: https://enterprise-docs.anaconda.com/en/latest/data-science-workflows/data/stats.html
@@ -741,7 +743,7 @@ def test_pvalue_correction(pvals,alpha=0.05,method_type_id='fdr_bh'):
 
 # compute peak accessibility-TF expression correlation
 def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',
-										pval_correction=1,alpha=0.05,method_type_id_correction='fdr_bh',flag_load=0,field_load=[],parallel_mode=0,
+										pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',flag_load=0,field_load=[],parallel_mode=0,
 										save_mode=1,input_file_path='',input_filename_list=[],output_file_path='',
 										filename_prefix='',verbose=0,select_config={}):
 
@@ -789,7 +791,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 																														correlation_type=correlation_type,
 																														pval_correction=pval_correction,
 																														alpha=alpha,
-																														method_type_id_correction=method_type_id_correction,
+																														method_type_correction=method_type_correction,
 																														parallel_mode=parallel_mode,
 																														select_config=select_config)
 
@@ -827,7 +829,7 @@ def test_peak_tf_correlation_query_1(motif_data=[],peak_query_vec=[],motif_query
 ## peak accessibility-TF expression correlation
 def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 								peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
-								alpha=0.05,method_type_id_correction = 'fdr_bh',parallel_mode=0,verbose=1,select_config={}):
+								alpha=0.05,method_type_correction = 'fdr_bh',parallel_mode=0,verbose=1,select_config={}):
 
 		if len(motif_query_vec)==0:
 			motif_query_name_ori = motif_data.columns
@@ -857,7 +859,7 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 		if parallel_mode==0:
 			t_vec_1 = test_peak_tf_correlation_unit1(motif_data=motif_data_query,peak_query_vec=[],motif_query_vec=motif_query_vec,
 															peak_read=peak_read,rna_exprs=rna_exprs,correlation_type=correlation_type,pval_correction=pval_correction,
-															alpha=alpha,method_type_id_correction=method_type_id_correction,parallel_mode=0,verbose=1,select_config=select_config)
+															alpha=alpha,method_type_correction=method_type_correction,parallel_mode=0,verbose=1,select_config=select_config)
 			df_corr_, df_pval_, df_pval_corrected, df_motif_basic = t_vec_1
 		else:
 			dict_query_1 = dict()
@@ -866,7 +868,7 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 				dict_query_1[field_id] = []
 
 			query_res_local = Parallel(n_jobs=-1)(delayed(test_peak_tf_correlation_unit1)(motif_data=motif_data_query,motif_query_vec=[motif_id_query],peak_read=peak_read,rna_exprs=rna_exprs,
-																							correlation_type=correlation_type,pval_correction=pval_correction,alpha=alpha,method_type_id_correction=method_type_id_correction,verbose=verbose,select_config=select_config) for motif_id_query in motif_query_vec)
+																							correlation_type=correlation_type,pval_correction=pval_correction,alpha=alpha,method_type_correction=method_type_correction,verbose=verbose,select_config=select_config) for motif_id_query in motif_query_vec)
 			
 			for t_query_res in query_res_local:
 				# dict_query = t_query_res
@@ -894,7 +896,7 @@ def test_peak_tf_correlation_1(motif_data,peak_query_vec=[],motif_query_vec=[],
 ## peak accessibility-TF expression correlation
 def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=[],
 									peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
-									alpha=0.05,method_type_id_correction='fdr_bh',parallel_mode=0,verbose=1,select_config={}):
+									alpha=0.05,method_type_correction='fdr_bh',parallel_mode=0,verbose=1,select_config={}):
 		
 	motif_query_num = len(motif_query_vec)
 	motif_data_query = motif_data
@@ -938,12 +940,12 @@ def test_peak_tf_correlation_unit1(motif_data,peak_query_vec=[],motif_query_vec=
 		
 		if flag_pval_correction>0:
 			pvals = np.asarray(df_pval_1.loc[peak_loc_query,motif_id])
-			pvals_correction_vec1, pval_thresh1 = test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_id_correction)
+			pvals_correction_vec1, pval_thresh1 = test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_correction)
 			id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
 			df_pval_corrected.loc[peak_loc_query,motif_id] = pvals_corrected1
 			if (verbose>0) and (i1%100==0):
-				# print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
-				print('p-value correction: alpha: %s, method type: %s, minimum p-value corrected: %s, maximum p-value corrected: %s '%(alpha,method_type_id_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
+				# print('pvalue correction: alpha: %s, method_type: %s, minimum pval_corrected: %s, maximum pval_corrected: %s '%(alpha,method_type_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
+				print('p-value correction: alpha: %s, method type: %s, minimum p-value corrected: %s, maximum p-value corrected: %s '%(alpha,method_type_correction,np.min(pvals_corrected1),np.max(pvals_corrected1)))
 
 	return (df_corr_, df_pval_, df_pval_corrected, df_motif_basic)
 
@@ -967,33 +969,33 @@ def test_gene_peak_query_attribute_1(df_gene_peak_query=[],df_gene_peak_query_re
 	return df_gene_peak_query
 
 ## query the feature group
-def test_feature_group_query_basic_1(df_query=[],field_query=[],query_vec=[],column_vec=[],type_id_1=0,select_config={}):
+# def test_feature_group_query_basic_1(df_query=[],field_query=[],query_vec=[],column_vec=[],type_id_1=0,select_config={}):
 
-		if type_id_1==0:
-			column_id1='count'
-			# if 'count' in df_query:
-			# 	column_id1='count1'
-			df_query[column_id1] = 1
-			df_query_group = df_query.loc[:,[column_id1,field_query]].groupby(by=field_query).sum()
-		elif type_id_1==1:
-			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).max()
-		elif type_id_1==2:
-			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).min()
-		else:
-			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).mean()
+# 		if type_id_1==0:
+# 			column_id1='count'
+# 			# if 'count' in df_query:
+# 			# 	column_id1='count1'
+# 			df_query[column_id1] = 1
+# 			df_query_group = df_query.loc[:,[column_id1,field_query]].groupby(by=field_query).sum()
+# 		elif type_id_1==1:
+# 			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).max()
+# 		elif type_id_1==2:
+# 			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).min()
+# 		else:
+# 			df_query_group = df_query.loc[:,query_vec+[field_query]].groupby(by=field_query).mean()
 
-		query_id = df_query.index
-		if type_id_1==0:
-			if len(column_vec)==0:
-				column_vec = ['group_count']
-				column_id = column_vec[0]
-			df_query[column_id] = df_query_group.loc[query_id,column_id1]
-		else:
-			if len(column_vec)==0:
-				column_vec = query_vec
-			df_query.loc[:,column_vec] = df_query_group.loc[query_id,query_vec]
+# 		query_id = df_query.index
+# 		if type_id_1==0:
+# 			if len(column_vec)==0:
+# 				column_vec = ['group_count']
+# 				column_id = column_vec[0]
+# 			df_query[column_id] = df_query_group.loc[query_id,column_id1]
+# 		else:
+# 			if len(column_vec)==0:
+# 				column_vec = query_vec
+# 			df_query.loc[:,column_vec] = df_query_group.loc[query_id,query_vec]
 
-		return df_query
+# 		return df_query
 
 ## find the columns with non-zero values
 def test_columns_nonzero_1(df,type_id=0):
@@ -1030,59 +1032,59 @@ def test_query_frequency_1(query_vec,select_config={}):
 	return df_query
 
 ## query celltype frequencey for the metacells
-def test_query_celltype_frequency_1(sample_id_query,df_annot=[],input_filename='',column_idvec_1=[],column_idvec_2=[],select_config={}):
+# def test_query_celltype_frequency_1(sample_id_query,df_annot=[],input_filename='',column_idvec_1=[],column_idvec_2=[],select_config={}):
 
-	flag_query1=1
-	if flag_query1>0:
-		df_annot1 = df_annot
-		if len(df_annot)==0:
-			filename_1 = input_filename
-			df_annot1 = pd.read_csv(filename_1,index_col=0,sep='\t')
+# 	flag_query1=1
+# 	if flag_query1>0:
+# 		df_annot1 = df_annot
+# 		if len(df_annot)==0:
+# 			filename_1 = input_filename
+# 			df_annot1 = pd.read_csv(filename_1,index_col=0,sep='\t')
 		
-		celltype_vec = select_config['celltype_vec']
-		celltype_num = len(celltype_vec)
-		celltype_idvec_1 = np.arange(celltype_num)
-		dict_celltype_1 = dict(zip(celltype_vec,celltype_idvec_1))
-		dict_celltype_2 = dict(zip(celltype_idvec_1,celltype_vec))
+# 		celltype_vec = select_config['celltype_vec']
+# 		celltype_num = len(celltype_vec)
+# 		celltype_idvec_1 = np.arange(celltype_num)
+# 		dict_celltype_1 = dict(zip(celltype_vec,celltype_idvec_1))
+# 		dict_celltype_2 = dict(zip(celltype_idvec_1,celltype_vec))
 	
-		sample_id = sample_id_query # metacell sample id query
-		sample_num = len(sample_id)
+# 		sample_id = sample_id_query # metacell sample id query
+# 		sample_num = len(sample_id)
 
-		if len(column_idvec_1)==0:
-			column_idvec_1 = ['celltype','celltype_frequency']
-			column_idvec_pre1 = ['celltype_id','celltype_id_freq']
-		else:
-			column_idvec_pre1 = ['%s_id'%(column_query) for column_query in column_idvec_1]
+# 		if len(column_idvec_1)==0:
+# 			column_idvec_1 = ['celltype','celltype_frequency']
+# 			column_idvec_pre1 = ['celltype_id','celltype_id_freq']
+# 		else:
+# 			column_idvec_pre1 = ['%s_id'%(column_query) for column_query in column_idvec_1]
 
-		column_id_1, column_id1 = column_idvec_1
-		column_id_2, column_id2 = column_idvec_pre1
-		field_query = [column_id1,column_id2]
+# 		column_id_1, column_id1 = column_idvec_1
+# 		column_id_2, column_id2 = column_idvec_pre1
+# 		field_query = [column_id1,column_id2]
 		
-		column_vec = list(celltype_vec)+field_query
-		df_ratio_query = pd.DataFrame(index=sample_id,columns=column_vec,data=0,dtype=np.float32)
-		# df_label_query = pd.DataFrame(index=sample_id,columns=[column_id1,column_id2])
-		if len(column_idvec_2)==0:
-			column_idvec_2  =['Metacell','CellType']
+# 		column_vec = list(celltype_vec)+field_query
+# 		df_ratio_query = pd.DataFrame(index=sample_id,columns=column_vec,data=0,dtype=np.float32)
+# 		# df_label_query = pd.DataFrame(index=sample_id,columns=[column_id1,column_id2])
+# 		if len(column_idvec_2)==0:
+# 			column_idvec_2  =['Metacell','CellType']
 		
-		column_id_query1, column_id_query2 = column_idvec_2
-		for i1 in range(sample_num):
-			sample_id1 = sample_id[i1]
-			df_query = df_annot1.loc[df_annot1[column_id_query1]==sample_id1]
-			df_ratio = test_query_frequency_1(df_query[column_id_query2],select_config=select_config)
-			query_name_vec = df_ratio.index
-			df_ratio_query.loc[sample_id1,query_name_vec] = df_ratio['ratio']
-			df_ratio_query.loc[sample_id1,column_id1] = df_ratio['ratio'].idxmax()
-			df_ratio_query.loc[sample_id1,'count'] = df_ratio['count'].sum()
+# 		column_id_query1, column_id_query2 = column_idvec_2
+# 		for i1 in range(sample_num):
+# 			sample_id1 = sample_id[i1]
+# 			df_query = df_annot1.loc[df_annot1[column_id_query1]==sample_id1]
+# 			df_ratio = test_query_frequency_1(df_query[column_id_query2],select_config=select_config)
+# 			query_name_vec = df_ratio.index
+# 			df_ratio_query.loc[sample_id1,query_name_vec] = df_ratio['ratio']
+# 			df_ratio_query.loc[sample_id1,column_id1] = df_ratio['ratio'].idxmax()
+# 			df_ratio_query.loc[sample_id1,'count'] = df_ratio['count'].sum()
 
-		df_ratio_query[column_id_1] = df_annot1.loc[sample_id,column_id_query2]
-		query_num1 = len(column_idvec_1)
-		for i1 in range(query_num1):
-			column_query1, column_query2 = column_idvec_1[i1], column_idvec_pre1[i1]
-			df_ratio_query[column_query2] = df_ratio_query[column_query1].map(dict_celltype_1)
-		# df_ratio_query['label_comp'] = (df_ratio_query['celltype']!=df_ratio_query['celltype_frequency'])
-		df_ratio_query['label_comp'] = (df_ratio_query[column_id_1]!=df_ratio_query[column_id1]).astype(int)
+# 		df_ratio_query[column_id_1] = df_annot1.loc[sample_id,column_id_query2]
+# 		query_num1 = len(column_idvec_1)
+# 		for i1 in range(query_num1):
+# 			column_query1, column_query2 = column_idvec_1[i1], column_idvec_pre1[i1]
+# 			df_ratio_query[column_query2] = df_ratio_query[column_query1].map(dict_celltype_1)
+# 		# df_ratio_query['label_comp'] = (df_ratio_query['celltype']!=df_ratio_query['celltype_frequency'])
+# 		df_ratio_query['label_comp'] = (df_ratio_query[column_id_1]!=df_ratio_query[column_id1]).astype(int)
 
-		return df_ratio_query
+# 		return df_ratio_query
 
 ## group frequency query
 def test_group_frequency_query(feature_id,group_id):
@@ -1102,221 +1104,221 @@ def test_group_frequency_query(feature_id,group_id):
 # statistical tests for motif enrichment analysis
 # def test_feature_enrichment_pre1(peak_loc_query,motif_query=[],peak_sel_bg=[],motif_data=[],motif_data_score=[],motif_data_score_quantile=[],select_config={}):
 # feature1: group of feature query of feature type 1; feature2: group of feature query of feature ytpe 2
-def test_feature_enrichment_pre1(feature1=[],feature2=[],feature2_bg=[],group_id='',df_link=[],df_link_score=[],df_link_score_2=[],flag_link_score=0,type_id_1=0,type_id_pval_correction=1,verbose=0,select_config={}):
+# def test_feature_enrichment_pre1(feature1=[],feature2=[],feature2_bg=[],group_id='',df_link=[],df_link_score=[],df_link_score_2=[],flag_link_score=0,type_id_1=0,type_id_pval_correction=1,verbose=0,select_config={}):
 
-		feature1_ori = df_link.columns
-		# t_value1 = np.sum(motif_data.loc[peak_loc_query,:],axis=0)
-		t_value1 = df_link.loc[feature2,:].sum(axis=0)
-		feature1_pre1 = feature1_ori[t_value1>0]
+# 		feature1_ori = df_link.columns
+# 		# t_value1 = np.sum(motif_data.loc[peak_loc_query,:],axis=0)
+# 		t_value1 = df_link.loc[feature2,:].sum(axis=0)
+# 		feature1_pre1 = feature1_ori[t_value1>0]
 
-		if len(feature1)==0:
-			feature1_query = feature1_pre1
-		else:
-			feature1_query = pd.Index(feature1).intersection(feature1_pre1,sort=False)
+# 		if len(feature1)==0:
+# 			feature1_query = feature1_pre1
+# 		else:
+# 			feature1_query = pd.Index(feature1).intersection(feature1_pre1,sort=False)
 
-		if verbose>0:
-			print('feature1_query:%d'%(len(feature1_query)))
+# 		if verbose>0:
+# 			print('feature1_query:%d'%(len(feature1_query)))
 
-		# flag_link_score=1
-		if len(df_link_score)==0:
-			df_link_score = df_link
-			flag_link_score = 0
+# 		# flag_link_score=1
+# 		if len(df_link_score)==0:
+# 			df_link_score = df_link
+# 			flag_link_score = 0
 
-		df_link_subset = df_link.loc[feature2,feature1_query] # links between feature2 and feature query of feature1
-		df_link_bg =  df_link.loc[feature2_bg,feature1_query] # links between feature2_bg and feature query of feature1
+# 		df_link_subset = df_link.loc[feature2,feature1_query] # links between feature2 and feature query of feature1
+# 		df_link_bg =  df_link.loc[feature2_bg,feature1_query] # links between feature2_bg and feature query of feature1
 
-		list1 = []
-		thresh1 = 0
-		field_query_1 = ['fc_1','fc_2','fc_3','stat_ks','pval_ks','stat_fisher_exact','pval_fisher_exact',
-							'stat_chi2','pval_chi2','stat_barnard','pval_barnard','score1','score2']
-		if flag_link_score>0:
-			field_query_1 = field_query_1 + ['feature_score_max','feature_score_2_max']
-		field_query_pre2 = ['pval_ks','pval_fisher_exact','pval_chi2']
+# 		list1 = []
+# 		thresh1 = 0
+# 		field_query_1 = ['fc_1','fc_2','fc_3','stat_ks','pval_ks','stat_fisher_exact','pval_fisher_exact',
+# 							'stat_chi2','pval_chi2','stat_barnard','pval_barnard','score1','score2']
+# 		if flag_link_score>0:
+# 			field_query_1 = field_query_1 + ['feature_score_max','feature_score_2_max']
+# 		field_query_pre2 = ['pval_ks','pval_fisher_exact','pval_chi2']
 		
-		# field_query_pre_2 = ['pval_ks','pval_fisher_exact','pval_chi2']
-		field_query_num2 = len(field_query_pre2)
-		field_query_2 = ['%s.corrected'%(t_field_query) for t_field_query in field_query_pre2]
+# 		# field_query_pre_2 = ['pval_ks','pval_fisher_exact','pval_chi2']
+# 		field_query_num2 = len(field_query_pre2)
+# 		field_query_2 = ['%s.corrected'%(t_field_query) for t_field_query in field_query_pre2]
 
-		field_query_pre2 = np.asarray(field_query_pre2)
-		field_query_2= np.asarray(field_query_2)
+# 		field_query_pre2 = np.asarray(field_query_pre2)
+# 		field_query_2= np.asarray(field_query_2)
 
-		# df1 = pd.DataFrame(index=motif_query,columns=field_query_1,dtype=np.float32)
-		df1 = pd.DataFrame(index=feature1_query,columns=field_query_1,dtype=np.float32)
+# 		# df1 = pd.DataFrame(index=motif_query,columns=field_query_1,dtype=np.float32)
+# 		df1 = pd.DataFrame(index=feature1_query,columns=field_query_1,dtype=np.float32)
 
-		field_query_3_1 = ['num1','num2','num1_bg','num2_bg']
-		field_query_3_2 = ['ratio1','ratio2','ratio1_1','ratio2_1','ratio1_2','ratio2_2']
-		field_query_3 = field_query_3_1+field_query_3_2
-		# df2 = pd.DataFrame(index=motif_query,columns=field_query_3,dtype=np.int32)
-		df2 = pd.DataFrame(index=feature1_query,columns=field_query_3,dtype=np.int32)
+# 		field_query_3_1 = ['num1','num2','num1_bg','num2_bg']
+# 		field_query_3_2 = ['ratio1','ratio2','ratio1_1','ratio2_1','ratio1_2','ratio2_2']
+# 		field_query_3 = field_query_3_1+field_query_3_2
+# 		# df2 = pd.DataFrame(index=motif_query,columns=field_query_3,dtype=np.int32)
+# 		df2 = pd.DataFrame(index=feature1_query,columns=field_query_3,dtype=np.int32)
 
-		thresh1 = 0
-		type_id_2 = 0
-		if len(df_link_score_2)>0:
-			type_id_2 = 1
+# 		thresh1 = 0
+# 		type_id_2 = 0
+# 		if len(df_link_score_2)>0:
+# 			type_id_2 = 1
 
-		feature2_num = len(feature2)
-		feature2_num_bg = len(feature2_bg)
+# 		feature2_num = len(feature2)
+# 		feature2_num_bg = len(feature2_bg)
 
-		feature1_compare = df_link.columns.difference(feature1_query,sort=False)
-		feature1_compare_num = len(feature1_compare)
-		if verbose>0:
-			print('feature1_compare: %d'%(feature1_compare_num))
+# 		feature1_compare = df_link.columns.difference(feature1_query,sort=False)
+# 		feature1_compare_num = len(feature1_compare)
+# 		if verbose>0:
+# 			print('feature1_compare: %d'%(feature1_compare_num))
 
-		link_num_feature2 = (df_link.loc[feature2,:]).sum().sum() # the number of links between feature1 and feature2 foreground
-		link_num_feature2_bg = (df_link.loc[feature2_bg,:]>thresh1).sum().sum() # the number of links between feature1 and feature2 background
-		link_num_1 = link_num_feature2 + link_num_feature2_bg # the number of links between feature1 and feature2 
+# 		link_num_feature2 = (df_link.loc[feature2,:]).sum().sum() # the number of links between feature1 and feature2 foreground
+# 		link_num_feature2_bg = (df_link.loc[feature2_bg,:]>thresh1).sum().sum() # the number of links between feature1 and feature2 background
+# 		link_num_1 = link_num_feature2 + link_num_feature2_bg # the number of links between feature1 and feature2 
 
-		feature_num1 = len(feature1_query)
-		flag_barnard_ = 0
-		if 'flag_barnard_' in select_config:
-			flag_barnard_ = select_config['flag_barnard_']
-		# for (i1, t_feature_query) in enumerate(feature1_query):
-		for i1 in range(feature_num1):
-			t_feature_query = feature1_query[i1]
-			id_1, id_2 = (df_link.loc[feature2,t_feature_query]>thresh1), (df_link.loc[feature2_bg,t_feature_query]>thresh1)
+# 		feature_num1 = len(feature1_query)
+# 		flag_barnard_ = 0
+# 		if 'flag_barnard_' in select_config:
+# 			flag_barnard_ = select_config['flag_barnard_']
+# 		# for (i1, t_feature_query) in enumerate(feature1_query):
+# 		for i1 in range(feature_num1):
+# 			t_feature_query = feature1_query[i1]
+# 			id_1, id_2 = (df_link.loc[feature2,t_feature_query]>thresh1), (df_link.loc[feature2_bg,t_feature_query]>thresh1)
 
-			link_num_sel = np.sum(id_1)	# the number of links between feature1 foreground and feature2 foreground
-			link_num_bg = np.sum(id_2)	# the number of links between feature1 foreground and feature2 background
+# 			link_num_sel = np.sum(id_1)	# the number of links between feature1 foreground and feature2 foreground
+# 			link_num_bg = np.sum(id_2)	# the number of links between feature1 foreground and feature2 background
 
-			link_num_sel2 = link_num_feature2-link_num_sel	# links between feature1 background and feature2 foreground
-			link_num_bg2 = link_num_feature2_bg-link_num_bg	# links between feature1 background and feature2 background
+# 			link_num_sel2 = link_num_feature2-link_num_sel	# links between feature1 background and feature2 foreground
+# 			link_num_bg2 = link_num_feature2_bg-link_num_bg	# links between feature1 background and feature2 background
 
-			link_num_feature1 = (link_num_sel+link_num_bg) # links between feature1 foreground and feature2 (foreground and background)
-			link_num_feature1_bg = (link_num_1-link_num_feature1) # the number of links between feature1 background and feature2
+# 			link_num_feature1 = (link_num_sel+link_num_bg) # links between feature1 foreground and feature2 (foreground and background)
+# 			link_num_feature1_bg = (link_num_1-link_num_feature1) # the number of links between feature1 background and feature2
 
-			ratio1 = link_num_sel/link_num_feature2 # frequency in links between feature1 and feature2 foreground
-			ratio2 = link_num_bg/link_num_feature2_bg  # frequency in links between feature1 and feature2 background
+# 			ratio1 = link_num_sel/link_num_feature2 # frequency in links between feature1 and feature2 foreground
+# 			ratio2 = link_num_bg/link_num_feature2_bg  # frequency in links between feature1 and feature2 background
 
-			ratio1_1 = link_num_sel/feature2_num # frequency in feature2 foreground
-			ratio2_1 = link_num_bg/feature2_num_bg  # frequency in feature2 background
+# 			ratio1_1 = link_num_sel/feature2_num # frequency in feature2 foreground
+# 			ratio2_1 = link_num_bg/feature2_num_bg  # frequency in feature2 background
 
-			ratio1_2 = link_num_sel/link_num_feature1 # frequency in links between feature1 foreground and feature2
-			ratio2_2 = link_num_sel2/link_num_feature1_bg	# frequency in links between feature1 background and feature2
+# 			ratio1_2 = link_num_sel/link_num_feature1 # frequency in links between feature1 foreground and feature2
+# 			ratio2_2 = link_num_sel2/link_num_feature1_bg	# frequency in links between feature1 background and feature2
 
-			eps = 1e-12
-			fold_change1 = np.log2(ratio1/(ratio2+eps))
-			fold_change2 = np.log2(ratio1_1/(ratio2_1+eps))
-			fold_change3 = np.log2(ratio1_2/(ratio2_2+eps))
-			# contingency_table = [[peak_num_motif_sel,peak_num_motif_bg],[peak_num_sel-peak_num_motif_sel,peak_num_bg1-peak_num_motif_bg]]
-			# row1: the links between feature1 and feature2 (e.g., feature1: motif, feature2: peak), the links between feature 1 and background feature 2
-			# row2: the links with feature2 but not with feature1, the links with feature2_bg but not with feature1
-			# contingency_table = [[link_num_sel,link_num_bg],[feature2_num-link_num_sel,feature2_num_bg-link_num_bg]]
-			# contingency_table = [[link_num_sel,link_num_bg],[link_num_feature2-link_num_sel,link_num_feature2_bg-link_num_bg]]
-			contingency_table = [[link_num_sel,link_num_bg],[link_num_sel2,link_num_bg2]]
-			contingency_table = np.asarray(contingency_table)
-			contingency_table_ori = contingency_table.copy()
-			if type_id_1==1:
-				contingency_table = contingency_table.T
+# 			eps = 1e-12
+# 			fold_change1 = np.log2(ratio1/(ratio2+eps))
+# 			fold_change2 = np.log2(ratio1_1/(ratio2_1+eps))
+# 			fold_change3 = np.log2(ratio1_2/(ratio2_2+eps))
+# 			# contingency_table = [[peak_num_motif_sel,peak_num_motif_bg],[peak_num_sel-peak_num_motif_sel,peak_num_bg1-peak_num_motif_bg]]
+# 			# row1: the links between feature1 and feature2 (e.g., feature1: motif, feature2: peak), the links between feature 1 and background feature 2
+# 			# row2: the links with feature2 but not with feature1, the links with feature2_bg but not with feature1
+# 			# contingency_table = [[link_num_sel,link_num_bg],[feature2_num-link_num_sel,feature2_num_bg-link_num_bg]]
+# 			# contingency_table = [[link_num_sel,link_num_bg],[link_num_feature2-link_num_sel,link_num_feature2_bg-link_num_bg]]
+# 			contingency_table = [[link_num_sel,link_num_bg],[link_num_sel2,link_num_bg2]]
+# 			contingency_table = np.asarray(contingency_table)
+# 			contingency_table_ori = contingency_table.copy()
+# 			if type_id_1==1:
+# 				contingency_table = contingency_table.T
 			
-			t_score1 = -1
-			t_score2 = -1
-			if flag_link_score>0:
-				# t_score1 = np.max(vec1)	# maximal feature score
-				link_score_sel = df_link_score.loc[feature2,t_feature_query]
-				link_score_bg = df_link_score.loc[feature2_bg,t_feature_query]
-				t_score1 = np.max(link_score_sel) # maximal feature score
-				if type_id_2>0:
-					t_score2 = np.max(df_link_score_2.loc[feature2,t_feature_query]) # maximal feature score 2
+# 			t_score1 = -1
+# 			t_score2 = -1
+# 			if flag_link_score>0:
+# 				# t_score1 = np.max(vec1)	# maximal feature score
+# 				link_score_sel = df_link_score.loc[feature2,t_feature_query]
+# 				link_score_bg = df_link_score.loc[feature2_bg,t_feature_query]
+# 				t_score1 = np.max(link_score_sel) # maximal feature score
+# 				if type_id_2>0:
+# 					t_score2 = np.max(df_link_score_2.loc[feature2,t_feature_query]) # maximal feature score 2
 
-			flag1 = 1
-			if flag1>0:
-				stat_ks_, pval_ks_ = -1, -1
-				# stat_barnard_, pval_barnard_ = -1, -1
-				stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = -1,-1,-1,-1
-				stat_fisher_exact_, pval_fisher_exact_ = -1,-1
-				stat_barnard_, pval_barnard_ = -1, -1
-				stat_boschloo_, pval_boschloo_ = -1, -1
-				try:
-					if flag_link_score>0:
-						# scipy.stats.kstest(rvs, cdf, args=(), N=20, alternative='two-sided', mode='auto')
-						stat_ks_, pval_ks_ =  scipy.stats.ks_2samp(link_score_sel, link_score_bg, alternative='less', mode='auto')
-						# print('KS test ',stat_ks_, pval_ks_)
+# 			flag1 = 1
+# 			if flag1>0:
+# 				stat_ks_, pval_ks_ = -1, -1
+# 				# stat_barnard_, pval_barnard_ = -1, -1
+# 				stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = -1,-1,-1,-1
+# 				stat_fisher_exact_, pval_fisher_exact_ = -1,-1
+# 				stat_barnard_, pval_barnard_ = -1, -1
+# 				stat_boschloo_, pval_boschloo_ = -1, -1
+# 				try:
+# 					if flag_link_score>0:
+# 						# scipy.stats.kstest(rvs, cdf, args=(), N=20, alternative='two-sided', mode='auto')
+# 						stat_ks_, pval_ks_ =  scipy.stats.ks_2samp(link_score_sel, link_score_bg, alternative='less', mode='auto')
+# 						# print('KS test ',stat_ks_, pval_ks_)
 
-						# stat_mannwhitenyu_, pval_mannwhitenyu_ = mannwhitneyu(vec1, vec2, alternative='greater', method="exact")
-						# print('Mann Whiteny U test ',stat_mannwhitenyu_,pval_mannwhitenyu_)
+# 						# stat_mannwhitenyu_, pval_mannwhitenyu_ = mannwhitneyu(vec1, vec2, alternative='greater', method="exact")
+# 						# print('Mann Whiteny U test ',stat_mannwhitenyu_,pval_mannwhitenyu_)
 
-					## commented
-					# res = barnard_exact(contingency_table,alternative='greater')
-					# stat_barnard_, pval_barnard_ = res.statistic, res.pvalue
-					# print('Barnard exact test ',stat_barnard_, pval_barnard_)
+# 					## commented
+# 					# res = barnard_exact(contingency_table,alternative='greater')
+# 					# stat_barnard_, pval_barnard_ = res.statistic, res.pvalue
+# 					# print('Barnard exact test ',stat_barnard_, pval_barnard_)
 
-					# res_2 = boschloo_exact(contingency_table,alternative='greater')
-					# stat_boschloo_, pval_boschloo_ = res_2.statistic, res_2.pvalue
-					# print('Boschloo exact test ',stat_boschloo_,pval_boschloo_)
+# 					# res_2 = boschloo_exact(contingency_table,alternative='greater')
+# 					# stat_boschloo_, pval_boschloo_ = res_2.statistic, res_2.pvalue
+# 					# print('Boschloo exact test ',stat_boschloo_,pval_boschloo_)
 
-					stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
-					# print('chi2 ',stat_chi2_, pval_chi2_)
+# 					stat_chi2_, pval_chi2_, dof_chi2_, ex_chi2_ = chi2_contingency(contingency_table,correction=True)
+# 					# print('chi2 ',stat_chi2_, pval_chi2_)
 
-					stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative='greater')
-					# print('Fisher exact test ',stat_fisher_exact_, pval_fisher_exact_)
+# 					stat_fisher_exact_, pval_fisher_exact_ = fisher_exact(contingency_table,alternative='greater')
+# 					# print('Fisher exact test ',stat_fisher_exact_, pval_fisher_exact_)
 
-					if flag_barnard_>0:
-						thresh_pval_1 = 1E-05
-						if (pval_fisher_exact_<thresh_pval_1) and (pval_chi2_<thresh_pval_1):
-							res = barnard_exact(contingency_table,alternative='greater')
-							stat_barnard_, pval_barnard_ = res.statistic, res.pvalue
-							print('Barnard exact test ',stat_barnard_,pval_barnard_,t_feature_query,i1,group_id)
+# 					if flag_barnard_>0:
+# 						thresh_pval_1 = 1E-05
+# 						if (pval_fisher_exact_<thresh_pval_1) and (pval_chi2_<thresh_pval_1):
+# 							res = barnard_exact(contingency_table,alternative='greater')
+# 							stat_barnard_, pval_barnard_ = res.statistic, res.pvalue
+# 							print('Barnard exact test ',stat_barnard_,pval_barnard_,t_feature_query,i1,group_id)
 
-				except Exception as error:
-					print('error! ', error)
-					print(t_feature_query,i1)
-					print(contingency_table)
-					return
+# 				except Exception as error:
+# 					print('error! ', error)
+# 					print(t_feature_query,i1)
+# 					print(contingency_table)
+# 					return
 
-				t_vec1 = [fold_change1,fold_change2,fold_change3,stat_ks_,pval_ks_,stat_fisher_exact_,pval_fisher_exact_,stat_chi2_,pval_chi2_,
-							stat_barnard_,pval_barnard_,t_score1,t_score2]
-				# list1.append(t_vec1)
-				df1.loc[t_feature_query,field_query_1] = t_vec1
+# 				t_vec1 = [fold_change1,fold_change2,fold_change3,stat_ks_,pval_ks_,stat_fisher_exact_,pval_fisher_exact_,stat_chi2_,pval_chi2_,
+# 							stat_barnard_,pval_barnard_,t_score1,t_score2]
+# 				# list1.append(t_vec1)
+# 				df1.loc[t_feature_query,field_query_1] = t_vec1
 
-				# if (i1%1000==0) or (pval_ks_<0.1):
-				if (verbose>0)&((i1%1000==0) or (pval_fisher_exact_<0.01)):
-					# print(t_motif_query,i1,fold_change1,pval_ks_,pval_barnard_,pval_fisher_exact_,pval_chi2_,t_score1,t_score2)
-					# print(t_motif_query,i1,t_vec1)
-					print(t_feature_query,i1,group_id,t_vec1)
-					print(contingency_table)
+# 				# if (i1%1000==0) or (pval_ks_<0.1):
+# 				if (verbose>0)&((i1%1000==0) or (pval_fisher_exact_<0.01)):
+# 					# print(t_motif_query,i1,fold_change1,pval_ks_,pval_barnard_,pval_fisher_exact_,pval_chi2_,t_score1,t_score2)
+# 					# print(t_motif_query,i1,t_vec1)
+# 					print(t_feature_query,i1,group_id,t_vec1)
+# 					print(contingency_table)
 
-				t_vec2 = np.ravel(np.asarray(contingency_table_ori).T)
-				t_vec3 = [ratio1,ratio2,ratio1_1,ratio2_1,ratio1_2,ratio2_2]
-				df2.loc[t_feature_query,field_query_3_1] = t_vec2
-				df2.loc[t_feature_query,field_query_3_2] = t_vec3
+# 				t_vec2 = np.ravel(np.asarray(contingency_table_ori).T)
+# 				t_vec3 = [ratio1,ratio2,ratio1_1,ratio2_1,ratio1_2,ratio2_2]
+# 				df2.loc[t_feature_query,field_query_3_1] = t_vec2
+# 				df2.loc[t_feature_query,field_query_3_2] = t_vec3
 
-		if flag_link_score==0:
-			df1 = df1.loc[:,field_query_1[:-2]]
-			sel_idvec = [1,2]
-		else:
-			sel_idvec = [0,1,2]
+# 		if flag_link_score==0:
+# 			df1 = df1.loc[:,field_query_1[:-2]]
+# 			sel_idvec = [1,2]
+# 		else:
+# 			sel_idvec = [0,1,2]
 
-		# type_id_pval_correction = 0
-		flag_pval_correction = type_id_pval_correction
-		# sel_idvec = [0,2,3]
-		if flag_pval_correction==1:
-			## pvalue correction
-			alpha = 0.05
-			method_type_id_correction = 'fdr_bh'
-			df_pval_corrected = pd.DataFrame(index=df1.index,columns=field_query_2[sel_idvec],dtype=np.float32)
-			for i2 in sel_idvec:
-				t_field_query_1 = field_query_pre2[i2]
-				t_field_query_2 = field_query_2[i2]
-				print('p-value correction ', t_field_query_1, t_field_query_2)
-				pvals = df1.loc[:,t_field_query_1]
-				id_pre1 = (pd.isna(pvals)|(pvals==-1)|(pvals==1))
-				pvals = np.asarray(pvals)
-				sel_id1 = np.where(id_pre1==True)[0]
-				sel_id2 = np.where(id_pre1==False)[0]
-				pvals[sel_id1] = 1.0
+# 		# type_id_pval_correction = 0
+# 		flag_pval_correction = type_id_pval_correction
+# 		# sel_idvec = [0,2,3]
+# 		if flag_pval_correction==1:
+# 			## pvalue correction
+# 			alpha = 0.05
+# 			method_type_correction = 'fdr_bh'
+# 			df_pval_corrected = pd.DataFrame(index=df1.index,columns=field_query_2[sel_idvec],dtype=np.float32)
+# 			for i2 in sel_idvec:
+# 				t_field_query_1 = field_query_pre2[i2]
+# 				t_field_query_2 = field_query_2[i2]
+# 				print('p-value correction ', t_field_query_1, t_field_query_2)
+# 				pvals = df1.loc[:,t_field_query_1]
+# 				id_pre1 = (pd.isna(pvals)|(pvals==-1)|(pvals==1))
+# 				pvals = np.asarray(pvals)
+# 				sel_id1 = np.where(id_pre1==True)[0]
+# 				sel_id2 = np.where(id_pre1==False)[0]
+# 				pvals[sel_id1] = 1.0
 
-				pvals_correction_vec1, pval_thresh1 = test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_id_correction)
-				id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
+# 				pvals_correction_vec1, pval_thresh1 = test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_correction)
+# 				id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
 					
-				# df_pval_corrected_list[i2].loc[gene_query_id,query_vec_1] = pvals_corrected1
-				df_pval_corrected.loc[(id_pre1==False),t_field_query_2] = pvals_corrected1[sel_id2]
+# 				# df_pval_corrected_list[i2].loc[gene_query_id,query_vec_1] = pvals_corrected1
+# 				df_pval_corrected.loc[(id_pre1==False),t_field_query_2] = pvals_corrected1[sel_id2]
 
-			df1 = pd.concat([df1,df_pval_corrected],axis=1,join='outer',ignore_index=False,keys=None,levels=None,names=None,verify_integrity=False,copy=True)
+# 			df1 = pd.concat([df1,df_pval_corrected],axis=1,join='outer',ignore_index=False,keys=None,levels=None,names=None,verify_integrity=False,copy=True)
 		
-		df1['group_id'] = group_id
-		df2['group_id'] = group_id
+# 		df1['group_id'] = group_id
+# 		df2['group_id'] = group_id
 
-		return df1, df2
+# 		return df1, df2
 
 ## query feature link
 # use matrix format to represent feature link
@@ -1367,9 +1369,6 @@ def test_query_feature_link_format_1(data,column_idvec=[],flag_link_score=0,colu
 def test_query_feature_format_1(df_feature_link=[],feature_query_vec=[],feature_type_vec=[],column_vec=[],column_value='',flag_unduplicate=1,format_type=0,save_mode=0,filename_prefix_save='',output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		df_link_query = df_feature_link
-		# if len(feature_type_vec)==0:
-		# 	feature_type_vec = ['gene','peak']
-
 		if len(column_vec)==0:
 			column_idvec = ['%s_id'%(feature_query) for feature_query in feature_type_vec]
 		else:
@@ -1467,82 +1466,82 @@ def test_save_file_1(output_filename,file,file_type,float_format=''):
 # feature interaction importance estimate at specified interaction depth levels
 # sel_num1: interaction depth
 # sel_num2: the number of interactions to select
-def test_model_explain_interaction_pre2(filename_dict,sel_num1=2,sel_num2=-1,save_mode=1):
+# def test_model_explain_interaction_pre2(filename_dict,sel_num1=2,sel_num2=-1,save_mode=1):
 		
-	# model_type_idvec = list(filename_dict.keys())
-	# model_type_num = len(model_type_idvec)
-	query_idvec = list(filename_dict.keys())
-	query_num = len(query_idvec)
+# 	# model_type_idvec = list(filename_dict.keys())
+# 	# model_type_num = len(model_type_idvec)
+# 	query_idvec = list(filename_dict.keys())
+# 	query_num = len(query_idvec)
 
-	# print(filename_dict)
-	flag = 1
-	interaction_depth = sel_num1-1
-	dict1, save_filename_dict1 = dict(), dict()
+# 	# print(filename_dict)
+# 	flag = 1
+# 	interaction_depth = sel_num1-1
+# 	dict1, save_filename_dict1 = dict(), dict()
 
-	for i1 in range(query_num):
-		query_id = query_idvec[i1]
-		input_filename1 = filename_dict[query_id]
-		if os.path.exists(input_filename1)==False:
-			print('file does not exist ',input_filename1)
-			continue
+# 	for i1 in range(query_num):
+# 		query_id = query_idvec[i1]
+# 		input_filename1 = filename_dict[query_id]
+# 		if os.path.exists(input_filename1)==False:
+# 			print('file does not exist ',input_filename1)
+# 			continue
 
-		list1, list_1, list_2 = [], [], []
-		if flag==1:
-		# try:
-			sheet_name = 'Interaction Depth %d'%(interaction_depth)
-			# data1 = pd.read_excel(input_filename1,sheet_name=sheet_name)
-			# print(data1.head())
+# 		list1, list_1, list_2 = [], [], []
+# 		if flag==1:
+# 		# try:
+# 			sheet_name = 'Interaction Depth %d'%(interaction_depth)
+# 			# data1 = pd.read_excel(input_filename1,sheet_name=sheet_name)
+# 			# print(data1.head())
 
-			data1 = pd.ExcelFile(input_filename1)
-			df = {sheet_name: data1.parse(sheet_name) for sheet_name in data1.sheet_names}
-			# print(df.keys())
+# 			data1 = pd.ExcelFile(input_filename1)
+# 			df = {sheet_name: data1.parse(sheet_name) for sheet_name in data1.sheet_names}
+# 			# print(df.keys())
 
-			df1 = df[sheet_name]
-			# print(input_filename1,df1.head())
-			print(input_filename1,df1[0:2])
-			feature_name_interaction = df1['Interaction']
-			sel_column_vec = ['Gain','FScore','wFScore','Average wFScore','Average Gain','Expected Gain',
-								'Gain Rank','Fscore Rank','wFScore Rank','Avg wFScore Rank','Avg Gain Rank','Expected Gain Rank',
-								'Average Rank','Average Tree Index','Average Tree Depth']
+# 			df1 = df[sheet_name]
+# 			# print(input_filename1,df1.head())
+# 			print(input_filename1,df1[0:2])
+# 			feature_name_interaction = df1['Interaction']
+# 			sel_column_vec = ['Gain','FScore','wFScore','Average wFScore','Average Gain','Expected Gain',
+# 								'Gain Rank','Fscore Rank','wFScore Rank','Avg wFScore Rank','Avg Gain Rank','Expected Gain Rank',
+# 								'Average Rank','Average Tree Index','Average Tree Depth']
 
-			# sel_column_id1 = sel_column_vec[0]
-			sel_column_id1 = 'Gain'
-			feature_imp = df1[sel_column_id1]
+# 			# sel_column_id1 = sel_column_vec[0]
+# 			sel_column_id1 = 'Gain'
+# 			feature_imp = df1[sel_column_id1]
 
-			if sel_num2>0:
-				t_sel_num2 = np.min([len(feature_name_interaction),sel_num2])
-			else:
-				t_sel_num2 = len(feature_name_interaction)
+# 			if sel_num2>0:
+# 				t_sel_num2 = np.min([len(feature_name_interaction),sel_num2])
+# 			else:
+# 				t_sel_num2 = len(feature_name_interaction)
 
-			# print('sel_num2 ', t_sel_num2, input_filename1)
-			for t_feature_name in feature_name_interaction[0:t_sel_num2]:
-				str_vec1 = t_feature_name.split('|')
-				str_vec1 = np.sort(str_vec1)
-				list_1.append(str_vec1)
+# 			# print('sel_num2 ', t_sel_num2, input_filename1)
+# 			for t_feature_name in feature_name_interaction[0:t_sel_num2]:
+# 				str_vec1 = t_feature_name.split('|')
+# 				str_vec1 = np.sort(str_vec1)
+# 				list_1.append(str_vec1)
 
-		# except:
-		#   continue
+# 		# except:
+# 		#   continue
 
-		if len(list_1)>0:
-			# list1 = list(np.unique(list1))
-			print(len(list_1),list_1[0:5])
+# 		if len(list_1)>0:
+# 			# list1 = list(np.unique(list1))
+# 			print(len(list_1),list_1[0:5])
 
-			idvec = np.asarray(['.'.join(t_vec1) for t_vec1 in list_1])
-			mtx1 = np.asarray(list_1)
-			interaction_sel_num, query_num = mtx1.shape[0], mtx1.shape[1] # the number of selected feature interactions and the number of features in the interaction
-			t_columns = ['feature%d'%(query_id1+1) for query_id1 in range(query_num)]
-			df1 = pd.DataFrame(index=idvec,columns=t_columns,data=mtx1)
-			df1[sel_column_id1] = np.asarray(feature_imp)
-			dict1[query_id] = df1
+# 			idvec = np.asarray(['.'.join(t_vec1) for t_vec1 in list_1])
+# 			mtx1 = np.asarray(list_1)
+# 			interaction_sel_num, query_num = mtx1.shape[0], mtx1.shape[1] # the number of selected feature interactions and the number of features in the interaction
+# 			t_columns = ['feature%d'%(query_id1+1) for query_id1 in range(query_num)]
+# 			df1 = pd.DataFrame(index=idvec,columns=t_columns,data=mtx1)
+# 			df1[sel_column_id1] = np.asarray(feature_imp)
+# 			dict1[query_id] = df1
 
-			if save_mode==1:
-				b = input_filename1.find('.xlsx')
-				output_filename1 = input_filename1[0:b]+'.interaction%d.txt'%(query_num)
-				df1.to_csv(output_filename1,sep='\t')
-				# save_filename_list1.append(output_filename1)
-				save_filename_dict1[query_id] = output_filename1
+# 			if save_mode==1:
+# 				b = input_filename1.find('.xlsx')
+# 				output_filename1 = input_filename1[0:b]+'.interaction%d.txt'%(query_num)
+# 				df1.to_csv(output_filename1,sep='\t')
+# 				# save_filename_list1.append(output_filename1)
+# 				save_filename_dict1[query_id] = output_filename1
 
-	return dict1, save_filename_dict1
+# 	return dict1, save_filename_dict1
 
 # query quantile values of feature vector
 def test_stat_1(vec_query,quantile_vec=[]):
@@ -1557,84 +1556,86 @@ def test_stat_1(vec_query,quantile_vec=[]):
 
 	return vec1
 
-def plot_scores_pre3(df, meta_fdl, genes, n_cols=5, 
-						vmin=-2, vmax=2, 
-						plot_subset=None, s=30,
-						output_filename = '',
-						scale_type_id=1,
-						scale_type_id_2=0,
-						query_name_vec=[]):
+# the plot function
+# def plot_scores_pre3(df, meta_fdl, genes, n_cols=5, 
+# 						vmin=-2, vmax=2, 
+# 						plot_subset=None, s=30,
+# 						output_filename = '',
+# 						scale_type_id=1,
+# 						scale_type_id_2=0,
+# 						query_name_vec=[]):
 
-	if plot_subset is None:
-		plot_subset = df.index
-	else:
-		df_ori = df.copy()
-		df = df.loc[plot_subset,:]
+# 	if plot_subset is None:
+# 		plot_subset = df.index
+# 	else:
+# 		df_ori = df.copy()
+# 		df = df.loc[plot_subset,:]
 	
-	# fig = palantir.plot.FigureGrid(len(genes), n_cols)
-	# plt.rcParams.update({'axes.titlesize': 'large'})
-	n_rows = int(np.ceil(len(genes)/n_cols))
-	print(n_rows,n_cols)
-	fig = plt.figure(figsize = (6*n_cols, 6*n_rows))
-	i1 = 1
-	query_num1 = len(genes)
-	# for tf, ax in zip(genes, fig):
-	# for (id1,tf) in enumerate(genes):
-	for id1 in range(query_num1):
-		tf = genes[id1]
-		ax = fig.add_subplot(n_rows, n_cols, i1)
-		i1 += 1
-		# vmax = np.percentile(df[tf][plot_subset], 99)
-		vmax = np.percentile(df[tf], 99)
-		# vmax = np.max([vmax, -np.percentile(df[tf][plot_subset], 1)])
-		vmax = np.max([vmax, -np.percentile(df[tf], 1)])
+# 	# fig = palantir.plot.FigureGrid(len(genes), n_cols)
+# 	# plt.rcParams.update({'axes.titlesize': 'large'})
+# 	n_rows = int(np.ceil(len(genes)/n_cols))
+# 	print(n_rows,n_cols)
+# 	fig = plt.figure(figsize = (6*n_cols, 6*n_rows))
+# 	i1 = 1
+# 	query_num1 = len(genes)
+# 	# for tf, ax in zip(genes, fig):
+# 	# for (id1,tf) in enumerate(genes):
+# 	for id1 in range(query_num1):
+# 		tf = genes[id1]
+# 		ax = fig.add_subplot(n_rows, n_cols, i1)
+# 		i1 += 1
+# 		# vmax = np.percentile(df[tf][plot_subset], 99)
+# 		vmax = np.percentile(df[tf], 99)
+# 		# vmax = np.max([vmax, -np.percentile(df[tf][plot_subset], 1)])
+# 		vmax = np.max([vmax, -np.percentile(df[tf], 1)])
 
-		min_value = np.min(df[tf])
-		if min_value<0:
-			vmin = -vmax
-			cmap1 = matplotlib.cm.RdBu_r
-		else:
-			vmin = 0
-			# cmap1 = matplotlib.cm.RdBu_r
-			cmap1 = matplotlib.cm.Reds
+# 		min_value = np.min(df[tf])
+# 		if min_value<0:
+# 			vmin = -vmax
+# 			cmap1 = matplotlib.cm.RdBu_r
+# 		else:
+# 			vmin = 0
+# 			# cmap1 = matplotlib.cm.RdBu_r
+# 			cmap1 = matplotlib.cm.Reds
 
-		ax.scatter(meta_fdl['x'], 
-				   meta_fdl['y'], 
-				   s=s,
-				   c=df[tf], vmin=vmin, vmax=vmax, 
-				   cmap=cmap1, 
-				   edgecolor='black', linewidths=0.25)
-		ax.set_axis_off()
-		feature_query1 = tf
-		if len(query_name_vec)>0:
-			feature_query = query_name_vec[id1]
-		else:
-			feature_query = tf
-		# ax.set_title(tf)
-		ax.set_title(feature_query)
+# 		ax.scatter(meta_fdl['x'], 
+# 				   meta_fdl['y'], 
+# 				   s=s,
+# 				   c=df[tf], vmin=vmin, vmax=vmax, 
+# 				   cmap=cmap1, 
+# 				   edgecolor='black', linewidths=0.25)
+# 		ax.set_axis_off()
+# 		feature_query1 = tf
+# 		if len(query_name_vec)>0:
+# 			feature_query = query_name_vec[id1]
+# 		else:
+# 			feature_query = tf
+# 		# ax.set_title(tf)
+# 		ax.set_title(feature_query)
 		
-		normalize = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
-		cax, _ = matplotlib.colorbar.make_axes(ax)
-		# matplotlib.colorbar.ColorbarBase(cax, norm=normalize, cmap=matplotlib.cm.RdBu_r)
-		matplotlib.colorbar.ColorbarBase(cax, norm=normalize, cmap=cmap1)
+# 		normalize = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
+# 		cax, _ = matplotlib.colorbar.make_axes(ax)
+# 		# matplotlib.colorbar.ColorbarBase(cax, norm=normalize, cmap=matplotlib.cm.RdBu_r)
+# 		matplotlib.colorbar.ColorbarBase(cax, norm=normalize, cmap=cmap1)
 
-	if output_filename!='':
-		# output_filename = 'test_1.png'
-		plt.savefig(output_filename,format='png')
+# 	if output_filename!='':
+# 		# output_filename = 'test_1.png'
+# 		plt.savefig(output_filename,format='png')
 
-def impute_data(dm_res, ad, n_steps=3, n_jobs=-1):
-	T_steps = dm_res['T'] ** n_steps
-	T_steps = T_steps.astype(np.float32)
+# data imputation
+# def impute_data(dm_res, ad, n_steps=3, n_jobs=-1):
+# 	T_steps = dm_res['T'] ** n_steps
+# 	T_steps = T_steps.astype(np.float32)
 
-	# RUn in parallel
-	seq = np.append(np.arange(0, ad.X.shape[1], 100), [ad.X.shape[1]])
-	res = Parallel(n_jobs=n_jobs)(delayed(_dot_func)(T_steps, ad.X[:, seq[i - 1]:seq[i]]) for i in range(1, len(seq)))
-	imputed_data = hstack(res)
-	imputed_data = imputed_data.todense()
-	imputed_data[imputed_data < 1e-2] = 0
-	gc.collect()
+# 	# RUn in parallel
+# 	seq = np.append(np.arange(0, ad.X.shape[1], 100), [ad.X.shape[1]])
+# 	res = Parallel(n_jobs=n_jobs)(delayed(_dot_func)(T_steps, ad.X[:, seq[i - 1]:seq[i]]) for i in range(1, len(seq)))
+# 	imputed_data = hstack(res)
+# 	imputed_data = imputed_data.todense()
+# 	imputed_data[imputed_data < 1e-2] = 0
+# 	gc.collect()
 
-	return imputed_data
+# 	return imputed_data
 
 # dimension reduction methods
 def dimension_reduction(x_ori,feature_dim,type_id,shuffle=False,sub_sample=-1,filename_prefix='',filename_load='test1',save_mode=1,select_config={}):
@@ -1789,303 +1790,303 @@ def dimension_reduction(x_ori,feature_dim,type_id,shuffle=False,sub_sample=-1,fi
 	return x, dimension_model
 
 ## feature query dimension reduction
-def test_feature_query_dimension_reduction(input_filename='',data_pre=[],transpose=False,save_mode=1,output_file_path='',filename_prefix='',type_id_1=1,type_id_2=0,select_config={}):
+# def test_feature_query_dimension_reduction(input_filename='',data_pre=[],transpose=False,save_mode=1,output_file_path='',filename_prefix='',type_id_1=1,type_id_2=0,select_config={}):
 
-	file_path1 = '../data2'
-	field_query = ['n_components','n_neighbors','zero_center','use_highly_variable']
-	list1 = []
-	for t_field_query in field_query:
-		list1.append(select_config[t_field_query])
+# 	file_path1 = '../data2'
+# 	field_query = ['n_components','n_neighbors','zero_center','use_highly_variable']
+# 	list1 = []
+# 	for t_field_query in field_query:
+# 		list1.append(select_config[t_field_query])
 
-	n_components, n_neighbors_1, zero_center, use_highly_variable = list1
+# 	n_components, n_neighbors_1, zero_center, use_highly_variable = list1
 
-	if len(data_pre)==0:
-		data_pre = pd.read_csv(input_filename,index_col=0,sep='\t')
-	if transpose==True:
-		data_pre = data_pre.T
+# 	if len(data_pre)==0:
+# 		data_pre = pd.read_csv(input_filename,index_col=0,sep='\t')
+# 	if transpose==True:
+# 		data_pre = data_pre.T
 	
-	feature_query_id = data_pre.index
-	feature_query_id_2 = data_pre.columns
-	print('data_pre ', data_pre.shape, feature_query_id[0:2],feature_query_id_2[0:2])
-	score_query_ad = sc.AnnData(data_pre)
-	score_query_ad.X = csr_matrix(score_query_ad.X)
-	pre_ad = score_query_ad
+# 	feature_query_id = data_pre.index
+# 	feature_query_id_2 = data_pre.columns
+# 	print('data_pre ', data_pre.shape, feature_query_id[0:2],feature_query_id_2[0:2])
+# 	score_query_ad = sc.AnnData(data_pre)
+# 	score_query_ad.X = csr_matrix(score_query_ad.X)
+# 	pre_ad = score_query_ad
 			
-	sc.pp.pca(pre_ad,zero_center=zero_center,n_comps=n_components,use_highly_variable=use_highly_variable)
+# 	sc.pp.pca(pre_ad,zero_center=zero_center,n_comps=n_components,use_highly_variable=use_highly_variable)
 	
-	df_pca = pre_ad.obsm['X_pca']
-	print('X_pca ',df_pca.shape)
-	filename_prefix_1 = '%s.pca%d'%(filename_prefix,n_components)
-	output_filename_1 = '%s/%s.feature.1.txt'%(output_file_path,filename_prefix_1)
-	feature_dim = n_components
-	feature_mtx = pd.DataFrame(index=feature_query_id,columns=range(feature_dim),data=np.asarray(df_pca),dtype=np.float32)
-	feature_mtx.to_csv(output_filename_1,sep='\t')
+# 	df_pca = pre_ad.obsm['X_pca']
+# 	print('X_pca ',df_pca.shape)
+# 	filename_prefix_1 = '%s.pca%d'%(filename_prefix,n_components)
+# 	output_filename_1 = '%s/%s.feature.1.txt'%(output_file_path,filename_prefix_1)
+# 	feature_dim = n_components
+# 	feature_mtx = pd.DataFrame(index=feature_query_id,columns=range(feature_dim),data=np.asarray(df_pca),dtype=np.float32)
+# 	feature_mtx.to_csv(output_filename_1,sep='\t')
 
-	flag_neighbor = type_id_1
-	if flag_neighbor>0:
-		sc.pp.neighbors(pre_ad,use_rep='X_pca',n_neighbors=n_neighbors_1)
+# 	flag_neighbor = type_id_1
+# 	if flag_neighbor>0:
+# 		sc.pp.neighbors(pre_ad,use_rep='X_pca',n_neighbors=n_neighbors_1)
 
-	flag_connectivity = type_id_2
-	list_query_1 = []
-	if flag_connectivity>0:
-		## scanpy.pp.neighbors(adata, n_neighbors=15, n_pcs=None, use_rep=None, knn=True, random_state=0, method='umap', metric='euclidean', metric_kwds=mappingproxy({}), key_added=None, copy=False)
-		# neighbors
-		# sc.pp.neighbors(pre_ad,use_rep='X_pca',n_neighbors=n_neighbors_1)
-		method_type_id = 'umap'
-		# method_type_id = 'gauss'
-		method_type_vec = ['umap','gauss']
-		n_neighbor_vec = [n_neighbors_1]
+# 	flag_connectivity = type_id_2
+# 	list_query_1 = []
+# 	if flag_connectivity>0:
+# 		## scanpy.pp.neighbors(adata, n_neighbors=15, n_pcs=None, use_rep=None, knn=True, random_state=0, method='umap', metric='euclidean', metric_kwds=mappingproxy({}), key_added=None, copy=False)
+# 		# neighbors
+# 		# sc.pp.neighbors(pre_ad,use_rep='X_pca',n_neighbors=n_neighbors_1)
+# 		method_type_id = 'umap'
+# 		# method_type_id = 'gauss'
+# 		method_type_vec = ['umap','gauss']
+# 		n_neighbor_vec = [n_neighbors_1]
 
-		for method_type_id in method_type_vec[0:1]:
-			# for n_neighbors in [15,20,50]:
-			for n_neighbors in n_neighbor_vec:
-				sc.pp.neighbors(pre_ad,method=method_type_id,use_rep='X_pca',n_neighbors=n_neighbors)
-				filename_prefix_2 = '%s.pca%d.%d.%s'%(filename_prefix,n_components,n_neighbors,method_type_id)
+# 		for method_type_id in method_type_vec[0:1]:
+# 			# for n_neighbors in [15,20,50]:
+# 			for n_neighbors in n_neighbor_vec:
+# 				sc.pp.neighbors(pre_ad,method=method_type_id,use_rep='X_pca',n_neighbors=n_neighbors)
+# 				filename_prefix_2 = '%s.pca%d.%d.%s'%(filename_prefix,n_components,n_neighbors,method_type_id)
 				
-				if (save_mode==1) and (output_file_path!=''):
-					output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
-					pre_ad.write(output_filename)
+# 				if (save_mode==1) and (output_file_path!=''):
+# 					output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
+# 					pre_ad.write(output_filename)
 
-					connectivity_mtx = pre_ad.obsp['connectivities']
-					distance_mtx = pre_ad.obsp['distances']
-					print('connectivities, distances ', connectivity_mtx.shape, distance_mtx.shape)
-					df1 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=distance_mtx.toarray(),dtype=np.float32)
-					df2 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=connectivity_mtx.toarray(),dtype=np.float32)
-					b = output_filename.find('.txt')
-					output_filename1 = '%s/%s.distance.txt'%(output_file_path,filename_prefix_2)
-					output_filename2 = '%s/%s.connectivity.txt'%(output_file_path,filename_prefix_2)
-					df1.to_csv(output_filename1,sep='\t')
-					df2.to_csv(output_filename2,sep='\t')
+# 					connectivity_mtx = pre_ad.obsp['connectivities']
+# 					distance_mtx = pre_ad.obsp['distances']
+# 					print('connectivities, distances ', connectivity_mtx.shape, distance_mtx.shape)
+# 					df1 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=distance_mtx.toarray(),dtype=np.float32)
+# 					df2 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=connectivity_mtx.toarray(),dtype=np.float32)
+# 					b = output_filename.find('.txt')
+# 					output_filename1 = '%s/%s.distance.txt'%(output_file_path,filename_prefix_2)
+# 					output_filename2 = '%s/%s.connectivity.txt'%(output_file_path,filename_prefix_2)
+# 					df1.to_csv(output_filename1,sep='\t')
+# 					df2.to_csv(output_filename2,sep='\t')
 
-				# ## scanpy.tl.umap(adata, min_dist=0.5, spread=1.0, n_components=2, maxiter=None, alpha=1.0, gamma=1.0, negative_sample_rate=5, init_pos='spectral', random_state=0, a=None, b=None, copy=False, method='umap', neighbors_key=None)
-				# # UMAP
-				# # obsm['X_umap']
-				# sc.tl.umap(pre_ad)
+# 				# ## scanpy.tl.umap(adata, min_dist=0.5, spread=1.0, n_components=2, maxiter=None, alpha=1.0, gamma=1.0, negative_sample_rate=5, init_pos='spectral', random_state=0, a=None, b=None, copy=False, method='umap', neighbors_key=None)
+# 				# # UMAP
+# 				# # obsm['X_umap']
+# 				# sc.tl.umap(pre_ad)
 
-				print(pre_ad)
-				list_query_1.append(feature_mtx)
-	else:
-		if (save_mode==1) and (output_file_path!=''):
-			filename_prefix_2 = '%s.pca%d.%d'%(filename_prefix,n_components,n_neighbors_1)
-			output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
-			pre_ad.write(output_filename)
-		list_query_1.append(feature_mtx)
+# 				print(pre_ad)
+# 				list_query_1.append(feature_mtx)
+# 	else:
+# 		if (save_mode==1) and (output_file_path!=''):
+# 			filename_prefix_2 = '%s.pca%d.%d'%(filename_prefix,n_components,n_neighbors_1)
+# 			output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
+# 			pre_ad.write(output_filename)
+# 		list_query_1.append(feature_mtx)
 
-	return list_query_1
+# 	return list_query_1
 
 # motif similarity 
-def test_motif_similarity(thresh_type_1='E-value',thresh_type_2='q-value',thresh1=0.001,thresh2=0.05,type_id_1=1):
+# def test_motif_similarity(thresh_type_1='E-value',thresh_type_2='q-value',thresh1=0.001,thresh2=0.05,type_id_1=1):
 
-	file_path_1 = '../example_datasets/data1'
-	filename1 = '%s/tomtom_motif/motif_output_1/tomtom.tsv'%(file_path_1)
-	filename2 = '%s/tomtom_motif/cisbp_motif_name.txt'%(file_path_1)
-	filename3 = '%s/tomtom_motif/test_motif_name_cisbp.2.repeat1.txt'%(file_path_1)
+# 	file_path_1 = '../example_datasets/data1'
+# 	filename1 = '%s/tomtom_motif/motif_output_1/tomtom.tsv'%(file_path_1)
+# 	filename2 = '%s/tomtom_motif/cisbp_motif_name.txt'%(file_path_1)
+# 	filename3 = '%s/tomtom_motif/test_motif_name_cisbp.2.repeat1.txt'%(file_path_1)
 
-	# data1 = pd.read_csv(filename1,sep='\t')
-	data1 = pd.read_csv(filename1,sep='\t',skipfooter=4, engine='python')
-	motif_query = np.asarray(data1['Query_ID'])
-	data1.index = motif_query
-	motif_compare = np.asarray(data1['Target_ID'])
-	print(filename1,data1.shape)
+# 	# data1 = pd.read_csv(filename1,sep='\t')
+# 	data1 = pd.read_csv(filename1,sep='\t',skipfooter=4, engine='python')
+# 	motif_query = np.asarray(data1['Query_ID'])
+# 	data1.index = motif_query
+# 	motif_compare = np.asarray(data1['Target_ID'])
+# 	print(filename1,data1.shape)
 
-	data2 = pd.read_csv(filename3,sep='\t')
-	motif_id_query_ori_1 = np.asarray(data2['motif_name_ori'])
-	motif_id_query = np.asarray(data2['motif_name'])
-	motif_id_1 = np.asarray(data2['motif_id'])
-	data2.index = list(motif_id_query)
-	data2_1 = data2.copy()
-	data2_1.index = motif_id_1
+# 	data2 = pd.read_csv(filename3,sep='\t')
+# 	motif_id_query_ori_1 = np.asarray(data2['motif_name_ori'])
+# 	motif_id_query = np.asarray(data2['motif_name'])
+# 	motif_id_1 = np.asarray(data2['motif_id'])
+# 	data2.index = list(motif_id_query)
+# 	data2_1 = data2.copy()
+# 	data2_1.index = motif_id_1
 
-	motif_name_query = np.unique(motif_id_query)
-	motif_num = len(motif_name_query)
-	motif_num_ori = len(np.unique(motif_id_query_ori_1))
-	print('motif num', motif_num, motif_num_ori)
+# 	motif_name_query = np.unique(motif_id_query)
+# 	motif_num = len(motif_name_query)
+# 	motif_num_ori = len(np.unique(motif_id_query_ori_1))
+# 	print('motif num', motif_num, motif_num_ori)
 
-	assert motif_num==motif_num_ori
+# 	assert motif_num==motif_num_ori
 
-	list1 = []
-	list2 = []
-	for i in range(motif_num):
-		t_motif_id_query = motif_name_query[i]
-		t_motif_id_1 = data2.loc[t_motif_id_query,['motif_id']]
-		# print(t_motif_id_1)
-		assert len(t_motif_id_1)==1
-		t_motif_id_1 = list(t_motif_id_1)[0]
-		t_motif_id_query_ori = list(data2.loc[t_motif_id_query,['motif_name_ori']])[0]
+# 	list1 = []
+# 	list2 = []
+# 	for i in range(motif_num):
+# 		t_motif_id_query = motif_name_query[i]
+# 		t_motif_id_1 = data2.loc[t_motif_id_query,['motif_id']]
+# 		# print(t_motif_id_1)
+# 		assert len(t_motif_id_1)==1
+# 		t_motif_id_1 = list(t_motif_id_1)[0]
+# 		t_motif_id_query_ori = list(data2.loc[t_motif_id_query,['motif_name_ori']])[0]
 
-		# print(t_motif_id_1)
-		t_motif_compare = data1.loc[t_motif_id_1,'Target_ID']
-		t_motif_compare = np.asarray(t_motif_compare)
-		t_motif_compare_evalue = data1.loc[t_motif_id_1,'E-value']
-		t_motif_compare_qvalue = data1.loc[t_motif_id_1,'q-value']
+# 		# print(t_motif_id_1)
+# 		t_motif_compare = data1.loc[t_motif_id_1,'Target_ID']
+# 		t_motif_compare = np.asarray(t_motif_compare)
+# 		t_motif_compare_evalue = data1.loc[t_motif_id_1,'E-value']
+# 		t_motif_compare_qvalue = data1.loc[t_motif_id_1,'q-value']
 
-		id1 = (t_motif_compare_evalue<thresh1)&(t_motif_compare_qvalue<thresh2)
-		id_1 = np.where((id1>0)&(t_motif_compare!=t_motif_id_1))[0]
+# 		id1 = (t_motif_compare_evalue<thresh1)&(t_motif_compare_qvalue<thresh2)
+# 		id_1 = np.where((id1>0)&(t_motif_compare!=t_motif_id_1))[0]
 
-		num1 = len(id_1)
-		if num1>0:
-			t_motif_compare_1 = t_motif_compare[id_1]
-			if i%100==0:
-				print('motif query',t_motif_id_query,len(t_motif_compare),len(t_motif_compare_1))
+# 		num1 = len(id_1)
+# 		if num1>0:
+# 			t_motif_compare_1 = t_motif_compare[id_1]
+# 			if i%100==0:
+# 				print('motif query',t_motif_id_query,len(t_motif_compare),len(t_motif_compare_1))
 			
-			t_motif_compare_2 = pd.Series(index=t_motif_compare_1).index.intersection(data2_1.index)
-			t_motif_name_compare_2 = data2_1.loc[t_motif_compare_2,'motif_name']
-			num1 = len(t_motif_name_compare_2)
-			assert num1==len(np.unique(t_motif_name_compare_2))
-			str1 = ','.join(list(t_motif_name_compare_2))
-			str2 = ','.join(t_motif_compare_2)
+# 			t_motif_compare_2 = pd.Series(index=t_motif_compare_1).index.intersection(data2_1.index)
+# 			t_motif_name_compare_2 = data2_1.loc[t_motif_compare_2,'motif_name']
+# 			num1 = len(t_motif_name_compare_2)
+# 			assert num1==len(np.unique(t_motif_name_compare_2))
+# 			str1 = ','.join(list(t_motif_name_compare_2))
+# 			str2 = ','.join(t_motif_compare_2)
 
-			if type_id_1==1:
-				vec1 = [str(t1) for t1 in t_motif_compare_evalue[id_1]]
-				vec2 = [str(t1) for t1 in t_motif_compare_qvalue[id_1]]
-				str3_1 = ','.join(vec1)
-				str3_2 = ','.join(vec2)
-		else:
-			str1, str2 = '-1', '-1',
-			str3_1, str3_2 = '-1','-1'
+# 			if type_id_1==1:
+# 				vec1 = [str(t1) for t1 in t_motif_compare_evalue[id_1]]
+# 				vec2 = [str(t1) for t1 in t_motif_compare_qvalue[id_1]]
+# 				str3_1 = ','.join(vec1)
+# 				str3_2 = ','.join(vec2)
+# 		else:
+# 			str1, str2 = '-1', '-1',
+# 			str3_1, str3_2 = '-1','-1'
 
-		if type_id_1==1:
-			list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2,str3_1,str3_2])
-		else:
-			list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2])
-		list2.append(num1)
+# 		if type_id_1==1:
+# 			list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2,str3_1,str3_2])
+# 		else:
+# 			list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2])
+# 		list2.append(num1)
 
-	t_fields = ['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare',
-					'motif_id_compare','motif_evalue_compare','motif_qvalue_compare']
-	if type_id_1==1:
-		data1 = pd.DataFrame(index=motif_name_query,columns=t_fields)
-		data1.loc[:,t_fields[0:3]+t_fields[4:]] = np.asarray(list1)
-		data1['motif_num_compare'] = list2
-		output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.2.txt'%(file_path_1,str(thresh1),str(thresh2))
+# 	t_fields = ['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare',
+# 					'motif_id_compare','motif_evalue_compare','motif_qvalue_compare']
+# 	if type_id_1==1:
+# 		data1 = pd.DataFrame(index=motif_name_query,columns=t_fields)
+# 		data1.loc[:,t_fields[0:3]+t_fields[4:]] = np.asarray(list1)
+# 		data1['motif_num_compare'] = list2
+# 		output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.2.txt'%(file_path_1,str(thresh1),str(thresh2))
 
-	else:
-		data1 = pd.DataFrame(index=motif_name_query,columns=['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare','motif_id_compare'])
-		data1.loc[:,t_fields[0:3]+t_fields[4:-2]] = np.asarray(list1)
-		data1['motif_num_compare'] = list2
-		output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.1.txt'%(file_path_1,str(thresh1),str(thresh2))
+# 	else:
+# 		data1 = pd.DataFrame(index=motif_name_query,columns=['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare','motif_id_compare'])
+# 		data1.loc[:,t_fields[0:3]+t_fields[4:-2]] = np.asarray(list1)
+# 		data1['motif_num_compare'] = list2
+# 		output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.1.txt'%(file_path_1,str(thresh1),str(thresh2))
 	
-	data1.to_csv(output_filename,sep='\t')
+# 	data1.to_csv(output_filename,sep='\t')
 
-	return True
+# 	return True
 
 ## minibatch K-means clustering
-def test_feature_query_clustering_pre2(input_filename='',output_filename='',feature_mtx=[],similarity_mtx=[],feature_name=[],
-						sel_id=[],symmetry_type_id=0,n_clusters=-1,connectivity_type_id=0,connectivity_thresh=0.5,distance_thresh=-1,
-						linkage_type_id=1,alpha_connectivity=1.0,max_iter=500,transpose=False,dimension_reduction=False,save_mode=1,output_file_path='',select_config={}):
+# def test_feature_query_clustering_pre2(input_filename='',output_filename='',feature_mtx=[],similarity_mtx=[],feature_name=[],
+# 						sel_id=[],symmetry_type_id=0,n_clusters=-1,connectivity_type_id=0,connectivity_thresh=0.5,distance_thresh=-1,
+# 						linkage_type_id=1,alpha_connectivity=1.0,max_iter=500,transpose=False,dimension_reduction=False,save_mode=1,output_file_path='',select_config={}):
 		
-	if len(feature_mtx)==0:
-		feature_mtx = pd.read_csv(input_filename,index_col=0,sep='\t')
-		if transpose==True:
-			feature_mtx = feature_mtx.T
+# 	if len(feature_mtx)==0:
+# 		feature_mtx = pd.read_csv(input_filename,index_col=0,sep='\t')
+# 		if transpose==True:
+# 			feature_mtx = feature_mtx.T
 
-	flag_dimension_reduction = dimension_reduction
-	feature_mtx = feature_mtx.fillna(0)
-	if flag_dimension_reduction>0:
-		dimension_reduction_config = select_config['dimension_reduction_config']
-		filename_prefix_1 = dimension_reduction_config['filename_prefix_1']
-		data_list1 = test_feature_query_dimension_reduction(data_pre=feature_mtx,
-															transpose=False,
-															save_mode=save_mode,
-															output_file_path=output_file_path,
-															filename_prefix=filename_prefix_1,
-															type_id_1=0,
-															type_id_2=0,
-															select_config=dimension_reduction_config)
-		feature_mtx = data_list1[0]
+# 	flag_dimension_reduction = dimension_reduction
+# 	feature_mtx = feature_mtx.fillna(0)
+# 	if flag_dimension_reduction>0:
+# 		dimension_reduction_config = select_config['dimension_reduction_config']
+# 		filename_prefix_1 = dimension_reduction_config['filename_prefix_1']
+# 		data_list1 = test_feature_query_dimension_reduction(data_pre=feature_mtx,
+# 															transpose=False,
+# 															save_mode=save_mode,
+# 															output_file_path=output_file_path,
+# 															filename_prefix=filename_prefix_1,
+# 															type_id_1=0,
+# 															type_id_2=0,
+# 															select_config=dimension_reduction_config)
+# 		feature_mtx = data_list1[0]
 
-	sample_id = feature_mtx.index
-	# model_type_vec = ['MiniBatchKMeans']
-	# sklearn.cluster.MiniBatchKMeans(n_clusters=8, *, init='k-means++', max_iter=100, batch_size=1024, verbose=0, compute_labels=True, random_state=None, tol=0.0, max_no_improvement=10, init_size=None, n_init=3, reassignment_ratio=0.01)[source]
+# 	sample_id = feature_mtx.index
+# 	# model_type_vec = ['MiniBatchKMeans']
+# 	# sklearn.cluster.MiniBatchKMeans(n_clusters=8, *, init='k-means++', max_iter=100, batch_size=1024, verbose=0, compute_labels=True, random_state=None, tol=0.0, max_no_improvement=10, init_size=None, n_init=3, reassignment_ratio=0.01)[source]
 
-	# model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','cluster_optics_dbscan','MiniBatchKMeans']
-	model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','MiniBatchKMeans']
-	model_type_vec = np.asarray(model_type_vec)
+# 	# model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','cluster_optics_dbscan','MiniBatchKMeans']
+# 	model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','MiniBatchKMeans']
+# 	model_type_vec = np.asarray(model_type_vec)
 
-	# cluster_model1 = DBSCAN(eps=1,min_samples=1,n_jobs=-1,metric='precomputed')
-	# cluster_model2 = OPTICS(min_samples=2,n_jobs=-1,metric='precomputed')
-	cluster_model1 = DBSCAN(eps=18,min_samples=1,n_jobs=-1)
-	cluster_model2 = OPTICS(min_samples=2,n_jobs=-1)
+# 	# cluster_model1 = DBSCAN(eps=1,min_samples=1,n_jobs=-1,metric='precomputed')
+# 	# cluster_model2 = OPTICS(min_samples=2,n_jobs=-1,metric='precomputed')
+# 	cluster_model1 = DBSCAN(eps=18,min_samples=1,n_jobs=-1)
+# 	cluster_model2 = OPTICS(min_samples=2,n_jobs=-1)
 
-	if distance_thresh>0:
-		distance_threshold = distance_thresh
-	else:
-		distance_threshold = None
-	linkage_type_vec = ['ward','average','complete','single']
-	linkage_type = linkage_type_vec[linkage_type_id]
+# 	if distance_thresh>0:
+# 		distance_threshold = distance_thresh
+# 	else:
+# 		distance_threshold = None
+# 	linkage_type_vec = ['ward','average','complete','single']
+# 	linkage_type = linkage_type_vec[linkage_type_id]
 
-	sample_num = len(sample_id)
-	# n_clusters = np.int(np.min([sample_num*0.3,150]))
-	# n_clusters = np.int(np.min([sample_num*0.1,50]))
-	if n_clusters<0:
-		n_clusters = np.int(np.min([sample_num*0.1,100]))
-	print('n_clusters ', n_clusters)
-	cluster_model3 = AgglomerativeClustering(n_clusters=n_clusters,distance_threshold=distance_threshold,linkage=linkage_type,
-												compute_full_tree=True) # distance
+# 	sample_num = len(sample_id)
+# 	# n_clusters = np.int(np.min([sample_num*0.3,150]))
+# 	# n_clusters = np.int(np.min([sample_num*0.1,50]))
+# 	if n_clusters<0:
+# 		n_clusters = np.int(np.min([sample_num*0.1,100]))
+# 	print('n_clusters ', n_clusters)
+# 	cluster_model3 = AgglomerativeClustering(n_clusters=n_clusters,distance_threshold=distance_threshold,linkage=linkage_type,
+# 												compute_full_tree=True) # distance
 
-	## affinity = [“euclidean”,“precomputed”]
-	# max_iter = 200
-	# max_iter = 500	# after using distance_thresh=10
-	# cluster_model3_1 = AffinityPropagation(affinity='precomputed',max_iter=max_iter) # affinity
-	cluster_model3_1 = AffinityPropagation(max_iter=max_iter) # affinity
+# 	## affinity = [“euclidean”,“precomputed”]
+# 	# max_iter = 200
+# 	# max_iter = 500	# after using distance_thresh=10
+# 	# cluster_model3_1 = AffinityPropagation(affinity='precomputed',max_iter=max_iter) # affinity
+# 	cluster_model3_1 = AffinityPropagation(max_iter=max_iter) # affinity
 
-	# cluster_model5 = SpectralClustering(n_clusters=n_clusters,affinity='precomputed')	# affinity
-	cluster_model5 = SpectralClustering(n_clusters=n_clusters)	# affinity
-	# cluster_model3_1 = SpectralClustering(n_clusters=100,affinity='precomputed_nearest_neighbors')	# distance
-	# cluster_model6 = cluster_optics_dbscan()
-	# list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model6]
+# 	# cluster_model5 = SpectralClustering(n_clusters=n_clusters,affinity='precomputed')	# affinity
+# 	cluster_model5 = SpectralClustering(n_clusters=n_clusters)	# affinity
+# 	# cluster_model3_1 = SpectralClustering(n_clusters=100,affinity='precomputed_nearest_neighbors')	# distance
+# 	# cluster_model6 = cluster_optics_dbscan()
+# 	# list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model6]
 
-	batch_size = 1280
-	init_size = 5000
-	n_init = 10
-	cluster_model_1 = MiniBatchKMeans(n_clusters=n_clusters,max_iter=max_iter,batch_size=batch_size,init_size=init_size,n_init=n_init)
-	# cluster_model_1.fix(feature_mtx)
+# 	batch_size = 1280
+# 	init_size = 5000
+# 	n_init = 10
+# 	cluster_model_1 = MiniBatchKMeans(n_clusters=n_clusters,max_iter=max_iter,batch_size=batch_size,init_size=init_size,n_init=n_init)
+# 	# cluster_model_1.fix(feature_mtx)
 
-	list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model_1]
+# 	list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model_1]
 
-	if len(sel_id)==0:
-		# sel_id = [0,1,2,3]
-		sel_id = [0]
+# 	if len(sel_id)==0:
+# 		# sel_id = [0,1,2,3]
+# 		sel_id = [0]
 
-	sel_id = np.asarray(sel_id)
-	num1 = len(sel_id)
-	data1 = pd.DataFrame(index=sample_id,columns=['feature_name']+list(model_type_vec[sel_id]))
-	data1['feature_name'] = sample_id
-	b = output_filename.find('.txt')
-	filename_prefix_1 = output_filename[0:b]
+# 	sel_id = np.asarray(sel_id)
+# 	num1 = len(sel_id)
+# 	data1 = pd.DataFrame(index=sample_id,columns=['feature_name']+list(model_type_vec[sel_id]))
+# 	data1['feature_name'] = sample_id
+# 	b = output_filename.find('.txt')
+# 	filename_prefix_1 = output_filename[0:b]
 
-	dict_query = dict()
-	flag_1 = 0
-	for model_id in sel_id:
-		model_type_id = model_type_vec[model_id]
-		cluster_model = list1[model_id]
-		print(model_id, model_type_id)
+# 	dict_query = dict()
+# 	flag_1 = 0
+# 	for model_id in sel_id:
+# 		model_type_id = model_type_vec[model_id]
+# 		cluster_model = list1[model_id]
+# 		print(model_id, model_type_id)
 
-		start = time.time()
-		cluster_model.fit(feature_mtx)
-		dict_query.update({model_type_id:cluster_model})
-		t_labels = cluster_model.labels_
-		data1.loc[:,model_type_id] = t_labels
-		label_vec = np.unique(t_labels)
-		label_num = len(label_vec)
-		stop = time.time()
-		print(model_type_id,label_num,stop-start)
+# 		start = time.time()
+# 		cluster_model.fit(feature_mtx)
+# 		dict_query.update({model_type_id:cluster_model})
+# 		t_labels = cluster_model.labels_
+# 		data1.loc[:,model_type_id] = t_labels
+# 		label_vec = np.unique(t_labels)
+# 		label_num = len(label_vec)
+# 		stop = time.time()
+# 		print(model_type_id,label_num,stop-start)
 
-		df1 = pd.DataFrame(index=label_vec,columns=['cluster','feature_num','feature'])
-		if (save_mode==1) and (flag_1==1):
-			for t_label_1 in label_vec:
-				feature_query_id_1 = np.asarray(sample_id[t_labels==t_label_1])
-				str1 = ','.join(feature_query_id_1)
-				df1.loc[t_label_1,'cluster'] = t_label_1
-				df1.loc[t_label_1,'feature_num'] = len(feature_query_id_1)
-				df1.loc[t_label_1,'feature'] = str1
-				output_filename_1 = '%s.%s.txt'%(filename_prefix_1,model_type_id)
-				df1.to_csv(output_filename_1,index=False,sep='\t')
+# 		df1 = pd.DataFrame(index=label_vec,columns=['cluster','feature_num','feature'])
+# 		if (save_mode==1) and (flag_1==1):
+# 			for t_label_1 in label_vec:
+# 				feature_query_id_1 = np.asarray(sample_id[t_labels==t_label_1])
+# 				str1 = ','.join(feature_query_id_1)
+# 				df1.loc[t_label_1,'cluster'] = t_label_1
+# 				df1.loc[t_label_1,'feature_num'] = len(feature_query_id_1)
+# 				df1.loc[t_label_1,'feature'] = str1
+# 				output_filename_1 = '%s.%s.txt'%(filename_prefix_1,model_type_id)
+# 				df1.to_csv(output_filename_1,index=False,sep='\t')
 
-	annot_pre1 = '%s.%s.%s'%(str(distance_thresh),str(connectivity_thresh),str(linkage_type_id))
-	if save_mode==1:
-		data1.to_csv(output_filename,sep='\t')
+# 	annot_pre1 = '%s.%s.%s'%(str(distance_thresh),str(connectivity_thresh),str(linkage_type_id))
+# 	if save_mode==1:
+# 		data1.to_csv(output_filename,sep='\t')
 
-	return data1, dict_query
+# 	return data1, dict_query
 
 def test_figure_configuration(fontsize=10,fontsize1=11,fontsize2=11):
 

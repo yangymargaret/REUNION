@@ -56,14 +56,13 @@ class _Base_pre1(BaseEstimator):
 		self.run_id = run_id
 		self.cell = cell
 		self.generate = generate
-		self.train_chromvec = chromvec
-		self.chromosome = chromvec[0]
+		self.chromvec = chromvec
 
 		self.path_1 = file_path
+		self.save_path_1 = file_path
 		self.config = config
 		self.run_id = run_id
 
-		self.save_path_1 = file_path
 		self.pre_rna_ad = []
 		self.pre_atac_ad = []
 		self.fdl = []

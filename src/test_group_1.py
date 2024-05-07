@@ -397,7 +397,6 @@ class _Base2_group1(BaseEstimator):
 
 		for method_type_1 in method_type_vec:
 			if method_type_1 in ['phenograph']:
-				# for neighbors in [5,7,10,15,20,30]:
 				for neighbors in neighbors_vec:
 					method_type_annot1 = '%s.%d'%(method_type_1,neighbors)
 					list_config.append([method_type_1,method_type_annot1,n_clusters_pre,neighbors,distance_threshold_pre,linkage_type_id_pre,metric])
@@ -861,6 +860,290 @@ class _Base2_group1(BaseEstimator):
 					df_obs.to_csv(output_filename_2, sep='\t')
 				
 				return df_obs
+
+	## feature query dimension reduction
+	def test_feature_query_dimension_reduction(self,input_filename='',data_pre=[],transpose=False,save_mode=1,output_file_path='',filename_prefix='',type_id_1=1,type_id_2=0,select_config={}):
+
+		file_path1 = '../data2'
+		field_query = ['n_components','n_neighbors','zero_center','use_highly_variable']
+		list1 = []
+		for t_field_query in field_query:
+			list1.append(select_config[t_field_query])
+
+		n_components, n_neighbors_1, zero_center, use_highly_variable = list1
+
+		if len(data_pre)==0:
+			data_pre = pd.read_csv(input_filename,index_col=0,sep='\t')
+		if transpose==True:
+			data_pre = data_pre.T
+		
+		feature_query_id = data_pre.index
+		feature_query_id_2 = data_pre.columns
+		print('data_pre ', data_pre.shape, feature_query_id[0:2],feature_query_id_2[0:2])
+		score_query_ad = sc.AnnData(data_pre)
+		score_query_ad.X = csr_matrix(score_query_ad.X)
+		pre_ad = score_query_ad
+				
+		sc.pp.pca(pre_ad,zero_center=zero_center,n_comps=n_components,use_highly_variable=use_highly_variable)
+		
+		df_pca = pre_ad.obsm['X_pca']
+		print('X_pca ',df_pca.shape)
+		filename_prefix_1 = '%s.pca%d'%(filename_prefix,n_components)
+		output_filename_1 = '%s/%s.feature.1.txt'%(output_file_path,filename_prefix_1)
+		feature_dim = n_components
+		feature_mtx = pd.DataFrame(index=feature_query_id,columns=range(feature_dim),data=np.asarray(df_pca),dtype=np.float32)
+		feature_mtx.to_csv(output_filename_1,sep='\t')
+
+		flag_neighbor = type_id_1
+		if flag_neighbor>0:
+			sc.pp.neighbors(pre_ad,use_rep='X_pca',n_neighbors=n_neighbors_1)
+
+		flag_connectivity = type_id_2
+		list_query_1 = []
+		if flag_connectivity>0:
+			method_type_id = 'umap'
+			# method_type_id = 'gauss'
+			method_type_vec = ['umap','gauss']
+			n_neighbor_vec = [n_neighbors_1]
+
+			for method_type_id in method_type_vec[0:1]:
+				for n_neighbors in n_neighbor_vec:
+					sc.pp.neighbors(pre_ad,method=method_type_id,use_rep='X_pca',n_neighbors=n_neighbors)
+					filename_prefix_2 = '%s.pca%d.%d.%s'%(filename_prefix,n_components,n_neighbors,method_type_id)
+					
+					if (save_mode==1) and (output_file_path!=''):
+						output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
+						pre_ad.write(output_filename)
+
+						connectivity_mtx = pre_ad.obsp['connectivities']
+						distance_mtx = pre_ad.obsp['distances']
+						print('connectivities, distances ', connectivity_mtx.shape, distance_mtx.shape)
+						df1 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=distance_mtx.toarray(),dtype=np.float32)
+						df2 = pd.DataFrame(index=feature_query_id,columns=feature_query_id,data=connectivity_mtx.toarray(),dtype=np.float32)
+						b = output_filename.find('.txt')
+						output_filename1 = '%s/%s.distance.txt'%(output_file_path,filename_prefix_2)
+						output_filename2 = '%s/%s.connectivity.txt'%(output_file_path,filename_prefix_2)
+						df1.to_csv(output_filename1,sep='\t')
+						df2.to_csv(output_filename2,sep='\t')
+
+					print(pre_ad)
+					list_query_1.append(feature_mtx)
+		else:
+			if (save_mode==1) and (output_file_path!=''):
+				filename_prefix_2 = '%s.pca%d.%d'%(filename_prefix,n_components,n_neighbors_1)
+				output_filename = '%s/%s.1.ad'%(output_file_path,filename_prefix_2)
+				pre_ad.write(output_filename)
+			list_query_1.append(feature_mtx)
+
+		return list_query_1
+
+	# motif similarity 
+	def test_motif_similarity(self,thresh_type_1='E-value',thresh_type_2='q-value',thresh1=0.001,thresh2=0.05,type_id_1=1):
+
+		file_path_1 = '../example_datasets/data1'
+		filename1 = '%s/tomtom_motif/motif_output_1/tomtom.tsv'%(file_path_1)
+		filename2 = '%s/tomtom_motif/cisbp_motif_name.txt'%(file_path_1)
+		filename3 = '%s/tomtom_motif/test_motif_name_cisbp.2.repeat1.txt'%(file_path_1)
+
+		# data1 = pd.read_csv(filename1,sep='\t')
+		data1 = pd.read_csv(filename1,sep='\t',skipfooter=4, engine='python')
+		motif_query = np.asarray(data1['Query_ID'])
+		data1.index = motif_query
+		motif_compare = np.asarray(data1['Target_ID'])
+		print(filename1,data1.shape)
+
+		data2 = pd.read_csv(filename3,sep='\t')
+		motif_id_query_ori_1 = np.asarray(data2['motif_name_ori'])
+		motif_id_query = np.asarray(data2['motif_name'])
+		motif_id_1 = np.asarray(data2['motif_id'])
+		data2.index = list(motif_id_query)
+		data2_1 = data2.copy()
+		data2_1.index = motif_id_1
+
+		motif_name_query = np.unique(motif_id_query)
+		motif_num = len(motif_name_query)
+		motif_num_ori = len(np.unique(motif_id_query_ori_1))
+		print('motif num', motif_num, motif_num_ori)
+
+		assert motif_num==motif_num_ori
+
+		list1 = []
+		list2 = []
+		for i in range(motif_num):
+			t_motif_id_query = motif_name_query[i]
+			t_motif_id_1 = data2.loc[t_motif_id_query,['motif_id']]
+			# print(t_motif_id_1)
+			assert len(t_motif_id_1)==1
+			t_motif_id_1 = list(t_motif_id_1)[0]
+			t_motif_id_query_ori = list(data2.loc[t_motif_id_query,['motif_name_ori']])[0]
+
+			# print(t_motif_id_1)
+			t_motif_compare = data1.loc[t_motif_id_1,'Target_ID']
+			t_motif_compare = np.asarray(t_motif_compare)
+			t_motif_compare_evalue = data1.loc[t_motif_id_1,'E-value']
+			t_motif_compare_qvalue = data1.loc[t_motif_id_1,'q-value']
+
+			id1 = (t_motif_compare_evalue<thresh1)&(t_motif_compare_qvalue<thresh2)
+			id_1 = np.where((id1>0)&(t_motif_compare!=t_motif_id_1))[0]
+
+			num1 = len(id_1)
+			if num1>0:
+				t_motif_compare_1 = t_motif_compare[id_1]
+				if i%100==0:
+					print('motif query',t_motif_id_query,len(t_motif_compare),len(t_motif_compare_1))
+				
+				t_motif_compare_2 = pd.Series(index=t_motif_compare_1).index.intersection(data2_1.index)
+				t_motif_name_compare_2 = data2_1.loc[t_motif_compare_2,'motif_name']
+				num1 = len(t_motif_name_compare_2)
+				assert num1==len(np.unique(t_motif_name_compare_2))
+				str1 = ','.join(list(t_motif_name_compare_2))
+				str2 = ','.join(t_motif_compare_2)
+
+				if type_id_1==1:
+					vec1 = [str(t1) for t1 in t_motif_compare_evalue[id_1]]
+					vec2 = [str(t1) for t1 in t_motif_compare_qvalue[id_1]]
+					str3_1 = ','.join(vec1)
+					str3_2 = ','.join(vec2)
+			else:
+				str1, str2 = '-1', '-1',
+				str3_1, str3_2 = '-1','-1'
+
+			if type_id_1==1:
+				list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2,str3_1,str3_2])
+			else:
+				list1.append([t_motif_id_query,t_motif_id_query_ori,t_motif_id_1,str1,str2])
+			list2.append(num1)
+
+		t_fields = ['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare',
+						'motif_id_compare','motif_evalue_compare','motif_qvalue_compare']
+		if type_id_1==1:
+			data1 = pd.DataFrame(index=motif_name_query,columns=t_fields)
+			data1.loc[:,t_fields[0:3]+t_fields[4:]] = np.asarray(list1)
+			data1['motif_num_compare'] = list2
+			output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.2.txt'%(file_path_1,str(thresh1),str(thresh2))
+
+		else:
+			data1 = pd.DataFrame(index=motif_name_query,columns=['motif_name','motif_name_ori','motif_id','motif_num_compare','motif_name_compare','motif_id_compare'])
+			data1.loc[:,t_fields[0:3]+t_fields[4:-2]] = np.asarray(list1)
+			data1['motif_num_compare'] = list2
+			output_filename = '%s/tomtom_motif/test_motif_compare_cisbp.%s.%s.1.txt'%(file_path_1,str(thresh1),str(thresh2))
+		
+		data1.to_csv(output_filename,sep='\t')
+
+		return True
+
+	# minibatch K-means clustering
+	def test_feature_query_clustering_pre2(self,input_filename='',output_filename='',feature_mtx=[],similarity_mtx=[],feature_name=[],
+													sel_id=[],symmetry_type_id=0,n_clusters=-1,connectivity_type_id=0,connectivity_thresh=0.5,distance_thresh=-1,
+													linkage_type_id=1,alpha_connectivity=1.0,max_iter=500,transpose=False,dimension_reduction=False,save_mode=1,output_file_path='',select_config={}):
+			
+		if len(feature_mtx)==0:
+			feature_mtx = pd.read_csv(input_filename,index_col=0,sep='\t')
+			if transpose==True:
+				feature_mtx = feature_mtx.T
+
+		flag_dimension_reduction = dimension_reduction
+		feature_mtx = feature_mtx.fillna(0)
+		if flag_dimension_reduction>0:
+			dimension_reduction_config = select_config['dimension_reduction_config']
+			filename_prefix_1 = dimension_reduction_config['filename_prefix_1']
+			data_list1 = self.test_feature_query_dimension_reduction(data_pre=feature_mtx,
+																		transpose=False,
+																		save_mode=save_mode,
+																		output_file_path=output_file_path,
+																		filename_prefix=filename_prefix_1,
+																		type_id_1=0,
+																		type_id_2=0,
+																		select_config=dimension_reduction_config)
+			feature_mtx = data_list1[0]
+
+		sample_id = feature_mtx.index
+		
+		# model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','cluster_optics_dbscan','MiniBatchKMeans']
+		model_type_vec = ['DBSCAN','OPTICS','AgglomerativeClustering','AffinityPropagation','SpectralClustering','MiniBatchKMeans']
+		model_type_vec = np.asarray(model_type_vec)
+
+		# cluster_model1 = DBSCAN(eps=1,min_samples=1,n_jobs=-1,metric='precomputed')
+		# cluster_model2 = OPTICS(min_samples=2,n_jobs=-1,metric='precomputed')
+		cluster_model1 = DBSCAN(eps=18,min_samples=1,n_jobs=-1)
+		cluster_model2 = OPTICS(min_samples=2,n_jobs=-1)
+
+		if distance_thresh>0:
+			distance_threshold = distance_thresh
+		else:
+			distance_threshold = None
+		linkage_type_vec = ['ward','average','complete','single']
+		linkage_type = linkage_type_vec[linkage_type_id]
+
+		sample_num = len(sample_id)
+		if n_clusters<0:
+			n_clusters = np.int(np.min([sample_num*0.1,100]))
+		print('n_clusters ', n_clusters)
+		cluster_model3 = AgglomerativeClustering(n_clusters=n_clusters,distance_threshold=distance_threshold,linkage=linkage_type,
+													compute_full_tree=True) # distance
+
+		# affinity = [“euclidean”,“precomputed”]
+		# max_iter = 500	# after using distance_thresh=10
+		# cluster_model3_1 = AffinityPropagation(affinity='precomputed',max_iter=max_iter) # affinity
+		cluster_model3_1 = AffinityPropagation(max_iter=max_iter) # affinity
+
+		# cluster_model5 = SpectralClustering(n_clusters=n_clusters,affinity='precomputed')	# affinity
+		cluster_model5 = SpectralClustering(n_clusters=n_clusters)	# affinity
+		# cluster_model3_1 = SpectralClustering(n_clusters=100,affinity='precomputed_nearest_neighbors')	# distance
+		# cluster_model6 = cluster_optics_dbscan()
+		# list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model6]
+
+		batch_size = 1280
+		init_size = 5000
+		n_init = 10
+		cluster_model_1 = MiniBatchKMeans(n_clusters=n_clusters,max_iter=max_iter,batch_size=batch_size,init_size=init_size,n_init=n_init)
+
+		list1 = [cluster_model1,cluster_model2,cluster_model3,cluster_model3_1,cluster_model5,cluster_model_1]
+
+		if len(sel_id)==0:
+			# sel_id = [0,1,2,3]
+			sel_id = [0]
+
+		sel_id = np.asarray(sel_id)
+		num1 = len(sel_id)
+		data1 = pd.DataFrame(index=sample_id,columns=['feature_name']+list(model_type_vec[sel_id]))
+		data1['feature_name'] = sample_id
+		b = output_filename.find('.txt')
+		filename_prefix_1 = output_filename[0:b]
+
+		dict_query = dict()
+		flag_1 = 0
+		for model_id in sel_id:
+			model_type_id = model_type_vec[model_id]
+			cluster_model = list1[model_id]
+			print(model_id, model_type_id)
+
+			start = time.time()
+			cluster_model.fit(feature_mtx)
+			dict_query.update({model_type_id:cluster_model})
+			t_labels = cluster_model.labels_
+			data1.loc[:,model_type_id] = t_labels
+			label_vec = np.unique(t_labels)
+			label_num = len(label_vec)
+			stop = time.time()
+			print(model_type_id,label_num,stop-start)
+
+			df1 = pd.DataFrame(index=label_vec,columns=['cluster','feature_num','feature'])
+			if (save_mode==1) and (flag_1==1):
+				for t_label_1 in label_vec:
+					feature_query_id_1 = np.asarray(sample_id[t_labels==t_label_1])
+					str1 = ','.join(feature_query_id_1)
+					df1.loc[t_label_1,'cluster'] = t_label_1
+					df1.loc[t_label_1,'feature_num'] = len(feature_query_id_1)
+					df1.loc[t_label_1,'feature'] = str1
+					output_filename_1 = '%s.%s.txt'%(filename_prefix_1,model_type_id)
+					df1.to_csv(output_filename_1,index=False,sep='\t')
+
+		annot_pre1 = '%s.%s.%s'%(str(distance_thresh),str(connectivity_thresh),str(linkage_type_id))
+		if save_mode==1:
+			data1.to_csv(output_filename,sep='\t')
+
+		return data1, dict_query
 
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
