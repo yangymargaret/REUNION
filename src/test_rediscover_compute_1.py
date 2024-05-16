@@ -67,20 +67,20 @@ class _Base2_2(_Base_pre2):
 									config=config,
 									select_config=select_config)
 
-		self.test_query_config_pre1()
+		self.test_config_pre1()
 
-	## file_path query
-	# query the basic file path
-	def test_file_path_query_1_ori(self,input_file_path='',run_id=1,select_config={}):
+	## ====================================================
+	# query the file path
+	# def test_file_path_query_1(self,input_file_path='',run_id=1,select_config={}):
 
-		data_file_type = select_config['data_file_type']
-		type_id_feature = select_config['type_id_feature']
-		filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
+	# 	data_file_type = select_config['data_file_type']
+	# 	type_id_feature = select_config['type_id_feature']
+	# 	filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
 
-		select_config_query = {'data_path':input_file_path,
-									'filename_save_annot_1':filename_save_annot_1,
-									'filename_save_annot_pre1':filename_save_annot_1}
-		return select_config_query
+	# 	select_config_query = {'data_path':input_file_path,
+	# 							'filename_save_annot_1':filename_save_annot_1}
+
+	# 	return select_config_query
 
 	## file_path and configuration query
 	# def test_query_config_pre1_1(self,data_file_type='',input_file_path='',method_type_vec=[],flag_config_1=1,select_config={}):
@@ -91,25 +91,78 @@ class _Base2_2(_Base_pre2):
 
 	# 	return select_config
 
-	## configuration
-	def test_query_config_pre1(self,data=[],verbose=0,select_config={}):
+	## ====================================================
+	# parameter configuration
+	# to update
+	def test_config_pre1(self,save_mode=1,verbose=0,select_config={}):
 
-		feature_type_annot = ['peak-motif sequence feature']*2+['accessibility feature']*2
-		feature_type_vec_pre1 = ['peak_motif','peak_motif_ori','peak_tf','peak_mtx']
+		"""
+		parameter configuration
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing configuration parameters
+		return: dictionary containing parameters
+		"""
+
+		feature_type_vec = ['peak_motif','peak_motif_ori','peak_tf']
+		feature_type_annot = feature_type_annot = ['peak-motif sequence feature']*2+['accessibility feature'] # the annotations for different feature types of peak loci
+
+		# feature type annotation
+		self.test_query_feature_type_annot_1(feature_type_vec=feature_type_vec,feature_type_annot=feature_type_annot,save_mode=1)
+
+		return select_config
+
+	## ====================================================
+	# query feature type annotation
+	# to update
+	def test_query_feature_type_annot_1(self,feature_type_vec=[],feature_type_annot=[],save_mode=1,verbose=0,select_config={}):
+
+		"""
+		feature type annotation
+		:param feature_type_vec: (array) feature types for feature representations
+		:param feature_type_annot: (array) annotations of the feature types for feature representations
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing configuration parameters
+		:return: 1. dictionary with mapping between feature type and feature type annotation
+				 2. dictionary with mapping between name for feature embedding and feature type annotation
+		"""
+
+		if len(feature_type_vec)==0:
+			feature_type_vec = ['peak_motif','peak_motif_ori','peak_tf']  # feature types of peak loci
+		feature_type_vec_pre1 = feature_type_vec
+
+		if len(feature_type_annot)==0:
+			feature_type_annot = ['peak-motif sequence feature']*2+['accessibility feature'] # the annotations for different feature types of peak loci
+		
 		feature_type_vec_pre2 = ['latent_%s'%(feature_type_query) for feature_type_query in feature_type_vec_pre1]
 		dict_feature_type_annot1 = dict(zip(feature_type_vec_pre1,feature_type_annot))
 		dict_feature_type_annot2 = dict(zip(feature_type_vec_pre2,feature_type_annot))
-		self.dict_feature_type_annot1 = dict_feature_type_annot1
-		self.dict_feature_type_annot2 = dict_feature_type_annot2
-
+		if save_mode>0:
+			self.dict_feature_type_annot1 = dict_feature_type_annot1 	# the dictionary with mapping between feature type and feature type annotation
+			self.dict_feature_type_annot2 = dict_feature_type_annot2	# the dictionary with mapping between name for feature embedding and feature type annotation
+		
+		return dict_feature_type_annot1, dict_feature_type_annot2
 
 	## ====================================================
 	# query the filename of motif scanning data
-	def test_query_motif_filename_pre1(self,data=[],data_file_type_query='',thresh_motif=5e-05,thresh_motif_annot='',retrieve_mode=0,save_mode=1,verbose=0,select_config={}):
+	# to update
+	def test_query_motif_filename_pre1(self,data_file_type='',thresh_motif=5e-05,column_motif='motif_id',retrieve_mode=0,verbose=0,select_config={}):
+
+		"""
+		query the filename of motif scanning data
+		:param data_file_type: name of the data
+		:param thresh_motif: threshold on motif score used to identify motif presence by motif scanning
+		:param column_motif: column corresponding to the names of TFs with binding motifs
+		:param retrieve_mode: indicator of whether to update the parameters in select_config or create a dictionary storing parameters
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary storing parameters
+		:return: dictionary storing parameters
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
-			data_file_query_motif = data_file_type_query
+			data_file_query_motif = data_file_type
 			thresh_vec_1 = [5e-05,1e-04,0.001,-1,0.01] # the thresholds used for motif scanning
 			annot_vec_1 = ['5e-05','1e-04','0.001',-1,'0.01']
 			thresh_num1 = len(thresh_vec_1)
@@ -136,9 +189,7 @@ class _Base2_2(_Base_pre2):
 
 			file_format = 'csv'
 			if format_type==0:
-				filename_annot1 = '1.2'
-				filename_annot2 = '1'
-				input_filename_1 = '%s/%s_motif.1.2.%s'%(data_path_save_motif,filename_prefix,file_format)
+				input_filename_1 = '%s/%s_motif.1.%s'%(data_path_save_motif,filename_prefix,file_format)
 				input_filename_2 = '%s/%s_motif_scores.1.%s'%(data_path_save_motif,filename_prefix,file_format)
 				filename_chromvar_score = '%s/%s_chromvar_scores.1.csv'%(data_path_save_motif,filename_prefix)
 			else:
@@ -153,8 +204,6 @@ class _Base2_2(_Base_pre2):
 				os.makedirs(file_path_2,exist_ok=True)
 
 			input_filename_annot = '%s/translationTable.csv'%(file_path_2)
-			column_motif = 'motif_id'
-			# column_motif = 'tf'
 
 			select_config_1.update({'data_path_save_motif':data_path_save_motif})
 
@@ -177,243 +226,22 @@ class _Base2_2(_Base_pre2):
 			return select_config_1
 
 	## ====================================================
-	# load motif data
-	# def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,save_file_path='',verbose=0,select_config={}):
-		
-	# 	flag_query1=1
-	# 	method_type_num = len(method_type_vec)
-	# 	dict_motif_data = dict()
-	# 	data_file_type = select_config['data_file_type']
-		
-	# 	for i1 in range(method_type_num):
-	# 		# method_type = method_type_vec[method_type_id]
-	# 		method_type = method_type_vec[i1]
-			
-	# 		# data_path = select_config['input_file_path_query'][method_type]
-	# 		# input_file_path = data_path
-	# 		# print('data_path_save: ',data_path)
-	# 		motif_data_pre1, motif_data_score_pre1 = [], []
-
-	# 		method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
-	# 		# flag_1 = False
-	# 		flag_1 = self.test_query_method_type_motif_1(method_type=method_type,method_annot_vec=method_annot_vec,select_config=select_config)
-			
-	# 		dict_query = dict()
-	# 		if flag_1>0:
-	# 			if (len(motif_data_pre1)==0) and (len(motif_data_score_pre1)==0):
-	# 				input_filename1 = select_config['filename_motif_data']
-	# 				input_filename2 = select_config['filename_motif_data_score']
-	# 				b1 = input_filename1.find('.h5ad')
-	# 				b2 = input_filename1.find('.ad')
-	# 				if (b1>=0) or (b2>=0):
-	# 					input_filename_list1 = [input_filename1,input_filename2]	# read from the anndata
-	# 					input_filename_list2 = []
-	# 				else:
-	# 					# b3 = input_filename.find('.csv')
-	# 					input_filename_list1 = []
-	# 					input_filename_list2 = [input_filename1,input_filename2]	# read from the .csv data
-
-	# 				print('motif_filename_list1: ',input_filename_list1)
-
-	# 				# save_file_path = ''
-	# 				flag_query2 = 1
-	# 				# load motif data
-	# 				motif_data, motif_data_score, df_annot, type_id_query = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
-	# 																										input_filename_list2=input_filename_list2,
-	# 																										flag_query1=1,flag_query2=flag_query2,
-	# 																										input_file_path=input_file_path,
-	# 																										save_file_path=save_file_path,
-	# 																										type_id_1=0,type_id_2=1,
-	# 																										select_config=select_config)
-					
-	# 				# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-	# 				# flag_query1=0
-	# 				motif_data_pre1 = motif_data
-	# 				motif_data_score_pre1 = motif_data_score
-	# 			else:
-	# 				motif_data, motif_data_score = motif_data_pre1, motif_data_score_pre1
-	# 				# print('motif data loaded ',motif_data.shape,motif_data_score.shape,method_type,i1)
-	# 				print('loaded motif scanning data (binary), dataframe of ',motif_data.shape)
-	# 				print('loaded motif scores, dataframe of ',motif_data_score.shape)
-
-	# 			dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-			
-	# 		dict_motif_data[method_type] = dict_query
-	# 		# print('dict_query: ',dict_query,method_type)
-
-	# 	return dict_motif_data, select_config
-
-	## prepare translationTable
-	# def test_translationTable_pre1(self,motif_data=[],
-	# 									motif_data_score=[],
-	# 									df_gene_annot=[],
-	# 									meta_scaled_exprs=[],
-	# 									save_mode=1,
-	# 									save_file_path='',
-	# 									output_filename='',
-	# 									flag_cisbp_motif=1,
-	# 									flag_expr=0,
-	# 									select_config={}):
-
-	# 	# motif_name_1 = motif_data.columns
-	# 	motif_name_ori = motif_data.columns
-	# 	if flag_cisbp_motif>0:
-	# 		# motif name correction for the name conversion in R
-	# 		# t_vec_str = motif_name_ori.str.split('_').str
-	# 		# motif_name = motif_name_ori.str.split('_').str.get(2)	# gene name
-	# 		# gene_id = motif_name_ori.str.split('_').str.get(0)	# ENSEMBL id
-	# 		motif_num = len(motif_name_ori)
-	# 		motif_name = np.array(motif_name_ori)
-	# 		gene_id = motif_name.copy()
-	# 		for i1 in range(motif_num):
-	# 			motif_id = motif_name_ori[i1]
-	# 			t_vec_str1 = pd.Index(motif_id.split('_'))
-	# 			b1 = t_vec_str1.str.find('LINE')
-	# 			b2 = np.where(b1>=0)[0]
-	# 			loc_id = b2[-1]+1
-	# 			motif_name[i1] = t_vec_str1[loc_id] # gene name
-	# 			gene_id[i1] = t_vec_str1[0] # ENSEMBL id
-
-	# 		# motif_data.columns = motif_name
-	# 		str_vec_1 = ['NKX2','NKX1','NKX3','NKX6']
-	# 		str_vec_2 = ['NKX2-','NKX1-','NKX3-','NKX6-']
-	# 		str_vec_1 = str_vec_1 + ['Nkx2','Nkx1','Nkx3','Nkx6']
-	# 		str_vec_2 = str_vec_2 + ['Nkx2-','Nkx1-','Nkx3-','Nkx6-']
-	# 		# motif_name_1 = motif_data.columns.str.replace('Nkx2','Nkx2-')
-	# 		query_num1 = len(str_vec_1)		
-	# 		# motif_name_1 = motif_data.columns
-	# 		motif_name_1 = pd.Index(motif_name)
-	# 		for i1 in range(query_num1):
-	# 			motif_name_1 = pd.Index(motif_name_1).str.replace(str_vec_1[i1],str_vec_2[i1])
-
-	# 		df1 = pd.DataFrame.from_dict(data={'motif_id':motif_name_ori,'tf':motif_name_1},orient='columns')
-
-	# 		# df1['gene_id'] = df1['motif_id'].str.split('_').str.get(0) # ENSEMBL id
-	# 		df1['gene_id'] = np.asarray(gene_id)
-	# 		df1.index = np.asarray(df1['gene_id'].str.upper())
-	# 		# df1 = df1.rename(columns={'gene_id':'ENSEMBL'})
-
-	# 		gene_id_1 = df_gene_annot['gene_id'].str.upper()
-	# 		df_gene_annot.index = np.asarray(gene_id_1)
-	# 		motif_query_id = df1.index.intersection(gene_id_1,sort=False)
-
-	# 		df1.loc[:,'tf_ori'] = df1.loc[:,'tf'].copy()
-	# 		df1.loc[motif_query_id,'tf'] = df_gene_annot.loc[motif_query_id,'gene_name']
-	# 		tf_name = np.asarray(df1['tf'])
-			
-	# 		b1 = np.where(tf_name=='Pit1')[0]
-	# 		tf_name[b1] = 'Pou1f1'
-	# 		df1['tf'] = tf_name
-	# 		# tf_name = df1['tf']
-	# 		if flag_expr>0:
-	# 			# meta_scaled_exprs = self.meta_scaled_exprs
-	# 			# gene_name_expr = meta_scaled_exprs.columns
-	# 			df_var = self.rna_meta_ad.var
-	# 			if flag_expr>1:
-	# 				# motif name query by gene id
-	# 				# df_var = self.rna_meta_ad.var
-	# 				if 'gene_id' in df_var.columns:
-	# 					gene_id_2 = df_var['gene_id'].str.upper()
-	# 					motif_query_id_expr = df1.index.intersection(gene_id_2,sort=False)
-	# 					df1.loc[motif_query_id_expr,'tf_expr'] = 1
-	# 					df_var['gene_name'] = df_var.index.copy()
-	# 					df_var.index = np.asarray(df_var['gene_id'])
-	# 					df1.loc[motif_query_id_expr,'tf'] = df_var.loc[motif_query_id_expr,'gene_name']
-	# 					df_var.index = np.asarray(df_var['gene_name']) # reset the index
-	# 					motif_query_name_expr = np.asarray(df1.loc[motif_query_id_expr,'tf'])
-	# 				else:
-	# 					flag_expr = 1
-
-	# 			if flag_expr==1:
-	# 				# motif name query by gene name
-	# 				# df_var = self.rna_meta_ad.var
-	# 				gene_name_expr = self.rna_meta_ad.var_names
-	# 				output_file_path = select_config['data_path_save']
-	# 				output_filename_2 = '%s/test_rna_meta_ad.df_var.query1.txt'%(output_file_path)
-	# 				df_var.to_csv(output_filename_2,sep='\t')
-	# 				motif_query_name_expr = pd.Index(tf_name).intersection(gene_name_expr,sort=False)
-	# 				df1.index = np.asarray(df1['tf'])
-	# 				df1.loc[motif_query_name_expr,'tf_expr'] = 1
-					
-	# 			df1.index = np.asarray(df1['gene_id'])
-	# 			self.motif_query_name_expr = motif_query_name_expr
-
-	# 			# print('motif_query_id_expr ',len(motif_query_id_expr))
-	# 			# df1.loc[motif_query_id_expr,'tf_expr'] = 1
-	# 			print('motif_query_name_expr ',len(motif_query_name_expr))
-
-	# 		# df.loc[:,'tf_ori'] = df.loc[:,'tf'].copy()
-	# 		# df1.loc[motif_query_id_expr,'tf'] = df_gene_annot_expr.loc[motif_query_id_expr,'gene_name']
-	# 		# df1.index = np.asarray(df1['tf'])
-	# 		if save_mode>0:
-	# 			if output_filename=='':
-	# 				output_filename = '%s/translationTable.csv'%(save_file_path)
-	# 			df1.to_csv(output_filename,sep='\t')
-
-	# 	return df1
-	
-	## query file save path
-	# query the filename of the estimated peak-TF-gene link query
-	def test_query_file_path_1(self,data_file_type='',save_mode=1,verbose=0,select_config={}):
-
-		if data_file_type=='':
-			data_file_type_query = select_config['data_file_type']
-		else:
-			data_file_type_query = data_file_type
-
-		dict_file_query = dict()
-
-		if len(dict_file_query)==0:
-			if data_file_type_query in ['pbmc']:
-				file_path_motif_score = select_config['file_path_motif_score_2']
-				input_file_path_query = file_path_motif_score
-
-				input_filename_pre1_1 = '%s/test_motif_score_normalize_insilico.%s.thresh1.1.txt'%(input_file_path_query,data_file_type_query)
-				input_filename_pre1_2 = '%s/test_motif_score_normalize_insilico.%s.thresh1.1.thresh0.1.txt'%(input_file_path_query,data_file_type_query)
-				# input_filename_pre2_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.txt.gz'%(input_file_path_query,data_file_type_query)
-				input_filename_pre2_1 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.1.copy2_1.txt.gz'%(input_file_path_query,data_file_type_query)
-				input_filename_pre2_2 = '%s/test_query_gene_peak.%s.2.pre1.pcorr_query1.annot2.init.query1.2.txt.gz'%(input_file_path_query,data_file_type_query)
-
-				filename_list2 = [input_filename_pre1_1,input_filename_pre1_2,input_filename_pre2_1,input_filename_pre2_2]
-				method_type_annot = ['insilico','insilico_1','joint_score_pre1','joint_score_pre2']
-				dict_file_query = dict(zip(method_type_annot,filename_list2))
-
-		return dict_file_query
-
-	## ====================================================
-	# query method type for prediction by feature group
-	def test_query_column_method_1(self,feature_type_vec=[],method_type_feature_link='',n_neighbors=-1,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-		flag_query1 = 1
-		if flag_query1>0:
-			if method_type_feature_link=='':
-				method_type_feature_link = select_config['method_type_feature_link']
-			if n_neighbors<0:
-				n_neighbors = select_config['neighbor_num']
-			column_pred2 = '%s.pred_sel'%(method_type_feature_link) # selected peak loci with predicted binding sites
-			column_pred_2 = '%s.pred_group_2'%(method_type_feature_link)
-
-			column_neighbor = ['neighbor%d'%(id1) for id1 in np.arange(1,n_neighbors+1)]
-			feature_type_query_1, feature_type_query_2 = feature_type_vec[0:2]
-			column_1 = '%s_group_neighbor'%(feature_type_query_1)
-			column_2 = '%s_group_neighbor'%(feature_type_query_2)
-
-			column_query1 = '%s_neighbor'%(feature_type_query_1)	# query neighbor in feature space 1, without restriction in the same group of the selected peak query
-			column_query2 = '%s_neighbor'%(feature_type_query_2)	# query neighbor in feature space 2, without restriction in the same group of the selected peak query
-
-			column_pred_3 = '%s.pred_group_neighbor'%(method_type_feature_link)
-			column_pred_5 = '%s.pred_group_neighbor_1'%(method_type_feature_link)
-			column_pred_6 = '%s.pred_neighbor_2_group'%(method_type_feature_link)
-			column_pred_7 = '%s.pred_neighbor_2'%(method_type_feature_link)
-			column_pred_8 = '%s.pred_neighbor_1'%(method_type_feature_link)
-
-			column_vec_query_1 = [column_pred2,column_pred_2,column_pred_3,column_pred_5,column_1,column_2,column_pred_6,column_pred_7,column_pred_8,column_query1,column_query2]
-			
-			return column_vec_query_1
-
-	## ====================================================
 	# perform feature dimension reduction
-	def test_query_feature_pre1_1(self,feature_mtx=[],method_type='SVD',n_components=50,sub_sample=-1,verbose=0,select_config={}):
+	# to update
+	def test_query_feature_pre2(self,feature_mtx=[],method_type='SVD',n_components=50,sub_sample=-1,verbose=0,select_config={}):
+
+		"""
+		perform feature dimension reduction
+		:param feature_mtx: (dataframe) feature matrix (row:observation, column:feature)
+		:param method_type: (str) method to perform feature dimension reduction
+		:param n_components: (int) the nubmer of latent components used in feature dimension reduction
+		:param sub_sample: (int) the number of observations selected in subsampling; if sub_sample=-1, keep all the observations
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. feature dimension reduction model
+				 2. (dataframe) low-dimensional feature embeddings of observations (row:observation,column:latent components)
+				 3. (dataframe) loading matrix (associations between latent components and features)
+		"""
 
 		vec1 = ['PCA','Incremental PCA','Kernel PCA','Sparse PCA','SVD',
 					'GRP','SRP','MDS','ISOMAP','Minibatch','ICA','tSNE','LLE','Encoder',-1,'NMF']
@@ -430,7 +258,6 @@ class _Base2_2(_Base_pre2):
 			print('feature_mtx, method_type_query: ',feature_mtx_1.shape,method_type_query)
 			print(feature_mtx_1[0:2])
 
-		# sub_sample = -1
 		from utility_1 import dimension_reduction
 		feature_mtx_pre, dimension_model = dimension_reduction(x_ori=feature_mtx_1,feature_dim=n_components,type_id=type_id_reduction,shuffle=False,sub_sample=sub_sample)
 		df_latent = feature_mtx_pre
@@ -439,71 +266,86 @@ class _Base2_2(_Base_pre2):
 		return dimension_model, df_latent, df_component
 
 	## ====================================================
-	# query feature embeddings for TF and peak loci
-	def test_query_feature_pre1_2(self,peak_query_vec=[],gene_query_vec=[],motif_data=[],motif_data_score=[],motif_group=[],method_type_vec=['SVD','SVD','SVD'],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],n_components=50,sub_sample=-1,flag_shuffle=False,float_format='%.6f',input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
+	# compute feature embeddings of observations
+	# to update
+	def test_query_feature_pre1(self,peak_query_vec=[],gene_query_vec=[],method_type_vec=[],motif_data=[],motif_data_score=[],
+								peak_read=[],rna_exprs=[],n_components=50,sub_sample=-1,flag_shuffle=False,float_format='%.6f',input_file_path='',
+								save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		motif_query_vec = motif_data.columns.intersection(rna_exprs.columns,sort=False) # tf with expression
+		"""
+		perform feature dimension reduction
+		:param peak_query_vec: (array) peak loci; if not specified, genome-wide peaks in the peak accessibility matrix are included
+		:param gene_query_vec: (array) genes with expressions or TFs with expressions to include in analysis
+		:param method_type_vec: (array or list) methods for feature dimension reduction for the different feature types
+		:param motif_data: (dataframe) motif presence in peak loci by motif scanning (binary) (row:peak, column:TF (associated with motif))
+		:param motif_data_score: (dataframe) motif scores by motif scanning (row:peak, column:TF (associated with motif))
+		:param peak_read: (dataframe) peak accessibility matrix (normalized and log-transformed) (row:metacell, column:peak)
+		:param rna_exprs: (dataframe) gene expression matrix (row:metacell, column:gene)
+		:param n_components: (int) the nubmer of latent components used in feature dimension reduction 
+		:param sub_sample: (int) the number of observations selected in subsampling; if sub_sample=-1, keep all the observations
+		:param flag_shuffle: indicator of whether to shuffle the observations
+		:param float_format: format to keep data precision
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing feature dimension reduction model, feature embeddings of observations and loading matrix for each feature type
+		"""
+
+		motif_query_vec = motif_data.columns.intersection(rna_exprs.columns,sort=False) # TF with motif and expression
 		motif_query_num = len(motif_query_vec)
-		print('TFs (with expression): ',motif_query_num)
+		print('TFs (with motif and expression): ',motif_query_num)
 		
+		if len(peak_query_vec)>0:
+			feature_mtx_query1 = peak_read.loc[:,peak_query_vec].T  # peak accessibility matrix, shape: (peak_num,cell_num)
+		else:
+			peak_query_vec = peak_read.columns
+			feature_mtx_query1 = peak_read.T
+
+		feature_motif_query1 = motif_data.loc[peak_query_vec,motif_query_vec] # motif matrix of peak, shape: (peak_num,motif_num)
+		feature_motif_query2 = motif_data.loc[peak_query_vec,:] # motif matrix of peak, shape: (peak_num,motif_num)
+
 		column_1 = 'flag_peak_tf_combine'
 		# flag_peak_tf_combine=1: combine peak accessibility and TF expression matrix to perform dimension reduction
+		# since peak number >> TF number, using peak accessibility and TF expression for dimension reduction is similar to using peak accessibility for dimension reduction
 		flag_peak_tf_combine = 0
 		if column_1 in select_config:
 			flag_peak_tf_combine = select_config[column_1]
 
-		flag_annot1 = 0
 		if flag_peak_tf_combine>0:
-			sample_id = rna_exprs_unscaled.index
-			peak_read = peak_read.loc[sample_id,:]
-
+			sample_id = peak_read.index
+			rna_exprs = rna_exprs.loc[sample_id,:]
 			if len(gene_query_vec)==0:
-				gene_query_vec = motif_query_vec
-				# annot_str_vec = ['peak_tf','peak_motif','peak_motif_ori']
-				flag_annot1 = 1  # tf query as gene query
+				gene_query_vec = motif_query_vec # the genes are TFs
 			
-		feature_mtx_query1 = peak_read.loc[:,peak_query_vec].T  # peak matrix, shape: (peak_num,cell_num)
-		feature_motif_query1 = motif_data.loc[peak_query_vec,motif_query_vec] # motif matrix of peak, shape: (peak_num,motif_num)
-		feature_motif_query2 = motif_data.loc[peak_query_vec,:] # motif matrix of peak, shape: (peak_num,motif_num)
-
-		flag_group = 0
-		if len(motif_group)>0:
-			flag_group = 1
-
-		feature_motif_query_2 = []
-		list1 = []
-		if flag_group>0:
-			feature_motif_query_2 = motif_group.loc[peak_query_vec,:] # (peak_num,group_num)
-			list1 = list1 + [feature_motif_query_2]
-
-		dict_query1 = dict()
-		dict_query1.update({'df_peak':feature_mtx_query1,
-							'df_peak_motif':feature_motif_query1,'df_peak_motif_ori':feature_motif_query2})
-
-		if flag_peak_tf_combine>0:
-			feature_expr_query1 = rna_exprs_unscaled.loc[:,gene_query_vec].T # tf expression, shape: (tf_num,cell_num)
+			feature_expr_query1 = rna_exprs.loc[:,gene_query_vec].T # tf expression, shape: (tf_num,cell_num)
 			feature_mtx_1 = pd.concat([feature_mtx_query1,feature_expr_query1],axis=0,join='outer',ignore_index=False)
-			dict_query1.update({'df_exprs_1':feature_expr_query1})
 		else:
 			feature_mtx_1 = feature_mtx_query1
 		
-		feature_mtx_2 = feature_motif_query1
-		feature_mtx_2_ori = feature_motif_query2
-
-		list_pre1 = [feature_mtx_1,feature_mtx_2,feature_mtx_2_ori]
+		list_pre1 = [feature_mtx_1,feature_motif_query1,feature_motif_query2]
 		query_num1 = len(list_pre1)
-		
-		feature_type_vec_pre1 = ['peak_tf','peak_motif','peak_motif_ori']
-		annot_str_vec = feature_type_vec_pre1
-		feature_type_annot = ['peak accessibility','peak-motif (TF with expr)','peak-motif']
+		dict_query1 = dict()
 
-		# flag_shuffle = False
-		# annot_str_vec_2 = annot_str_vec[0:1]+['motif','motif_ori']
+		feature_type_vec_pre1 = ['peak_tf','peak_motif','peak_motif_ori']
+		feature_type_annot = ['peak accessibility','peak-motif (TF with expr) sequence feature','peak-motif sequence feature']
+		
+		if len(method_type_vec)==0:
+			method_type_dimension = select_config['method_type_dimension']
+			method_type_vec = [method_type_dimension]*query_num1
+
 		verbose_internal = self.verbose_internal
 		for i1 in range(query_num1):
 			feature_mtx_query = list_pre1[i1]
-			annot_str1 = annot_str_vec[i1]
+			feature_type_query = feature_type_vec_pre1[i1]
 			feature_type_annot_query = feature_type_annot[i1]
+
+			field_id1 = 'df_%s'%(feature_type_query)
+			dict_query1.update({field_id1:feature_mtx_query}) # the feature matrix
 
 			query_id_1 = feature_mtx_query.index.copy()
 			if verbose_internal>0:
@@ -515,95 +357,99 @@ class _Base2_2(_Base_pre2):
 				query_id_1 = query_id_1[id1]
 				feature_mtx_query = feature_mtx_query.loc[query_id_1,:]
 
-			# sub_sample = -1
 			method_type = method_type_vec[i1]
-			n_components_query = n_components
 
 			# perform feature dimension reduction
-			dimension_model, df_latent, df_component = self.test_query_feature_pre1_1(feature_mtx=feature_mtx_query,method_type=method_type,n_components=n_components_query,sub_sample=sub_sample,verbose=verbose,select_config=select_config)
+			dimension_model, df_latent, df_component = self.test_query_feature_pre2(feature_mtx=feature_mtx_query,
+																					method_type=method_type,
+																					n_components=n_components,
+																					sub_sample=sub_sample,
+																					verbose=verbose,select_config=select_config)
 
-			feature_dim_vec = ['feature%d'%(id1+1) for id1 in range(n_components_query)]
+			feature_dim_vec = ['feature%d'%(id1+1) for id1 in range(n_components)]
 			feature_vec_1 = query_id_1
 			df_latent = pd.DataFrame(index=feature_vec_1,columns=feature_dim_vec,data=df_latent)
 
 			feature_vec_2 = feature_mtx_query.columns
 			df_component = df_component.T
 			df_component = pd.DataFrame(index=feature_vec_2,columns=feature_dim_vec,data=df_component)
-			
-			print('df_latent: ',df_latent.shape,annot_str1)
-			print(df_latent[0:2])
 
-			if i1==0:
+			if feature_type_query in ['peak_tf']:
 				if flag_peak_tf_combine>0:
 					feature_query_vec = list(peak_query_vec)+list(gene_query_vec)
 					df_latent = df_latent.loc[feature_query_vec,:]
 
-					if flag_annot1>0:
-						df_latent_tf = df_latent.loc[motif_query_vec,:]
-						if verbose_internal>0:
-							print('embeddings of TFs, dataframe of size ',df_latent_tf.shape)
-							print('preview: ')
-							print(df_latent_tf[0:2])
-						dict_query1.update({'latent_tf':df_latent_tf})
-					else:
-						df_latent_gene = df_latent.loc[gene_query_vec,:]
-						if verbose_internal>0:
-							print('embeddings of genes, dataframe of size ',df_latent_gene.shape)
-							print('preview: ')
-							print(df_latent_gene[0:2])
-						dict_query1.update({'latent_gene':df_latent_gene})
+					df_latent_gene = df_latent.loc[gene_query_vec,:]
+					dict_query1.update({'latent_gene':df_latent_gene})
 					df_latent_peak = df_latent.loc[peak_query_vec,:]
 				else:
 					df_latent = df_latent.loc[peak_query_vec,:]
 					df_latent_peak = df_latent
-
-				# df_latent_peak = df_latent.loc[peak_query_vec,:]
-				if verbose_internal>0:
-					print('peak embeddings using peak accessibility, dataframe of size ',df_latent_peak.shape)
-					print('preview: ')
-					print(df_latent_peak[0:2])
 				df_latent_query = df_latent
 			else:
-				df_latent_peak_motif = df_latent.loc[peak_query_vec,:]
-				df_latent_query = df_latent_peak_motif
+				df_latent_query = df_latent.loc[peak_query_vec,:]
+				df_latent_peak = df_latent_query
 				
-				if verbose_internal>0:
-					print('peak embeddings using peak-motif sequence feature, dataframe of size ',df_latent_peak.shape)
-					print('preview: ')
-					print(df_latent_peak[0:2])
-				
-			if verbose_internal>0:
-				# print('df_component: ',df_component.shape)
-				print('component_matrix, dataframe of size ',df_components.shape)
-				
-			# annot_str2 = annot_str_vec[i1]
-			dict_query1.update({'dimension_model_%s'%(annot_str1):dimension_model}) # dimension reduction model for motif feature of peak query
-			dict_query1.update({'latent_%s'%(annot_str1):df_latent_query,'component_%s'%(annot_str1):df_component})
+			if (verbose_internal>0):
+				feature_type_annot_query1 = feature_type_annot_query
+				flag_2 = ((feature_type_query in ['peak_tf']) and (flag_peak_tf_combine>0))
+				if flag_2>0:
+					feature_type_annot_query1 = '%s and TF exprs'%(feature_type_annot_query)
+					
+				print('feature embeddings using %s, dataframe of size '%(feature_type_annot_query1),df_latent_query.shape)
+				print('data preview:\n',df_latent_query[0:2])
+				print('component_matrix, dataframe of size ',df_component.shape)
+
+				if flag_2>0:
+					print('peak embeddings using %s, dataframe of size '%(feature_type_annot_query1),df_latent_peak.shape)
+					print('data preview:\n',df_latent_peak[0:2])
+
+			field_query_pre1 = ['dimension_model','latent','component']
+			field_query_1 = ['%s_%s'%(field_id_query,feature_type_query) for field_id_query in field_query_pre1]
+			list_query1 = [dimension_model, df_latent_query, df_component]
+			for (field_id1,query_value) in zip(field_query_1,list_query1):
+				dict_query1.update({field_id1:query_value})
 
 			if save_mode>0:
-				filename_save_annot_2 = '%s_%s'%(method_type,n_components_query)
-				output_filename_1 = '%s/%s.dimension_model.%s.%s.1.h5'%(output_file_path,filename_prefix_save,annot_str1,filename_save_annot_2)
+				filename_save_annot_2 = '%s.%s_%s'%(feature_type_query,method_type,n_components)
+				output_filename_1 = '%s/%s.dimension_model.%s.1.h5'%(output_file_path,filename_prefix_save,filename_save_annot_2)
 				pickle.dump(dimension_model, open(output_filename_1, 'wb'))
 
-				list_query2 = [df_latent_query,df_component]
 				field_query_2 = ['df_latent','df_component']
+				list_query2 = [df_latent_query,df_component]
 				for (field_id,df_query) in zip(field_query_2,list_query2):
 					filename_prefix_save_2 = '%s.%s'%(filename_prefix_save,field_id)
-					output_filename = '%s/%s.%s.%s.1.txt'%(output_file_path,filename_prefix_save_2,annot_str1,filename_save_annot_2)
+					output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix_save_2,filename_save_annot_2)
 					df_query.to_csv(output_filename,sep='\t',float_format=float_format)
 
 		return dict_query1
 
 	## ====================================================
-	# query peak-motif matrix and motif scores by motif scanning for given peak loci
-	# query TFs with expressions
-	def test_query_motif_data_annotation_1(self,data=[],data_file_type='',gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
+	# query peak-motif matrix and motif scores by motif scanning for peak loci
+	# query TFs with motifs and expressions
+	# to update
+	def test_query_motif_data_annotation_1(self,data=[],gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],verbose=0,select_config={}):
+
+		"""
+		query peak-motif matrix and motif scores by motif scanning for given peak loci;
+		query TFs with motifs and expressions;
+		:param data: dictionary containing motif scanning data used the method for initial prediction of peak-TF associations
+		:param gene_query_vec: (array) genes with expressions or TFs with expressions to include in analysis
+		:param feature_query_vec: (array) selected peak loci; if not specified, genome-wide peak loci are included
+		:param method_type: method used for initially predicting peak-TF associations
+		:param peak_read: (dataframe) peak accessibility matrix (row: metacell; column: peak)
+		:param rna_exprs: (dataframe) gene expression matrix (row: metacell; column: gene)
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1-2. (dataframe) binary matrix of motif presence in peak loci and motif score matrix by motif scanning (row: peak; column: TF (associated with motif))
+				 3. (array) TFs with motifs and expressions
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
 			dict_motif_data_ori = data
 			method_type_query = method_type
-			print(method_type_query)
+			print('method for predicting peak-TF associations: %s'(method_type_query))
 
 			if method_type_query in dict_motif_data_ori:
 				dict_motif_data = dict_motif_data_ori[method_type_query]
@@ -616,8 +462,8 @@ class _Base2_2(_Base_pre2):
 			if flag_1==0:
 				if len(peak_read)>0:
 					flag_1 = 1
-					peak_loc_1 = peak_read.columns
-
+					peak_loc_1 = peak_read.columns # use the peaks included in the peak accessibility matrix
+					
 			if flag_1>0:
 				motif_data_query1 = motif_data_query1.loc[peak_loc_1,:]
 
@@ -639,17 +485,23 @@ class _Base2_2(_Base_pre2):
 			else:
 				motif_data_score_query1 = motif_data_query1
 
-			# query TFs with expressions
-			motif_query_vec = self.test_query_motif_annotation_1(data=motif_data_query1,data_file_type=data_file_type,
-																	gene_query_vec=gene_query_vec,feature_query_vec=[],
-																	method_type='',peak_read=peak_read,rna_exprs=rna_exprs,
-																	save_mode=0,verbose=0,select_config=select_config)
+			# query TFs with motifs and expressions
+			motif_query_vec = self.test_query_motif_annotation_1(data=motif_data_query1,gene_query_vec=gene_query_vec,rna_exprs=rna_exprs)
 
 			return motif_data_query1, motif_data_score_query1, motif_query_vec
 
 	## ====================================================
-	# query TFs with expressions
-	def test_query_motif_annotation_1(self,data=[],data_file_type='',gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
+	# query TFs with motifs and expressions
+	# to update
+	def test_query_motif_annotation_1(self,data=[],gene_query_vec=[],rna_exprs=[]):
+
+		"""
+		query TFs with motifs and expressions
+		:param data: (dataframe) the motif scanning data matrix (row: peak; column: TF motif)
+		:param gene_query_vec: (array) genes with expression
+		:param rna_exprs: (dataframe) gene expression matrix (row: metacell; column: gene)
+		:return: (array) TFs with motifs and expressions
+		"""
 
 		motif_data_query1 = data
 		motif_name_ori = motif_data_query1.columns
@@ -657,8 +509,7 @@ class _Base2_2(_Base_pre2):
 			if len(rna_exprs)>0:
 				gene_name_expr_ori = rna_exprs.columns
 				gene_query_vec = gene_name_expr_ori
-				# motif_query_name_expr = pd.Index(motif_name_ori).intersection(gene_name_expr_ori,sort=False)
-
+				
 		if len(gene_query_vec)>0:
 			motif_query_vec = pd.Index(motif_name_ori).intersection(gene_query_vec,sort=False)
 			print('motif_query_vec (with expression): ',len(motif_query_vec))
@@ -668,47 +519,82 @@ class _Base2_2(_Base_pre2):
 		return motif_query_vec
 
 	## ====================================================
-	# compute feature embedding
-	def test_query_feature_mtx_1(self,feature_query_vec=[],feature_type_vec=[],gene_query_vec=[],method_type_vec_dimension=[],n_components=50,type_id_group=0,
-										motif_data=[],motif_data_score=[],motif_group=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
-										load_mode=0,input_file_path='',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=1,select_config={}):
+	# compute feature embeddings of observations
+	# to update
+	def test_query_feature_mtx_1(self,feature_query_vec=[],feature_type_vec=[],gene_query_vec=[],method_type_vec_dimension=[],n_components=50,
+										motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],load_mode=0,input_file_path='',
+										save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=1,select_config={}):
 
 		"""
-		compute feature embeddings of peak loci
-		parameters stored in select_config
-		return: dict_query1: {feature_type:latent score matrix}
+		compute feature embeddings of observations (peak loci)
+		:param feature_query_vec: (array) peak loci; if not specified, peaks in the peak accessibility matrix are included
+		:param feature_type_vec: (array or list) feature types of feature representations of the observations
+		:param gene_query_vec: (array) genes with expressions or TFs with expressions to include in analysis
+		:param method_type_vec_dimension: (array or list) methods for feature dimension reduction for the different feature types
+		:param n_components: (int) the nubmer of latent components used in feature dimension reduction 
+		:param type_id_group: (int) the type of peak-motif sequence feature to use: 0: use motifs of TFs with expressions; 1: use all TF motifs
+		:param motif_data: (dataframe) motif presence in peak loci by motif scanning (binary) (row:peak, column:TF (associated with motif))
+		:param motif_data_score: (dataframe) motif scores by motif scanning (row:peak, column:TF (associated with motif))
+		:param peak_read: (dataframe) peak accessibility matrix (normalized and log-transformed) (row:metacell, column:peak)
+		:param rna_exprs: (dataframe) gene expression matrix (row:metacell, column:gene)
+		:param load_mode: indicator of whether to compute feature embedding or load embeddings from saved files
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing feature embeddings of observations for each feature type
 		"""
 
 		if len(method_type_vec_dimension)==0:
-			method_type_vec_dimension = ['SVD','SVD','SVD']
-		
-		float_format='%.6f'
+			feature_type_num = len(feature_type_vec)
+			method_type_vec_dimension = ['SVD']*feature_type_num
+
+		column_1 = 'type_id_group'
+		if column_1 in select_config:
+			type_id_group = select_config[column_1]
+		else:
+			type_id_group = 0
+			select_config.update({column_1:type_id_group})
+
 		filename_prefix_save_2 = '%s.%d'%(filename_prefix_save,type_id_group)
 
 		latent_peak = []
 		latent_peak_motif,latent_peak_motif_ori = [], []
 		latent_peak_tf_link = []
-		peak_query_vec_pre1 = feature_query_vec
+		if len(feature_query_vec)==0:
+			feature_query_vec = peak_read.columns # include peaks in peak accessibility matrix
+
 		flag_shuffle = False
-		load_mode_2 = load_mode
+		sub_sample = -1
+		float_format='%.6f'
+		verbose_internal = self.verbose_internal
+		if load_mode==0:
+			# perform feature dimension reduction
+			# dict_query1: {'latent_peak_tf','latent_peak_motif','latent_peak_motif_ori'}
+			dict_query1 = self.test_query_feature_pre1(peak_query_vec=feature_query_vec,
+														gene_query_vec=gene_query_vec,
+														method_type_vec=method_type_vec_dimension,
+														motif_data=motif_data,motif_data_score=motif_data_score,
+														peak_read=peak_read,rna_exprs=rna_exprs,
+														n_components=n_components,
+														sub_sample=sub_sample,
+														flag_shuffle=flag_shuffle,float_format=float_format,
+														input_file_path=input_file_path,
+														save_mode=save_mode,output_file_path=output_file_path,output_filename='',
+														filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,
+														verbose=verbose,select_config=select_config)
 
-		# perform feature dimension reduction
-		if load_mode_2==0:
-			# dict_query1: {'latent_peak_tf','latent_gene','latent_peak_motif','latent_peak_motif_ori'}
-			dict_query1 = self.test_query_feature_pre1_2(peak_query_vec=peak_query_vec_pre1,gene_query_vec=gene_query_vec,
-															motif_data=motif_data,motif_data_score=motif_data_score,motif_group=motif_group,
-															method_type_vec=method_type_vec_dimension,
-															peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-															n_components=n_components,sub_sample=-1,flag_shuffle=flag_shuffle,float_format=float_format,
-															input_file_path=input_file_path,save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save_2,filename_save_annot=filename_save_annot,output_filename='',verbose=verbose,select_config=select_config)
-
-		elif load_mode_2==1:
+		elif load_mode==1:
+			# load computed feature embeddings
 			input_file_path_query = output_file_path
 			annot_str_vec = ['peak_motif','peak_tf']
+			annot_str_vec_2 = ['peak-motif sequence feature','peak accessibility']
 			field_query_2 = ['df_latent','df_component']
 			dict_query1 = dict()
 
-			# field_num = len(field_query)
 			query_num = len(annot_str_vec)
 			for i2 in range(query_num):
 				method_type_dimension = method_type_vec_dimension[i2]
@@ -718,65 +604,70 @@ class _Base2_2(_Base_pre2):
 				field_id1 = 'df_latent'
 				
 				filename_prefix_save_query = '%s.%s'%(filename_prefix_save_2,field_id1)
-				# input_filename = 'pbmc.pre1.0.df_latent.peak_tf.SVD_100.1.txt'
 				input_filename = '%s/%s.%s.%s.1.txt'%(input_file_path_query,filename_prefix_save_query,annot_str1,filename_save_annot_2)
 				df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
-				print('df_query: ',df_query.shape,annot_str1)
-				print(df_query[0:2])
 
-				if i2==0:
-					peak_query_vec_pre1 = df_query.index
-					# field_id2 = field_query[i2+1]
-					field_id2 = 'latent_%s'%(annot_str1)
-					dict_query1.update({field_id2:df_query})
-				else:
-					feature_query_pre1 = df_query.index
-					feature_vec_2 = pd.Index(peak_query_vec_pre1).intersection(feature_query_pre1,sort=False)
-					feature_vec_3 = pd.Index(feature_query_pre1).difference(peak_query_vec_pre1,sort=False)
+				if verbose_internal>0:
+					print('feature embedding using %s, dataframe of size '%(annot_str_vec_2[i2]),df_query.shape)
+					print('data preview:\n ',df_query[0:2])
 
-					# latent_peak = df_query.loc[peak_query_vec_pre1,:]
-					feature_query_pre2 = list(feature_vec_2)+list(feature_vec_3)
-					feature_query_pre2 = pd.Index(feature_query_pre2)
-					
-					df_query = df_query.loc[feature_query_pre2,:]
-					field_id2 = 'latent_%s'%(annot_str1)
-					dict_query1.update({field_id2:df_query})
+				feature_query_pre1 = df_query.index
+				feature_query_pre2 = pd.Index(feature_query_vec).intersection(feature_query_pre1,sort=False)
+				df_query = df_query.loc[feature_query_pre2,:]
+				field_id2 = 'latent_%s'%(annot_str1)
+				dict_query1.update({field_id2:df_query})
 
-					motif_query_vec = gene_query_vec
-					if len(motif_query_vec)==0:
-						motif_query_vec = feature_vec_3
-					
-					if len(motif_query_vec)>0:
-						feature_query_1 = feature_query_pre1.difference(motif_query_vec,sort=False)
-						feature_query_2 = pd.Index(peak_query_vec_pre1).intersection(feature_query_1,sort=False)
-						feature_query_3 = pd.Index(peak_query_vec_pre1).difference(feature_query_1,sort=False)
-						print('feature_query_2: ',len(feature_query_2))
-						print('feature_query_3: ',len(feature_query_3))
+				if annot_str1 in ['peak_tf']:
+					feature_vec_2 = pd.Index(feature_query_pre1).difference(feature_query_vec,sort=False)
+					feature_vec_3 = pd.Index(feature_query_vec).difference(feature_query_pre1,sort=False)
+					if len(gene_query_vec)==0:
+						gene_query_pre2 = feature_vec_2
+					else:
+						gene_query_pre2 = pd.Index(gene_query_vec).intersection(feature_query_pre1,sort=False)
 
-						latent_peak = df_query.loc[peak_query_vec_pre1,:]
-						print('latent_peak: ',latent_peak.shape)
-						print(latent_peak[0:2])
-						dict_query1.update({'latent_peak':latent_peak})
-						
-						motif_query_2 = pd.Index(motif_query_vec).intersection(feature_query_pre1,sort=False)
-						if len(motif_query_2)>0:
-							latent_gene = df_query.loc[motif_query_2,:]
-							print('latent_gene: ',latent_gene.shape)
-							print(latent_gene[0:2])
-							# dict_query1.update({'latent_peak':latent_peak,'latent_gene':latent_gene})
-							dict_query1.update({'latent_gene':latent_gene})
+					latent_gene = df_query.loc[gene_query_pre2,:]
+					if verbose_internal==2:
+						print('feature_vec_2: %d',len(feature_vec_2))
+						print('feature_vec_3: %d',len(feature_vec_3))
+						print('latent_gene, dataframe of size ',latent_gene.shape)
+						print('data preview:\n',latent_gene[0:2])
+					dict_query1.update({'latent_gene':latent_gene})
 
 		return dict_query1
 
-	## query feature enrichment
-	# query the enrichment of predicted peak loci in one type of group
-	def test_query_enrichment_group_1_unit1(self,data=[],dict_group=[],dict_thresh=[],group_type_vec=['group1','group2'],column_vec_query=[],flag_enrichment=1,flag_size=0,type_id_1=1,type_id_2=0,save_mode=0,verbose=0,select_config={}):
+	## ====================================================
+	# select groups for each feature type based on enrichment of peak loci with predicted TF binding and peak number
+	# to update
+	def test_query_enrichment_group_1(self,data=[],dict_group=[],dict_thresh=[],group_type_vec=['group1','group2'],column_vec_query=[],
+										flag_enrichment=1,flag_size=1,type_id_1=1,type_id_2=1,save_mode=0,verbose=0,select_config={}):
+		
+		"""
+		select groups for each feature type based on enrichment of peak loci with predicted TF binding and peak number
+		:param data: (dataframe) annotations containing the number and percentage of specific peaks in each group for each feature type
+		:param dict_group: dictionary of the group assignment of peaks in each feature space
+		:param dict_thresh: dictionary containing thresholds for group (or paired groups) selection using peak number and peak enrichment
+		:param group_type_vec: (array or list) group name for different feature types
+		:param column_vec_query: (array or list) columns representing peak number in each group and p-value of peak enrichment in each group by statistical test
+		:param flag_enrichment: indicator of whether to select groups using peak enrichment 
+		:param flag_size: indicator of whether to select groups using peak number
+		:param type_id_1: indicator of whether to adjust the threshold on peak number for group selection
+		:param type_id_2: indicator of which criteria to use to select groups:
+						  0: selecting based on both peak enrichment and peak number; 
+						  1: selecting based on peak enrichment or peak number; 
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing a list with two elements for each feature type:
+		         1. (dataframe) the annotations of groups selected based on peak enrichment and peak number;
+				 2. dictionary containing two dataframes of group annotations:
+				 	2.1 groups selected based on peak enrichment and requiring peak number above a threshold
+				 	2.2 groups selected based on peak number only 
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
-			# df_overlap_query = data
-			df_query_1 = data  # the number and percentage of feature query in each group 
-			dict_group_basic = dict_group # the group annotation of feature query
+			df_query_1 = data  # the number and percentage of peaks in each group 
+			dict_group_basic = dict_group # the group assignment of peaks in each feature space
 
 			thresh_overlap_default_1 = 0
 			thresh_overlap_default_2 = 0
@@ -790,73 +681,116 @@ class _Base2_2(_Base_pre2):
 
 			flag_1 = 1
 			if flag_1>0:
-				## feature type 1: motif feature
+				# feature type 1: peak-motif sequence feature
 				group_type_1 = group_type_vec[0]
 				id1 = (df_query_1['group_type']==group_type_1)
 				df_query1_1 = df_query_1.loc[id1,:]
-				# query the enrichment of predicted peak loci in paired groups
-				df_query_group1_1, dict_query_group1_1 = self.test_query_enrichment_group_2_unit1(data=df_query1_1,dict_group=dict_group,dict_thresh=dict_thresh,column_vec_query=column_vec_query,flag_enrichment=flag_enrichment,flag_size=flag_size,type_id_1=type_id_1,type_id_2=type_id_2,
-																									save_mode=save_mode,verbose=verbose,select_config=select_config)
+				# query the enrichment of peak loci with predicted TF binding in each group in feature space 1
+				df_query_group1_1, dict_query_group1_1 = self.test_query_enrichment_group_2(data=df_query1_1,
+																							dict_thresh=dict_thresh,
+																							column_vec_query=column_vec_query,
+																							flag_enrichment=flag_enrichment,
+																							flag_size=flag_size,
+																							type_id_1=type_id_1,
+																							type_id_2=type_id_2,
+																							type_group=0,
+																							save_mode=save_mode,verbose=verbose,select_config=select_config)
 				
 				list1 = [df_query_group1_1, dict_query_group1_1]
 				dict_query_1 = {group_type_1:list1}
 
 				if len(group_type_vec)>1:
+					# feature type 2: peak accessibility feature
 					group_type_2 = group_type_vec[1]
 					id2 = (df_query_1['group_type']==group_type_2)
 					df_query1_2 = df_query_1.loc[id2,:]
-					# query the enrichment of predicted peak loci in paired groups
-					df_query_group2_1, dict_query_group2_1 = self.test_query_enrichment_group_2_unit1(data=df_query1_2,dict_group=dict_group,dict_thresh=dict_thresh,column_vec_query=column_vec_query,flag_enrichment=flag_enrichment,flag_size=flag_size,type_id_1=type_id_1,type_id_2=type_id_2,
-																										save_mode=save_mode,verbose=verbose,select_config=select_config)
+					# query the enrichment of peak loci with predicted TF binding in each group in feature space 2
+					df_query_group2_1, dict_query_group2_1 = self.test_query_enrichment_group_2(data=df_query1_2,
+																								dict_thresh=dict_thresh,
+																								column_vec_query=column_vec_query,
+																								flag_enrichment=flag_enrichment,
+																								flag_size=flag_size,
+																								type_id_1=type_id_1,
+																								stype_id_2=type_id_2,
+																								type_group=0,
+																								save_mode=save_mode,verbose=verbose,select_config=select_config)
 
 					list2 = [df_query_group2_1,dict_query_group2_1]
 					dict_query_1.update({group_type_2:list2})
 
 			return dict_query_1
 
-	## query feature enrichment
-	# query the enrichment of peak loci with predicted TF binding in paired groups
-	def test_query_enrichment_group_2_unit1(self,data=[],dict_group=[],dict_thresh=[],group_type_vec=['group1','group2'],column_vec_query=['overlap','pval_fisher_exact_'],flag_enrichment=1,flag_size=0,type_id_1=1,type_id_2=0,save_mode=0,verbose=0,select_config={}):
+	## ====================================================
+	# select groups for each feature type or paired groups based on enrichment of peak loci with predicted TF binding and peak number
+	# to update
+	def test_query_enrichment_group_2(self,data=[],dict_thresh=[],thresh_overlap=0,thresh_quantile=-1,thresh_pval=0.25,
+										group_type_vec=['group1','group2'],column_vec_query=[],flag_enrichment=1,flag_size=0,
+										type_id_1=1,type_id_2=0,type_group=0,save_mode=0,verbose=0,select_config={}):
+
+		"""
+		select groups for each feature type or paired groups based on enrichment of peak loci with predicted TF binding and peak number
+		:param data: (dataframe) annotations containing the number of specific peaks in each group (or paired groups)
+		:param dict_thresh: dictionary containing thresholds for group (or paired groups) selection using peak number and peak enrichment
+		:param thresh_overlap: threshold on peak number in group or (paired groups) for group (or paired groups) selection
+		:param thresh_quantile: threshold on the quantile of peak number in group (or paired groups) for selection
+		:param thresh_pval: threshold on p-value of peak enrichment in group (or paired groups) for selection
+		:param column_vec_query: (array or list) columns representing peak number in each group (or paired groups) and p-value of peak enrichment in each group (or paired groups) by statistical test
+		:param flag_enrichment: indicator of whether to select groups (or paired groups) using peak enrichment 
+		:param flag_size: indicator of whether to select groups (or paired groups) using peak number
+		:param type_id_1: indicator of whether to adjust the threshold on peak number for group selection
+		:param type_id_2: indicator of which criteria to use to select groups:
+						  0: selecting based on both peak enrichment and peak number; 
+						  1: selecting based on peak enrichment or peak number; 
+		:param type_group: the type of group: 0: groups in one feature space; 
+											  1: paired groups representing the intersection of members of each pair of groups in the two feature spaces;
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the annotations of groups (or paired groups) selected based on peak enrichment and peak number
+				 2. dictionary containing two dataframes of group (or paired groups) annotations:
+				 	2.1 groups selected based on peak enrichment and requiring peak number above a threshold
+				 	2.2 groups selected based on peak number only
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
 			df_overlap_query = data
-			df_query_1 = df_overlap_query # the overlaping between groups
-			# dict_group_basic = dict_group # the group annotation of feature query
-
+			df_query_1 = df_overlap_query # annotations containing the number and percentage of specific peaks in each group (or paired groups)
+			
 			thresh_overlap_default_1 = 0
 			thresh_overlap_default_2 = 0
-			thresh_overlap = 0
-			# thresh_pval_1 = 0.20
-			thresh_pval_1 = 0.25
+			thresh_pval_1 = thresh_pval
 
 			column_1 = 'thresh_overlap_default_1'
 			column_2 = 'thresh_overlap_default_2'
 			column_3 = 'thresh_overlap'
 			column_pval = 'thresh_pval_1'
-			column_query1, column_query2 = column_vec_query[0:2]
-			# id1 = (df_overlap_query['overlap']>thresh_value_overlap)
-			# id2 = (df_overlap_query['pval_chi2_']<thresh_pval_1)
+
+			if len(column_vec_query)==0:
+				column_vec_query=['overlap','pval_fisher_exact_']
+
+			column_query1, column_query2 = column_vec_query[0:2] # columns representing peak number in groups and p-value of peak enrichment in groups by statistical test
 			verbose_internal = self.verbose_internal
 
-			enrichment_query = flag_enrichment
+			group_annot_vec = ['groups','paired groups']
+			group_annot = group_annot_vec[type_group]
+
 			df_overlap_query_pre1 = df_overlap_query
 			dict_query = dict()
 			if verbose_internal>0:
-				print('the number of paired groups: ',df_query_1.shape[0])
+				print('the number of %s: %d'%(group_annot,df_query_1.shape[0]))
 
 			if flag_enrichment>0:
-				# print('select group based on enrichment')
-				print('select paired group based on enrichment of peaks with predicted TF binding')
+				print('select %s based on enrichment of peaks with predicted TF binding'%(group_annot))
 				if column_1 in dict_thresh:
-					thresh_overlap_default_1 = dict_thresh[column_1]
+					thresh_overlap_default_1 = dict_thresh[column_1] # threshold on candidate peak number (predicted TF-binding peaks) in the group
 
 				if column_pval in dict_thresh:
-					thresh_pval_1 = dict_thresh[column_pval]
+					thresh_pval_1 = dict_thresh[column_pval]	# threshold on p-value of candidate peak enrichment in the group by statistical test
 
 				flag1=0
 				try:
-					id1 = (df_query_1[column_query1]>thresh_overlap_default_1)
+					id1 = (df_query_1[column_query1]>thresh_overlap_default_1) # requiring candidate peak number above the threshold
 				except Exception as error:
 					print('error! ',error)
 					flag1=1
@@ -867,6 +801,7 @@ class _Base2_2(_Base_pre2):
 				except Exception as error:
 					print('error! ',error)
 					try: 
+						# if Fisher's exact test was not perfomed, using p-value of candidate peak enrichment by chi-squared test
 						column_query2_1 = 'pval_chi2_'
 						id2 = (df_query_1[column_query2_1]<thresh_pval_1)
 					except Exception as error:
@@ -876,31 +811,28 @@ class _Base2_2(_Base_pre2):
 				id_1 = []
 				if (flag2==0):
 					if (flag1==0):
-						id_1 = (id1&id2)
+						id_1 = (id1&id2)  # selections based on candidate peak number and enrichment in the group were both performed
 					else:
-						id_1 = id2
+						id_1 = id2  # select groups based on candidate peak enrichment only
 				else:
 					if (flag1==0):
-						id_1 = id1
+						id_1 = id1 	# select groups based on candidate peak number only
 
 				if (flag1+flag2<2):
 					df_overlap_query1 = df_query_1.loc[id_1,:]
 					if verbose_internal>0:
-						print('the number of selected paired groups with enrichment of predicted TF-binding peaks above threshold: ',df_overlap_query1.shape[0])
+						print('the number of selected %s enriched with predicted TF-binding peaks above threshold: '%(group_annot),df_overlap_query1.shape[0])
 				else:
 					df_overlap_query1 = []
 					if verbose_internal>0:
-						# print('df_overlap_query, df_overlap_query1: ',df_query_1.shape,len(df_overlap_query1))
-						print('lacking information to select paired groups')
+						print('lacking information to select %s'%(group_annot))
 
 			df_query_2 = df_query_1.loc[df_query_1[column_query1]>0]
 			if verbose_internal>0:
-				# print('the original overlap, the overlap with number above zero')
-				# print('df_query_1, df_query_2: ',df_query_1.shape,df_query_2.shape)
-				print('the number of paired groups with predicted TF-binding peak number above zero: ',df_query_2.shape[0])
+				print('the number of %s with predicted TF-binding peak number above zero: '%(group_annot),df_query_2.shape[0])
 
-			query_value_1 = df_query_1[column_query1]
-			query_value_2 = df_query_2[column_query1]
+			query_value_1 = df_query_1[column_query1] 	# candidate peak number in each group
+			query_value_2 = df_query_2[column_query1]	# candidate peak number in groups with candidate peak number above zero
 			quantile_vec_1 = [0.05,0.10,0.25,0.50,0.75,0.90,0.95]
 			query_vec_1 = ['max','min','mean','median']+['percentile_%.2f'%(percentile) for percentile in quantile_vec_1]
 			t_value_1 = utility_1.test_stat_1(query_value_1,quantile_vec=quantile_vec_1)
@@ -910,100 +842,94 @@ class _Base2_2(_Base_pre2):
 			dict_query.update({'group_size_query':df_quantile_1})
 
 			if flag_size>0:
-				# print('select paired group based on the number of members')
-				print('select paired group based on the number of peaks with predicted TF binding')
+				print('select %s based on the number of peaks with predicted TF binding'%(group_annot))
 				if column_2 in dict_thresh:
 					thresh_overlap_default_2 = dict_thresh[column_2]
 
 				if column_3 in dict_thresh:
 					thresh_overlap = dict_thresh[column_3]
 
-				# thresh_quantile_1 = 0.25
-				thresh_quantile_1 = -1
+				thresh_quantile_1 = thresh_quantile
 				column_pre2 = 'thresh_quantile_overlap'
 				if column_pre2 in dict_thresh:
 					thresh_quantile_1 = dict_thresh[column_pre2]
-					# print('thresh_quantile_1: ',thresh_quantile_1)
-					print('threshold on the quantile of number of peaks with predicted TF binding in paired group: ',thresh_quantile_1)
+					print('threshold on the quantile of the number of predicted TF-binding peaks in the %s: '%(group_annot),thresh_quantile_1)
 				
-				# df_query_2 = df_query_1.loc[df_query_1[column_query1]>0]
-				# print('the original overlap, the overlap with number above zero')
-				# print('df_query_1, df_query_2: ',df_query_1.shape,df_query_2.shape)
 				if thresh_quantile_1>0:
+					# use threshold by quantile
 					query_value = df_query_2[column_query1]
-					thresh_size_1 = np.quantile(query_value,thresh_quantile_1)
-
+					thresh_size_1 = np.quantile(query_value,thresh_quantile_1) 
 					if type_id_1>0:
 						thresh_size_ori = thresh_size_1
 						thresh_size_1 = np.max([thresh_overlap_default_2,thresh_size_1])
 				else:
-					thresh_size_1 = thresh_overlap
+					thresh_size_1 = thresh_overlap  # use the specified threshold by candidate peak number
 
 				id_2 = (df_query_1[column_query1]>=thresh_size_1)
-				df_overlap_query2 = df_query_1.loc[id_2,:]
+				df_overlap_query2 = df_query_1.loc[id_2,:]  # select groups with candidate peak number above threshold
 				if verbose_internal>0:
-					# print('the original overlap, the overlap with number above the threshold')
-					# print('df_overlap_query, df_overlap_query2: ',df_query_1.shape,df_overlap_query2.shape)
-					 #print('thresh_size_1: ',thresh_size_1)
-					print('the number of paired groups: ',df_query_1.shape[0])
-					print('the number of paired groups with predicted TF-binding peak number above threshold: ',df_overlap_query2.shape[0])
-					# print('thresh_size_1: ',thresh_size_1)
+					print('the number of %s: %d'%(group_annot,df_query_1.shape[0]))
+					print('the number of %s with predicted TF-binding peak number above threshold: %d'%(group_annot,df_overlap_query2.shape[0]))
 					print('threshold on the predicted TF-binding peak number: ',thresh_size_1)
 
-				if enrichment_query>0:
+				if flag_enrichment>0:
 					if type_id_2==0:
-						id_pre1 = (id_1&id_2)
+						id_pre1 = (id_1&id_2) # select groups (or paired groups) based on both candiate peak enrichment and number
 					else:
-						id_pre1 = (id_1|id_2)
+						id_pre1 = (id_1|id_2) # select groups (or paired groups) based on candiate peak enrichment or number
 					df_overlap_query_pre1 = df_query_1.loc[id_pre1,:]
 
-					df_overlap_query_pre1.loc[id_1,'enrichment'] = 1
-					df_overlap_query_pre1.loc[id_2,'group_size'] = 1
+					df_overlap_query_pre1.loc[id_1,'enrichment'] = 1  # the groups (or paired groups) with candiate peak enrichment above threshold
+					df_overlap_query_pre1.loc[id_2,'group_size'] = 1  # the groups (or paired groups) with candiate peak number above threshold
 					if verbose_internal>0:
-						# print('df_overlap_query, df_overlap_query_pre1: ',df_query_1.shape,df_overlap_query_pre1.shape)
 						if type_id_2==0:
 							annot_str_1 = 'peak number and peak enrichment'
 						else:
 							annot_str_1 = 'peak number or peak enrichment'
-						print('the number of selected paired groups using thresholds on %s: '%(annot_str_1),df_overlap_query_pre1.shape[0])
+						print('the number of selected %s using thresholds on %s: %d'%(group_annot,annot_str_1,df_overlap_query_pre1.shape[0]))
 				else:
-					df_overlap_query_pre1 = df_overlap_query2
+					df_overlap_query_pre1 = df_overlap_query2  # select groups (or paired groups) based on candidate peak number only
 			else:
-				df_overlap_query_pre1 = df_overlap_query1
+				df_overlap_query_pre1 = df_overlap_query1    # select groups (or paired groups) based on candidate peak enrichment and requiring peak number above a threshold
 
 			dict_query.update({'enrichment':df_overlap_query1,'group_size':df_overlap_query2})
 			return df_overlap_query_pre1, dict_query
 
-	## select training sample
-	# select pseudo positive training sample
-	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id='',method_type_feature_link='',dict_thresh=[],thresh_vec=[],input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
+	## ====================================================
+	# select paired groups based on enrichment of peak loci with predicted TF binding and peak number
+	# to update
+	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id='',dict_thresh=[],thresh_vec=[],flag_select_2=0,input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
 
+		"""
+		# select paired groups based on enrichment of peak loci with predicted TF binding and peak number
+		:param data: (dataframe) peak annotations including group assignment in the two feature spaces
+		:param dict_annot: dictionary containing the following data:
+						   1. (dataframe) annotations containing the number and percentage of candiate peaks (peaks with initially predicted TF binding) in each group for each feature type
+						   2. dictionary of the group assignment of peaks in each feature space
+						   3. (dataframe) annotations containing the number of candidate peaks in paired groups
+		:param motif_id: (str) name of the TF for which to predict binding in peak loci
+		:param dict_thresh: dictionary containing thresholds for group (or paired groups) selection using peak number and peak enrichment
+		:param thresh_vec: (array or list) thresholds for group (or paired groups) selection using peak number and peak enrichment
+		:param flag_select_2: indicator of whether to include paired groups without candidate peak enrichment but associated with a group with enrichment of candidate peaks in the individual feature space
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (dataframe) the updated peak annotations with the column representing selected paired groups
+		"""
+
+		df_query1 = data   # peak annotations including group assignment in the two feature spaces
 		flag_select_1=1
-		# column_pred1 = '%s.pred'%(method_type_feature_link)
-		column_pred1 = select_config['column_pred1']
-		df_query1 = data
-		id_pred1 = (df_query1[column_pred1]>0)
-		peak_loc_pre1 = df_query1.index
-		# df_query2 = df_query1.loc[id_pred1,:]
-		peak_loc_pred1 = peak_loc_pre1[id_pred1]
-
-		# column_corr_1 = field_id1
-		# column_pval = field_id2
-		column_corr_1 = 'peak_tf_corr'
-		column_pval = 'peak_tf_pval_corrected'
-		thresh_corr_1, thresh_pval_1 = 0.30, 0.05
-		thresh_corr_2, thresh_pval_2 = 0.1, 0.1
-		thresh_corr_3, thresh_pval_2 = 0.05, 0.1
-		verbose_internal = self.verbose_internal
-
 		if flag_select_1>0:
-			# find the paired groups with enrichment
+			# search for the paired groups with enrichment of peak loci with initially predicted TF binding
 			column_1 = 'thresh_overlap_default_1'
 			column_2 = 'thresh_overlap_default_2'
 			column_3 = 'thresh_overlap'
 			column_pval_group = 'thresh_pval_1'
 			column_quantile = 'thresh_quantile_overlap'
 			column_thresh_query = [column_1,column_2,column_3,column_pval_group,column_quantile]
+			verbose_internal = self.verbose_internal
 
 			if len(dict_thresh)==0:
 				if len(thresh_vec)==0:
@@ -1011,23 +937,21 @@ class _Base2_2(_Base_pre2):
 					thresh_overlap_default_2 = 0
 					thresh_overlap = 0
 									
-					# thresh_pval_1 = 0.10
-					# thresh_pval_1 = 0.20
+					# thresh_pval_group = 0.20
 					thresh_pval_group = 0.25
-					# thresh_quantile_overlap = 0.50
 					thresh_quantile_overlap = 0.75
 					thresh_vec = [thresh_overlap_default_1,thresh_overlap_default_2,thresh_overlap,thresh_pval_group,thresh_quantile_overlap]
 				
+				# dictionary containing thresholds for group selection using peak number and peak enrichment
 				dict_thresh = dict(zip(column_thresh_query,thresh_vec))
 
-			# query the enrichment of predicted peak loci in one type of group
+			# -----------------------------------------------------
+			# select groups for each feature type based on enrichment of peak loci with predicted TF binding and peak number
 			group_type_vec = ['group1','group2']
 			df_group_basic_query_2 = dict_annot['df_group_basic_query_2']
 			dict_group_basic_2 = dict_annot['dict_group_basic_2']
 
 			if verbose_internal>0:
-				# print('df_group_basic_query_2: ',df_group_basic_query_2.shape)
-				# print(df_group_basic_query_2.columns)
 				print('peak group annotation, dataframe of size ',df_group_basic_query_2.shape)
 				print('columns: ',np.asarray(df_group_basic_query_2.columns))
 				print('data preview: ')
@@ -1037,13 +961,17 @@ class _Base2_2(_Base_pre2):
 			flag_enrichment = 1
 			flag_size = 1
 			type_id_1, type_id_2 = 1, 1
-			# dict_query = {'enrichment':df_overlap_query1,'group_size':df_overlap_query2}
-			dict_query_pre1 = self.test_query_enrichment_group_1_unit1(data=df_group_basic_query_2,dict_group=dict_group_basic_2,dict_thresh=dict_thresh,
-																				group_type_vec=group_type_vec,
-																				column_vec_query=column_vec_query,
-																				flag_enrichment=flag_enrichment,flag_size=flag_size,
-																				type_id_1=type_id_1,type_id_2=type_id_2,
-																				save_mode=1,verbose=verbose,select_config=select_config)
+
+			dict_query_pre1 = self.test_query_enrichment_group_1(data=df_group_basic_query_2,
+																	dict_group=dict_group_basic_2,
+																	dict_thresh=dict_thresh,
+																	group_type_vec=group_type_vec,
+																	column_vec_query=column_vec_query,
+																	flag_enrichment=flag_enrichment,
+																	flag_size=flag_size,
+																	type_id_1=type_id_1,
+																	type_id_2=type_id_2,
+																	save_mode=1,verbose=verbose,select_config=select_config)
 							
 			group_type_1, group_type_2 = group_type_vec[0:2]
 			df_query_group1_1,dict_query_group1_1 = dict_query_pre1[group_type_1]
@@ -1053,20 +981,15 @@ class _Base2_2(_Base_pre2):
 			field_id1, field_id2 = field_query_2[0:2]
 			field_id3 = field_query_2[2]
 
-			list_query1 = []
 			dict_query1 = dict()
-			data_file_type_query = select_config['data_file_type']
-			config_id_load = select_config['config_id_load']
-			method_type_group = select_config['method_type_group']
-			n_neighbors = select_config['neighbor_num']
 			save_mode_2 = 0
+
 			for group_type in group_type_vec:
 				print('group_type: ',group_type)
 				dict_query_group = dict_query_pre1[group_type][1]
 				group_vec_query1_1 = dict_query_group[field_id1].index.unique()
 				group_vec_query2_1 = dict_query_group[field_id2].index.unique()
 				group_num1_1, group_num2_1 = len(group_vec_query1_1), len(group_vec_query2_1)
-				# list_query1.append([group_vec_query1_1,group_vec_query2_1])
 				dict_query1.update({group_type:[group_vec_query1_1,group_vec_query2_1]})
 				
 				if verbose_internal>0:
@@ -1075,41 +998,46 @@ class _Base2_2(_Base_pre2):
 					print('the number of groups with predicted TF-binding peak number above threshold: %d'%(group_num2_1))
 					print('groups: ',np.asarray(group_vec_query2_1))
 
-				df_quantile_1 = dict_query_group[field_id3]
-
-				filename_link_annot = select_config['filename_annot']
 				if save_mode_2>0:
+					df_quantile_1 = dict_query_group[field_id3]
+					filename_link_annot = select_config['filename_annot']
 					output_filename = '%s/test_query_quantile.%s.%s.txt'%(output_file_path,motif_id,filename_link_annot)
 					df_quantile_1.to_csv(output_filename,sep='\t')
 
 			group_vec_query1_1, group_vec_query2_1 = dict_query1[group_type_1]
 			group_vec_query1_2, group_vec_query2_2 = dict_query1[group_type_2]
 
-			# query the enrichment of predicted peak loci in paired groups
+			# -----------------------------------------------------
+			# select paired groups based on enrichment of peak loci with predicted TF binding and peak number
 			column_vec_query_2 = ['overlap','pval_fisher_exact_']
 			flag_enrichment = 1
 			flag_size = 1
 			type_id_1, type_id_2 = 1, 1
 			df_overlap_query = dict_annot['df_overlap_query']
-			# query the enrichment of peak loci with predicted TF binding in paired groups
-			df_overlap_query_pre2, dict_query_pre2 = self.test_query_enrichment_group_2_unit1(data=df_overlap_query,dict_group=[],dict_thresh=dict_thresh,group_type_vec=group_type_vec,
-																									column_vec_query=column_vec_query_2,flag_enrichment=flag_enrichment,flag_size=flag_size,type_id_1=type_id_1,type_id_2=type_id_2,
-																									save_mode=1,verbose=verbose,select_config=select_config)
+
+			df_overlap_query_pre2, dict_query_pre2 = self.test_query_enrichment_group_2(data=df_overlap_query,
+																						dict_thresh=dict_thresh,
+																						group_type_vec=group_type_vec,
+																						column_vec_query=column_vec_query_2,
+																						flag_enrichment=flag_enrichment,
+																						flag_size=flag_size,
+																						type_id_1=type_id_1,
+																						type_id_2=type_id_2,
+																						type_group=1,
+																						save_mode=1,verbose=verbose,select_config=select_config)
 			
 			group_vec_query2 = np.asarray(df_overlap_query_pre2.loc[:,group_type_vec].astype(int))
 			group_num_2 = len(group_vec_query2)
 			if verbose_internal>0:
-				# print('group_vec_query2: ',group_num_2)
-				# print(group_vec_query2[0:5])
 				print('the number of selected paired groups: %d'%(group_num_2))
 				print('preview: ')
 				print(group_vec_query2[0:5])
 
-			df_1 = dict_query_pre2[field_id1] # group with enrichment above threshold
+			df_1 = dict_query_pre2[field_id1] # paired groups with peak enrichment above threshold
 			group_vec_query1_pre2 = df_1.loc[:,group_type_vec].astype(int)
 			group_num1_pre2 = len(group_vec_query1_pre2)
 			
-			df_2 = dict_query_pre2[field_id2] # group with group_size above threshold
+			df_2 = dict_query_pre2[field_id2] # paired groups with group size above threshold
 			group_vec_query2_pre2 = df_2.loc[:,group_type_vec].astype(int)
 			group_num2_pre2 = len(group_vec_query2_pre2)
 
@@ -1127,42 +1055,35 @@ class _Base2_2(_Base_pre2):
 			group_vec_2_overlap = group_vec_query1_pre2[group_type_2].unique()
 
 			group_vec_pre1 = pd.Index(group_vec_1).difference(group_vec_1_overlap,sort=False)
+			group_vec_pre2 = pd.Index(group_vec_2).difference(group_vec_2_overlap,sort=False)
+			
+			list_query1 = [group_vec_pre1,group_vec_pre2]
+			feature_type_num = len(list_query)
 			if verbose_internal>0:
-				# print('group with enrichment in feature type 1 but not enriched in joint groups')
-				# print('group_vec_pre1: ',len(group_vec_pre1))
-				print('the number of groups with enrichment in feature type 1 but not enriched in paired groups: %d'%(len(group_vec_pre1)))
+				for i1 in range(feature_type_num):
+					group_vec_query = list_query1[i1]
+					print('the number of groups with enrichment for feature type %d but not enriched in paired groups: %d'%(i1+1,len(group_vec_query)))
 
-			# df1_query2 = df_overlap_query.loc[df_overlap_query[group_type_1].isin(group_vec_pre1),:]
 			list1 = []
+			list2 = []
 			column_query1, column_query2 = column_vec_query_2[0:2]
 			df_overlap_query = df_overlap_query.sort_values(by=['pval_fisher_exact_'],ascending=True)
 			thresh_size_query1 = 1
 
-			flag_group_pre2 = 0
-			if flag_group_pre2>0:
-				for group_type_query in group_vec_pre1:
-					df1 = df_overlap_query.loc[df_overlap_query[group_type_1]==group_type_query,:]
-					df1_1 = df1.loc[df1[column_query1]>thresh_size_query1,:]
-					group_query_1 = np.asarray(df1.loc[:,group_type_vec])[0]
-					group_query_2 = np.asarray(df1_1.loc[:,group_type_vec])
-					list1.append(group_query_1)
-					list1.extend(group_query_2)
-
-			list2 = []
-			group_vec_pre2 = pd.Index(group_vec_2).difference(group_vec_2_overlap,sort=False)
-			if verbose_internal>0:
-				# print('group with enrichment in feature type 2 but not enriched in joint groups')
-				# print('group_vec_pre2: ',len(group_vec_pre2))
-				print('the number of groups with enrichment in feature type 2 but not enriched in paired groups: %d'%(len(group_vec_pre1)))
-				
-			if flag_group_pre2>0:
-				for group_type_query in group_vec_pre2:
-					df2 = df_overlap_query.loc[df_overlap_query[group_type_2]==group_type_query,:]
-					df2_1 = df1.loc[df1[column_query1]>thresh_size_query1,:]
-					group_query_1 = np.asarray(df2.loc[:,group_type_vec])[0]
-					group_query_2 = np.asarray(df2_1.loc[:,group_type_vec])
-					list2.append(group_query_1)
-					list2.extend(group_query_2)
+			if flag_select_2>0:
+				# include paired groups without peak enrichment but associated with a group with enrichment in one feature space
+				list_query = []
+				for (group_type,group_vec_query) in zip(group_type_vec,list_query1):
+					list_group = []
+					for group_type_query in group_vec_query:
+						df1 = df_overlap_query.loc[df_overlap_query[group_type]==group_type_query,:] # paired groups associated with the given group in the feature space
+						df1_1 = df1.loc[df1[column_query1]>thresh_size_query1,:]
+						group_query_1 = np.asarray(df1.loc[:,group_type_vec])[0] # the paired groups with the relatively smallest peak enrichment p-value
+						group_query_2 = np.asarray(df1_1.loc[:,group_type_vec])	 # the paired groups with peak number above threshold
+						list_group.append(group_query_1)
+						list_group.extend(group_query_2)
+					list_query.append(list_group)
+				list1, list2 = list_query[0:2]
 
 			group_vec_query1_pre2 = np.asarray(group_vec_query1_pre2)
 			list_pre1 = list(group_vec_query1_pre2)+list1+list2
@@ -1172,14 +1093,12 @@ class _Base2_2(_Base_pre2):
 			df_1.index = utility_1.test_query_index(df_1,column_vec=[group_type_1,group_type_2],symbol_vec=['_'])
 			df_1 = df_1.drop_duplicates(subset=group_type_vec)
 			group_id_1 = df_1.index
-			group_id_pre1 = ['%s_%s'%(group_1,group_2) for (group_1,group_2) in group_vec_query1_pre2]
+			group_id_pre1 = ['%s_%s'%(group_1,group_2) for (group_1,group_2) in group_vec_query1_pre2] # paired groups with peak enrichment above threshold
 			group_id_2 = group_id_1.difference(group_id_pre1,sort=False)
 
 			column_query_1 = df_overlap_query.columns.difference(group_type_vec,sort=False)
 			df_1.loc[:,column_query_1] = df_overlap_query.loc[group_id_1,column_query_1]
 			group_vec_query1 = df_1.loc[:,group_type_vec]
-			# print('df_1: ',df_1.shape)
-			# print(df_1)
 
 			feature_type_vec = select_config['feature_type_vec']
 			feature_type_query_1, feature_type_query_2 = feature_type_vec[0:2]
@@ -1188,15 +1107,26 @@ class _Base2_2(_Base_pre2):
 			df_query1['group_id2'] = utility_1.test_query_index(df_query1,column_vec=group_type_vec_2,symbol_vec=['_'])
 			id1 = (df_query1['group_id2'].isin(group_id_1))
 			id2 = (df_query1['group_id2'].isin(group_id_2))
-			df_query1.loc[id1,'group_overlap'] = 1 # the group with enrichment
-			df_query1.loc[id2,'group_overlap'] = 2 # the paired group without enrichment but the single group with enrichment
+			df_query1.loc[id1,'group_overlap'] = 1 # selected paired groups
+			df_query1.loc[id2,'group_overlap'] = 2 # the paired groups without peak enrichment but associated with the single group enriched with peaks of predicted TF binding in the feature space
 			# print('group_id_1, group_id_2: ',len(group_id_1),len(group_id_2))
 
 			return df_query1
 
-	## select training sample
-	# select training sample based on quantile of score query
-	def test_query_feature_quantile_1(self,data=[],query_idvec=[],column_vec_query=[],flag_corr_1=1,save_mode=1,verbose=0,select_config={}):
+	## ====================================================
+	# compute quantiles of the feature association scores
+	# to update
+	def test_query_feature_quantile_1(self,data=[],query_idvec=[],column_vec_query=[],verbose=0,select_config={}):
+
+		"""
+		compute quantiles of the feature association scores
+		:param data: (dataframe) peak annotations including initially predicated peak-TF associations for the given TF
+		:param query_idvec: (array) selected peak loci; if not specified, using all the peaks in the peak annoation data
+		:param column_vec_query: (list) columns in peak annotation data to retrieve information from 
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary storing parameters
+		:return: dictionary storing updated parameters, including column names corresponding to computed score quantiles
+		"""
 
 		if len(column_vec_query)==0:
 			column_corr_1 = 'peak_tf_corr'
@@ -1212,8 +1142,6 @@ class _Base2_2(_Base_pre2):
 		thresh_corr_2, thresh_pval_2 = 0.1, 0.1
 		thresh_corr_3, thresh_pval_2 = 0.05, 0.1
 
-		# flag_corr_1=1
-		# peak_loc_query_group2_1 = []
 		df_query1 = data
 		column_id2 = 'peak_id'
 		if not (column_id2 in df_query1.columns):
@@ -1227,11 +1155,8 @@ class _Base2_2(_Base_pre2):
 		score_mtx = quantile_transform(query_value_1[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
 		df_query1[column_quantile_pre1] = score_mtx[:,0]
 
-		# the peak loci with predicted TF binding
-		# id_pred1 = query_idvec
-		# df_pre2 = df_query1.loc[id_pred1,:]
 		if len(query_idvec)>0:
-			df_pre2 = df_query1.loc[query_idvec,:]
+			df_pre2 = df_query1.loc[query_idvec,:] # peak annotations for selected peak loci
 		else:
 			df_pre2 = df_query1
 			query_idvec = df_query1.index
@@ -1244,17 +1169,14 @@ class _Base2_2(_Base_pre2):
 		column_quantile_1 = '%s_quantile_2'%(column_corr_1)
 		normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
 		score_mtx = quantile_transform(query_value[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
-		# df_pre2[column_quantile_1] = score_mtx[:,0]
 		df_query1.loc[query_idvec,column_quantile_1] = score_mtx[:,0]
 							
 		query_value_2 = df_pre2[column_score_query1]
 		query_value_2 = query_value_2.fillna(0)
 
-		# column_score_query1 = '%s.score'%(method_type_feature_link)
 		column_quantile_2 = '%s_quantile'%(column_score_query1)
 		normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
 		score_mtx_2 = quantile_transform(query_value_2[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
-		# df_pre2[column_quantile_2] = score_mtx_2[:,0]
 		df_query1.loc[query_idvec,column_quantile_2] = score_mtx_2[:,0]
 
 		column_vec_quantile = [column_quantile_pre1,column_quantile_1,column_quantile_2]
@@ -1262,13 +1184,24 @@ class _Base2_2(_Base_pre2):
 
 		return df_query1, select_config
 
-	## select training sample based on correlation value
-	def test_query_training_select_correlation_1(self,data=[],thresh_vec=[0.1,0.90],save_mode=1,verbose=0,select_config={}):
+	## ====================================================
+	# select pseuso postive training sample utilizing peak accessibility-TF expression correlation
+	# to update
+	def test_query_training_select_correlation_1(self,data=[],thresh_vec=[0.1,0.90],verbose=0,select_config={}):
 		
+		"""
+		select pseuso postive training sample utilizing peak accessibility-TF expression correlation value
+		:param data: (dataframe) annotations of peak loci with TF binding predicted by the first method
+		:param thrseh_vec: (array or list) the thresholds on peak accessibility-TF expression correlation to select pseuso postive training samples
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (array) selected peak loci using threshold on peak accessibility-TF expression correlation and p-value
+				 2. (array) selected peak loci using threshold on quantile of peak accessibility-TF expression correlation
+		"""
+
 		flag_corr_1 = 1
 		if flag_corr_1>0:
 			# select peak with peak accessibility-TF expression correlation above threshold
-			# df_query = df_pre2
 			df_query = data
 			peak_loc_query = df_query.index
 
@@ -1282,7 +1215,8 @@ class _Base2_2(_Base_pre2):
 			thresh_pval_1 = 0.1
 
 			# peak loci with correlation above threshold and p-value below threshold
-			id_score_query2_1 = (df_query[column_corr_1]>thresh_corr_1)&(df_query[column_pval]<thresh_pval_1)
+			# id_score_query2_1 = (df_query[column_corr_1]>thresh_corr_1)&(df_query[column_pval]<thresh_pval_1)
+			id_score_query_1 = (df_query[column_corr_1]>thresh_corr_1)&(df_query[column_pval]<thresh_pval_1)
 
 			# query_value_1 = df_query1.loc[id_pred2,column_corr_1]
 			query_value = df_query[column_corr_1]
@@ -1291,59 +1225,68 @@ class _Base2_2(_Base_pre2):
 			thresh_corr_query1 = np.quantile(query_value,thresh_corr_quantile)
 			thresh_corr_query2 = np.min([thresh_corr_1,thresh_corr_query1])
 			
-
 			# print('thresh_corr_query1, thresh_corr_query2: ',thresh_corr_query1, thresh_corr_query2)
 			# id_score_query_2_1 = (df_query[column_corr_1]>thresh_corr_query2)&(df_query[column_pval]<thresh_pval_1)
 			# peak loci with correlation above threshold
-			id_score_query_2_1 = (df_query[column_corr_1]>thresh_corr_query2)
+			 #id_score_query_2_1 = (df_query[column_corr_1]>thresh_corr_query2)
+			id_score_query_2 = (df_query[column_corr_1]>thresh_corr_query2)
 								
-			peak_loc_query_2_1 = peak_loc_query[id_score_query2_1]
-			peak_loc_query_2 = peak_loc_query[id_score_query_2_1]
+			# peak_loc_query_2_1 = peak_loc_query[id_score_query2_1]
+			# peak_loc_query_2 = peak_loc_query[id_score_query_2_1]
+
+			# peak_loc_query_group2_1 = peak_loc_query_2
+			# feature_query_vec_1 = peak_loc_query_2_1
+			# feature_query_vec_2 = peak_loc_query_2
+
+			feature_query_vec_1 = peak_loc_query[id_score_query_1]
+			feature_query_vec_2 = peak_loc_query[id_score_query_2]
 
 			verbose_internal = self.verbose_internal
 			if verbose_internal>0:
-				# print('thresh_corr_query1, thresh_corr_query2: ',thresh_corr_query1, thresh_corr_query2)
-				# print('peak_loc_query_2_1, peak_loc_query_2: ',len(peak_loc_query_2_1),len(peak_loc_query_2))
 				print('the original and the adjusted thresholds on quantile of peak accessibility-TF expression correlation: ',thresh_corr_query1,thresh_corr_query2)
-				print('selected peak loci using threshold on peak accessibility-TF expression correlation and p-value: %d'%(len(peak_loc_query_2_1)))
-				print('selected peak loci using threshold on quantile of peak accessibility-TF expression correlation: %d'%(len(peak_loc_query_2)))
-
-			# peak_loc_query_group2_1 = peak_loc_query_2
-			feature_query_vec_1 = peak_loc_query_2_1
-			feature_query_vec_2 = peak_loc_query_2
+				print('selected peak loci using threshold on peak accessibility-TF expression correlation and p-value: %d'%(len(feature_query_vec_1)))
+				print('selected peak loci using threshold on quantile of peak accessibility-TF expression correlation: %d'%(len(feature_query_vec_2)))
 
 			return feature_query_vec_1, feature_query_vec_2
 
 	## ====================================================
-	# select training sample based on feature link score
+	# select pseudo positive training sample based on peak-TF association score and peak accessibility-TF expression correlation
+	# to update
 	def test_query_training_select_feature_link_score_1(self,data=[],column_vec_query=[],thresh_vec=[],save_mode=1,verbose=0,select_config={}):
+
+		"""
+		select pseudo positive training sample based on peak-TF association score and peak accessibility-TF expression correlation
+		:param data: (dataframe) annotations of peak loci with initially predicted TF binding, including estimated peak-TF association scores
+		:param column_vec_query: (array or list) columns representing peak accessibility-TF expression correlation and estimated peak-TF association score in the peak annotation dataframe
+		:param thresh_vec: (array or list) thresholds used to select peak loci based on peak-TF association score and peak accessibility-TF expression correlation
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (array) selected peak loci based on peak-TF association score and peak accessibility-TF expression correlation
+		"""
 
 		flag_score_1=1
 		if flag_score_1>0:
-			# select peak query based on score threshold
+			df_query1 = data
 			if len(thresh_vec)>0:
 				thresh_score_query_pre1, thresh_score_query_1, thresh_corr_query = thresh_vec[0:3]
 			else:
 				thresh_corr_query = 0.10
 				thresh_score_query_pre1 = 0.15
 				thresh_score_query_1 = 0.15
-				# thresh_score_query_1 = 0.20
 			column_1 = 'thresh_score_group_1'
 			if column_1 in select_config:
 				thresh_score_group_1 = select_config[column_1]
 				thresh_score_query_1 = thresh_score_group_1
 
-			# column_score_query1 = '%s.score'%(method_type_feature_link)
 			column_corr_1, column_score_query1 = column_vec_query[0:2]
-			id_score_query1 = (df_pre2[column_score_query1]>thresh_score_query_1)
-			id_score_query1 = (id_score_query1)&(df_pre2[column_corr_1]>thresh_corr_query)
-			df_query1_2 = df_pre2.loc[id_score_query1,:]
+			id_score_query1 = (df_query1[column_score_query1]>thresh_score_query_1)  # select peak loci based on estimated peak-TF association score
+			id_score_query1 = (id_score_query1)&(df_query1[column_corr_1]>thresh_corr_query)  # requiring peak accessibility-TF expression correlation above the threshold
+			df_query1_2 = df_query1.loc[id_score_query1,:]
 
 			peak_loc_query_1 = df_query1_2.index 	# the peak loci with prediction and with score above threshold
-			# peak_num_1 = len(peak_loc_query_1)
-			# print('peak_loc_query_1: ',peak_num_1)
-			print('the number of selected peak loci with prediction and with score above threshold: %d'%(peak_num_1))
-			# peak_loc_query_group2_1 = pd.Index(peak_loc_query_1).union(peak_loc_query_2,sort=False)
+			peak_num_1 = len(peak_loc_query_1)
+			print('the number of selected peak loci with predicted TF binding and with score above threshold: %d'%(peak_num_1))
 
 			feature_query_vec_1 = peak_loc_query_1
 
@@ -1351,9 +1294,25 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseudo positive training sample
-	def test_query_training_select_pre1(self,data=[],column_vec_query=[],flag_corr_1=1,flag_score_1=0,flag_enrichment_sel=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# to update
+	def test_query_training_select_pre1(self,data=[],column_vec_query=[],flag_corr_1=1,flag_score_1=0,flag_enrichment_sel=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
-		df_query1 = data
+		"""
+		:param data: (dataframe) annotations of peak loci with TF binding predicted by the first method
+		:param column_vec_query: (array or list) columns representing peak accessibility-TF expression correlation and estimated peak-TF association score in the peak annotation dataframe
+		:param flag_corr_1: indicating whether to select peak loci using peak accessibility-TF expression correlation
+		:param flag_score_1: indicating whether to select peak loci using peak-TF association score and peak accessibility-TF expression correlation
+		:param flag_enrichment_sel: indicating whether to select peak loci using different thresholds depending on peak enrichment in paired groups
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: fillename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (array) selected pseudo positive training sample
+		"""
+
+		df_query1 = data  # annotations of peak loci with TF binding predicted by the first method
 		column_vec_quantile = select_config['column_vec_quantile']
 		column_quantile_pre1,column_quantile_1,column_quantile_2 = column_vec_quantile[0:3]
 		df_query1 = df_query1.sort_values(by=['group_overlap',column_quantile_pre1],ascending=False)
@@ -1362,29 +1321,34 @@ class _Base2_2(_Base_pre2):
 		if flag_query1>0:
 			peak_loc_query_1 = []
 			peak_loc_query_2 = []
-			method_type_feature_link = select_config['method_type_feature_link']
-			column_corr_1 = 'peak_tf_corr'
-			column_score_query1 = '%s.score'%(method_type_feature_link)
-			column_vec_query = [column_corr_1,column_score_query1]
+			if len(column_vec_query)==0:
+				method_type_feature_link = select_config['method_type_feature_link']
+				column_corr_1 = 'peak_tf_corr'
+				column_score_query1 = '%s.score'%(method_type_feature_link)
+				column_vec_query = [column_corr_1,column_score_query1]
+			else:
+				column_corr_1, column_score_query1 = column_vec_query[0:2]
+
 			peak_loc_query_2_1 = []
 			peak_loc_query_2 = []
 			if flag_corr_1>0:
-				# select peak with peak accessibility-TF expression correlation below threshold
-				# df_query = df_pre2
+				# select peak loci using peak accessibility-TF expression correlation
 				thresh_corr_1 = 0.1
 				thresh_corr_quantile = 0.90
 				thresh_vec_1 = [thresh_corr_1,thresh_corr_quantile]
-				peak_loc_query_2_1, peak_loc_query_2 = self.test_query_training_select_correlation_1(data=df_query1,thresh_vec=thresh_vec_1,save_mode=1,verbose=verbose,select_config=select_config)
+				peak_loc_query_2_1, peak_loc_query_2 = self.test_query_training_select_correlation_1(data=df_query1,thresh_vec=thresh_vec_1,verbose=verbose,select_config=select_config)
 
 			flag_score_1=0
 			peak_loc_query_1 = []
 			if flag_score_1>0:
-				# select peak query based on score threshold
+				# select peak loci based on peak-TF association score and peak accessibility-TF expression correlation
 				thresh_score_query_pre1 = 0.15
 				thresh_score_query_1 = 0.15
 				thresh_corr_1 = 0.1
 				thresh_vec_2 = [thresh_score_query_pre1,thresh_score_query_1,thresh_corr_1]
-				peak_loc_query_1 = self.test_query_training_select_feature_link_score_1(data=df_pre2,thresh_vec=thresh_vec_2,save_mode=1,verbose=verbose,select_config=select_config)		
+				peak_loc_query_1 = self.test_query_training_select_feature_link_score_1(data=df_query1,column_vec_query=column_vec_query,
+																						thresh_vec=thresh_vec_2,
+																						verbose=verbose,select_config=select_config)		
 
 			peak_loc_query_pre2 = pd.Index(peak_loc_query_2).union(peak_loc_query_1,sort=False)
 			feature_query_vec_pre2 = peak_loc_query_pre2
@@ -1392,6 +1356,7 @@ class _Base2_2(_Base_pre2):
 			verbose_internal = self.verbose_internal
 
 			if flag_enrichment_sel>0:
+				# select peak loci using different thresholds depending on peak enrichment in paired groups
 				# thresh_vec_query1=[0.25,0.75]
 				thresh_vec_query1=[0.5,0.9]
 				column_1 = 'thresh_vec_sel_1'
@@ -1399,56 +1364,68 @@ class _Base2_2(_Base_pre2):
 					thresh_vec_query1 = select_config[column_1]
 
 				if verbose_internal>0:
-					# print('thresh_vec_query1: ',thresh_vec_query1)
 					print('threshold on the quantile of peak-TF link score for selection: ',thresh_vec_query1)
 				thresh_vec_query2=[0.95,0.001]
 				
 				# column_vec_quantile = select_config['column_vec_quantile']
 				# column_quantile_pre1,column_quantile_1,column_quantile_2 = column_vec_quantile[0:3]
-				column_vec_query = [column_quantile_1,column_quantile_2]
-				peak_loc_query_group2_1 = self.test_query_training_select_pre2(data=df_query1,feature_query_vec=feature_query_vec_pre2,column_vec_query=column_vec_query,
-																				thresh_vec_1=thresh_vec_query1,thresh_vec_2=thresh_vec_query2,
-																				save_mode=1,verbose=verbose,select_config=select_config)
+				column_vec_query_2 = [column_quantile_1,column_quantile_2]
+				feature_query_group1 = self.test_query_training_select_pre2(data=df_query1,feature_query_vec=feature_query_vec_pre2,
+																				column_vec_query=column_vec_query_2,
+																				thresh_vec_1=thresh_vec_query1,
+																				thresh_vec_2=thresh_vec_query2,
+																				verbose=verbose,select_config=select_config)
 
-
-			feature_query_group2 = peak_loc_query_group2_1
-			
-			return feature_query_group2
+			return feature_query_group1
 
 	## ====================================================
-	# select pseudo positive training sample based on feature group enrichment
+	# select pseudo positive training sample using different thresholds depending on peak enrichment in paired groups
+	# to update
 	def test_query_training_select_pre2(self,data=[],feature_query_vec=[],column_vec_query=[],thresh_vec_1=[0.25,0.75],thresh_vec_2=[0.95,0.001],save_mode=1,verbose=0,select_config={}):
 		
-		df_query = data
-		id_group_overlap = (df_query['group_overlap']>0)
+		"""
+		select pseudo positive training sample using different thresholds depending on peak enrichment in paired groups
+		:param data: (dataframe) annotations of peak loci with TF binding predicted by the first method
+		:param feature_query_vec: (array) the currently selected pseudo positive training samples
+		:param column_vec_query: (array or list) columns (in the peak annotation dataframe) representing quantile of scores computed using peaks with initially predicted TF binding and computed using all the peaks
+		:param thresh_vec_1: (array or list) thresholds on quantile of score for paired groups with or without enrichment of peaks with initially predicted TF binding
+		:param thresh_vec_2: (array or list) upper and lower thresholds on peak accessibility-TF expression correlation
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (array) selected pseudo positive training samples
+		"""
+
+		df_query = data  # annotations of peak loci with TF binding predicted by the first method (candidate peaks)
+		id_group_overlap = (df_query['group_overlap']>0) # find paired groups with candidate peak enrichment above threshold
 		flag_enrichment_sel = 1
 		if flag_enrichment_sel>0:
 			id1 = (id_group_overlap)
-			id2 = (~id_group_overlap)
-			
-			group_id_query = df_query.loc[id1,'group_id2'].unique()
+			id2 = (~id_group_overlap)  # find paired groups without enrichment of candidate peaks
+			group_id_query = df_query.loc[id1,'group_id2'].unique()  # name of paired groups with candidate peak enrichment above threshold
 
 			if len(thresh_vec_1)>0:
 				thresh_1, thresh_2 = thresh_vec_1[0:2]
 			else:
 				thresh_1, thresh_2 = 0.25, 0.75
 
-			thresh_quantile_query1_1, thresh_quantile_query2_1 = thresh_1, thresh_1
-			thresh_quantile_query1_2, thresh_quantile_query2_2 = thresh_2, thresh_2
+			thresh_quantile_query1_1, thresh_quantile_query2_1 = thresh_1, thresh_1  # threshold on quantile of score for groups enriched with candidata peaks
+			thresh_quantile_query1_2, thresh_quantile_query2_2 = thresh_2, thresh_2  # threshold on quantile of score for groups without enrichment of candidata peaks
 
+			# column_quantile_1: quantile of scores computed using the peaks with predicted TF binding
+			# column_quantile_2: quantile of scores computed using all the peaks
 			column_quantile_1, column_quantile_2 = column_vec_query[0:2]
-			id_score_1 = (df_query[column_quantile_1]>thresh_quantile_query1_1) # lower threshold for group with enrichment
+			id_score_1 = (df_query[column_quantile_1]>thresh_quantile_query1_1) # lower threshold for groups enriched with candidata peaks
 			id_score_2 = (df_query[column_quantile_2]>thresh_quantile_query2_1)
 
 			id1_1 = id1&(id_score_1|id_score_2)
 			# id2_1 = id2&(id_score_1|id_score_2)
 
-			id_score_1_2 = (df_query[column_quantile_1]>thresh_quantile_query1_2) # higher threshold for group without enrichment
+			id_score_1_2 = (df_query[column_quantile_1]>thresh_quantile_query1_2) # higher threshold for groups without enrichment of candidate peaks
 			id_score_2_2 = (df_query[column_quantile_2]>thresh_quantile_query2_2)
 
 			# id1_2 = id1&(id_score_1_2|id_score_2_2)
 			id2_2 = id2&(id_score_1_2|id_score_2_2)
-
 			id_query_2 = (id1_1|id2_2)
 
 			if len(thresh_vec_2)>0:
@@ -1465,57 +1442,109 @@ class _Base2_2(_Base_pre2):
 
 			df_query_pre2 = df_query.loc[id_query_2,:]
 
-			peak_loc_query_3 = df_query_pre2.index 	# the peak loci with prediction and with score above threshold
-			peak_num_3 = len(peak_loc_query_3)
-			# print('peak_loc_query_3: ',peak_num_3)
-			print('selected peak loci with predicted TF binding and with score above threshold: %d'%(peak_num_3))
+			peak_loc_query_2 = df_query_pre2.index 	# the peak loci with initially predicted TF binding and with association score above threshold
+			peak_num_2 = len(peak_loc_query_2)
+			print('selected peak loci with predicted TF binding and with score above threshold: %d'%(peak_num_2))
 
 		# peak_loc_query_pre2 = pd.Index(peak_loc_query_2).union(peak_loc_query_1,sort=False)
-		peak_loc_query_pre2 = feature_query_vec
-		peak_loc_query_group2_1 = pd.Index(peak_loc_query_pre2).union(peak_loc_query_3,sort=False)
-							
-		peak_num_group2_1 = len(peak_loc_query_group2_1)
-		# print('peak_loc_query_group2_1: ',peak_num_group2_1)		
-		feature_query_vec_1 = peak_loc_query_group2_1
+		# peak_loc_query_pre2 = feature_query_vec
+		# peak_loc_query_group2_1 = pd.Index(peak_loc_query_pre2).union(peak_loc_query_3,sort=False)
+		# peak_num_group2_1 = len(peak_loc_query_group2_1)
+		# print('peak_loc_query_group2_1: ',peak_num_group2_1)
+		# feature_query_vec_2 = peak_loc_query_group2_1
+
+		feature_query_vec_2 = pd.Index(feature_query_vec).union(peak_loc_query_2,sort=False)
+		feature_query_num_2 = len(feature_query_vec_2)
+		# print('selected pseudo positive training samples: %d'%(feature_query_num_2))
 
 		return feature_query_vec_1
 
 	## ====================================================
-	# select pseudo negative training sample (peak class 2)
-	def test_query_training_select_group2(self,data=[],motif_id_query='',peak_query_vec_1=[],feature_type_vec=[],peak_read=[],rna_exprs=[],save_mode=0,verbose=0,select_config={}):
+	# query column names representing the shared paired group assignment and neighbor information of peak loci
+	# to update
+	def test_query_column_method_1(self,feature_type_vec=[],method_type_feature_link='',select_config=select_config):
 
-		flag_select_2=1
-		if flag_select_2>0:
-			# column_vec_query_pre1, column_vec_query_pre2, column_vec_query_pre2_2 = self.test_query_column_method_1(feature_type_vec=feature_type_vec_query,select_config=select_config)
-			column_motif_group = 'motif_group_1'
-			column_peak_tf_corr_1 = 'group_correlation'
-			column_motif_group_corr_1 = 'motif_group_correlation'
+		"""
+		query column names representing the shared paired group assignment and neighbor information of peak loci
+		:param feature_type_vec: (array or list) feature types of feature representations of observations (peak loci)
+		:param method_type_feature_link: the method used to predict peak-TF associations initially
+		:param select_config: dictionary containing the configuration parameters
+		:return: (array) names of columns representing the shareg paired group assignment and neighbor information of peak loci related to peak loci with initially predicted TF binding
+		"""
 
-			method_type_feature_link = select_config['method_type_feature_link']
+		flag_query1 = 1
+		if flag_query1>0:
+			if method_type_feature_link=='':
+				method_type_feature_link = select_config['method_type_feature_link']
+
 			column_pred2 = '%s.pred_sel'%(method_type_feature_link) # selected peak loci with predicted binding sites
 			column_pred_2 = '%s.pred_group_2'%(method_type_feature_link)
 
-			n_neighbors = select_config['neighbor_num']
-			column_neighbor = ['neighbor%d'%(id1) for id1 in np.arange(1,n_neighbors+1)]
+			# feature_type_query_1, feature_type_query_2 = feature_type_vec[0:2]
+			# column_group_neighbor_feature1 = '%s_group_neighbor'%(feature_type_query_1)
+			# column_group_neighbor_feature2 = '%s_group_neighbor'%(feature_type_query_2)
+			column_vec_query1 = ['%s_group_neighbor'%(feature_type_query) for feature_type_query in feature_type_vec[0:2]]
 
-			feature_type_query_1, feature_type_query_2 = feature_type_vec[0:2]
-			column_1 = '%s_group_neighbor'%(feature_type_query_1)
-			column_2 = '%s_group_neighbor'%(feature_type_query_2)
+			# column_neighbor_feature1 = '%s_neighbor'%(feature_type_query_1)	# query neighbor in feature space 1, without restriction in the same group of the selected peak query
+			# column_neighbor_feature2 = '%s_neighbor'%(feature_type_query_2)	# query neighbor in feature space 2, without restriction in the same group of the selected peak query
 
-			column_query1 = '%s_neighbor'%(feature_type_query_1)	# query neighbor in feature space 1, without restriction in the same group of the selected peak
-			column_query2 = '%s_neighbor'%(feature_type_query_2)	# query neighbor in feature space 2, without restriction in the same group of the selected peak
+			# query neighbor in feature space 1 and 2, without restriction that peaks are in the same group with the selected peaks
+			column_vec_query2 = ['%s_neighbor'%(feature_type_query) for feature_type_query in feature_type_vec[0:2]]
 
-			column_pred_3 = '%s.pred_group_neighbor'%(method_type_feature_link)
-			column_pred_5 = '%s.pred_group_neighbor_1'%(method_type_feature_link)
-			column_pred_6 = '%s.pred_neighbor_2_group'%(method_type_feature_link)
-			column_pred_7 = '%s.pred_neighbor_2'%(method_type_feature_link)
-			column_pred_8 = '%s.pred_neighbor_1'%(method_type_feature_link)
+			# column_group_neighbor = '%s.pred_group_neighbor'%(method_type_feature_link)
+			# column_group_neighbor_1 = '%s.pred_group_neighbor_1'%(method_type_feature_link)
+			# column_neighbor_2_group = '%s.pred_neighbor_2_group'%(method_type_feature_link)
+			# column_neighbor_2 = '%s.pred_neighbor_2'%(method_type_feature_link)
+			# column_neighbor_1 = '%s.pred_neighbor_1'%(method_type_feature_link)
 
-			column_vec_query_pre2 = [column_pred_2,column_query1,column_query2,column_pred_6]
-			column_vec_pre2_1 = [column_pred_3,column_pred_6,column_pred_7]
-			column_vec_pre2_2 = [column_pred_5,column_pred_6,column_pred_7] # the default column query
-			column_vec_pre2_3 = [column_motif_group,column_pred_3,column_pred_6,column_pred_7]
+			field_query = ['pred_group_neighbor','pred_group_neighbor_1','pred_neighbor_2_group',
+							'pred_neighbor_2','pred_neighbor_1']
+			column_vec_query3 = ['%s.%s'%(method_type_feature_link,field_id) for field_id in field_query]
 
+			column_vec_query_1 = [column_pred2,column_pred_2]+column_vec_query1+column_vec_query2+column_vec_query3
+
+			# dict_annot = dict(zip(field_query_1,column_vec_query_1)) # to update
+			
+			return column_vec_query_1
+
+	## ====================================================
+	# select pseudo negative training sample
+	# to update
+	def test_query_training_select_group2(self,data=[],feature_type_vec=[],save_mode=0,verbose=0,select_config={}):
+
+		"""
+		select pseudo negative training sample
+		:param data: dataframe of peak annotations including initially predicted peak-TF associations
+		:param feature_type_vec: (array or list) feature types of feature representations of observations (peak loci)
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1: (array) pseudo negative training samples selected from peaks with TF motif detected and without predicted TF binding
+				 2: (array) pseudo negative training samples selected from peaks without TF motif detected
+		"""
+
+		flag_select=1
+		verbose_internal = self.verbose_internal
+		if flag_select>0:
+			method_type_feature_link = select_config['method_type_feature_link']
+			column_vec_query_pre1 = self.test_query_column_method_1(feature_type_vec=feature_type_vec,method_type_feature_link=method_type_feature_link,select_config=select_config)
+			
+			column_pred2, column_pred_2 = column_vec_query_pre1[0:2]
+			column_group_neighbor_feature1, column_group_neighbor_feature2, column_neighbor_feature1, column_neighbor_feature2 =  column_vec_query_pre1[2:6]
+			column_group_neighbor, column_group_neighbor_1, column_neighbor_2_group, column_neighbor_2, column_neighbor_1 = column_vec_query_pre1[6:11]
+
+			column_vec_query_pre2 = [column_pred_2,column_neighbor_feature1,column_neighbor_feature2,column_neighbor_2_group]
+			column_vec_pre2_1 = [column_group_neighbor,column_neighbor_2_group,column_neighbor_2]
+			column_vec_pre2_2 = [column_group_neighbor_1,column_neighbor_2_group,column_neighbor_2]
+
+			if verbose_internal==2:
+				field_query = ['column_pred2','column_pred_2','column_group_neighbor_feature1','column_group_neighbor_feature2',
+								'column_neighbor_feature1, column_neighbor_feature2',
+								'column_group_neighbor, column_group_neighbor_1, column_neighbor_2_group',
+								'column_neighbor_2, column_neighbor_1']
+				for (field_id,query_value) in zip(field_query,column_vec_query_pre1):
+					print('%s: %s\n'%(field_id,query_value))
+				
 			df_pre1 = data
 			df_query1 = data
 			peak_loc_ori = df_query1.index
@@ -1526,31 +1555,30 @@ class _Base2_2(_Base_pre2):
 			if (column_motif!='-1'):
 				motif_score = df_query1[column_motif]
 				id_motif = (df_query1[column_motif].abs()>0)
-				df_query1_motif = df_query1.loc[id_motif,:]	# the peak loci with binding motif identified
+				df_query1_motif = df_query1.loc[id_motif,:]	# peak loci with the TF binding motif identified
 				peak_loc_motif = df_query1_motif.index
 				peak_num_motif = len(peak_loc_motif)
-				print('peak loci with detectd TF motif: ',peak_num_motif)
+				print('peak loci with detected TF motif: ',peak_num_motif)
 
 			id_pred1 = (df_query1[column_pred1]>0)
-			peak_loc_pred1 = df_query1.loc[id_pred1,:]
+			peak_loc_pred1 = df_query1.loc[id_pred1,:]	# peak loci with predicted TF binding
 
 			df_query2_2 = df_query1.loc[(~id_pred1)&id_motif,:]
-			peak_loc_query_group2_2_ori = df_query2_2.index  # the peak loci without prediction and with motif
+			peak_loc_query_group2_2_ori = df_query2_2.index  # peak loci without predicted TF binding and with motif
 			peak_num_group2_2_ori = len(peak_loc_query_group2_2_ori)
-			print('peak loci without predicted TF binding and with motif: 'peak_num_group2_2_ori)
+			print('peak loci without predicted TF binding and with motif: %d'(peak_num_group2_2_ori))
 
-			# config_id_2 = 0
-			# config_id_2 = select_config['config_id_2_query']
 			config_id_2 = select_config['config_id_2']
 			column_query_pre1 = column_vec_query_pre2
 			
-			print('config_id_2,motif_id_query: ',config_id_2,motif_id_query)
+			if verbose_internal>0:
+				print('config_id_2:%d, motif_id_query:%s'%(config_id_2,motif_id_query))
 			if config_id_2%2==0:
 				column_query_pre2 = column_vec_query_pre2
-				print('use threshold 1 for pre-selection')
+				print('use threshold 1 for pre-selection of pseudo negative peak loci')
 			else:
 				column_query_pre2 = column_vec_pre2_2
-				print('use threshold 2 for pre-selection')
+				print('use threshold 2 for pre-selection of pseudo negative peak loci') # stricter threshold
 							
 				query_num1 = len(column_query_pre1)
 				mask_1 = (df_pre1.loc[:,column_query_pre1]>0)
@@ -1563,14 +1591,17 @@ class _Base2_2(_Base_pre2):
 			id2_2 = (~id_pred2_group)
 
 			thresh_1, thresh_2 = 5, 5
-			id_neighbor_1 = (df_pre1[column_query1]>=thresh_1)
-			id_neighbor_2 = (df_pre1[column_query2]>=thresh_2)
+			
+			id_neighbor_1 = (df_pre1[column_neighbor_feature1]>=thresh_1)
+			id_neighbor_2 = (df_pre1[column_neighbor_feature2]>=thresh_2)
 
 			flag_neighbor_2_2 = 1
 			if flag_neighbor_2_2>0:
 				id_neighbor_query1 = (id_neighbor_1&id_neighbor_2)
-				id1 = (id_neighbor_1)&(df_pre1[column_query2]>1)
-				id2 = (id_neighbor_2)&(df_pre1[column_query1]>1)
+
+				id1 = (id_neighbor_1)&(df_pre1[column_neighbor_feature2]>1)
+				id2 = (id_neighbor_2)&(df_pre1[column_neighbor_feature1]>1)
+
 				id_neighbor_query2 = (id1|id2)
 				id2_2 = (id2_2)&(~id_neighbor_query2)
 
@@ -1630,7 +1661,6 @@ class _Base2_2(_Base_pre2):
 			peak_vec_2_1_ori, peak_vec_2_2_ori = list_query2_2[0:2]
 			peak_num_2_1_ori = len(peak_vec_2_1_ori) # peak loci in class 2 with motif 
 			peak_num_2_2_ori = len(peak_vec_2_2_ori) # peak loci in class 2 without motif
-			# print('peak_vec_2_1_ori, peak_vec_2_2_ori: ',peak_num_2_1_ori,peak_num_2_2_ori)
 			print('candidate pseudo negative peak loci with the TF motif: ',peak_num_2_1_ori)
 			print('candidate pseudo negative peak loci without the TF motif: ',peak_num_2_2_ori)
 
@@ -1638,7 +1668,7 @@ class _Base2_2(_Base_pre2):
 			peak_query_num_1 = len(peak_query_vec)
 
 			# ratio_1, ratio_2 = 0.25, 2
-			atio_1, ratio_2 = 0.25, 1.5
+			ratio_1, ratio_2 = 0.25, 1.5
 			column_1, column_2 = 'ratio_1', 'ratio_2'
 			if column_1 in select_config:
 				ratio_1 = select_config[column_1]
@@ -1656,10 +1686,26 @@ class _Base2_2(_Base_pre2):
 			return peak_vec_2_1, peak_vec_2_2
 
 	## ====================================================
-	# select pseudo negative training sample (peak class 2) with base model
-	def test_query_training_select_group2_2(self,data=[],id_query=[],method_type_query='',flag_sample=1,flag_select_2=2,save_mode=1,verbose=0,select_config={}):
+	# select pseudo negative training sample with base model
+	# to update
+	def test_query_training_select_group2_2(self,data=[],id_query=[],method_type='',flag_sample=1,flag_select=2,save_mode=0,verbose=0,select_config={}):
 
-		method_type_feature_link = method_type_query
+		"""
+		select pseudo negative training sample with base model
+		:param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
+		:param method_type: the method used to predict peak-TF associations initially
+		:param n_components: the number of latent components used for feature representation
+		:param flag_sample: indicator of whether to random samplely the pseudo negative training samples
+		:param flag_select: indicator of whether to use the motif presence in peak loci information for pseudo negative training sample selection
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1: (array) pseudo negative training samples selected
+				 2: (array) pseudo negative training samples selected from peaks with TF motif detected and without predicted TF binding
+				 3: (array) pseudo negative training samples selected from peaks without TF motif detected
+		"""
+
+		method_type_feature_link = method_type
 		if method_type_query=='':
 			method_type_feature_link = select_config['method_type_feature_link']
 
@@ -1691,15 +1737,14 @@ class _Base2_2(_Base_pre2):
 			peak_vec_2_2_ori = np.asarray(peak_loc_pre1[id_pred2_2])
 
 		peak_vec_2 = []
-		# flag_sample = 0
 		if flag_sample>0:
 			ratio_1, ratio_2 = select_config['ratio_1'], select_config['ratio_2']
-			if flag_select_2 in [2]:
+			if flag_select in [2]:
 				np.random.shuffle(peak_vec_2_ori)
 				peak_query_num_2 = int(peak_query_num_1*ratio_2)
 				peak_vec_2 = peak_vec_2_ori[0:peak_query_num_2]
 
-			elif flag_select_2 in [3]:
+			elif flag_select in [3]:
 				np.random.shuffle(peak_vec_2_1_ori)
 				np.random.shuffle(peak_vec_2_2_ori)
 				peak_query_num2_1 = int(peak_query_num_1*ratio_1)
@@ -1707,17 +1752,29 @@ class _Base2_2(_Base_pre2):
 				peak_vec_2_1 = peak_vec_2_1_ori[0:peak_query_num2_1]
 				peak_vec_2_2 = peak_vec_2_2_ori[0:peak_query_num2_2]
 		else:
-			if flag_select_2 in [2]:
+			if flag_select in [2]:
 				peak_vec_2 = peak_vec_2_ori
-			elif flag_select_2 in [3]:
+			elif flag_select in [3]:
 				peak_vec_2_1 = peak_vec_2_1_ori
 				peak_vec_2_2 = peak_vec_2_2_ori
 
 		return peak_vec_2, peak_vec_2_1, peak_vec_2_2
 
 	## ====================================================
-	# parameter configuration
+	# parameter configuration for prediction model training
+	# to upate
 	def test_optimize_configure_1(self,model_type_id,Lasso_alpha=0.01,Ridge_alpha=1.0,l1_ratio=0.01,ElasticNet_alpha=1.0,select_config={}):
+
+		"""
+		parameter configuration for prediction model training
+		:param model_type_id: the prediction model type
+		:param Lasso_alpha: coefficient of the L1 norm term in the Lasso model (using sklearn)
+		:param Ridge_alpha: coefficient of the L2 norm term in the Ridge regression model (using sklearn)
+		:param l1_ratio: parameter l1_ratio (related to coefficient of the L1 norm term) in the ElasticNet model in sklearn
+		:param ElasticNet_alpha: parameter alpha the ElasticNet model in skearn
+		:param select_config: dictionary storing configuration parameters
+		:return: dictionary storing configuration parameters for prediction model training
+		"""
 
 		flag_select_config_1 = 1
 		model_type_id1 = model_type_id
@@ -1754,7 +1811,6 @@ class _Base2_2(_Base_pre2):
 										'l1_ratio_ElasticNet':l1_ratio})
 				filename_annot2 = '%s.%s'%(ElasticNet_alpha,l1_ratio)
 			elif model_type_id1 in ['Ridge']:
-				# Ridge_alpha = 1E03
 				# Ridge_alpha = 0.01
 				if 'Ridge_alpha' in select_config:
 					Ridge_alpha = select_config['Ridge_alpha']
@@ -1763,7 +1819,6 @@ class _Base2_2(_Base_pre2):
 			else:
 				filename_annot2 = '1'
 
-			# filename_annot1 = '%s.%s'%(model_type_id1,filename_annot2)
 			run_id = select_config['run_id']
 			filename_annot1 = '%s.%d.%s.%d'%(model_type_id1,int(fit_intercept),filename_annot2,run_id)
 			select_config1.update({'filename_annot1':filename_annot1})
@@ -1771,16 +1826,113 @@ class _Base2_2(_Base_pre2):
 		return select_config1
 
 	## ====================================================
-	# query feature association
-	# df_feature_link: feature link mask
-	def test_query_association_unit_pre1(self,feature_query_vec=[],df_feature_link=[],df_feature_link_2=[],dict_feature=[],feature_type_vec=['motif','peak'],column_idvec=['motif_id','peak_id'],feature_mtx=[],df_gene_annot_expr=[],
-											peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],motif_data=[],model_type_vec=[],model_type_id='XGBClassifier',sample_idvec_train=[],type_id_model=0,num_class=2,num_fold=-1,link_type=0,parallel_mode=0,
-											save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# prepare training, validation and test sample indices
+	# to update
+	def test_train_idvec_pre1(self,sample_id,num_fold=10,train_valid_mode=1,load=0,input_filename='',save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 		
+		"""
+		prepare training and test sample indices
+		:param sample_id: (array) sample indices
+		:param num_fold: the number of folds for cross-validation
+		:param train_valid_mode: indicator of whether to use validation data
+		:param load: indicator of whether to load the training, validation, and test sample indices from the current file
+		:param input_filename: path of the file containing the prepared training, validation, and test sample indices
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the director to save data
+		:param output_filename: the filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. dataframe containing the test sample indices prepared for each fold
+				 2. dictionary containing the training, validation, and test sample indices prepared for each fold
+		"""
+
+		input_file_path = output_file_path
+		flag_query=1
+		if load>0:
+			input_filename = '%s/train_id_cv.pre1.txt'%(input_file_path)
+			if os.path.exists(input_filename)==True:
+				data1 = pd.read_csv(input_filename,index_col=0,sep='\t')
+				flag_query = 0
+				sample_idvec = dict()
+
+		if flag_query>0:
+			sample_num = len(sample_id)
+			sample_idvec = dict()
+			# num_fold = 10
+			np.random.seed(0)
+			split1 = KFold(n_splits=num_fold,shuffle=True,random_state=0)
+			id_query_pre1 = np.arange(sample_num)
+			id_vec1 = split1.split(id_query_pre1)
+
+			# label_vec = np.zeros(sampel_num,dtype=np.int8)
+			data1 = pd.DataFrame(index=sample_id,columns=['fold','type_id','id'])
+			# train_valid_mode_1, train_valid_mode_2 = 1, 1
+			cnt1 = 0
+			for train_id1, test_id1 in id_vec1:
+				train_num, test_num = len(train_id1), len(test_id1)
+				id_train, id_test = train_id1, test_id1
+				sample_id_train = sample_id[id_train]
+				sample_id_test = sample_id[id_test]
+
+				sample_id_train_ori = sample_id_train
+				if train_valid_mode>0:
+					sample_id_train1, sample_id_valid = train_test_split(sample_id_train, test_size=0.1, random_state=0)
+					sample_id_train = sample_id_train1
+				else:
+					sample_id_valid = []
+
+				sample_idvec[cnt1] = [sample_id_train, sample_id_valid, sample_id_test]
+
+				# t_vec_1 = [sample_id_test,sample_id_train,sample_id_valid]
+				print('sample_id_train, sample_id_valid, sample_id_test ',len(sample_id_train),len(sample_id_valid),len(sample_id_test))
+				data1.loc[sample_id_test,['fold','type_id']] = [cnt1,0]
+				cnt1 += 1
+
+			if save_mode>0:
+				if output_filename=='':
+					output_filename = '%s/train_id_cv.pre1.txt'%(output_file_path)
+				data1.to_csv(output_filename,sep='\t',float_format='%d')
+
+		return data1, sample_idvec
+
+	## ====================================================
+	# model training for peak-TF association prediction
+	# to update
+	def test_query_association_unit_pre1(self,feature_query_vec=[],dict_feature=[],feature_type_vec=['motif','peak'],model_type_vec=[],model_type_id='LogisticRegression',sample_idvec_train=[],
+											type_id_model=1,num_class=2,num_fold=-1,parallel_mode=0,
+											save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		model training for peak-TF association prediction
+		:param feature_query_vec: (array) TFs for which to predict binding in the genome-wide peak loci
+		:param dict_feature: dictionary containing the feature matrix of predictor variables and the response variable values
+		:param feature_type_vec: (array or list) the two types of features for which to estimate the associations
+		:param model_type_vec: (list) different types of prediction models
+		:param model_type_id: (str) method used by the prediction model
+		:param sample_idvec_train: (list) selected training, validation, and test samples
+		:param type_id_model: prediction model type: 0,regression model; 1,classification model
+		:param num_class: the number of classes
+		:param num_fold: the number of folds used in cross validation
+		:param parallel_mode: indicator of whether to perform model training in parallel
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing configuration parameters
+		:return: 1. (dataframe) predicted peak-TF association label for each peak locus and for the TF
+				 2. (dataframe) predicted TF binding probability in each peak locus for the TF
+		"""
+
 		feature_type_query1, feature_type_query2 = feature_type_vec[0:2]
 		df_feature_1 = dict_feature[feature_type_query1]
 		df_feature_2 = dict_feature[feature_type_query2]
-		# print('df_feature_1, df_feature_2: ',df_feature_1.shape,df_feature_2.shape)
+		verbose_internal = self.verbose_internal
+		if verbose_internal==2:
+			# print('df_feature_1, df_feature_2: ',df_feature_1.shape,df_feature_2.shape)
+			print('feature matrix of predictor variables, dataframe of size ',df_feature_1.shape)
+			print('response variable values, dataframe of size ',df_feature_2.shape)
 
 		sample_idvec_query = sample_idvec_train
 		if len(sample_idvec_train)==0:
@@ -1792,11 +1944,14 @@ class _Base2_2(_Base_pre2):
 					load_1 = select_config[field_id1]
 					if (load_1>0) and (field_id2 in select_config):
 						input_filename_query1 = select_config[field_id2]
-				data_vec_query, sample_idvec_query = self.test_train_idvec_pre1(sample_id,num_fold=num_fold,train_valid_mode=train_valid_mode_2,load=load_1,input_filename=input_filename_query1,save_mode=1,output_file_path=output_file_path,filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot,select_config=select_config)
+				data_vec_query, sample_idvec_query = self.test_train_idvec_pre1(sample_id,num_fold=num_fold,
+																				train_valid_mode=train_valid_mode_2,
+																				load=load_1,input_filename=input_filename_query1,
+																				save_mode=1,output_file_path=output_file_path,
+																				select_config=select_config)
 				sample_idvec_train = sample_idvec_query
 
 		sample_id_train, sample_id_valid, sample_id_test = sample_idvec_query[0:3]
-		# x_train1 = df_feature_2.loc[sample_id_train,feature_query_2]
 		x_train1 = df_feature_2.loc[sample_id_train,:]
 		x_train1_ori = x_train1.copy()
 
@@ -1806,7 +1961,6 @@ class _Base2_2(_Base_pre2):
 		feature_query_2 = df_feature_2.columns
 
 		y_mtx = df_feature_1.loc[sample_id_train,feature_query_1]
-		verbose_internal = self.verbose_internal
 		if verbose_internal>0:
 			print('input feature, dataframe of size ',x_train1.shape)
 			print('class label, dataframe of size ',y_mtx.shape)
@@ -1815,20 +1969,19 @@ class _Base2_2(_Base_pre2):
 		if len(model_type_vec)==0:
 			model_type_vec = ['LR','XGBClassifier','XGBR','Lasso',-1,'RF','ElasticNet','LogisticRegression']
 
-		# model_type_id = 'XGBClassifier'
 		model_type_id1 = model_type_id  # model_type_name
-		model_type = model_type_id1
+		# model_type = model_type_id1
 		# print('model_type: ',model_type_id1,model_type)
 		print('model_type: ',model_type_id1)
 
 		file_path1 = self.save_path_1
 		run_id = select_config['run_id']
 		select_config1 = dict()
+		# parameter configuration for model training
 		select_config1 = self.test_optimize_configure_1(model_type_id=model_type_id1,select_config=select_config)
-		# print('select_config1: ',select_config1)
+		# print('parameter configuration: ',select_config1)
 
 		max_depth, n_estimators = 7, 100
-		# max_depth, n_estimators = 5, 100
 		select_config_comp = {'max_depth':max_depth,'n_estimators':n_estimators}
 		select_config1.update({'select_config_comp':select_config_comp})
 
@@ -1836,7 +1989,7 @@ class _Base2_2(_Base_pre2):
 		multi_class_query = 'auto'
 		if column_1 in select_config:
 			multi_class_query = select_config[column_1]
-			select_config1.update({column_1:multi_class_query}) # copy the field query
+			select_config1.update({column_1:multi_class_query}) # copy the field
 		print('multi_class_logisticregression: ',multi_class_query)
 
 		train_valid_mode_1, train_valid_mode_2 = 1, 0 # train_valid_mode_1:1, train on the combined data; train_valid_mode_2:0,only use train and test data; 1, use train,valid,and test data
@@ -1848,7 +2001,6 @@ class _Base2_2(_Base_pre2):
 		select_config, list_param = test_query_default_parameter_1(field_query=field_query,default_parameter=list_param,overwrite=False,select_config=select_config)
 		train_valid_mode_1,train_valid_mode_2 = list_param[0:2]
 		
-		# print('train_valid_mode_1, train_valid_mode_2: ',train_valid_mode_1,train_valid_mode_2)
 		print('train_valid_mode_1: %d, train_valid_mode_2: %d'%(train_valid_mode_1,train_valid_mode_2))
 		if train_valid_mode_1>0:
 			print('train on the combined data')
@@ -1861,39 +2013,30 @@ class _Base2_2(_Base_pre2):
 			response_query1 = response_variable_name
 			y_train1 = y_mtx.loc[:,response_query1]
 			x_train1_ori = x_train1
-			model_type_id1 = model_type_id
 			if verbose_internal>0:
-				# print('y_train1: ',np.unique(y_train1))
 				print('class labels: ',np.unique(y_train1))
 			
 			pre_data_dict = dict()
-			model_pre = train_pre1_1._Base2_train1(peak_read=peak_read,rna_exprs=rna_exprs,
-													rna_exprs_unscaled=rna_exprs_unscaled,
-													df_gene_peak_query=df_feature_link,
-													df_gene_annot_expr=df_gene_annot_expr,
-													motif_data=motif_data,
-													select_config=select_config)
+			model_pre = train_pre1_1._Base2_train1(select_config=select_config)
 
 			sample_weight = []
 			dict_query_1 = dict()
 			save_mode_1 = 1
 			save_model_train = 1
-			# type_id_model = 1
 			model_path_1 = select_config['model_path_1']
 			dict_query_1, df_score_1 = model_pre.test_optimize_pre1_basic2_1(model_pre=[],x_train=x_train1,y_train=y_train1,
 																				response_variable_name=response_query1,
-																				x_train_feature2=[],
 																				sample_weight=sample_weight,
 																				dict_query=dict_query_1,
 																				df_coef_query=[],
 																				df_pred_query=[],
 																				model_type_vec=model_type_vec,
 																				model_type_idvec=[model_type_id1],
-																				filename_annot_vec=[],
 																				score_type_idvec=[],
 																				pre_data_dict=pre_data_dict,
 																				type_id_train=0,
-																				type_id_model=type_id_model,num_class=num_class,
+																				type_id_model=type_id_model,
+																				num_class=num_class,
 																				save_mode=save_mode_1,
 																				save_model_train=save_model_train,
 																				model_path_1=model_path_1,
@@ -1916,8 +2059,7 @@ class _Base2_2(_Base_pre2):
 
 			# dict_query_1[model_type_id1].update({'model_combine':model_2,'df_score_2':df_score_2})	# prediction performance on the combined data
 			model_train = dict1['model_combine']
-			df_score_2 = dict1['df_score_2']
-
+			# df_score_2 = dict1['df_score_2']
 			x_test = df_feature_2.loc[sample_id_test,feature_query_2]
 			y_test = df_feature_1.loc[sample_id_test,feature_query_1]
 
@@ -1935,9 +2077,32 @@ class _Base2_2(_Base_pre2):
 			return df_pred_2, df_proba_2
 
 	## ====================================================
-	# model training peak-TF link prediction
-	def test_query_compare_binding_train_unit1(self,data=[],peak_query_vec=[],peak_vec_1=[],motif_id_query='',dict_feature=[],feature_type_vec=[],sample_idvec_query=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],motif_data=[],flag_scale=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-			
+	# model training for peak-TF association prediction
+	# to update
+	def test_query_compare_binding_train_unit1(self,data=[],peak_query_vec=[],peak_vec_1=[],motif_id_query='',dict_feature=[],feature_type_vec=[],sample_idvec_query=[],motif_data=[],flag_scale=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+		
+		"""
+		model training for peak-TF association prediction
+		:param data: (dataframe) peak annotations including initially predicated peak-TF associations for the given TF
+		:param peak_query_vec: (array) peak loci to predict TF binding for the given TF
+		:param peak_vec_1: (array) selected pseudo positive training samples (peak loci)
+		:param motif_id_query: (str) name of the TF for which to predict binding in peak loci
+		:param dict_feature: dictionary containing feature matrices of predictor variables and response variable values
+		:param feature_type_vec: (array or list) feature types used for feature representations of the observations
+		:param sample_idvec_query: (list) selected training, validation, and test samples
+		:param motif_data: (dataframe) motif presence in peak loci by motif scanning (binary) (row:peak, column:TF (associated with motif))
+		:param flag_scale: indicator of whether to scale the feature matrix
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing configuration parameters
+		return: (dataframe) peak annotations including predicted peak-TF association label (binary) and TF binding probability for the given TF
+		"""
+
 		flag_query1 = 1
 		if flag_query1>0:
 			sample_id_valid = []
@@ -1952,18 +2117,15 @@ class _Base2_2(_Base_pre2):
 			peak_num1 = len(peak_vec_1)
 			print('selected pseudo positive peak loci: %d'%(peak_num1))
 
-			column_signal = 'signal'
+			# column_signal = 'signal'
 			method_type_feature_link = select_config['method_type_feature_link']
-			column_motif = select_config['column_motif']
-			field_query_1 = [motif_id_query]
-			if column_motif in df_pre1.columns:
-				field_query_1 = [column_motif,motif_id_query]
-
-			if column_signal in df_pre1.columns:
-				field_query_1 = [column_signal] + field_query_1
-
 			verbose_internal = self.verbose_internal
 			if verbose_internal==2:
+				column_motif = select_config['column_motif']
+				field_query_1 = [motif_id_query]
+				if column_motif in df_pre1.columns:
+					field_query_1 = [column_motif,motif_id_query]
+
 				print('data preview: ')
 				print(df_pre1.loc[peak_vec_1,field_query_1])
 
@@ -1984,8 +2146,6 @@ class _Base2_2(_Base_pre2):
 			if column_1 in select_config:
 				type_query = select_config[column_1]
 			if type_query==0:
-				# select_config_1 = self.select_config
-				# feature_type_combine = select_config_1['feature_type_combine']
 				feature_type_vec_2 = select_config['feature_type_vec_2']
 				feature_type_1, feature_type_2 = feature_type_vec_2[0:2]
 				feature_type_combine = 'latent_%s_%s_combine'%(feature_type_1,feature_type_2)
@@ -1994,92 +2154,88 @@ class _Base2_2(_Base_pre2):
 				feature_type_query_vec_2 = np.asarray(list(dict_feature.keys()))
 			feature_type_num1 = len(feature_type_query_vec_2)
 				
-			# file_path_query1 = select_config['file_path_query_1']
 			file_path_query1 = select_config['file_path_save_link']
-				
-			# print('file_path_query1: ',file_path_query1)
 			dict_feature_query = dict_feature
 			for i2 in range(feature_type_num1):
-				# feature_type_query = feature_type_query_1
-				# latent_mtx_query = latent_mtx_1
 				feature_type_query = feature_type_query_vec_2[i2]
-				# latent_mtx_query = list_pre1[i2]
 				latent_mtx_query_ori = dict_feature[feature_type_query]
 				if flag_scale>0:
-						print('perform feature scaling')
-						# z-score scaling
-						scale_type = 2
-						with_mean = True
-						with_std = True
-						latent_mtx_query = utility_1.test_motif_peak_estimate_score_scale_1(score=latent_mtx_query_ori,feature_query_vec=[],with_mean=with_mean,with_std=with_std,
-																							select_config=select_config,
-																							scale_type_id=scale_type)
+					print('perform feature scaling')
+					scale_type = 2 # compute z-score
+					with_mean = True
+					with_std = True
+					# perform feature scaling
+					latent_mtx_query = utility_1.test_motif_peak_estimate_score_scale_1(score=latent_mtx_query_ori,
+																							feature_query_vec=[],
+																							with_mean=with_mean,
+																							with_std=with_std,
+																							scale_type_id=scale_type,
+																							select_config=select_config)
 				else:
-						latent_mtx_query = latent_mtx_query_ori
+					latent_mtx_query = latent_mtx_query_ori
 
-					df_feature_2 = latent_mtx_query.loc[peak_loc_ori,:]
-					df_feature_1 = df_pre1.loc[peak_loc_ori,feature_query_vec_1]
+				df_feature_2 = latent_mtx_query.loc[peak_loc_ori,:]
+				df_feature_1 = df_pre1.loc[peak_loc_ori,feature_query_vec_1]
 
-					feature_type_pre1, feature_type_pre2 = feature_type_vec_pre1[0:2]
-					dict_feature_query = {feature_type_pre1:df_feature_1,feature_type_pre2:df_feature_2}
+				feature_type_pre1, feature_type_pre2 = feature_type_vec_pre1[0:2]
+				dict_feature_query = {feature_type_pre1:df_feature_1,feature_type_pre2:df_feature_2}
+				
 				if verbose_internal==2:
-						# print('df_feature_1: ',df_feature_1.shape,feature_type_pre1)
-						print('response variable: ',feature_query_vec_1,feature_type_pre1)
-						print('data preview: ')
-						print(df_feature_1[0:2])
+					print('response variable: ',feature_query_vec_1,feature_type_pre1)
+					print('data preview: ')
+					print(df_feature_1[0:2])
 					
-						# print('df_feature_2: ',df_feature_2.shape,feature_type_pre2,feature_type_query)
-						# print('predictor variable feature, dataframe of size ',df_feature_2.shape)
-						print('input feature, dataframe of size ',df_feature_2.shape)
-						print('feature type: %s'%(feature_type_query))
-						print('data preview: ')
-						print(df_feature_2[0:2])
+					print('input feature, dataframe of size ',df_feature_2.shape)
+					print('feature type: %s'%(feature_type_query))
+					print('data preview: ')
+					print(df_feature_2[0:2])
 
 				sample_idvec_train = sample_idvec_query
-					run_id1 = 1
-					select_config.update({'run_id':run_id1})
-					feature_type_id1 = 0
-					flag_model_explain = 1
-					select_config.update({'feature_type_id':feature_type_id1,'flag_model_explain':flag_model_explain})
+				run_id1 = 1
+				select_config.update({'run_id':run_id1})
+				feature_type_id1 = 0
+				flag_model_explain = 1
+				select_config.update({'feature_type_id':feature_type_id1,'flag_model_explain':flag_model_explain})
 
 				filename_save_annot_2 = filename_save_annot
-					filename_save_annot_local = '%s.%s_%s'%(filename_save_annot_2,feature_type_query,model_type_id1)
-					data_path_save = file_path_query1
-					select_config.update({'filename_save_annot_local':filename_save_annot_local,'data_path_save':file_path_query1})
+				filename_save_annot_local = '%s.%s_%s'%(filename_save_annot_2,feature_type_query,model_type_id1)
+				data_path_save = file_path_query1
+				select_config.update({'filename_save_annot_local':filename_save_annot_local,'data_path_save':file_path_query1})
 
 				start = time.time()
-					# classification model training
-					model_type_id_train = 'LogisticRegression'
-					type_id_model=1 # type_id_model: 0,regression model; 1, classification model
-					select_config.update({'model_type_id_train':model_type_id_train,
+				# classification model training
+				model_type_id_train = 'LogisticRegression'
+				type_id_model=1 # type_id_model: 0,regression model; 1,classification model
+				select_config.update({'model_type_id_train':model_type_id_train,
 											'model_type_id1':model_type_id_train,
 											'type_id_model':type_id_model})
 
-				# query feature association
-				df_pred_2, df_proba_2 = self.test_query_association_unit_pre1(feature_query_vec=feature_query_vec_1,df_feature_link=[],df_feature_link_2=[],
-																					dict_feature=dict_feature_query,feature_type_vec=feature_type_vec_pre1,
-																					column_idvec=column_vec_pre1,feature_mtx=[],df_gene_annot_expr=[],
-																					peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
-																					motif_data=motif_data,model_type_vec=[],model_type_id=model_type_id1,
-																					sample_idvec_train=sample_idvec_train,
-																					type_id_model=type_id_model,
-																					num_class=num_class,num_fold=num_fold,link_type=0,parallel_mode=0,
-																					save_mode=1,output_file_path=output_file_path,output_filename='',filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot_2,
-																					verbose=verbose,select_config=select_config)
+				# model training for peak-TF association prediction
+				df_pred_2, df_proba_2 = self.test_query_association_unit_pre1(feature_query_vec=feature_query_vec_1,
+																				dict_feature=dict_feature_query,
+																				feature_type_vec=feature_type_vec_pre1,
+																				peak_read=peak_read,rna_exprs=rna_exprs,rna_exprs_unscaled=rna_exprs_unscaled,
+																				model_type_vec=[],
+																				model_type_id=model_type_id1,
+																				sample_idvec_train=sample_idvec_train,
+																				type_id_model=type_id_model,
+																				num_class=num_class,
+																				num_fold=num_fold,
+																				parallel_mode=0,
+																				save_mode=1,output_file_path=output_file_path,output_filename='',filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot_2,
+																				verbose=verbose,select_config=select_config)
 					
 				stop = time.time()
 				print('model training used %.2fs'%(stop-start),feature_type_query)
 
 				if verbose_internal>0:
-					# print('df_pred_2: ',df_pred_2.shape,feature_type_query)
 					print('predicted class label, dataframe of size ',df_pred_2.shape,feature_type_query)
 					print('data preview: ')
 					print(df_pred_2[0:2])
 
-						# print('df_proba_2: ',df_proba_2.shape,feature_type_query)
-						print('predicted probability, dataframe of size ',df_proba_2.shape,feature_type_query)
-						print('data preview: ')
-						print(df_proba_2[0:2])
+					print('predicted probability, dataframe of size ',df_proba_2.shape,feature_type_query)
+					print('data preview: ')
+					print(df_proba_2[0:2])
 
 				peak_loc_query1 = df_pred_2.index
 				peak_loc_query2 = df_proba_2.index
@@ -2092,16 +2248,12 @@ class _Base2_2(_Base_pre2):
 				column_2 = column_vec_2[0]
 				df_proba_2 = df_proba_2.round(6)
 				df_pre1.loc[peak_loc_query2,column_2] = np.asarray(df_proba_2)[:,1]
-				
 				select_config.update({'column_pred_%s'%(feature_type_query):column_1,'colum_proba_%s'%(feature_type_query):column_vec_2})
 
-			# df_1 = pd.read_csv(input_filename,index_col=0,sep='\t')
-			# peak_loc_1 = df_1.index
 			if column_signal in df_pre1.columns:
-					# df_pre1 = df_pre1.sort_values(by=['signal',column_motif],ascending=False)
-					column_vec_sort = [column_signal,column_motif]
+				column_vec_sort = [column_signal,column_motif]
 			else:
-					column_vec_sort = [column_motif]
+				column_vec_sort = [column_motif]
 					
 			df_pre1 = df_pre1.sort_values(by=column_vec_sort,ascending=False)
 			if (save_mode>0) and (output_filename!=''):
@@ -2114,19 +2266,34 @@ class _Base2_2(_Base_pre2):
 			return df_pre1
 	
 	## ====================================================
-	# load data and query configuration parameters
-	# load motif data; load ATAC-seq and RNA-seq data of the metacells
-	def test_query_load_pre1(self,data=[],method_type_vec_query=[],flag_config_1=1,flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=0,input_file_path='',save_mode=1,verbose=0,select_config={}):
+	# load motif scanning data; load ATAC-seq and RNA-seq data of the metacells
+	# to update
+	def test_query_load_pre1(self,method_type_vec=[],flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=0,input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		"""
+		load motif scanning data; load ATAC-seq and RNA-seq data of the metacells
+		:param method_type_vec: the methods used to predict peak-TF associations initially
+		:param flag_motif_data_load: indicator of whether to query motif scanning data
+		:param flag_load_1: indicator of whether to query peak accessibility and gene expression data
+		:param flag_format: indicator of whether to use uppercase variable names in the RNA-seq data of the metacells
+		:param flag_scale: indicator of whether to scale the feature matrix
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing updated configuration parameters
+		"""
 
 		# flag_motif_data_load_1 = 1
 		# load motif data
 		method_type_feature_link = select_config['method_type_feature_link']
 		if flag_motif_data_load_1>0:
 			print('load motif data')
+			method_type_vec_query = method_type_vec
 			if len(method_type_vec_query)==0:
 				method_type_vec_query = [method_type_feature_link]
 
-			# load motif data
+			# load motif scanning data
 			dict_motif_data, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
 																			select_config=select_config)
 
@@ -2138,7 +2305,10 @@ class _Base2_2(_Base_pre2):
 			print('load peak accessiblity and gene expression data')
 			# print('load ATAC-seq and RNA-seq count matrices of the metacells')
 			start = time.time()
-			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_motif_peak_estimate_control_load_pre1_ori(meta_exprs=[],peak_read=[],flag_format=flag_format,flag_scale=flag_scale,select_config=select_config)
+			peak_read, meta_scaled_exprs, meta_exprs_2 = self.test_load_data_pre1(meta_exprs=[],peak_read=[],
+																					flag_format=flag_format,
+																					flag_scale=flag_scale,
+																					select_config=select_config)
 
 			sample_id = peak_read.index
 			meta_exprs_2 = meta_exprs_2.loc[sample_id,:]
@@ -2147,13 +2317,11 @@ class _Base2_2(_Base_pre2):
 				rna_exprs = meta_scaled_exprs	# scaled RNA-seq data
 			else:
 				rna_exprs = meta_exprs_2	# unscaled RNA-seq data
-			# print('peak_read, rna_exprs: ',peak_read.shape,rna_exprs.shape)
 
 			print('ATAC-seq count matrix: ',peak_read.shape)
-			print(peak_read[0:2])
-
+			print('data preview:\n',peak_read[0:2])
 			print('RNA-seq count matrix: ',rna_exprs.shape)
-			print(rna_exprs[0:2])
+			print('data preview:\n',rna_exprs[0:2])
 
 			self.peak_read = peak_read
 			self.meta_scaled_exprs = meta_scaled_exprs
@@ -2166,410 +2334,320 @@ class _Base2_2(_Base_pre2):
 		return select_config
 
 	## ====================================================
-	# file annotation query
-	def test_query_file_annotation_1(self,data=[],input_filename='',method_type_feature_link='',load_mode=0,save_mode=0,verbose=0,select_config={}):
-
-		flag_query1=1
-		if flag_query1>0:
-			if load_mode>0:
-				dict_file_query = data
-				input_filename_query_1 = dict_file_query[method_type_feature_link]
-				df_gene_peak_query_1_ori = pd.read_csv(input_filename_query_1,index_col=False,sep='\t')
-				print('df_gene_peak_query_1_ori: ',df_gene_peak_query_1_ori.shape)
-				print(df_gene_peak_query_1_ori.columns)
-				print(input_filename_query_1)
-
-			column_peak_tf_pval = 'peak_tf_pval_corrected'
-			column_peak_gene_pval = 'peak_gene_corr_pval'
-			# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
-			column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
-			column_gene_tf_pval = 'gene_tf_pval_corrected'
-			list1 = [column_peak_tf_pval,column_peak_gene_pval,column_pval_cond,column_gene_tf_pval]
-			
-			field_query = ['column_peak_tf_pval','column_peak_gene_pval','column_pval_cond','column_gene_tf_pval']
-			select_config, list1 = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=False,select_config=select_config)
-			column_vec_annot_query1 = list1
-			column_vec_annot = ['score_pred1_correlation']+column_vec_annot_query1
-
-			if load_mode>0:
-				column_vec = df_gene_peak_query_1_ori.columns
-				column_vec_annot = pd.Index(column_vec_annot).difference(column_vec,sort=False)
-
-			data_file_type_query = select_config['data_file_type']
-			input_file_path_query = select_config['file_path_motif_score']
-
-			df_score_annot = []
-			if len(column_vec_annot)>0:
-				print('columns for annotation: ',np.asarray(column_vec_annot))
-				input_filename_1 = input_filename
-				if os.path.exists(input_filename_1)==True:
-					df_score_annot = pd.read_csv(input_filename_1,index_col=False,sep='\t')
-				else:
-					column_1 = 'filename_annot_list'
-					if column_1 in select_config:
-						input_filename_list = select_config[column_1]
-						file_num = len(input_filename_list)
-						list1 = []
-						for i1 in range(file_num):
-							input_filename = input_filename_list[i1]
-							df_1 = pd.read_csv(input_filename,index_col=False,sep='\t')
-							list1.append(df_1)
-							if (iter_id%10==0):
-								print('df_1: ',df_1.shape)
-								print(input_filename)
-
-						df_score_annot = pd.concat(list1,axis=0,join='outer',ignore_index=False)
-						
-						print('df_score_annot: ',df_score_annot.shape)
-						print(df_score_annot.columns)
-						print(df_score_annot[0:2])
-
-				if len(df_score_annot)==0:
-					print('please provide score annotation file')
-					return
-
-				column_idvec_1 = ['motif_id','peak_id','gene_id']
-				df_score_annot.index = utility_1.test_query_index(df_score_annot,column_vec=column_idvec_1)
-				
-				if load_mode>0:
-					df_gene_peak_query_1_ori.index = utility_1.test_query_index(df_gene_peak_query_1_ori,column_vec=column_idvec_1)
-
-					df_list1 = [df_gene_peak_query_1_ori,df_score_annot]
-					column_vec_query_1 = [column_vec_annot]
-					df_gene_peak_query_1_ori = utility_1.test_column_query_1(input_filename_list=[],id_column=column_idvec_1,column_vec=column_vec_query_1,
-																				df_list=df_list1,type_id_1=0,type_id_2=0,reset_index=False,select_config=select_config)
-
-					print('df_gene_peak_query_1_ori: ',df_gene_peak_query_1_ori.shape)
-					print(df_gene_peak_query_1_ori.columns)
-
-				if save_mode>0:
-					b = input_filename_query_1.find('.txt.gz')
-					compression = 'gzip'
-					# output_filename = input_filename_query_1[0:b]+'.copy2_1.txt.gz'
-					output_filename = input_filename_query_1[0:b]+'.copy1.txt.gz'
-					df_gene_peak_query_1_ori.to_csv(output_filename,index=False,sep='\t',compression=compression)
-
-			if load_mode>0:
-				return df_score_annot, df_gene_peak_query_1_ori
-			else:
-				return df_score_annot
-
-	## ====================================================
 	# query feature link
-	def test_query_feature_link_pre1_1(self,method_type='',method_type_vec=[],dict_method_type=[],dict_file_query=[],dict_feature_query=[],df_score_annot=[],thresh_query_vec=[],input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# TODO
+	# def test_query_feature_link_pre1(self,method_type='',method_type_vec=[],dict_method_type=[],dict_file_query=[],dict_feature_query=[],df_score_annot=[],thresh_query_vec=[],input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# def test_query_feature_link_select_pre1(self,method_type='',method_type_vec=[],dict_method_type=[],dict_file_query=[],dict_feature_query=[],df_score_annot=[],thresh_query_vec=[],input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	
+	# 	"""
+	# 	compute feature embeddings of observations (peak loci)
+	# 	:param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
+	# 	:param method_type_dimension: the method for dimension reduction
+	# 	:param n_components: the number of latent components used for feature representation
+	# 	:param select_config: dictionary storing other parameters
+	# 	:return: dict_query1: {feature_type:latent score matrix (feature embedding), feature_type:component matrix}
+	# 	"""
 
-		flag_query1 = 1
-		if flag_query1>0:
-			data_file_type_query = select_config['data_file_type']
-			self.dict_file_query = dict_file_query
-			compression = 'gzip'
-			list_pre2 = []
-			if len(method_type_vec)==0:
-				key_vec = list(dict_method_type.keys())
-				method_type_vec = np.asarray(key_vec)
+	# 	flag_query1 = 1
+	# 	if flag_query1>0:
+	# 		data_file_type_query = select_config['data_file_type']
+	# 		self.dict_file_query = dict_file_query
+	# 		compression = 'gzip'
+	# 		list_pre2 = []
+	# 		if len(method_type_vec)==0:
+	# 			key_vec = list(dict_method_type.keys())
+	# 			method_type_vec = np.asarray(key_vec)
 
-			for method_type_query1 in method_type_vec:
-				if (method_type_query1.find('insilico')>-1):
-					method_type_query1_1 = 'insilico'
+	# 		for method_type_query1 in method_type_vec:
+	# 			if (method_type_query1.find('insilico')>-1):
+	# 				method_type_query1_1 = 'insilico'
 
-				elif (method_type_query1.find('Unify')>-1):
-					method_type_query1_1 = 'Unify'
+	# 			elif (method_type_query1.find('Unify')>-1):
+	# 				method_type_query1_1 = 'Unify'
 
-				input_filename = dict_file_query[method_type_query1_1]
-				method_type = method_type_query1_1
-				try:
-					df_query = pd.read_csv(input_filename,index_col=0,sep='\t',compression=compression) # load feature link
-				except Exception as error:
-					print('error! ',error)
-					df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
+	# 			input_filename = dict_file_query[method_type_query1_1]
+	# 			method_type = method_type_query1_1
+	# 			try:
+	# 				df_query = pd.read_csv(input_filename,index_col=0,sep='\t',compression=compression) # load feature link
+	# 			except Exception as error:
+	# 				print('error! ',error)
+	# 				df_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 
-				print('df_query: ',df_query.shape)
-				print(input_filename)
-				print(df_query.columns)
-				print(df_query[0:2])
+	# 			print('df_query: ',df_query.shape)
+	# 			print(input_filename)
+	# 			print(df_query.columns)
+	# 			print(df_query[0:2])
 
-				df_link_query_1 = df_query
-				thresh_query_vec = []
-				dict_thresh_score = []
-				print('method_type: ',method_type)
+	# 			df_link_query_1 = df_query
+	# 			thresh_query_vec = []
+	# 			dict_thresh_score = []
+	# 			print('method_type: ',method_type)
 
-				if method_type_query1 in dict_method_type:
-					dict1 = dict_method_type[method_type_query1]
-					thresh_query_vec = dict1['thresh_query_vec']
-					if 'dict_thresh_score' in dict1:
-						dict_thresh_score = dict1['dict_thresh_score']
-				else:
-					thresh_query_vec = []
+	# 			if method_type_query1 in dict_method_type:
+	# 				dict1 = dict_method_type[method_type_query1]
+	# 				thresh_query_vec = dict1['thresh_query_vec']
+	# 				if 'dict_thresh_score' in dict1:
+	# 					dict_thresh_score = dict1['dict_thresh_score']
+	# 			else:
+	# 				thresh_query_vec = []
 					
-				b1 = method_type.find('Unify')
-				if (b1>-1):
-					column_score_vec = ['score_pred1','score_pred2']
-					if len(dict_thresh_score)>0:
-						field_query = ['thresh_score_vec','thresh_score_vec_2','thresh_pval_vec']
-						list1 = [dict_thresh_score[field_id] for field_id in field_query]
-						thresh_score_vec, thresh_score_vec_2, thresh_pval_vec = list1[0:3]
-					else:
-						# use the default parameter
-						thresh_score_vec_2 = [0.05,0.15,0.10]
-						# thresh_score_vec = [[0.10,0.05],[0.10,0.05]]
-						thresh_score_vec = [[0.10,0],[0.10,0]]
-						# the p-value threshold for peak_tf_corr, peak_gene_corr_, gene_tf_corr_peak, gene_tf_corr and stricter threshold for peak_tf_corr
-						thresh_pval_vec = [0.1,0.1,0.25,0.1,0.01]
+	# 			b1 = method_type.find('Unify')
+	# 			if (b1>-1):
+	# 				column_score_vec = ['score_pred1','score_pred2']
+	# 				if len(dict_thresh_score)>0:
+	# 					field_query = ['thresh_score_vec','thresh_score_vec_2','thresh_pval_vec']
+	# 					list1 = [dict_thresh_score[field_id] for field_id in field_query]
+	# 					thresh_score_vec, thresh_score_vec_2, thresh_pval_vec = list1[0:3]
+	# 				else:
+	# 					# use the default parameter
+	# 					thresh_score_vec_2 = [0.05,0.15,0.10]
+	# 					# thresh_score_vec = [[0.10,0.05],[0.10,0.05]]
+	# 					thresh_score_vec = [[0.10,0],[0.10,0]]
+	# 					# the p-value threshold for peak_tf_corr, peak_gene_corr_, gene_tf_corr_peak, gene_tf_corr and stricter threshold for peak_tf_corr
+	# 					thresh_pval_vec = [0.1,0.1,0.25,0.1,0.01]
 					
-					type_query = 0
-					# type_query = 1
-					overwrite_2 = True
+	# 				type_query = 0
+	# 				# type_query = 1
+	# 				overwrite_2 = True
 
-					# perform feature link selection using thresholds
-					thresh_query_vec_pre1 = list(np.arange(5))+[5,21]
-					dict_feature_link_1 = self.test_query_feature_link_select_pre2(df_feature_link=df_link_query_1,df_score_annot=df_score_annot,column_score_vec=column_score_vec,
-																						thresh_query_vec=thresh_query_vec_pre1,thresh_score_vec=thresh_score_vec,
-																						thresh_score_vec_2=thresh_score_vec_2,thresh_pval_vec=thresh_pval_vec,overwrite=overwrite_2,
-																						save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
-																						verbose=verbose,select_config=select_config)
-					# thresh_query_vec = thresh_query_vec_pre1+[-1]
-					# thresh_query_vec = [2,5,21]
-					thresh_query_vec = [2,21]
+	# 				# perform feature link selection using thresholds
+	# 				thresh_query_vec_pre1 = list(np.arange(5))+[5,21]
+	# 				dict_feature_link_1 = self.test_query_feature_link_select_pre2(df_feature_link=df_link_query_1,df_score_annot=df_score_annot,column_score_vec=column_score_vec,
+	# 																					thresh_query_vec=thresh_query_vec_pre1,thresh_score_vec=thresh_score_vec,
+	# 																					thresh_score_vec_2=thresh_score_vec_2,thresh_pval_vec=thresh_pval_vec,overwrite=overwrite_2,
+	# 																					save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
+	# 																					verbose=verbose,select_config=select_config)
+	# 				# thresh_query_vec = thresh_query_vec_pre1+[-1]
+	# 				# thresh_query_vec = [2,5,21]
+	# 				thresh_query_vec = [2,21]
 
-					# list2 = []
-					column_idvec = ['gene_id','peak_id','motif_id']
-					column_id1, column_id2, column_id3 = column_idvec[0:3]
-					for thresh_query in thresh_query_vec:
-						df_link_query = dict_feature_link_1[thresh_query]
-						method_type_query = '%s.thresh%d'%(method_type,thresh_query+1)
-						# print('df_link_query, method_type_query: ',df_link_query.shape,method_type_query)
-						print('feature link, dataframe of size ',df_link_query.shape)
-						print('method type: %s'%(method_type_query))
+	# 				# list2 = []
+	# 				column_idvec = ['gene_id','peak_id','motif_id']
+	# 				column_id1, column_id2, column_id3 = column_idvec[0:3]
+	# 				for thresh_query in thresh_query_vec:
+	# 					df_link_query = dict_feature_link_1[thresh_query]
+	# 					method_type_query = '%s.thresh%d'%(method_type,thresh_query+1)
+	# 					# print('df_link_query, method_type_query: ',df_link_query.shape,method_type_query)
+	# 					print('feature link, dataframe of size ',df_link_query.shape)
+	# 					print('method type: %s'%(method_type_query))
 
-						df_gene_peak_query = df_link_query
-						if ('gene_id' in df_gene_peak_query):
-							df_query = df_gene_peak_query.copy()
-							column_score_1 = 'score_pred1'
-							df_query = df_query.sort_values(by=[column_score_1],ascending=False)
-							# df_query.index = test_query_index(df_query,column_vec=['peak_id','motif_id'])
-							# df_peak_tf_query = df_query.loc[~df_query.index.duplicated(keep='first'),:]
-							df_peak_tf_query = df_query.drop_duplicates(subset=[column_id2,column_id3])
-							df_peak_tf_query.index = np.asarray(df_peak_tf_query[column_id3])
-							
-							# print('df_peak_tf_query ',df_peak_tf_query.shape,method_type)
-							print('peak-TF link, dataframe of size ',df_peak_tf_query.shape)
-							print('data preview: ')
-							print(df_peak_tf_query[0:5])
+	# 					df_gene_peak_query = df_link_query
+	# 					if ('gene_id' in df_gene_peak_query):
+	# 						df_query = df_gene_peak_query.copy()
+	# 						column_score_1 = 'score_pred1'
+	# 						df_query = df_query.sort_values(by=[column_score_1],ascending=False)
+	# 						# df_query.index = test_query_index(df_query,column_vec=['peak_id','motif_id'])
+	# 						# df_peak_tf_query = df_query.loc[~df_query.index.duplicated(keep='first'),:]
+	# 						df_peak_tf_query = df_query.drop_duplicates(subset=[column_id2,column_id3])
+	# 						df_peak_tf_query.index = np.asarray(df_peak_tf_query[column_id3])					
+	# 						# print('df_peak_tf_query ',df_peak_tf_query.shape,method_type)
+	# 						print('peak-TF link, dataframe of size ',df_peak_tf_query.shape)
+	# 						print('data preview: ')
+	# 						print(df_peak_tf_query[0:5])
 
-						dict1 = {'peak_tf_gene':df_gene_peak_query,'peak_tf':df_peak_tf_query}
-						dict_feature_query.update({method_type_query:dict1})
-
-				else:
-					b_1 = method_type.find('insilico')
-					print('b_1: ',b_1)
-					if b_1>-1:
-						# thresh_insilco_ChIP_seq = 0.1
-						column_1 = 'thresh_insilco_ChIP-seq'
-						column_score = 'score_pred1'
-						for thresh_query in thresh_query_vec:
-							method_type_query = 'insilico_%s'%(thresh_query)
-							df_link_query = df_link_query_1.loc[df_link_query_1[column_score]>thresh_query,:]
-							df_link_query['motif_id'] = np.asarray(df_link_query.index)
-
-							df_gene_peak_query = []
-							df_peak_tf_query = df_link_query
-							df_peak_tf_query.index = test_query_index(df_peak_tf_query,column_vec=['peak_id','motif_id'])
-							df_peak_tf_query = df_peak_tf_query.loc[~df_peak_tf_query.index.duplicated(keep='first'),:]
-							# print('df_peak_tf_query ',df_peak_tf_query.shape,method_type)
-							print('peak-TF link, dataframe of size ',df_peak_tf_query.shape)
-							print('data preview: ')
-							print(df_peak_tf_query[0:5])
-
-							dict1 = {'peak_tf_gene':df_gene_peak_query,'peak_tf':df_peak_tf_query}
-							dict_feature_query.update({method_type_query:dict1})
-
-			return dict_feature_query
+	# 					dict1 = {'peak_tf_gene':df_gene_peak_query,'peak_tf':df_peak_tf_query}
+	# 					dict_feature_query.update({method_type_query:dict1})
+				
+	# 		return dict_feature_query
 
 	## ====================================================
 	# feature_link selection
-	def test_query_feature_link_select_pre2(self,df_feature_link=[],df_score_annot=[],column_score_vec=['score_pred1','score_pred2'],thresh_query_vec=[],thresh_score_vec=[[0.1,0],[0.1,0]],thresh_score_vec_2=[0,0.1,0.15],thresh_pval_vec=[0.1,0.1,0.25,0.1,0.01],overwrite=False,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	# TODO
+	# def test_query_feature_link_select_pre2(self,df_feature_link=[],df_score_annot=[],column_score_vec=['score_pred1','score_pred2'],thresh_query_vec=[],thresh_score_vec=[[0.1,0],[0.1,0]],thresh_score_vec_2=[0,0.1,0.15],thresh_pval_vec=[0.1,0.1,0.25,0.1,0.01],overwrite=False,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
-		flag_query1=1
-		if flag_query1>0:
-			thresh_score_1, thresh_query_1 = thresh_score_vec[0]
-			thresh_score_2, thresh_query_2 = thresh_score_vec[1]
+	# 	"""
+	# 	compute feature embeddings of observations (peak loci)
+	# 	:param feature_mode: feature_mode = 1, use peak accessibility feature and peak-motif sequence feature
+	# 	:param method_type_dimension: the method for dimension reduction
+	# 	:param n_components: the number of latent components used for feature representation
+	# 	:param select_config: dictionary storing other parameters
+	# 	:return: dict_query1: {feature_type:latent score matrix (feature embedding), feature_type:component matrix}
+	# 	"""
 
-			column_1, column_2 = 'label_score_1', 'label_score_2'
-			column_score_1, column_score_2 = column_score_vec[0:2]
-			score_query1 = df_feature_link[column_score_1]
-			score_query2 = df_feature_link[column_score_2]
+	# 	flag_query1=1
+	# 	if flag_query1>0:
+	# 		thresh_score_1, thresh_query_1 = thresh_score_vec[0]
+	# 		thresh_score_2, thresh_query_2 = thresh_score_vec[1]
 
-			if (not (column_1 in df_feature_link.columns)) or (overwrite==True):
-				id1 = (score_query1>thresh_score_1)&(score_query2>thresh_query_1)
-				df_feature_link[column_1] = (id1).astype(int)
+	# 		column_1, column_2 = 'label_score_1', 'label_score_2'
+	# 		column_score_1, column_score_2 = column_score_vec[0:2]
+	# 		score_query1 = df_feature_link[column_score_1]
+	# 		score_query2 = df_feature_link[column_score_2]
 
-			if (not (column_2 in df_feature_link.columns)) or (overwrite==True):
-				id2 = (score_query2>thresh_score_2)&(score_query1>thresh_query_2)
-				df_feature_link[column_2] = (id2).astype(int)
+	# 		if (not (column_1 in df_feature_link.columns)) or (overwrite==True):
+	# 			id1 = (score_query1>thresh_score_1)&(score_query2>thresh_query_1)
+	# 			df_feature_link[column_1] = (id1).astype(int)
 
-			df_gene_peak_query_1_ori = df_feature_link
+	# 		if (not (column_2 in df_feature_link.columns)) or (overwrite==True):
+	# 			id2 = (score_query2>thresh_score_2)&(score_query1>thresh_query_2)
+	# 			df_feature_link[column_2] = (id2).astype(int)
+
+	# 		df_gene_peak_query_1_ori = df_feature_link
 			
-			id1 = (df_gene_peak_query_1_ori['label_score_1']>0) # score 1 above threshold
-			id2 = (df_gene_peak_query_1_ori['label_score_2']>0)	# score 2 above threshold
+	# 		id1 = (df_gene_peak_query_1_ori['label_score_1']>0) # score 1 above threshold
+	# 		id2 = (df_gene_peak_query_1_ori['label_score_2']>0)	# score 2 above threshold
 			
-			if len(thresh_score_vec_2)>0:
-				thresh_1, thresh_2, thresh_3 = thresh_score_vec_2[0:3]
-			else:
-				thresh_1, thresh_2 = 0, 0.15
-				thresh_3 = 0.10
+	# 		if len(thresh_score_vec_2)>0:
+	# 			thresh_1, thresh_2, thresh_3 = thresh_score_vec_2[0:3]
+	# 		else:
+	# 			thresh_1, thresh_2 = 0, 0.15
+	# 			thresh_3 = 0.10
 
-			column_peak_tf_corr = 'peak_tf_corr'
-			column_peak_gene_corr = 'peak_gene_corr_'
-			# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
-			column_cond = 'gene_tf_corr_peak'
-			column_gene_tf_corr = 'gene_tf_corr'
+	# 		column_peak_tf_corr = 'peak_tf_corr'
+	# 		column_peak_tf_pval = 'peak_tf_pval_corrected'
 
-			column_peak_tf_pval = 'peak_tf_pval_corrected'
-			column_peak_gene_pval = 'peak_gene_corr_pval'
-			# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
-			column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
-			column_gene_tf_pval = 'gene_tf_pval_corrected'
+	# 		column_peak_gene_corr = 'peak_gene_corr_'
+	# 		column_peak_gene_pval = 'peak_gene_corr_pval'
+
+	# 		column_cond = 'gene_tf_corr_peak'
+	# 		# column_pval_cond = 'gene_tf_corr_peak_pval_corrected2'
+	# 		column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
+
+	# 		column_gene_tf_corr = 'gene_tf_corr'
+	# 		column_gene_tf_pval = 'gene_tf_pval_corrected'
 			
-			list1 = [column_peak_tf_pval,column_peak_gene_pval,column_pval_cond,column_gene_tf_pval]
-			list1 += [column_peak_tf_corr,column_peak_gene_corr,column_cond,column_gene_tf_corr]
+	# 		list1 = [column_peak_tf_pval,column_peak_gene_pval,column_gene_tf_pval,column_pval_cond]
+	# 		list1 += [column_peak_tf_corr,column_peak_gene_corr,column_gene_tf_corr,column_cond]
 			
-			field_query1 = ['column_peak_tf_pval','column_peak_gene_pval','column_pval_cond','column_gene_tf_pval']
-			field_query2 = ['column_peak_tf_corr','column_peak_gene_corr','column_cond','column_gene_tf_corr']
-
-			field_query = field_query1+field_query2
-			select_config, list1 = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=False,select_config=select_config)
-			column_vec_annot_query1 = list1
-			column_vec_annot = ['score_pred1_correlation']+column_vec_annot_query1
-
-			column_vec = df_gene_peak_query_1_ori.columns
-			column_vec_annot = pd.Index(column_vec_annot).difference(column_vec,sort=False)
-
-			if len(column_vec_annot)>0:
-				print('column_vec_annot: ',column_vec_annot)
-				column_idvec_1 = ['motif_id','peak_id','gene_id']
-				if len(df_score_annot)==0:
-					print('please provide score annotation file')
-					return
-				# else:
-				# 	df_gene_peak_query_1_ori.index = utility_1.test_query_index(df_gene_peak_query_1_ori,column_vec=column_idvec_1)
-
-				df_list1 = [df_gene_peak_query_1_ori,df_score_annot]				
-				df_gene_peak_query_1_ori = utility_1.test_column_query_1(input_filename_list=[],id_column=column_idvec_1,column_vec=[column_vec_annot],
-																			df_list=df_list1,type_id_1=0,type_id_2=0,reset_index=False,select_config=select_config)
-
-
-				print('df_gene_peak_query_1_ori: ',df_gene_peak_query_1_ori.shape)
-				print(df_gene_peak_query_1_ori.columns)
-
-				file_path_motif_score = select_config['file_path_motif_score']
-
-			# id_thresh1 = (df_gene_peak_query_1_ori['score_pred1']>thresh_1)
-			id_thresh1 = (df_gene_peak_query_1_ori['score_pred2']>thresh_1)
-			id_thresh2 = (df_gene_peak_query_1_ori['score_pred1_correlation']>thresh_2)
-			id_thresh_2 = (df_gene_peak_query_1_ori['score_pred1_correlation']>thresh_3)
-			id_pre2 = (id1|(id2&id_thresh2))	# combination of selection by label_score_1 and label_score_2
-			# id_thresh_vec = [id1,id_pre2,(id1|id2)&id_thresh1,id2&id_thresh_2,id2&id_thresh2]
-			id_pre1 = (id1|id2)
-			id_thresh_vec = [id1,id_pre2,(id1|id2),id2&id_thresh_2,id2&id_thresh2]
-
-			thresh_num1 = 5
-			thresh_query_vec_pre1 = list(np.arange(thresh_num1))+[5,21]
-			thresh_query_vec_pre2 = thresh_query_vec_pre1+[-1]
-			type_query = 0
-
-			dict_query1 = dict()
-			dict_annot1 = dict()
+	# 		field_query_pre1 = ['peak_tf','peak_gene','gene_tf']
+	# 		field_query1 = ['column_%s_pval'%(field_id) for field_id in field_query_pre1] + ['column_pval_cond']
+	# 		field_query2 = ['column_%s_corr'%(field_id) for field_id in field_query_pre1] + ['column_cond']
 			
-			list_pre1 = thresh_query_vec_pre1
-			list1 = thresh_query_vec
-			list2 = id_thresh_vec
-			query_num_1 = len(list_pre1)
-			query_num1 = len(list1)
-			query_num2 = len(list2)
-			print('thresh_query_vec: ',query_num1,thresh_query_vec)
-			# print('selected subgroups: ',query_num2)
-			dict_annot1 = dict(zip(list_pre1,list2))
+	# 		# field_query1 = ['column_peak_tf_pval','column_peak_gene_pval','column_pval_cond','column_gene_tf_pval']
+	# 		# field_query2 = ['column_peak_tf_corr','column_peak_gene_corr','column_cond','column_gene_tf_corr']
+
+	# 		field_query = field_query1+field_query2
+	# 		select_config, list1 = utility_1.test_query_default_parameter_1(field_query=field_query,default_parameter=list1,overwrite=False,select_config=select_config)
+	# 		column_vec_annot_query1 = list1
+	# 		column_vec_annot = ['score_pred1_correlation']+column_vec_annot_query1
+
+	# 		column_vec = df_gene_peak_query_1_ori.columns
+	# 		column_vec_annot = pd.Index(column_vec_annot).difference(column_vec,sort=False)
+
+	# 		if len(column_vec_annot)>0:
+	# 			print('columns not included: ',np.asarray(column_vec_annot))
+	# 			column_idvec = ['motif_id','peak_id','gene_id']
+	# 			if len(df_score_annot)==0:
+	# 				print('please provide score annotation file')
+	# 				return
+				
+	# 			df_list1 = [df_gene_peak_query_1_ori,df_score_annot]
+	# 			# copy specified columns from the second dataframe to the first dataframe				
+	# 			df_gene_peak_query_1_ori = utility_1.test_column_query_1(input_filename_list=[],id_column=column_idvec,column_vec=[column_vec_annot],
+	# 																		df_list=df_list1,type_id_1=0,type_id_2=0,reset_index=False,select_config=select_config)
+
+
+	# 			print('df_gene_peak_query_1_ori: ',df_gene_peak_query_1_ori.shape)
+	# 			print(df_gene_peak_query_1_ori.columns)
+
+	# 			file_path_motif_score = select_config['file_path_motif_score']
+
+	# 		id_thresh1 = (df_gene_peak_query_1_ori['score_pred2']>thresh_1)
+	# 		id_thresh2 = (df_gene_peak_query_1_ori['score_pred1_correlation']>thresh_2)
+	# 		id_thresh_2 = (df_gene_peak_query_1_ori['score_pred1_correlation']>thresh_3)
+	# 		id_pre2 = (id1|(id2&id_thresh2))	# combination of selection by label_score_1 and label_score_2
 			
-			for i1 in range(query_num1):
-				thresh_query = list1[i1]
-				if thresh_query>=0:
-					id_thresh_query = dict_annot1[thresh_query]
-					print('thresh_query ',thresh_query)
-					df_gene_peak_query = df_gene_peak_query_1_ori.loc[id_thresh_query,:]
-					# df_gene_peak_query.index = test_query_index(df_gene_peak_query,column_vec=['motif_id','peak_id'])
-					df_gene_peak_query.index = np.asarray(df_gene_peak_query['motif_id'])
-					dict_query1[thresh_query] = df_gene_peak_query
+	# 		id_pre1 = (id1|id2)
+	# 		id_thresh_vec = [id1,id_pre2,(id1|id2),id2&id_thresh_2,id2&id_thresh2]
 
-			thresh_query_1 = -1
-			dict_query1[thresh_query_1] = df_gene_peak_query_1_ori
+	# 		thresh_num1 = 5
+	# 		thresh_query_vec_pre1 = list(np.arange(thresh_num1))
+	# 		thresh_query_vec_pre2 = thresh_query_vec_pre1+[-1]
+	# 		type_query = 0
 
-			return dict_query1
+	# 		dict_query1 = dict()
+	# 		dict_annot1 = dict()
+			
+	# 		list_pre1 = thresh_query_vec_pre1
+	# 		list1 = thresh_query_vec
+	# 		list2 = id_thresh_vec
+	# 		query_num_1 = len(list_pre1)
+	# 		query_num1 = len(list1)
+	# 		query_num2 = len(list2)
+	# 		print('thresh_query_vec: ',query_num1,thresh_query_vec)
+			
+	# 		dict_annot1 = dict(zip(list_pre1,list2))
+			
+	# 		for i1 in range(query_num1):
+	# 			thresh_query = list1[i1]
+	# 			if thresh_query>=0:
+	# 				id_thresh_query = dict_annot1[thresh_query]
+	# 				print('threshold: ',thresh_query)
+	# 				df_gene_peak_query = df_gene_peak_query_1_ori.loc[id_thresh_query,:]
+					
+	# 				df_gene_peak_query.index = np.asarray(df_gene_peak_query['motif_id'])
+	# 				dict_query1[thresh_query] = df_gene_peak_query
+
+	# 		thresh_query_1 = -1
+	# 		dict_query1[thresh_query_1] = df_gene_peak_query_1_ori
+
+	# 		return dict_query1
 
 	## ====================================================
 	# load feature link
-	def test_query_feature_link_load_pre1(self,data=[],dict_file_query=[],save_mode=1,verbose=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',select_config={}):
+	# def test_query_feature_link_load_pre1(self,data=[],dict_file_query=[],save_mode=1,verbose=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',select_config={}):
 
-		load_mode_query1 = 0
-		data_file_type_query = select_config['data_file_type']
-		dict_file_query = self.test_query_file_path_1(data_file_type=data_file_type_query,save_mode=1,verbose=0,select_config=select_config)
+	# 	load_mode_query1 = 0
+	# 	data_file_type_query = select_config['data_file_type']
+	# 	dict_file_query = self.test_query_file_path_1(data_file_type=data_file_type_query,save_mode=1,verbose=0,select_config=select_config)
 
-		self.dict_file_query = dict_file_query
-		select_config.update({'dict_file_query':dict_file_query})
-		print('dict_file_query: ',dict_file_query)
+	# 	self.dict_file_query = dict_file_query
+	# 	select_config.update({'dict_file_query':dict_file_query})
+	# 	print('dict_file_query: ',dict_file_query)
 
-		dict_feature_query = dict()
+	# 	dict_feature_query = dict()
 
-		dict_method_type = dict()
-		method_type_feature_link_query = 'insilico'
-		thresh_value_vec = [0.1,0.15]
-		dict_thresh_score_1 = dict()
-		dict1 = {'thresh_query_vec':thresh_value_vec,'dict_thresh_score':dict_thresh_score_1}
-		dict_method_type.update({method_type_feature_link_query:dict1})
+	# 	dict_method_type = dict()
+	# 	method_type_feature_link_query = 'insilico'
+	# 	thresh_value_vec = [0.1,0.15]
+	# 	dict_thresh_score_1 = dict()
+	# 	dict1 = {'thresh_query_vec':thresh_value_vec,'dict_thresh_score':dict_thresh_score_1}
+	# 	dict_method_type.update({method_type_feature_link_query:dict1})
 
-		method_type_feature_link = select_config['method_type_feature_link']
-		method_type_feature_link_1 = method_type_feature_link
-		# thresh_query_vec = np.arange(5)
-		thresh_query_vec = list(np.arange(5))+[5,21]
-		# use the default parameter
-		thresh_score_vec_2 = [0.05,0.15,0.10]
-		# thresh_score_vec = [[0.10,0.05],[0.10,0.05]]
-		thresh_score_vec = [[0.10,0],[0.10,0]]
-		# the p-value threshold for peak_tf_corr, peak_gene_corr_, gene_tf_corr_peak, gene_tf_corr and stricter threshold for peak_tf_corr
-		thresh_pval_vec = [0.1,0.1,0.25,0.1,0.01]
-		dict_thresh_score = {'thresh_score_vec':thresh_score_vec,'thresh_score_vec_2':thresh_score_vec_2,'thresh_pval_vec':thresh_pval_vec}
-		dict2 = {'thresh_query_vec':thresh_query_vec,'dict_thresh_score':dict_thresh_score}
-		dict_method_type.update({method_type_feature_link_1:dict2})
+	# 	method_type_feature_link = select_config['method_type_feature_link']
+	# 	method_type_feature_link_1 = method_type_feature_link
+	# 	# thresh_query_vec = np.arange(5)
+	# 	thresh_query_vec = list(np.arange(5))+[5,21]
+	# 	# use the default parameter
+	# 	thresh_score_vec_2 = [0.05,0.15,0.10]
+	# 	# thresh_score_vec = [[0.10,0.05],[0.10,0.05]]
+	# 	thresh_score_vec = [[0.10,0],[0.10,0]]
+	# 	# the p-value threshold for peak_tf_corr, peak_gene_corr_, gene_tf_corr_peak, gene_tf_corr and stricter threshold for peak_tf_corr
+	# 	thresh_pval_vec = [0.1,0.1,0.25,0.1,0.01]
+	# 	dict_thresh_score = {'thresh_score_vec':thresh_score_vec,'thresh_score_vec_2':thresh_score_vec_2,'thresh_pval_vec':thresh_pval_vec}
+	# 	dict2 = {'thresh_query_vec':thresh_query_vec,'dict_thresh_score':dict_thresh_score}
+	# 	dict_method_type.update({method_type_feature_link_1:dict2})
 
-		if 'method_type_vec_link' in select_config:
-			method_type_vec = select_config['method_type_vec_link']
-		else:
-			method_type_vec = [method_type_feature_link_1,method_type_feature_link_query]
+	# 	if 'method_type_vec_link' in select_config:
+	# 		method_type_vec = select_config['method_type_vec_link']
+	# 	else:
+	# 		method_type_vec = [method_type_feature_link_1,method_type_feature_link_query]
 
-		df_score_annot = self.test_query_file_annotation_1(data=dict_file_query,method_type_feature_link=method_type_feature_link_1,
-															load_mode=load_mode_query1,save_mode=0,verbose=0,select_config=select_config)
+	# 	df_score_annot = self.test_query_file_annotation_1(data=dict_file_query,method_type_feature_link=method_type_feature_link_1,
+	# 														load_mode=load_mode_query1,save_mode=0,verbose=0,select_config=select_config)
 		
-		dict_feature_query = self.test_query_feature_link_pre1_1(method_type=method_type_feature_link_1,method_type_vec=method_type_vec,
-																	dict_method_type=dict_method_type,dict_file_query=dict_file_query,
-																	dict_feature_query=dict_feature_query,df_score_annot=df_score_annot,
-																	thresh_query_vec=thresh_query_vec,input_file_path='',
-																	save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
-																	verbose=verbose,select_config=select_config)
+	# 	dict_feature_query = self.test_query_feature_link_pre1(method_type=method_type_feature_link_1,method_type_vec=method_type_vec,
+	# 																dict_method_type=dict_method_type,dict_file_query=dict_file_query,
+	# 																dict_feature_query=dict_feature_query,df_score_annot=df_score_annot,
+	# 																thresh_query_vec=thresh_query_vec,input_file_path='',
+	# 																save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
+	# 																verbose=verbose,select_config=select_config)
 			
-		# self.dict_file_query = dict_file_query
-		self.dict_feature_query = dict_feature_query
-		# select_config.update({'dict_file_query':dict_file_query})
+	# 	# self.dict_file_query = dict_file_query
+	# 	self.dict_feature_query = dict_feature_query
+	# 	# select_config.update({'dict_file_query':dict_file_query})
 
-		# if load_mode>0:
-		# 	return data_vec_1, dict_motif_data, dict_feature_query, select_config
-		dict_1 = dict_feature_query[method_type_feature_link]
-		df_gene_peak_query1 = dict_1['peak_tf_gene']
-		df_peak_tf_query1 = dict_1['peak_tf']
+	# 	# if load_mode>0:
+	# 	# 	return data_vec_1, dict_motif_data, dict_feature_query, select_config
+	# 	dict_1 = dict_feature_query[method_type_feature_link]
+	# 	df_gene_peak_query1 = dict_1['peak_tf_gene']
+	# 	df_peak_tf_query1 = dict_1['peak_tf']
 
-		# print('df_gene_peak_query1, df_peak_tf_query1: ',df_gene_peak_query1.shape,df_peak_tf_query1.shape)
-		# print(df_gene_peak_query1[0:2])
-		# print(df_peak_tf_query1[0:2])
+	# 	# print('df_gene_peak_query1, df_peak_tf_query1: ',df_gene_peak_query1.shape,df_peak_tf_query1.shape)
+	# 	# print(df_gene_peak_query1[0:2])
+	# 	# print(df_peak_tf_query1[0:2])
 
-		return dict_feature_query
+	# 	return dict_feature_query
 
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,upstream=100,downstream=100,type_id_query=1,thresh_fdr_peak_tf=0.2,path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=0,
