@@ -16,10 +16,6 @@ python test_unify_compute_group_1.py [Options]
 
 The options:
 
-- -b, --cell : cell type, default = 0
-  
-    cell type 0 represents the PBMC data
-
 - --data_file_type: the cell type or dataset annotation, default = 'pbmc'
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq data of the single cells, or the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
