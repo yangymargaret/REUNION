@@ -15,8 +15,9 @@ The command to use Unify to infer peak-TF-gene associations is as follows:
 python test_unify_compute_group_1.py [Options]
 
 The options:
-
 - --data_file_type: the cell type or dataset annotation, default = 'pbmc'
+  
+- -b, --cell : cell type or cell population index, default = 1 (representing PBMC data)
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq data of the single cells, or the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
 
@@ -73,11 +74,9 @@ python test_rediscover_compute_3.py [Options]
 
 The options:
 
-- -b, --cell : cell type, default = 1
-  
-    cell type 1 represents PBMC data
-
 - --data_file_type: the cell type or dataset annotation, default = 'pbmc'
+
+- -b, --cell : cell type or cell population index, default = 1 (representing PBMC data)
 
 - --input_dir: the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
 
