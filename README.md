@@ -4,9 +4,9 @@ and regulatory association inference from single-cell
 multi-omics data
 
 REUNION is an integrative computational framework which utilizes the single cell multi-omics data as input to infer peak-transcription factor (TF)-gene triplet regulatory associations and predict genome-wide TF binding activities in the peaks with or without TF motifs detected. 
-REUNION unites two functionally cooperative methods Unify and ReDiscover. 
+REUNION unites two functionally cooperative methods Unify and Rediscover. 
 Unify performs regulatory association estimation utilizing the single-cell multi-omics data.
-ReDiscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and Rediscover supports each other within one framework.
+Rediscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and Rediscover supports each other within one framework.
 
 Unify
 
@@ -66,9 +66,9 @@ The output:
 The output of Unify includes a file containing the estimated peak-TF-gene associations saved in the directory $output_dir/file_link. 
 
 
-ReDiscover
+Rediscover
 
-The command to use ReDiscover to perform TF binding prediction is as follows:
+The command to use Rediscover to perform TF binding prediction is as follows:
 
 python test_rediscover_compute_3.py [Options]
 
@@ -84,29 +84,29 @@ The options:
 
     Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
 
-    'extension' represents the file format. ReDiscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
+    'extension' represents the file format. Rediscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz; 
 
 - --atac_meta: the file path of the ATAC-seq read count matrix of the metacells, default = -1
 
 - --rna_meta: the file path of the RNA-seq read count matrix of the metacells, default = -1
 
-  If atac_meta or rna_meta is specified, ReDiscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
+  If atac_meta or rna_meta is specified, Rediscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
 - --motif_data: the filename of peak-motif matrix from the motif scanning results, default = -1
 
 - --motif_data_score: the filename of the motif scores from the motif scanning results, default = -1
   
-- --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to ReDiscover, default = 'Unify'.
+- --method_type_feature_link: the method which provides initially estimated peak-TF associations as input to Rediscover, default = 'Unify'.
 
-  By default we use the peak-TF associations predicted by Unify as input. ReDiscover can also take peak-TF associations predicted by other methods as input. In that case, please provide the name of the corresponding method.
+  By default we use the peak-TF associations predicted by Unify as input. Rediscover can also take peak-TF associations predicted by other methods as input. In that case, please provide the name of the corresponding method.
 
 - --tf: the name of the TF for which to predict peak-TF links, for example, ATF3; or a file containing the names of the TFs to query, with one TF name per line, default = -1
 
   If there are multiple TFs to query, please use a .txt file to include the TF names, with one TF name per line.
 
-- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or the method specified in 'method_type_feature_link' ) or ReDiscover, default = $data_file_type
+- --filename_prefix: the prefix as part of the name of the file that contains predicted peak-TF assocations by Unify (or the method specified in 'method_type_feature_link' ) or Rediscover, default = $data_file_type
 
-- --filename_annot: the annotation as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or ReDiscover, default = '1'
+- --filename_annot: the annotation as part of the name of the file that contains predicted peak-TF assocations by Unify (or other methods) or Rediscover, default = '1'
 
   If filename_annot='', filename_annot will not be used in the corresponding filename.
   
@@ -124,13 +124,13 @@ The options:
   
 - --output_dir: the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TFs and other associated files, default = 'output_file'
 
-  By default ReDiscover creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, ReDiscover will try to create it. ReDiscover will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF associations. 
+  By default Rediscover creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Rediscover will try to create it. Rediscover will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF associations. 
 
-- --output_filename: the file to save the peak-TF associations predicted by ReDiscover, default = -1
+- --output_filename: the file to save the peak-TF associations predicted by Rediscover, default = -1
 
-  If the default parameter is used, for each TF to query, ReDiscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.$filename_annot.pred2.txt and save the files to the directory $output_dir/file_link.
+  If the default parameter is used, for each TF to query, Rediscover will save the corresponding predictions to a file named $filename_prefix.$TF_name.$filename_annot.pred2.txt and save the files to the directory $output_dir/file_link.
 
-  If 'output_filename' is specified and there are multiple TFs to query, ReDiscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
+  If 'output_filename' is specified and there are multiple TFs to query, Rediscover will concatenate the peak-TF associations for different TFs into one dataframe, with one column 'tf_name' added to specify the TF name, and save the dataframe to the file specified by 'output_filename'.
   
 - --method_type_group: the method for peak clustering, default = phenograph.20
 
@@ -148,9 +148,9 @@ The options:
 
 - --neighbor_sel: the number of nearest neighbors used for each peak when performing the pseudo training sample selection, default = 30. Please note that $neighbor_sel<=$neighbor.
 
-- --model_type: the prediction model used in ReDiscover, default = 'LogisticRegression', available values: {'LogisticRegression', 'XGBoostClassifier'}.
+- --model_type: the prediction model used in Rediscover, default = 'LogisticRegression', available values: {'LogisticRegression', 'XGBoostClassifier'}.
 
-  ReDiscover supports using the logistic regression model or the XGBoost classifier as the prediction model. By default we use the logistic regression model.
+  Rediscover supports using the logistic regression model or the XGBoost classifier as the prediction model. By default we use the logistic regression model.
 
 - --ratio_1: the ratio of the number of pseudo negative training samples selected from the peaks with motif of a given TF detected but without TF binding predicted by Unify or other methods (noted as N_neg,1) compared to the number of pseudo positive training samples selected (noted as N_pos), default = 0.25. We have N_neg,1 = N_pos*$ratio_1.
 
@@ -158,15 +158,15 @@ The options:
 
 - --thresh_score: the thresholds on the normalized peak-TF scores to select pseudo positive training samples from the paired peak groups with or without enrichment of peaks predicted to be bound by a given TF by Unify or other methods (noted as predicted TF-binding peaks), default = '0.25,0.75'
 
-    thresh_score has the format 'thresh1,thresh2', where thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binding peaks, respectively. ReDiscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
+    thresh_score has the format 'thresh1,thresh2', where thresh1 or thresh 2 represents the threshold used to selected pseudo postivie training samples from the peak group with or without enrichment of the predicted TF-binding peaks, respectively. Rediscover performas quantile normalization for the original peak-TF scores. The normalized scores are between 0 and 1. Please use thresh1, thresh2 in [0,1].
 
 The output:
 
-The output of ReDiscover includes a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in $output_dir/file_link. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak locus.
+The output of Rediscover includes a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in $output_dir/file_link. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak locus.
 
 ************************************************************************************
 # Required pre-installed packages
-REUNION requires the following packages to be installed for both Unify and ReDiscover:
+REUNION requires the following packages to be installed for both Unify and Rediscover:
 - Python 
 - scikit-learn
 - NumPy 
@@ -178,7 +178,7 @@ Unify additionally requires the following packages to be installed:
 - pyranges
 - pingouin
 
-ReDiscover additionally requires the following packages to be installed:
+Rediscover additionally requires the following packages to be installed:
 - PhenoGraph
 
   
