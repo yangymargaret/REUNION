@@ -894,7 +894,7 @@ class _Base2_2(_Base_pre2):
 	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id='',dict_thresh=[],thresh_vec=[],flag_select_2=0,input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
 
 		"""
-		# select paired groups based on enrichment of peak loci with predicted TF binding and peak number
+		select paired groups based on enrichment of peak loci with predicted TF binding and peak number
 		:param data: (dataframe) peak annotations including group assignment in the two feature spaces
 		:param dict_annot: dictionary containing the following data:
 						   1. (dataframe) annotations containing the number and percentage of candiate peaks (peaks with initially predicted TF binding) in each group for each feature type
