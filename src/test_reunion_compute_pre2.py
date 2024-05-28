@@ -62,9 +62,22 @@ class _Base_pre2(_Base_pre1):
 									select_config=select_config)
 
 	## ====================================================
-	# load motif data
+	# load motif scanning data
+	# to update
 	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,save_file_path='',verbose=0,select_config={}):
 		
+		"""
+		load motif scanning data, including: 1. binary matrix presenting motif presence in each ATAC-seq peak locus; 2. motif scores if available;
+		:param method_type_vec: (array or list) methods used to initially predict peak-TF links, which require motif scanning results
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param save_file_path: the directory to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. dictionary containing motif scanning results utilized by the corresponding regulatory association inference method in method_type_vec;
+				 2. dictionary containing updated parameters
+		"""
+
 		flag_query1=1
 		method_type_num = len(method_type_vec)
 		dict_motif_data = dict()
@@ -75,7 +88,6 @@ class _Base_pre2(_Base_pre1):
 			motif_data_pre1, motif_data_score_pre1 = [], []
 
 			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
-			# flag_1 = False
 			flag_1 = self.test_query_method_type_motif_1(method_type=method_type,method_annot_vec=method_annot_vec,select_config=select_config)
 			
 			dict_query = dict()
@@ -95,19 +107,17 @@ class _Base_pre2(_Base_pre1):
 
 					print('motif_filename_list1: ',input_filename_list1)
 
-					# save_file_path = ''
 					flag_query2 = 1
 					# load motif data
 					motif_data, motif_data_score, df_annot, type_id_query = self.test_load_motif_data_pre1(input_filename_list1=input_filename_list1,
 																											input_filename_list2=input_filename_list2,
-																											flag_query1=1,flag_query2=flag_query2,
+																											flag_query=flag_query2,
+																											type_id_1=0,
 																											input_file_path=input_file_path,
 																											save_file_path=save_file_path,
-																											type_id_1=0,type_id_2=1,
 																											select_config=select_config)
 					
 					# dict_query={'motif_data':motif_data,'motif_data_score':motif_data_score}
-					# flag_query1=0
 					motif_data_pre1 = motif_data
 					motif_data_score_pre1 = motif_data_score
 				else:
@@ -123,11 +133,20 @@ class _Base_pre2(_Base_pre1):
 		return dict_motif_data, select_config
 
 	## ====================================================
-	# query the method type based on the motif data used
-	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],data=[],select_config={}):
+	# query if a method utilizes the motif scanning results using the CIS-BP motif collection
+	# to update
+	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],select_config={}):
+		
+		"""
+		query if a method utilizes the motif scanning results using the CIS-BP motif collection
+		:param method_type: (str) the method used to initially predict peak-TF links, which requires motif scanning results
+		:param method_annot_vec: (array or list) part of the method name which indicates the method type
+		:param select_config: dictionary containing parameters
+		:return: bool variable representing whether the method utilizes the motif scanning results using the CIS-BP motif collection
+		"""
 
 		if len(method_annot_vec)==0:
-			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP'] # the method type which share motif scanning results
+			method_annot_vec = ['insilico','joint_score','Unify','CIS-BP','CIS_BP','TOBIAS'] # the method type which share motif scanning results
 
 		flag_1 = False
 		for method_annot_1 in method_annot_vec:
@@ -136,16 +155,35 @@ class _Base_pre2(_Base_pre1):
 		return flag_1
 
 	## ====================================================
-	# load motif data
-	def test_load_motif_data_pre1(self,input_filename_list1=[],input_filename_list2=[],flag_query1=1,flag_query2=1,overwrite=True,input_file_path='',
-										save_mode=1,save_file_path='',type_id_1=0,type_id_2=1,select_config={}):
+	# load motif scanning data
+	# to update
+	def test_load_motif_data_pre1(self,input_filename_list1=[],input_filename_list2=[],flag_query=1,overwrite=True,
+									type_id_1=0,input_file_path='',save_mode=1,save_file_path='',select_config={}):
+
+		"""
+		load motif scanning data, including: 1. dataframe of binary TF motif presence in each ATAC-seq peak locus; 2. motif scores if available;
+		:param input_filename_list1: (array or list) paths of the files saving the AnnData objects of motif scanning binary matrix and the motif score matrix
+		:param input_filename_list2: (array or list) paths of the orignal files (csv or txt format) saving the motif scanning binary matrix and the motif score matrix
+		:param flag_query: indicator of whether to query if there are negative motif scores
+		:param overwrite: indicator of whether to overwrite the current file
+		:param type_id_1: indicating if the motif scanning data were loaded from AnnData objects (type_id_1=0) or loaded from the original files (csv or txt format) of motif scanning results (type_id_1=1)
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param save_file_path: the directory to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the binary motif scanning results, indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF);
+				 2. (dataframe) motif scores from motif scanning results (row:ATAC-seq peak locus, column:TF;
+				 3. (dataframe) the annotations which show the mapping between the TF binding motif name and the TF name;
+				 4. indicator of whether the motif scanning data were loaded from AnnData objects (type_id_query=0) or loaded from the original files (csv or txt format) of motif scanning results (type_id_query=1);
+		"""
 	
 		flag_pre1=0
 		motif_data, motif_data_score = [], []
 		type_id_query = type_id_1
 		df_annot = []
 		if len(input_filename_list1)>0:
-			## load from the processed anndata
+			# load data from the processed AnnData object
 			input_filename1, input_filename2 = input_filename_list1
 			if (os.path.exists(input_filename1)==True) and (os.path.exists(input_filename2)==True):
 				motif_data_ad = sc.read(input_filename1)
@@ -161,20 +199,17 @@ class _Base_pre2(_Base_pre1):
 				except Exception as error:
 					motif_data_score = pd.DataFrame(index=motif_data_score_ad.obs_names,columns=motif_data_score_ad.var_names,data=np.asarray(motif_data_score_ad.X))
 			
-				# print('motif_data ', motif_data)
-				# print('motif_data_score ', motif_data_score)
 				print('motif scanning data (binary), dataframe of ', motif_data.shape)
 				print('data preview: ')
 				print(motif_data[0:2])
 				print('motif scores, dataframe of ', motif_data_score.shape)
 				print('data preview: ')
 				print(motif_data_score[0:2])
-				# motif_data_query, motif_data_score_query = motif_data, motif_data_score
 				flag_pre1 = 1
 
-		# load from the original motif data
+		# load the original motif data
 		if flag_pre1==0:
-			print('load the motif data')
+			print('load the motif scanning data')
 			input_filename1, input_filename2 = input_filename_list2[0:2]
 
 			print('filename of motif scanning data (binary) ',input_filename1)
@@ -221,7 +256,7 @@ class _Base_pre2(_Base_pre1):
 					difference = np.abs(motif_data-motif_data_2)
 					assert np.max(np.max(difference))==0
 
-					## motif name query
+					# query motif name
 					motif_name_ori = motif_data.columns
 					motif_name_score_ori = motif_data_score.columns
 					peak_loc = motif_data.index
@@ -235,26 +270,24 @@ class _Base_pre2(_Base_pre1):
 			df_annot = []
 			type_id_query = 1
 			# overwrite = 0
-			# flag_query1 = 1
 			if os.path.exists(input_filename_translation)==False:
 				print('the file does not exist: %s'%(input_filename_translation))
-
-				# if flag_query1>0:
 				output_filename = input_filename_translation
 				# meta_scaled_exprs = self.meta_scaled_exprs
 				# df_gene_annot = []
 				df_gene_annot = self.df_gene_annot_ori
 				df_annot = self.test_translationTable_pre1(motif_data=motif_data,
-																df_gene_annot=df_gene_annot,
-																save_mode=1,
-																save_file_path=save_file_path,
-																output_filename=output_filename,
-																select_config=select_config)
+															df_gene_annot=df_gene_annot,
+															flag_cisbp_motif=1,
+															save_mode=1,
+															save_file_path=save_file_path,
+															output_filename=output_filename,
+															select_config=select_config)
 			else:
 				print('load TF motif name mapping file')
 				df_annot = pd.read_csv(input_filename_translation,index_col=0,sep='\t')
 
-			## motif name correction for the conversion in R
+			# motif name correction for the conversion in R
 			print('perform TF motif name mapping')
 			df_annot.index = np.asarray(df_annot['motif_id'])
 			motif_name_ori = motif_data.columns
@@ -283,7 +316,8 @@ class _Base_pre2(_Base_pre1):
 																						column_id=column_id,
 																						select_config=select_config)
 
-				print('motif_data_score ',motif_data_score.shape)
+				print('motif scores, dataframe of ',motif_data_score.shape)
+				print('data preview: ')
 				print(motif_data_score[0:2])
 
 				# print('motif_data_score_ori ',motif_data_score_ori.shape)
@@ -327,8 +361,7 @@ class _Base_pre2(_Base_pre1):
 						print('save motif score data',motif_data_score_ad)
 						print(output_filename2)
 
-		flag_query2=0
-		if flag_query2>0:
+		if flag_query>0:
 			df1 = (motif_data_score<0)
 			id2 = motif_data_score.columns[df1.sum(axis=0)>0]
 			if len(id2)>0:
@@ -339,19 +372,30 @@ class _Base_pre2(_Base_pre1):
 		return motif_data, motif_data_score, df_annot, type_id_query
 
 	## ====================================================
-	# prepare translationTable
-	def test_translationTable_pre1(self,motif_data=[],
-										motif_data_score=[],
-										df_gene_annot=[],
-										meta_scaled_exprs=[],
-										save_mode=1,
-										save_file_path='',
-										output_filename='',
-										flag_cisbp_motif=1,
-										flag_expr=0,
-										select_config={}):
+	# prepare the translationTable dataframe which show the mapping between the TF binding motif name and the TF name
+	# to update
+	def test_translationTable_pre1(self,motif_data=[],motif_data_score=[],df_gene_annot=[],rna_exprs=[],flag_cisbp_motif=1,flag_expr=0,
+										save_mode=1,save_file_path='',output_filename='',verbose=0,select_config={}):
 
-		# motif_name_1 = motif_data.columns
+		"""
+		prepare the translationTable dataframe which show the mapping between the TF binding motif name and the TF name
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param motif_data_score: (dataframe) motif scores from motif scanning results (row:ATAC-seq peak locus, column:TF)
+		:param df_gene_annot: (dataframe) gene annotations
+		:param flag_cisbp: indicator of whether the motif scanning results are based on using the curated CIS-BP motif collection from the chromVAR repository
+		:param flag_expr: indicator of whether to query if the TF associated with a TF motif is expressed in the RNA-seq data:
+						  0: not querying if a TF is expressed;
+						  1: query if a TF is expressed, and use gene identifier (ENSEMBL id) to identify genes with expressions;
+						  2: query if a TF is expressed, and use gene name to identify genes with expressions;
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param save_mode: indicator of whether to save data
+		:param save_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (dataframe) the annotations which show the mapping between the TF binding motif name and the TF name
+		"""
+
 		motif_name_ori = motif_data.columns
 		if flag_cisbp_motif>0:
 			# motif name correction for the name conversion in R
@@ -402,12 +446,9 @@ class _Base_pre2(_Base_pre1):
 			df1['tf'] = tf_name
 			# tf_name = df1['tf']
 			if flag_expr>0:
-				# meta_scaled_exprs = self.meta_scaled_exprs
-				# gene_name_expr = meta_scaled_exprs.columns
 				df_var = self.rna_meta_ad.var
 				if flag_expr>1:
-					# motif name query by gene id
-					# df_var = self.rna_meta_ad.var
+					# query TF name by gene id
 					if 'gene_id' in df_var.columns:
 						gene_id_2 = df_var['gene_id'].str.upper()
 						motif_query_id_expr = df1.index.intersection(gene_id_2,sort=False)
@@ -421,8 +462,7 @@ class _Base_pre2(_Base_pre1):
 						flag_expr = 1
 
 				if flag_expr==1:
-					# motif name query by gene name
-					# df_var = self.rna_meta_ad.var
+					# query TF name query by gene name
 					gene_name_expr = self.rna_meta_ad.var_names
 					output_file_path = select_config['data_path_save']
 					output_filename_2 = '%s/test_rna_meta_ad.df_var.query1.txt'%(output_file_path)
@@ -433,8 +473,7 @@ class _Base_pre2(_Base_pre1):
 					
 				df1.index = np.asarray(df1['gene_id'])
 				self.motif_query_name_expr = motif_query_name_expr
-
-				print('motif_query_name_expr ',len(motif_query_name_expr))
+				print('the number of TFs with expressions: %d'%(len(motif_query_name_expr)))
 
 			if save_mode>0:
 				if output_filename=='':
@@ -444,9 +483,19 @@ class _Base_pre2(_Base_pre1):
 		return df1
 
 	## ====================================================
-	# load motif data
-	# merge multiple columns that correspond to one TF to one column
+	# merge multiple columns in the motif presence or motif score matrix that correspond to one TF to one column
+	# to update
 	def test_load_motif_data_pre2(self,motif_data,df_annot,column_id='tf',select_config={}):
+
+		"""
+		merge multiple columns in the motif presence or motif score matrix that correspond to one TF to one column
+		:param motif_data: (dataframe) the binary motif presence matrix or motif score matrix by motif scanning (row:ATAC-seq peak locus, column:TF motif)
+		:param df_annot: (dataframe) the annotations which show the mapping between the TF binding motif name and the TF name
+		:param column_id: column in df_annot which corresponds to the TF name
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the binary motif presence matrix or motif score matrix after column merging (row:ATAC-seq peak locus, column:TF)
+				 2. (dataframe) the original binary motif presence matrix or motif score matrix by motif scanning (row:ATAC-seq peak locus, column:TF motif)
+		"""
 
 		motif_idvec = motif_data.columns.intersection(df_annot.index,sort=False)
 		motif_data = motif_data.loc[:,motif_idvec]
@@ -476,8 +525,16 @@ class _Base_pre2(_Base_pre1):
 		return motif_data, motif_data_ori
 
 	## ====================================================
-	# motif_name conversion for motifs in the used curated CIS-BP motif collection
+	# TF motif name conversion for motifs in the used curated CIS-BP motif collection
+	# to update
 	def test_query_motif_name_conversion_1(self,data=[],select_config={}):
+
+		"""
+		TF motif name conversion for motifs in the used curated CIS-BP motif collection
+		:param data: (dataframe) the binary motif presence matrix or motif score matrix by motif scanning (row:ATAC-seq peak locus, column:TF)
+		:param select_config: dictionary containing parameters
+		:return: (dataframe) the binary motif presence matrix or motif score matrix after TF name conversion (row:ATAC-seq peak locus, column:TF)
+		"""
 
 		motif_data = data
 		dict1 = {'ENSG00000142539':'SPIB',
@@ -495,10 +552,27 @@ class _Base_pre2(_Base_pre1):
 		return motif_data
 
 	## ====================================================
-	# load motif data
-	def test_load_motif_data_2(self,data=[],dict_motif_data={},save_mode=1,verbose=0,select_config={}):
+	# load motif scanning data
+	# to update
+	def test_load_motif_data_2(self,data=[],dict_motif_data={},method_type='',save_mode=1,verbose=0,select_config={}):
 		
+		"""
+		load motif scanning data
+		:param dict_motif_data: dictionary containing motif scanning results utilized by the corresponding regulatory association inference method
+		:param method_type: (str) the method used for initial peak-TF association prediction, which requires motif scanning results
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the binary motif scanning results, indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF with expressions);
+				 2. (dataframe) motif scores from motif scanning results (row:ATAC-seq peak locus, column:TF with expressions);
+				 3. (pandas.Series) names of the TFs with expressions in the RNA-seq data;
+		"""
+
 		motif_data = self.motif_data
+		if method_type=='':
+			method_type_feature_link = select_config['method_type_feature_link']
+			method_type = method_type_feature_link
+		method_type_query = method_type
 		if len(motif_data)>0:
 			motif_data_score = self.motif_data_score
 			motif_query_name_expr = self.motif_query_name_expr
@@ -512,14 +586,13 @@ class _Base_pre2(_Base_pre1):
 				print('load motif scanning data')
 				input_dir = select_config['input_dir']
 				file_path_1 = input_dir
-				
-				method_type_feature_link = select_config['method_type_feature_link']
-				method_type_vec_query = [method_type_feature_link]
+
+				method_type_vec_query = [method_type_query]
 				data_path_save_local = select_config['data_path_save_local']
 				file_path_motif = data_path_save_local
 				select_config.update({'file_path_motif':file_path_motif})
 				save_file_path = data_path_save_local
-				
+
 				dict_motif_data_query_1, select_config = self.test_load_motif_data_1(method_type_vec=method_type_vec_query,
 																						save_mode=1,save_file_path=save_file_path,
 																						select_config=select_config)
@@ -538,6 +611,7 @@ class _Base_pre2(_Base_pre1):
 					motif_query_name_expr = dict_motif_data[column_1]
 				else:
 					motif_query_vec_pre1 = motif_data.columns
+					rna_exprs = self.meta_exprs_2
 					gene_query_name_ori = rna_exprs.columns
 					motif_query_name_expr = motif_query_vec_pre1.intersection(gene_query_name_ori,sort=False)
 
@@ -550,9 +624,23 @@ class _Base_pre2(_Base_pre1):
 		return motif_data, motif_data_score, motif_query_name_expr
 
 	## ====================================================
-	# chromvar score query: chromvar score comparison with TF expression
-	# query correlation and mutual information between chromvar score and TF expression
-	def test_chromvar_score_query_1(self,input_filename,motif_query_name_expr,filename_prefix_save='',output_file_path='',output_filename='',df_query=[],type_id_query=0,select_config={}):
+	# query correlation and mutual information between chromVAR scores and TF expressions
+	# to update
+	def test_chromvar_score_query_1(self,input_filename,motif_query_name_expr,df_query=[],type_id_query=0,input_file_path='',output_file_path='',output_filename='',filename_prefix_save='',select_config={}):
+
+		"""
+		query correlation and mutual information between chromVAR scores and TF expressions
+		:param input_filename: (str) path of the file which saved chromVAR scores of the TFs
+		:param motif_query_name_expr: (array or list) names of the TFs with expressions in the RNA-seq data
+		:param df_query: (dataframe) the annotations which show the mapping between the TF binding motif name and the TF name
+		:param type_id_query: indicator of whether to perform column name coversion for the chromVAR score dataframe
+		:param input_file_path: the directory to retrieve data from
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param select_config: dictionary containing parameters
+		:return: (dataframe) annotations of TFs including the correlation and mutual information between chromVAR scores of the TFs and the TF expressions
+		"""
 
 		df1 = df_query
 		# df1.index = np.asarray(df1['motif_name_ori'])
@@ -582,7 +670,7 @@ class _Base_pre2(_Base_pre1):
 			b = input_filename.find('.csv')
 			output_filename = input_filename[0:b]+'copy1.csv'
 		chromvar_score.to_csv(output_filename)
-		print('chromvar_score ',chromvar_score.shape,chromvar_score)
+		print('chromVAR scores of TFs, dataframe of size ',chromvar_score.shape)
 
 		chromvar_score = chromvar_score.T
 		sample_id = meta_scaled_exprs.index
@@ -590,10 +678,12 @@ class _Base_pre2(_Base_pre1):
 
 		motif_query_vec = motif_query_name_expr
 		motif_query_num = len(motif_query_vec)
-		print('motif_query_vec ',motif_query_num)
+		print('the number of TFs with expressions: %d'%(motif_query_num))
 		
 		field_query_1 = ['spearmanr','pval1','pearsonr','pval2','mutual_info']
 		df_1 = pd.DataFrame(index=motif_query_vec,columns=field_query_1)
+		from scipy.stats import pearsonr, spearmanr
+		from sklearn.feature_selection import mutual_info_regression
 		for i1 in range(motif_query_num):
 			motif_query1 = motif_query_vec[i1]
 			tf_expr_1 = np.asarray(meta_scaled_exprs[motif_query1])
@@ -630,16 +720,31 @@ class _Base_pre2(_Base_pre1):
 		median_value = df_2.loc[id1,:].median(axis=0)
 		mean_value_2 = df_2.loc[(~id1),:].mean(axis=0)
 		median_value_2 = df_2.loc[(~id1),:].median(axis=0)
-		print('highly variable TF expression, mean_value, median_value ',motif_query_num2,mean_value,median_value)
-		print('the other TF expressoin, mean_value, median_value ',motif_query_num3,mean_value_2,median_value_2)
+		print('highly variable TF expressions, mean_value, median_value ',motif_query_num2,mean_value,median_value)
+		print('the other TF expressions, mean_value, median_value ',motif_query_num3,mean_value_2,median_value_2)
 
 		return df_2
 	
 	## ====================================================
 	# query gene annotations
-	def test_gene_annotation_query_pre1(self,flag_query1=0,flag_query2=0,flag_query3=0,select_config={}):
+	# matching gene names between the gene annotations and the gene expression data
+	# to update
+	def test_gene_annotation_query_pre1(self,flag_query1=0,flag_query2=0,flag_query3=0,input_file_path='',select_config={}):
 
-		# gene name query and matching between the gene annotation file and gene name in the gene expression file
+		"""
+		query gene annotations;
+		matching gene names between the gene annotations and the gene expression data;
+		:param flag_query1: indicator of whether to query gene annotations for genes with expressions in the data
+		:param flag_query2: indicator of whether to merge annotations of the given genes from different versions of gene annotations
+		:param flag_query3: indicator of whether to query transcription start sites of genes
+		:param input_file_path: the directory to retrieve data from 
+		:param select_config: dictionary containing parameters
+		return: 1. (dataframe) gene annotations of the genome-wide genes;
+				2. (dataframe) gene annotations of genes with expressions merged from different verisons of gene annotations
+				3. (dataframe) gene annotations of genes with expressions, including the transcription start site information;
+		"""
+
+		# query gene names and matching gene names between the gene annotations and the gene expression data
 		flag_gene_annot_query_1=flag_query1
 		df_gene_annot1, df_gene_annot2, df_gene_annot3 = [], [], []
 		if flag_gene_annot_query_1>0:	
@@ -647,9 +752,10 @@ class _Base_pre2(_Base_pre1):
 			filename_prefix_1 = 'Homo_sapiens.GRCh38.108'
 			# gene_annotation_filename = '%s/hg38.1.txt'%(input_file_path1)
 			# gene_annotation_filename = '%s/Homo_sapiens.GRCh38.108.1.txt'%(input_file_path1)
-			gene_annotation_filename = '%s/%s.1.txt'%(input_file_path1,filename_prefix_1)
+			# gene_annotation_filename = '%s/%s.1.txt'%(input_file_path1,filename_prefix_1)
+			gene_annotation_filename = '%s/%s.1.txt'%(input_file_path,filename_prefix_1)
 			if len(self.df_gene_annot_expr)==0:
-				df_gene_annot_ori, df_gene_annot_expr, df_gene_annot_expr_2 = self.test_motif_peak_estimate_gene_annot_load_1(input_filename=gene_annotation_filename,select_config=select_config)
+				df_gene_annot_ori, df_gene_annot_expr, df_gene_annot_expr_2 = self.test_gene_annotation_load_1(input_filename=gene_annotation_filename,select_config=select_config)
 				self.df_gene_annot_ori = df_gene_annot_ori
 				self.df_gene_annot_expr = df_gene_annot_expr
 
@@ -766,7 +872,14 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# query gene annotations
+	# to update
 	def test_gene_annotation_query1(self,select_config={}):
+
+		"""
+		query gene annotations
+		:param select_config:
+		:return: (dataframe) gene annotations of genes with expressions in the RNA-seq data
+		"""
 
 		flag_gene_annot_query=1
 		df_gene_annot_expr = []
@@ -779,7 +892,6 @@ class _Base_pre2(_Base_pre1):
 		
 		if flag_gene_annot_query>0:
 			data_file_type = select_config['data_file_type']
-
 			flag_query=1
 			if (self.species_id=='mm10'):
 				if input_filename_gene_annot=='':
@@ -788,9 +900,9 @@ class _Base_pre2(_Base_pre1):
 					input_filename_gene_annot = '%s/gene_annotation/test_Mus_musculus.GRCm38.102.annotations_mm38.gene_annot_pre1.txt'%(input_file_path)
 				
 				print('input_filename_gene_annot: ',input_filename_gene_annot)
-				df_gene_annot_ori, df_gene_annot_expr, df_gene_annot_expr_2 = self.test_motif_peak_estimate_gene_annot_load_1(input_filename=input_filename_gene_annot,
-																																type_id_1=0,
-																																select_config=select_config)
+				df_gene_annot_ori, df_gene_annot_expr, df_gene_annot_expr_2 = self.test_gene_annotation_load_1(input_filename=input_filename_gene_annot,
+																												type_id_1=0,
+																												select_config=select_config)
 				
 			elif (self.species_id=='hg38'):
 				input_file_path = data_path_1
@@ -799,9 +911,9 @@ class _Base_pre2(_Base_pre1):
 					input_filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path)
 				
 				print('input_filename_gene_annot: ',input_filename_gene_annot)
-				df_gene_annot_ori, df_gene_annot_expr, df_gene_annot_expr_2 = self.test_motif_peak_estimate_gene_annot_load_2(input_filename=input_filename_gene_annot,
-																																input_file_path=input_file_path,
-																																select_config=select_config)
+				df_gene_annot_ori, df_gene_annot_expr = self.test_gene_annotation_load_2(input_filename=input_filename_gene_annot,
+																							input_file_path=input_file_path,
+																							select_config=select_config)
 				
 			else:
 				print('please provide gene annotations')
@@ -817,11 +929,23 @@ class _Base_pre2(_Base_pre1):
 			return df_gene_annot_expr
 
 	## ====================================================
-	# load genome annotation
-	# input: the genome annotation filename; if not given, use default genome annotation filename
-	# output: genome annotation (dataframe); gene position, strand, tss, transcript num
-	# dataframe1: genes original; dataframe 2: genes with expr in the dataset
-	def test_motif_peak_estimate_gene_annot_load_1(self,input_filename='',input_filename_2='',type_id_1=0,flag_query_2=0,select_config={}):
+	# query gene annotations for genes with expressions in the data
+	# to update
+	def test_gene_annotation_load_1(self,input_filename='',input_filename_2='',type_id_1=0,flag_query_1=0,verbose=0,select_config={}):
+		
+		"""
+		query gene annotations for genes with expressions in the data
+		:param input_filename: (str) path of the gene annotation file of the genome-wide genes
+		:param input_filename_2: (str) path of the annotation file of the mapping beteen gene names and Ensembl gene identifiers
+		:param type_id_1: indicator of whether to query genes by gene name (type_id_1=0) or by Ensembl gene id (type_id_1=1)
+		:param flag_query_1: indicator of whether to query maximal expressions of the genes without matched gene names in the used version of gene annotations
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		return: 1. (dataframe) gene annotations of the genome-wide genes;
+				2. (dataframe) gene annotations of the genes with expressions in the RNA-seq data;
+				3. (dataframe) anontations of the genes without matched gene names in the used version of gene annotations
+		"""
 
 		input_file_path = self.save_path_1
 		print('load gene annotations')
@@ -846,9 +970,6 @@ class _Base_pre2(_Base_pre1):
 			field_query = ['highly_variable', 'means', 'dispersions', 'dispersions_norm']
 
 			df_var = rna_meta_ad.var
-			# print('df_var: ',df_var.shape)
-			# print(df_var.columns)
-
 			column_vec_1 = df_var.columns
 			column_vec_2 = pd.Index(field_query).intersection(column_vec_1,sort=False)
 
@@ -920,7 +1041,7 @@ class _Base_pre2(_Base_pre1):
 				df_gene_annot_expr_2.loc[gene_query_2,field_query] = df_var.loc[gene_query_2,field_query]
 				gene_num2 = np.sum(df_gene_annot_expr_2['highly_variable']==True)
 
-			if flag_query_2>0:
+			if flag_query_1>0:
 				if len(meta_scaled_exprs)>0:
 					meta_scaled_exprs.columns = df_var.index.copy()
 					df_gene_annot_expr_2['meta_scaled_exprs_max'] = meta_scaled_exprs.loc[:,gene_query_2].max(axis=0)
@@ -932,7 +1053,7 @@ class _Base_pre2(_Base_pre1):
 			gene_name_expr_1 = df_var.loc[gene_query_1,'gene_name']
 			gene_name_expr_2 = df_var.loc[gene_query_2,'gene_name']
 
-		# query how many genes are highly variable but not match the gene name in the used gene annotation version
+		# query how many genes are highly variable but not matching the gene name in the used gene annotations
 		gene_query_2 = df_gene_annot_expr_2.index
 		
 		if load_mode>0:
@@ -944,15 +1065,26 @@ class _Base_pre2(_Base_pre1):
 		# print('gene_name_expr, gene_name_expr_1, gene_name_expr_2 ', len(gene_name_expr), len(gene_name_expr_1), len(gene_name_expr_2))
 		# print('gene_name_expr_1, highly_variable ',len(gene_name_expr_1),gene_name_expr_1[0:5],gene_num1)
 		# print('gene_name_expr_2, highly_variable ',len(gene_name_expr_2),gene_name_expr_2[0:5],gene_num2,gene_query_2_highly_variable)
-		print('gene annotation, dataframe of size ',df_gene_annot_expr.shape)
+		print('gene annotations, dataframe of size ',df_gene_annot_expr.shape)
 
 		return df_gene_annot, df_gene_annot_expr, df_gene_annot_expr_2
 
 	## ====================================================
-	# query gene annotation for genes with expression in the given data
-	# input: the gene annotation filenames; if not given, use default gene annotation filenames
-	# output: gene annotation (dataframe); gene features in the dataset
-	def test_motif_peak_estimate_gene_annot_load_2(self,input_filename='',input_filename_1='',input_file_path='',save_mode=1,verbose=0,select_config={}):
+	# query gene annotations for genes with expressions in the data
+	# to update
+	def test_gene_annotation_load_2(self,input_filename='',input_filename_1='',input_file_path='',save_mode=1,verbose=0,select_config={}):
+
+		"""
+		query gene annotations for genes with expressions in the data
+		:param input_filename: (str) path of the gene annotation file of the genome-wide genes
+		:param input_filename_1: (str) path of the gene annotation file of the genes with expressions in the RNA-seq data
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) gene annotations of the genome-wide genes;
+				 2. (dataframe) gene annotations of the genes with expressions in the RNA-seq data;
+		"""
 
 		input_file_path1 = self.save_path_1
 		# load gene annotations
@@ -981,22 +1113,38 @@ class _Base_pre2(_Base_pre1):
 				print('gene annotation, dataframe of size ', df_gene_annot_expr.shape)
 			else:
 				print('the file does not exist: %s'%(input_filename))
-
-			# print('df_gene_annot_expr_1, df_gene_annot_expr ',df_gene_annot_expr_1.shape,df_gene_annot_expr.shape)
 			
 		except Exception as error:
 			print('error! ', error)
 			return
 
-		df_gene_annot_expr_2 = []
-		return df_gene_annot, df_gene_annot_expr, df_gene_annot_expr_2
-
+		# df_gene_annot_expr_2 = []
+		return df_gene_annot, df_gene_annot_expr
 
 	## ====================================================
-	# peak accessibility-TF expression correlation estimation
-	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
-									peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
-									alpha=0.05,method_type_correction = 'fdr_bh',verbose=1,select_config={}):
+	# compute peak accessibility-TF expression correlation and p-value
+	# to update
+	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],
+										correlation_type='spearmanr',pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',verbose=1,select_config={}):
+
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the correlation matrix between the peak accessibilities and TF expressions (row:ATAC-seq peak locus, column:TF);
+				 2. (dataframe) the raw p-pvalue matrix;
+				 3. (dataframe) the adjusted p-value matrix;
+				 4. (dataframe) TF annotations including the number of peak loci with the TF motif detected, the maximal and minimal correlation between peak accessibility and the TF expression for each TF;
+		"""
 
 		if len(motif_query_vec)==0:
 			motif_query_name_ori = motif_data.columns
@@ -1061,10 +1209,37 @@ class _Base_pre2(_Base_pre1):
 		return df_corr_, df_pval_, df_pval_corrected, df_motif_basic
 
 	## ====================================================
-	# compute peak accessibility-TF expression correlation
-	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',flag_load=0,field_load=[],
-											save_mode=1,input_file_path='',input_filename_list=[],output_file_path='',
-											filename_prefix='',verbose=0,select_config={}):
+	# compute peak accessibility-TF expression correlation and p-value
+	# to update
+	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],
+											correlation_type='spearmanr',pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',
+											flag_load=0,field_load=[],input_file_path='',input_filename_list=[],
+											save_mode=1,output_file_path='',filename_prefix='',verbose=0,select_config={}):
+
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param flag_load: indicator of whether to load peak accessibility-TF expression correlations and p-values from the saved files
+		:param field_load: (array or list) fields representing correlation, the raw p-value, and the adjusted p-value that are used in the corresponding filenames and used for retrieving data
+		:param input_file_path: the directory to retrieve data from
+		:param input_filename_list: (list) paths of files to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param filename_prefix: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing the following dataframes: 
+				 1,2,3. the correlation, raw p-value, and adjusted p-value matrices between the peak accessibilities and TF expressions (row:ATAC-seq peak locus, column:TF);					
+ 				 4. TF annotations including the number of peak loci with the TF motif detected, the maximal and minimal correlation between peak accessibility and the TF expression for each TF;
+		"""
 
 		if filename_prefix=='':
 			filename_prefix = 'test_peak_tf_correlation'
@@ -1095,7 +1270,7 @@ class _Base_pre2(_Base_pre1):
 				return dict_query
 
 		if flag_load==0:
-			print('peak accessibility-TF expr correlation estimation ')
+			print('compute peak accessibility-TF expression correlation')
 			start = time.time()
 			df_peak_tf_corr_, df_peak_tf_pval_, df_peak_tf_pval_corrected, df_motif_basic = self.test_peak_tf_correlation_1(motif_data=motif_data,
 																															peak_query_vec=peak_query_vec,
@@ -1103,6 +1278,9 @@ class _Base_pre2(_Base_pre1):
 																															peak_read=peak_read,
 																															rna_exprs=rna_exprs,
 																															correlation_type=correlation_type,
+																															pval_correction=pval_correction,
+																															alpha=alpha,
+																															method_type_correction=method_type_correction,
 																															select_config=select_config)
 
 			field_query = ['peak_tf_corr','peak_tf_pval','peak_tf_pval_corrected','motif_basic']
@@ -1111,7 +1289,7 @@ class _Base_pre2(_Base_pre1):
 			dict_query = dict(zip(field_query,list_query1))
 			query_num1 = len(list_query1)
 			stop = time.time()
-			print('peak accessibility-TF expr correlation estimation used: %.5fs'%(stop-start))
+			print('computing peak accessibility-TF expr correlation used: %.5fs'%(stop-start))
 
 			flag_save_text = 1
 			if 'flag_save_text_peak_tf' in select_config:

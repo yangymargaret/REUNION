@@ -73,18 +73,18 @@ from itertools import combinations
 
 # pairwise distance metric: spearmanr
 # from the notebook
-def spearman_corr(self, x, y):
-	return spearmanr(x, y)[0]
+# def spearman_corr(self, x, y):
+# 	return spearmanr(x, y)[0]
 
 # pairwise distance metric: pearsonr
 # from the notebook
-def pearson_corr(x, y):
-	return pearsonr(x, y)[0]
+# def pearson_corr(x, y):
+# 	return pearsonr(x, y)[0]
 
 class _Base2_correlation(BaseEstimator):
 	"""Base class for compute correlation
 	"""
-	def __init__(self,file_path='',run_id=1,,method=1,verbose=1,select_config={}):
+	def __init__(self,file_path='',run_id=1,method=1,verbose=1,select_config={}):
 
 		self.save_path_1 = file_path
 		self.run_id = run_id
@@ -93,12 +93,34 @@ class _Base2_correlation(BaseEstimator):
 		self.verbose_internal = verbose
 
 	## ====================================================
-	# query correlation between feature query
-	# query correlation between gene expression
+	# compute correlation and p-value between features
+	# TODO
+	# to update
 	def test_feature_correlation_1(self,df_feature_query_1=[],df_feature_query_2=[],feature_vec_1=[],feature_vec_2=[],correlation_type_vec=['spearmanr'],
-											peak_read=[],rna_exprs=[],df_gene_annot_expr=[],symmetry_mode=0,type_id_1=0,type_id_pval_correction=1,
-											thresh_corr_vec=[],filename_prefix='',save_mode=1,save_symmetry=0,output_file_path='',select_config={}):	
+										symmetry_mode=0,type_id_pval_correction=1,type_id_1=0,thresh_corr_vec=[],
+										save_mode=1,save_symmetry=0,output_file_path='',filename_prefix='',select_config={}):	
 		
+		"""
+		compute correlation and p-value between features
+		:param df_feature_query_1: (dataframe) feature matrix with columns containing the first set of variables (row:observation, column:variable)
+		:param df_feature_query_2: (dataframe) feature matrix with columns containing the second set of variables (row:observation, column:variable)
+		:param feature_vec_1: (array or list) the first set of variables
+		:param feature_vec_2: (array or list) the second set of variables
+		:param correlation_type_vec: (list) the type of correlation (e.g. Spearman's rank correlation or Pearson correlation)
+		:param symmetry_mode: indicator of whether the first and second sets of genes between which we compute the correlations are the same (0:the two sets of genes are different;1:the two sets are identical)
+		:param type_id_pval_correction: indicator of whether to estimate the adjusted p-value
+		:param type_id_1: indicator of whether to exclude each observation itself in computing adjusted p-values of the correlations (0:exclude the observation; 1:use all the observations)
+		:param thresh_corr_vec: (list) thresholds on correlation and the adjusted p-value
+		:param save_mode: indicator of whether to save data
+		:param save_symmetry: indicator of whether to only save the diagnoal and upper right half of the correlation matrix (if the matrix is symmetric) or save the full correlation matrix 
+							  (1:save partial matrix; 0:save full matrix)
+		:param output_file_path: the directory to save data
+		:param filename_prefix: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictonary containing the correlation matrix, the raw p-value matrix, and the adjusted p-value matrix for each correlation type (specified in correlation_type_vec)
+		"""
+
 		if len(feature_vec_1)>0:
 			df_feature_query1 = df_feature_query_1.loc[:,feature_vec_1]
 		else:
@@ -122,21 +144,43 @@ class _Base2_correlation(BaseEstimator):
 
 		dict_query_1 = self.test_correlation_pvalues_pre1(df_feature_query1=df_feature_query1,
 															df_feature_query2=df_feature_query2,
-															filename_prefix=filename_prefix,
 															correlation_type_vec=correlation_type_vec,
 															type_id_pval_correction=type_id_pval_correction,
 															type_id_1=type_id_1,
-															save_symmetry=save_symmetry,
 															save_mode=save_mode,
+															save_symmetry=save_symmetry,
 															output_file_path=output_file_path,
+															filename_prefix=filename_prefix,
 															select_config=select_config)
 
 		return dict_query_1
 
 	## ====================================================
 	# feature correlation estimation
-	def test_correlation_pvalues_pre1(self,df_feature_query1,df_feature_query2=[],filename_prefix='',correlation_type_vec=['spearmanr'],
-										type_id_pval_correction=1,type_id_1=0,save_symmetry=0,save_mode=1,output_file_path='',verbose=1,select_config={}):
+	# compute correlation and p-value between features
+	# TODO
+	# to update
+	def test_correlation_pvalues_pre1(self,df_feature_query1,df_feature_query2=[],correlation_type_vec=['spearmanr'],type_id_pval_correction=1,type_id_1=0,
+										save_mode=1,save_symmetry=0,output_file_path='',filename_prefix='',verbose=1,select_config={}):
+
+		"""
+		compute correlation and p-value between features
+		:param df_feature_query1: (dataframe) feature matrix of the first set of variables (row:observation, column:variable)
+		:param df_feature_query2: (dataframe) feature matrix of the second set of variables (row:observation, column:variable)
+		:param correlation_type_vec: (list) the type of correlation (e.g. Spearman's rank correlation or Pearson correlation)
+		:param symmetry_mode: indicator of whether the first and second sets of genes between which we compute the correlations are the same (0:the two sets of genes are different;1:the two sets are identical)
+		:param type_id_pval_correction: indicator of whether to estimate the adjusted p-value
+		:param type_id_1: indicator of whether to exclude each observation itself in computing adjusted p-values of the correlations (0:exclude the observation; 1:use all the observations)
+		:param thresh_corr_vec: (list) thresholds on correlation and the adjusted p-value
+		:param save_mode: indicator of whether to save data
+		:param save_symmetry: indicator of whether to only save the diagnoal and upper right half of the correlation matrix (if the matrix is symmetric) or save the full correlation matrix 
+							  (1:save partial matrix; 0:save full matrix)
+		:param output_file_path: the directory to save data
+		:param filename_prefix: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictonary containing the correlation matrix, the raw p-value matrix, and the adjusted p-value matrix for each correlation type (specified in correlation_type_vec)
+		"""
 
 		flag1 = 0
 		feature_query_vec_1 = df_feature_query1.columns
@@ -160,7 +204,7 @@ class _Base2_correlation(BaseEstimator):
 		flag_pval_correction = type_id_pval_correction
 		for correlation_type in correlation_type_vec:
 			if symmetry_mode==0:
-				# compute feature correlation
+				# compute feature correlation and p-value
 				df_corr_1, df_pval_1 = self.test_correlation_pvalues_pair(df1=df_feature_query1,
 																			df2=df_feature_query2,
 																			correlation_type=correlation_type,
@@ -178,8 +222,7 @@ class _Base2_correlation(BaseEstimator):
 				feature_query_num1 = len(feature_query_vec_1_sort)
 				df_corr_1 = pd.DataFrame(index=feature_query_vec_1_sort,columns=feature_query_vec_1_sort,dtype=np.float32)
 				df_pval_1 = pd.DataFrame(index=feature_query_vec_1_sort,columns=feature_query_vec_1_sort,dtype=np.float32)
-				# df_corr_1 = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
-				# df_pval_1 = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
+				
 				for i1 in range(feature_query_num1-1):
 					feature_id1 = feature_query_vec_1_sort[i1]
 					feature_idvec_1 = [feature_id1]
@@ -191,9 +234,6 @@ class _Base2_correlation(BaseEstimator):
 																					correlation_type=correlation_type,
 																					float_precision=7)
 
-					# if flag_pval_correction>0:
-					# 	df_corr_pre1 = df_corr_pre1.fillna(0)
-					# 	df_pval_pre1 = df_pval_pre1.fillna(1)
 					df_corr_pre1 = df_corr_pre1.fillna(0)
 					df_pval_pre1 = df_pval_pre1.fillna(1)
 					
@@ -234,11 +274,11 @@ class _Base2_correlation(BaseEstimator):
 				df_pval_corrected_1 = self.test_correlation_pvalue_correction_pre1(pvalues=df_pval_1,
 																					alpha=alpha,
 																					method_type_correction=method_type_correction,
-																					filename_prefix='',
 																					correlation_type_vec=['spearmanr'],
+																					type_id_1=type_id_1,
 																					save_mode=0,
 																					output_file_path='',
-																					type_id_1=type_id_1,
+																					filename_prefix='',
 																					select_config=select_config)
 				print('df_pval_1 ',df_pval_1.shape)
 
@@ -255,22 +295,79 @@ class _Base2_correlation(BaseEstimator):
 				float_precision = '%.6E'
 				if 'float_precision' in select_config:
 					float_precision = select_config['float_precision']
-				# df_corr_1_save.to_csv(output_filename_1,sep='\t',float_format='%.6E')
 				df_corr_1_save.to_csv(output_filename_1,sep='\t',float_format=float_precision)
 				output_filename_2 = '%s/%s.%s.pval.1.txt'%(output_file_path,filename_prefix_1,correlation_type)
-				# df_pval_1_save.to_csv(output_filename_2,sep='\t',float_format='%.6E')
 				df_pval_1_save.to_csv(output_filename_2,sep='\t',float_format=float_precision)
 				if flag_pval_correction>0:
 					output_filename_3 = '%s/%s.%s.pval_corrected.1.txt'%(output_file_path,filename_prefix_1,correlation_type)
-					# df_pval_corrected_1.to_csv(output_filename_3,sep='\t',float_format='%.6E')
 					df_pval_corrected_1.to_csv(output_filename_3,sep='\t',float_format=float_precision)
 					
 		return dict_query_1
 
 	## ====================================================
+	# correlation and p-value calculation
+	# from the website: https://enterprise-docs.anaconda.com/en/latest/data-science-workflows/data/stats.html
+	# TODO
+	# to update
+	def test_correlation_pvalues_pair(self,df1,df2,correlation_type='spearmanr',float_precision=7):
+		
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		correlation and p-value calculation
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: the correlations and p-values
+		"""
+
+		# df1 = df1.select_dtypes(include=['number'])
+		# df2 = df2.select_dtypes(include=['number'])
+		pairs = pd.MultiIndex.from_product([df1.columns, df2.columns])
+		if correlation_type=='pearsonr':
+			t_list1 = [pearsonr(df1[a], df2[b]) for a, b in pairs]
+		else:
+			t_list1= [spearmanr(df1[a], df2[b]) for a, b in pairs]
+
+		corr_values = [t_vec1[0] for t_vec1 in t_list1]
+		pvalues = [t_vec1[1] for t_vec1 in t_list1]
+
+		corr_values = pd.Series(corr_values, index=pairs).unstack()
+		pvalues = pd.Series(pvalues, index=pairs).unstack()
+
+		if float_precision>0:
+			corr_values = corr_values.round(float_precision)
+			pvalues = pvalues.round(float_precision)
+		
+		return corr_values, pvalues
+
+	## ====================================================
 	# p-value correction
-	def test_correlation_pvalue_correction_pre1(self,pvalues,alpha=0.05,method_type_correction='fdr_bh',filename_prefix='',correlation_type_vec=['spearmanr'],
-													type_id_pval_correction=1,save_mode=1,output_file_path='',type_id_1=0,select_config={}):
+	# compute adjusted p-values for correlations between features
+	# TODO
+	# to update
+	def test_correlation_pvalue_correction_pre1(self,pvalues,alpha=0.05,method_type_correction='fdr_bh',correlation_type_vec=['spearmanr'],
+													type_id_pval_correction=1,type_id_1=0,save_mode=1,output_file_path='',filename_prefix='',select_config={}):
+
+		"""
+		compute adjusted p-values for correlations between features
+		:param pvalues: (datafram) the raw p-value matrix (row:the first set of variables, column:the second set of variables)
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param type_id_pval_correction: indicator of whether to estimate the adjusted p-value
+		:param type_id_1: indicator of whether to exclude each observation itself in computing adjusted p-values of the correlations (0:exclude the observation; 1:use all the observations)
+		:param save_mode: indicator of whether to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		return: (dataframe) the ajusted p-value matrix (row:the first set of variables, column:the second set of variables)
+		"""
 
 		df_pval_ = pvalues
 		feature_query_vec_1 = df_pval_.index
@@ -295,6 +392,7 @@ class _Base2_correlation(BaseEstimator):
 			pvals_correction_vec1, pval_thresh1 = self.test_pvalue_correction(pvals,alpha=alpha,method_type_id=method_type_correction)
 			id1, pvals_corrected1, alpha_Sidak_1, alpha_Bonferroni_1 = pvals_correction_vec1
 			df_pval_corrected_1.loc[feature_query_id,query_vec_1] = pvals_corrected1
+
 			if i1%1000==0:
 				print('pvals_corrected1 ',np.max(pvals_corrected1),np.min(pvals_corrected1),np.mean(pvals_corrected1),np.median(pvals_corrected1),i1,feature_query_id)
 			
@@ -314,7 +412,22 @@ class _Base2_correlation(BaseEstimator):
 
 	## ====================================================
 	# p-value correction
+	# compute the adjusted p-value of correlation
+	# TODO
+	# to update
 	def test_pvalue_correction(self,pvals,alpha=0.05,method_type_id='fdr_bh'):
+
+		"""
+		:param pvalues: (array) the raw p-values
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:return: 1. tuplet including the components:
+				 	1-1. indicators of whether the corrected p-value is above the threshold alpha;
+					1-2. the corrected p-values;
+					1-3. corrected alpha for Sidak method;
+					1-4. corrected alpha for Bonferroni method;
+				 2. the maximal raw p-value of which the corrected p-value is below the threshold alpha;
+		"""
 
 		pvals = np.asarray(pvals)
 		t_correction_vec = multipletests(pvals,alpha=alpha,method=method_type_id,is_sorted=False,returnsorted=False)
@@ -330,44 +443,46 @@ class _Base2_correlation(BaseEstimator):
 
 		return (id1, pvals_corrected, alpha_Sidak, alpha_Bonferroni), pval_thresh1
 
-	## ====================================================
-	# correlation and pvalue calculation 
-	# from the website: https://enterprise-docs.anaconda.com/en/latest/data-science-workflows/data/stats.html
-	def test_correlation_pvalues_pair(self,df1,df2,correlation_type='spearmanr',float_precision=7):
-		
-		# df1 = df1.select_dtypes(include=['number'])
-		# df2 = df2.select_dtypes(include=['number'])
-		pairs = pd.MultiIndex.from_product([df1.columns, df2.columns])
-		if correlation_type=='pearsonr':
-			t_list1 = [pearsonr(df1[a], df2[b]) for a, b in pairs]
-		else:
-			t_list1= [spearmanr(df1[a], df2[b]) for a, b in pairs]
-
-		corr_values = [t_vec1[0] for t_vec1 in t_list1]
-		pvalues = [t_vec1[1] for t_vec1 in t_list1]
-
-		corr_values = pd.Series(corr_values, index=pairs).unstack()
-		pvalues = pd.Series(pvalues, index=pairs).unstack()
-
-		if float_precision>0:
-			corr_values = corr_values.round(float_precision)
-			pvalues = pvalues.round(float_precision)
-		
-		return corr_values, pvalues
-
 	## ======================================================
-	# compute peak accessibility-TF expression correlation
+	# compute peak accessibility-TF expression correlation and p-value
+	# TODO
+	# to update
 	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',
 											pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',flag_load=0,field_load=[],parallel_mode=0,
-											save_mode=1,input_file_path='',input_filename_list=[],output_file_path='',
-											filename_prefix='',verbose=0,select_config={}):
+											input_file_path='',input_filename_list=[],save_mode=1,output_file_path='',filename_prefix='',verbose=0,select_config={}):
+
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param flag_load: indicator of whether to load peak accessibility-TF expression correlations and p-values from the saved files
+		:param field_load: (array or list) fields representing correlation, the raw p-value, and adjusted p-value that are used in the corresponding filenames and used for retrieving data
+		:param parallel_mode: indicator of whether to perform computation in parallel
+		:param input_file_path: the directory to retrieve data from
+		:param input_filename_list: (list) paths of files to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param filename_prefix: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing the following dataframes: 
+				 1,2,3. the correlation, raw p-value, and adjusted p-value matrices between the peak accessibilities and TF expressions (row:ATAC-seq peak locus, column:TF);					
+ 				 4. TF annotations including the number of peak loci with the TF motif detected, the maximal and minimal correlation between peak accessibility and the TF expression for each TF;
+		"""
 
 		if filename_prefix=='':
 			filename_prefix = 'test_peak_tf_correlation'
 		if flag_load>0:
 			if len(field_load)==0:
 				field_load = [correlation_type,'pval','pval_corrected']
-				field_annot = ['correlation','p-value','corrected p-value']
+			field_annot = ['correlation','p-value','corrected p-value']
 			field_num = len(field_load)
 
 			file_num = len(input_filename_list)
@@ -377,6 +492,7 @@ class _Base2_correlation(BaseEstimator):
 
 			dict_query = dict()
 			print('load estimated peak accessibility-TF expression correlation and p-value')
+			
 			for i1 in range(field_num):
 				filename_annot1 = field_load[i1]
 				input_filename = input_filename_list[i1]
@@ -441,10 +557,31 @@ class _Base2_correlation(BaseEstimator):
 		return dict_query
 
 	## ====================================================
-	# peak accessibility-TF expression correlation
+	# compute peak accessibility-TF expression correlation and p-value
+	# TODO
+	# to update
 	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
 									peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
 									alpha=0.05,method_type_correction = 'fdr_bh',parallel_mode=0,verbose=1,select_config={}):
+
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) the correlation matrix between the peak accessibilities and TF expressions (row:ATAC-seq peak locus, column:TF);
+				 2. (dataframe) the raw p-pvalue matrix;
+				 3. (dataframe) the adjusted p-value matrix;
+				 4. (dataframe) TF annotations including the number of peak loci with the TF motif detected, the maximal and minimal correlation between peak accessibility and the TF expression;
+		"""
 
 		if len(motif_query_vec)==0:
 			motif_query_name_ori = motif_data.columns
@@ -466,14 +603,19 @@ class _Base2_correlation(BaseEstimator):
 
 		peak_loc_ori = motif_data_query.index
 		feature_query_vec_1, feature_query_vec_2 = peak_loc_ori, motif_query_vec
-		# df_corr_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
-		# df_pval_ = pd.DataFrame(index=feature_query_vec_1,columns=feature_query_vec_2,dtype=np.float32)
 		flag_pval_correction = pval_correction
 
 		if parallel_mode==0:
-			t_vec_1 = self.test_peak_tf_correlation_unit1(motif_data=motif_data_query,peak_query_vec=[],motif_query_vec=motif_query_vec,
-															peak_read=peak_read,rna_exprs=rna_exprs,correlation_type=correlation_type,pval_correction=pval_correction,
-															alpha=alpha,method_type_correction=method_type_correction,parallel_mode=0,verbose=1,select_config=select_config)
+			t_vec_1 = self.test_peak_tf_correlation_unit1(motif_data=motif_data_query,peak_query_vec=[],
+															motif_query_vec=motif_query_vec,
+															peak_read=peak_read,
+															rna_exprs=rna_exprs,
+															correlation_type=correlation_type,
+															pval_correction=pval_correction,
+															alpha=alpha,
+															method_type_correction=method_type_correction,
+															parallel_mode=0,
+															verbose=1,select_config=select_config)
 			df_corr_, df_pval_, df_pval_corrected, df_motif_basic = t_vec_1
 		else:
 			dict_query_1 = dict()
@@ -481,8 +623,13 @@ class _Base2_correlation(BaseEstimator):
 			for field_id in field_query:
 				dict_query_1[field_id] = []
 
-			query_res_local = Parallel(n_jobs=-1)(delayed(self.test_peak_tf_correlation_unit1)(motif_data=motif_data_query,motif_query_vec=[motif_id_query],peak_read=peak_read,rna_exprs=rna_exprs,
-																								correlation_type=correlation_type,pval_correction=pval_correction,alpha=alpha,method_type_correction=method_type_correction,verbose=verbose,select_config=select_config) for motif_id_query in motif_query_vec)
+			query_res_local = Parallel(n_jobs=-1)(delayed(self.test_peak_tf_correlation_unit1)(motif_data=motif_data_query,motif_query_vec=[motif_id_query],
+																								peak_read=peak_read,rna_exprs=rna_exprs,
+																								correlation_type=correlation_type,
+																								pval_correction=pval_correction,
+																								alpha=alpha,
+																								method_type_correction=method_type_correction,
+																								verbose=verbose,select_config=select_config) for motif_id_query in motif_query_vec)
 			
 			for t_query_res in query_res_local:
 				# dict_query = t_query_res
@@ -508,11 +655,32 @@ class _Base2_correlation(BaseEstimator):
 		return df_corr_, df_pval_, df_pval_corrected, df_motif_basic
 
 	## ======================================================
-	# peak accessibility-TF expression correlation
+	# compute peak accessibility-TF expression correlation
+	# TODO
+	# to update
 	def test_peak_tf_correlation_unit1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
 										peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
 										alpha=0.05,method_type_correction='fdr_bh',parallel_mode=0,verbose=1,select_config={}):
-			
+		
+		"""
+		compute peak accessibility-TF expression correlation and p-value
+		:param motif_data: (dataframe) the motif scanning results (binary), indicating if a TF motif is detected in a ATAC-seq peak locus (row:ATAC-seq peak locus, column:TF)
+		:param peak_query_vec: (array) the ATAC-seq peak loci for which to estimate peak-TF links
+		:param motif_query_vec: (array) TF names
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_exprs: (dataframe) gene expressions of the metacells (row:metacell, column:gene)
+		:param correlation_type: (str) the type of peak accessibility-TF expression correlation: 'spearmanr': Spearman's rank correlation; 'pearsonr': Pearson correlation;
+		:param pval_correction: indicator of whether to compute the adjusted p-value of the correlation
+		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
+		:param method_type_correction: (str) the method used for p-value correction
+		:param parallel_mode: indicator of whether to perform computation in parallel
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: tuplet including the following dataframes:
+				 1,2,3. the correlation, raw p-value, and adjusted p-value matrices between the peak accessibilities and TF expressions (row:ATAC-seq peak locus, column:TF);					
+ 				 4. TF annotations including the number of peak loci with the TF motif detected, the maximal and minimal correlation between peak accessibility and the TF expression for each TF;
+		"""
+
 		motif_query_num = len(motif_query_vec)
 		motif_data_query = motif_data
 		peak_loc_ori = motif_data_query.index
@@ -561,8 +729,23 @@ class _Base2_correlation(BaseEstimator):
 		return (df_corr_, df_pval_, df_pval_corrected, df_motif_basic)
 
 	## ======================================================
-	# query correlations above threshold
+	# query correlations with statistical significance above threshold
+	# TODO
+	# to update
 	def test_query_correlation_threshold(self,corr_value,pval_value,thresh_corr_vec,thresh_pval_vec,type_id_1=0,select_config={}):
+
+		"""
+		query correlations with statistical significance above threshold
+		:param corr_value: (array) the correlation values
+		:param pval_value: (array) the p-values
+		:param thresh_corr_vec: (array or list) the thresholds on correlations
+		:param thresh_pval_vec: (array or list) the thresholds on p-values
+		:param type_id_1: indicator of how to select the correlation and p-value using the threshold:
+						  0: select the correlation above the threshold with p-value below the threshold;
+						  1: select the correlation below the threshold with p-value below the threshold;
+		:param select_config: dictionary containing parameters
+		:return: list containing indicators of which correlations and p-values are selected using the corresponding threshold
+		"""
 
 		thresh_num1 = len(thresh_corr_vec)
 		# corr_value_abs = corr_value.abs()

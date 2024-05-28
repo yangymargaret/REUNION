@@ -13,9 +13,7 @@ plt.switch_backend('Agg')
 import seaborn as sns
 
 import warnings
-
 import sys
-from tqdm.notebook import tqdm
 
 import os
 import os.path
@@ -70,33 +68,6 @@ class _Base_pre1(BaseEstimator):
 		self.motif_data_score = []
 		self.motif_query_name_expr = []
 		
-		data_type_id = 1
-		if 'data_type_id' in self.config:
-			data_type_id = self.config['data_type_id']
-
-		if data_type_id==0:
-			# load scRNA-seq data
-			# self.test_init_1()
-			# self.adata = self.rna_ad_1
-			cluster_name1 = 'UpdatedCellType'
-		else:
-			# load multiome scRNA-seq data
-			load_mode = 1
-			# load_mode = self.config['load_mode_metacell']
-			if 'load_mode' in config:
-				load_mode = config['load_mode_metacell']
-			# self.test_init_2(load_mode=load_mode)
-			# self.adata = self.pre_rna_ad
-			cluster_name1 = 'CellType'
-
-			# load_mode_rna, load_mode_atac = 1, 1
-			load_mode_rna, load_mode_atac = 1, 1
-			if 'load_mode_rna' in config:
-				load_mode_rna = config['load_mode_rna']
-			if 'load_mode_atac' in config:
-				load_mode_atac = config['load_mode_atac']
-			
-		data_file_type = select_config['data_file_type']
 		if not ('type_id_feature' in select_config):
 			select_config.update({'type_id_feature':type_id_feature})
 		
@@ -108,8 +79,8 @@ class _Base_pre1(BaseEstimator):
 		self.df_gene_peak_list_ = []
 		self.motif_data = []
 		
-		self.df_tf_expr_corr_list_pre1 = []	# tf-tf expr correlation
-		self.df_expr_corr_list_pre1 = []	# gene-tf expr correlation
+		self.df_tf_expr_corr_list_pre1 = []	# TF-TF expr correlation
+		self.df_expr_corr_list_pre1 = []	# gene-TF expr correlation
 		self.df_gene_query = []
 		self.df_gene_peak_query = []
 		self.df_gene_annot_1 = []
@@ -130,10 +101,26 @@ class _Base_pre1(BaseEstimator):
 		self.df_gene_tf_expr_pval_ = []
 		self.df_gene_expr_corr_ = []
 		self.df_gene_expr_pval_ = []
-		self.verbose_interval = 1
+		self.verbose_internal = 2
 
-	# file_path query
+	## ====================================================
+	# update parameters in the parameter dictionary
+	# to update
 	def test_config_query_1(self,input_filename_1='',input_filename_2='',input_file_path='',save_mode=1,filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		update parameters in the parameter dictionary;
+		including paths of the single RNA-seq and ATAC-seq data
+		:param input_filename_1: (str) path of the single cell RNA-seq data
+		:param input_filename_2: (str) path of the single cell ATAC-seq data
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing updated parameters
+		"""
 
 		print('test_config_query')
 		if 'data_file_type' in select_config:
@@ -153,14 +140,29 @@ class _Base_pre1(BaseEstimator):
 				select_config.update({'filename_save_annot_1':filename_save_annot_1})
 				select_config.update({'filename_save_annot_pre1':filename_save_annot_1})
 
-			select_config.update({'data_path_save':file_save_path})
-
 		self.select_config = select_config
 
 		return select_config
 
-	## query file path of the RNA-seq and ATAC-seq data
+	## ====================================================
+	# update parameters in the parameter dictionary
+	# to update
 	def test_file_path_query_2(self,input_filename_1='',input_filename_2='',input_file_path='',type_id_feature=0,run_id=1,save_mode=1,filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		update parameters in the parameter dictionary
+		:param input_filename_1: (str) path of the single cell RNA-seq data
+		:param input_filename_2: (str) path of the single cell ATAC-seq data
+		:param input_file_path: the directory to retrieve data from
+		:param type_id_feature: the feature type based on which to estimate metecells (0:RNA-seq data; 1:ATAC-seq data)
+		:param run_id: index of the current computation
+		:param save_mode: indicator of whether to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing updated parameters
+		"""
 
 		input_file_path1 = self.save_path_1
 		data_file_type = select_config['data_file_type']
@@ -175,8 +177,33 @@ class _Base_pre1(BaseEstimator):
 
 		return select_config
 
-	## metacell estimation
-	def test_metacell_compute_unit_1(self,adata,feature_type_id=0,normalize=True,zero_center=True,highly_variable_query=True,use_highly_variable=True,n_SEACells=500,obsm_build_kernel='X_pca',pca_compute=1,num_components=50,n_waypoint_eigs=10,waypoint_proportion=1.0,plot_convergence=1,save_mode=1,select_config={}):
+	## ====================================================
+	# perform metacell estimation using SEACells method
+	# to update
+	def test_metacell_compute_unit_1(self,adata,feature_type_id=0,normalize=True,zero_center=True,highly_variable_query=True,use_highly_variable=True,n_SEACells=500,
+										obsm_build_kernel='X_pca',pca_compute=1,num_components=50,n_waypoint_eigs=10,waypoint_proportion=1.0,plot_convergence=1,
+										save_mode=1,select_config={}):
+
+		"""
+		perform metacell estimation using SEACells method
+		:param adata: AnnData object of RNA-seq or ATAC-seq data of single cells
+		:param feature_type_id: the feature type of data (0:RNA-seq data; 1:ATAC-seq data)
+		:param normalize: indicator of whether to normalize the RNA-seq or ATAC-seq count matrix
+		:param zero_center: indicator of whether to perform zero-centering of the variables for PCA
+		:param highly_variable_query: indicator of whether to query highly variable genes or peaks
+		:param use_highly_variable: indicator of whether to highly variable genes or peaks only to perform PCA
+		:param n_SEACells: (int) the number or SEACells to estimate
+		:param obsm_build_kernel: (str) key in .obsm of the AnnData object to use for computing metacells
+		:param pca_compute: (int) indicator of whether to perform PCA
+		:param num_components: (int) the number of principal components to compute in PCA
+		:param n_waypoint_eigs: (int) number of eigenvalues to consider when initializing metacells
+		:param waypoint_proportion: (float) the proportion of SEACells to initialize using waypoint analysis
+		:param plot_convergence: indicator of whether to plot the convergence curve
+		:param save_mode: indicator of whether to save data
+		:param select_config: dictionary containing parameters
+		:return: 1. updated RNA-seq or ATAC-seq AnnData object of single cells, with SEACell assignment saved in .obs dataframe;
+		         2. the SEACells model learned to estimate SEACells
+		"""
 
 		ad = adata
 		if normalize>0:
@@ -205,7 +232,6 @@ class _Base_pre1(BaseEstimator):
 			print('PCA computation ',ad.shape)
 			if feature_type_id==1:
 				zero_center = False
-			# sc.tl.pca(ad, zero_center=zero_center, n_comps=num_components, use_highly_variable=True)
 			sc.tl.pca(ad, zero_center=zero_center, n_comps=num_components, use_highly_variable=use_highly_variable)
 			if feature_type_id==1:
 				ad.obsm['X_svd'] = ad.obsm['X_pca'].copy()
@@ -223,27 +249,26 @@ class _Base_pre1(BaseEstimator):
 				list1[i1] = select_config[field_id]
 		n_neighbors, n_pcs = list1
 		
+		layer_name_query1 = 'X_umap'
 		if (flag_umap>0):
 			print('umap estimation')
 			layer_name_vec = ['X_pca','X_svd']
 			layer_name_query = layer_name_vec[feature_type_id]
-			# print('search for neighbors: ',n_neighbors,n_pcs,layer_name_query)
+			print('search for neighbors; neighbor number: %d, PC number: %d, using layer %s'%(n_neighbors,n_pcs,layer_name_query))
 			sc.pp.neighbors(ad, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
 			sc.tl.umap(ad)
 
+		import SEACells
 		build_kernel_on = obsm_build_kernel # key in ad.obsm to use for computing metacells
 											# This would be replaced by 'X_svd' for ATAC data
 		print('build_kernel_on, n_waypoint_eigs ',build_kernel_on,n_waypoint_eigs)
 
-		import SEACells
-		
-		# Additional parameters
-		# n_waypoint_eigs = 10 # Number of eigenvalues to consider when initializing metacells
+		# perform SEACell estimation
 		model = SEACells.core.SEACells(ad, 
-				  build_kernel_on=build_kernel_on, 
-				  n_SEACells=n_SEACells, 
-				  n_waypoint_eigs=n_waypoint_eigs,
-				  convergence_epsilon = 1e-5)
+									  build_kernel_on=build_kernel_on, 
+									  n_SEACells=n_SEACells, 
+									  n_waypoint_eigs=n_waypoint_eigs,
+									  convergence_epsilon=1e-5)
 
 		model.construct_kernel_matrix()
 		M = model.kernel_matrix
@@ -269,7 +294,7 @@ class _Base_pre1(BaseEstimator):
 
 			n_neighbors = 15
 			n_pcs = 50
-			print('search for neighbors: ',n_neighbors,n_pcs,layer_name_query)
+			print('search for neighbors; neighbor number: %d, PC number: %d, using layer %s'%(n_neighbors,n_pcs,layer_name_query))
 			sc.pp.neighbors(ad, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
 			sc.tl.umap(ad)
 		SEACells.plot.plot_initialization(ad, model, save_as=output_filename)
@@ -282,7 +307,6 @@ class _Base_pre1(BaseEstimator):
 			max_iter=select_config['max_iter']
 		print('min_iter:%d, max_iter:%d'%(min_iter,max_iter))
 		
-		# model.fit(min_iter=10, max_iter=200)
 		model.fit(min_iter=min_iter, max_iter=max_iter)
 		flag_addition_iteration=1
 		if flag_addition_iteration>0:
@@ -297,8 +321,20 @@ class _Base_pre1(BaseEstimator):
 
 		return ad, model
 
-	## from SEACells: genescores
+	## ====================================================
+	# from SEACells.genescores
+	# add variable annotations to the ATAC-seq AnnData object of the metacells
+	# to update
 	def _add_atac_meta_data(self,atac_meta_ad, atac_ad, n_bins_for_gc):
+
+		"""
+		add variable annotations to the ATAC-seq AnnData object of the metacells (GC content bin;counts bin)
+		:param atac_meta_ad: ATAC-seq seq AnnData object of the metacells
+		:param atac_ad: ATAC-seq seq AnnData object of the single cells
+		:param n_bins_for_gc: (int) the number of GC content bins and counts bins
+		:return: None
+		"""
+
 		atac_ad.var['log_n_counts'] = np.ravel(np.log10(atac_ad.X.sum(axis=0)))
 		
 		if 'GC' in atac_ad.var:
@@ -308,10 +344,24 @@ class _Base_pre1(BaseEstimator):
 																 atac_ad.var['log_n_counts'].max(), 
 																 n_bins_for_gc))
 	
-	## from SEACells: genescores
+	## ====================================================
+	# from SEACells.genescores
+	# normlize counts per metacell or cell and perform log-transformation
+	# to update
 	def _normalize_ad(self,meta_ad,target_sum=None,save_raw=True,save_normalize=False):
+
+		"""
+		normlize counts per metacell or cell and perform log-transformation
+		:param meta_ad: RNA-seq or ATAC-seq AnnData object of the metacells or cells
+		:param target_sum: the total count over all genes or peaks in each metacell or cell after normalization;
+						   if target_sum=None, target_num will the median of total counts for the metacells or cells before normalization;
+		:param save_raw: indicator of whehter to save the raw count matrix in the AnnData object
+		:param save_normalize: indicator of whether to save the normalized count matrix before log-transformation
+		:return: None
+		"""
+
 		if save_raw:
-			# Save in raw
+			# Save the raw count matrix in raw
 			meta_ad.raw = meta_ad.copy()
 
 		# Normalize 
@@ -319,20 +369,25 @@ class _Base_pre1(BaseEstimator):
 		sc.pp.normalize_total(meta_ad, target_sum=target_sum, key_added='n_counts')
 		if save_normalize==True:
 			meta_ad.layers['normalize'] = meta_ad.X.copy() # save the normalized read count without log-transformation
-		sc.pp.log1p(meta_ad)
+		sc.pp.log1p(meta_ad)  # perform log-transformation of the normalized count matrix
 
-	## from SEACells.genescores
-	def _prepare_multiome_anndata(self,atac_ad, rna_ad, SEACells_label='SEACell', summarize_layer_atac='X',summarize_layer_rna='X',flag_normalize=1,save_raw_ad_atac=1,save_raw_ad_rna=1,n_bins_for_gc=50,type_id_1=0):
+	## ====================================================
+	# from SEACells.genescores
+	# create metacell AnnData objects from single-cell AnnData objects for multiome data
+	# to update
+	def _prepare_multiome_anndata(self,atac_ad,rna_ad,SEACells_label='SEACell',summarize_layer_atac='X',summarize_layer_rna='X',flag_normalize=1,save_raw_ad_atac=1,save_raw_ad_rna=1,n_bins_for_gc=50,type_id_1=0,select_config={}):
+		
 		"""
-		Function to create metacell Anndata objects from single-cell Anndata objects for multiome data
-		:param atac_ad: (Anndata) ATAC Anndata object with raw peak counts in `X`. These anndata objects should be constructed 
+		Function to create metacell AnnData objects from single-cell AnnData objects for multiome data
+		:param atac_ad: (AnnData) ATAC AnnData object with raw peak counts in `X`. These anndata objects should be constructed 
 		 using the example notebook available in 
-		:param rna_ad: (Anndata) RNA Anndata object with raw gene expression counts in `X`. Note: RNA and ATAC anndata objects 
+		:param rna_ad: (AnnData) RNA AnnData object with raw gene expression counts in `X`. Note: RNA and ATAC anndata objects 
 		 should contain the same set of cells
 		:param SEACells_label: (str) `atac_ad.obs` field for constructing metacell matrices. Same field will be used for 
 		  summarizing RNA and ATAC metacells. 
 		:param n_bins_gc: (int) Number of bins for creating GC bins of ATAC peaks.
-		:return: ATAC metacell Anndata object and RNA metacell Anndata object
+		:param select_config: dictionary containing parameters
+		:return: ATAC metacell AnnData object and RNA metacell AnnData object
 		"""
 
 		import SEACells
@@ -380,7 +435,7 @@ class _Base_pre1(BaseEstimator):
 		print(' ATAC')
 		atac_meta_ad = core.summarize_by_SEACell(atac_mod_ad, SEACells_label=SEACells_label_atac, summarize_layer=summarize_layer_atac)
 		atac_meta_ad = atac_meta_ad[metacells, :]
-		## the raw ad was saved using the SEACells.core.summarize_by_SEACell() function
+		# the raw ad was saved using the SEACells.core.summarize_by_SEACell() function
 		# if save_raw_ad>0:
 		# 	raw_atac_meta_ad = sc.AnnData(atac_meta_ad.X)
 		# 	raw_atac_meta_ad.obs_names, raw_atac_meta_ad.var_names = atac_meta_ad.obs_names, atac_meta_ad.var_names
@@ -417,11 +472,23 @@ class _Base_pre1(BaseEstimator):
 
 		return atac_meta_ad, rna_meta_ad
 
-	## highly-variable gene query
-	def test_query_metacell_high_variable_feature(self,pre_meta_ad,highly_variable_feature_query_type=True,select_config={}):
+	## ====================================================
+	# highly-variable gene query
+	# query highly variable genes or peaks
+	# to update
+	def test_query_metacell_high_variable_feature(self,pre_meta_ad,highly_variable_feature_query=True,select_config={}):
 		
-		## select highly variable peaks or highly variable genes
-		if highly_variable_feature_query_type>0:
+		"""
+		query highly variable genes or peaks
+		:param pre_meta_ad: (AnnData object) gene expression or peak accessibility data of the metacells
+		:param highly_variable_feature_query: indicator of whether to estimate highly variable peaks or genes
+		:param select_config: dictionary containing parameters
+		:return: (AnnData object) gene expression or peak accessibility data of the metacells, 
+								  with the identified highly variable genes or peaks labeled in the var dataframe;
+		"""
+
+		# select highly variable peaks or highly variable genes
+		if highly_variable_feature_query>0:
 			mean_value = np.mean(pre_meta_ad.X.toarray(),axis=0)
 			min_mean1, max_mean1 = np.min(mean_value), np.max(mean_value)
 			print('mean_value ',min_mean1,max_mean1)
@@ -452,19 +519,34 @@ class _Base_pre1(BaseEstimator):
 
 			return pre_meta_ad
 
-	## metacell data scaing
-	def test_metacell_compute_unit_2(self,pre_meta_ad,save_mode=1,output_file_path='',filename_prefix='test_meta_ad',output_filename='',verbose=0,select_config={}):
+	## ====================================================
+	# perform scaling of the metacell data
+	# to update
+	def test_metacell_compute_unit_2(self,pre_meta_ad,save_mode=1,output_file_path='',output_filename='',filename_prefix='',verbose=0,select_config={}):
+
+		"""
+		perform scaling of the metacell data
+		:param pre_meta_ad: (AnnData object) peak accessibility or gene expression data of the metacells
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1.(AnnData object) peak accessibility or gene expression data of metacells (with potentially added layers)
+				 2.(AnnData object) scaled peak accessibility or gene expression data of metacells
+		"""
 
 		flag_query1 = 1
 		if flag_query1>0:
-			scale_type_id = select_config['scale_type_id']
+			scale_type_id = select_config['scale_type_id'] # the scaling method type
 			pre_meta_ad_scaled = []
 			if scale_type_id>=1:
 				warnings.filterwarnings('ignore')
 				print('scale_type: ',scale_type_id)
 
-				# ATAC-seq peak read after normalization, log transformation, and before scaling
 				if scale_type_id==1:
+					# ATAC-seq peak read count or gene expression matrix after normalization, log transformation, and before scaling
 					print('read scaling')
 					# mtx1 = scale(np.asarray(pre_meta_ad.X.todense()))
 					mtx1 = scale(pre_meta_ad.X.toarray())
@@ -473,7 +555,7 @@ class _Base_pre1(BaseEstimator):
 															dtype=np.float32)
 
 				elif scale_type_id==2:
-					# gene expression after normalization, log transformation, and scaling
+					# ATAC-seq peak read count or gene expression after normalization, log transformation, and scaling
 					pre_read = pd.DataFrame(index=pre_meta_ad.obs_names,
 											columns=pre_meta_ad.var_names,
 											data=np.asarray(pre_meta_ad.X.todense()))
@@ -490,24 +572,21 @@ class _Base_pre1(BaseEstimator):
 						thresh_2 = np.percentile(t_value1, thresh_upper_1)
 						thresh_1_ori = np.percentile(t_value1, thresh_lower_1)
 						# thresh_1 = 0
+						# if np.min(t_value1)>1E-03:
+						# 	thresh_1=thresh_1_ori
+						thresh_1=thresh_1_ori
 						if (thresh_2<1E-03):
 							if (np.max(t_value1)>2):
 								print('feature_query ',feature_query,i1,thresh_2,thresh_1_ori,np.max(t_value1),np.min(t_value1),np.mean(t_value1),np.median(t_value1))
 							thresh_2=np.max(t_value1)
 							if thresh_2==0:
 								continue
-						# if np.min(t_value1)>1E-03:
-						# 	# thresh_1=np.percentile(t_value1, thresh_lower_1)
-						# 	thresh_1=thresh_1_ori
-						thresh_1=thresh_1_ori
-						# exprs = minmax_scale(pre_read[feature_query], 
-						# 					[0, np.percentile(pre_read[feature_query], 99)])
+								
 						exprs = minmax_scale(t_value1,[thresh_1,thresh_2])
 						pre_meta_scaled_read[feature_query] = scale(exprs)
 					warnings.filterwarnings('default')
-
 				else:
-					print('read minmax scaling')
+					print('min-max scaling of the count matrix')
 					mtx1 = minmax_scale(pre_meta_ad.X.toarray())
 					pre_meta_scaled_read = pd.DataFrame(data=mtx1,index=pre_meta_ad.obs_names,
 															columns=pre_meta_ad.var_names,
@@ -518,22 +597,42 @@ class _Base_pre1(BaseEstimator):
 				pre_meta_ad_scaled.obs_names, pre_meta_ad_scaled.var_names = pre_meta_ad.obs_names, pre_meta_ad.var_names
 				warnings.filterwarnings('default')
 
-				if save_mode>0:
+				if save_mode==1:
+					if output_filename=='':
+						if filename_prefix!='':
+							output_filename = '%s/%s.h5ad'%(output_file_path,filename_prefix)
+
 					if (output_filename!=''):
 						b = output_filename.find('txt')
 						if b>=0:
 							float_format = '%.6E'
 							pre_meta_scaled_read.to_csv(output_filename,sep='\t',float_format=float_format)	# save txt file
 						else:
-							pre_meta_ad_scaled.write(output_filename)	# save anndata
+							pre_meta_ad_scaled.write(output_filename)	# save AnnData
 
 				elif save_mode==2:
 					pre_meta_ad.layers['scale_%d'%(scale_type_id)] = pre_meta_scaled_read
 
 		return pre_meta_ad, pre_meta_ad_scaled
 
+	## ====================================================
 	# metacell estimation
-	def test_metacell_compute_pre1(self,flag_path_query=0,flag_SEACell_estimate=0,flag_summarize=0,overwrite=0,save_mode=1,output_file_path='',print_mode=1,verbose=0,select_config={}):
+	# to update
+	def test_metacell_compute_pre1(self,flag_path_query=0,flag_SEACell_estimate=0,flag_summarize=0,overwrite=0,
+										save_mode=1,output_file_path='',print_mode=1,verbose=0,select_config={}):
+
+		"""
+		metacell estimation
+		:param flag_path_query: indicator of whether to update the dictionary of parameters
+		:param flag_SEACell_estimate: indicator of whether to estimate SEACells
+		:param flag_summarize: indicator of whether to summarize the RNA-seq or ATAC-seq read counts across single cells associated with each metacell (SEACell)
+		:param overwrite: indicator of whether to overwrite the current file
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: ATAC-seq and RNA-seq AnnData objects of the metacells
+		"""
 
 		input_file_path1 = self.save_path_1
 		data_file_type = select_config['data_file_type']
@@ -584,11 +683,20 @@ class _Base_pre1(BaseEstimator):
 		color_id = column_id1
 		filename_save_annot2 = data_file_type
 
-		# print_mode=1
-		data_list1 = self.test_query_attribute_1(data_list=data_list1,input_filename_list=input_filename_list,feature_type_vec=feature_type_vec,
-													feature_id=feature_id,column_id_query=column_id1,flag_plot=1,flag_query_1=1,flag_query_2=2,
-													save_mode=1,filename_save_annot=filename_save_annot2,output_file_path=output_file_path_1,
-													print_mode=1,verbose=verbose,select_config=select_config)
+		# query RNA-seq and ATAC-seq metacell data observation and variable attributes
+		data_list1 = self.test_attribute_query_2(data_list=data_list1,
+													input_filename_list=input_filename_list,
+													feature_type_vec=feature_type_vec,
+													feature_id=feature_id,
+													column_id_query=column_id1,
+													flag_plot=1,
+													flag_query_1=1,
+													flag_query_2=2,
+													save_mode=1,
+													output_file_path=output_file_path_1,
+													filename_save_annot=filename_save_annot2,
+													print_mode=print_mode,
+													verbose=verbose,select_config=select_config)
 
 		## retain the cells in both modalities
 		rna_ad, atac_ad = data_list1[0:2]
@@ -663,15 +771,20 @@ class _Base_pre1(BaseEstimator):
 					rna_ad.obs[column_query2] = rna_ad.obs[column_query1].copy()
 				
 				num_components_pca = num_components
-				rna_ad_1, model_1 = self.test_metacell_compute_unit_1(adata=rna_ad,normalize=normalize,n_SEACells=n_SEACells,obsm_build_kernel=obsm_build_kernel_rna,
-																		pca_compute=pca_compute,num_components=num_components_pca,n_waypoint_eigs=n_waypoint_eigs,
+				rna_ad_1, model_1 = self.test_metacell_compute_unit_1(adata=rna_ad,normalize=normalize,
+																		n_SEACells=n_SEACells,
+																		obsm_build_kernel=obsm_build_kernel_rna,
+																		pca_compute=pca_compute,
+																		num_components=num_components_pca,
+																		n_waypoint_eigs=n_waypoint_eigs,
 																		waypoint_proportion=waypoint_proportion,
-																		plot_convergence=1,select_config=select_config)
+																		plot_convergence=1,
+																		select_config=select_config)
 				
 				output_filename = '%s/%s.copy1.h5ad'%(output_file_path,filename_prefix_save)
 				rna_ad_1.write(output_filename)
 				rna_ad = rna_ad_1
-				print('RNA-seq \n',rna_ad_1)
+				print('RNA-seq anndata\n',rna_ad_1)
 				
 				save_filename = '%s/model_rna_%s.h5'%(output_file_path,filename_prefix_save)
 				with open(save_filename,'wb') as output_file:
@@ -679,18 +792,21 @@ class _Base_pre1(BaseEstimator):
 			else:
 				if column_query1 in atac_ad.obs:
 					atac_ad.obs[column_query2] = atac_ad.obs[column_query1].copy()
-				
 				num_components_atac = num_components
-				atac_ad_1, model_1 = self.test_metacell_compute_unit_1(adata=atac_ad,normalize=normalize,n_SEACells=n_SEACells,obsm_build_kernel=obsm_build_kernel_atac,
-																		pca_compute=0,num_components=num_components_atac,n_waypoint_eigs=n_waypoint_eigs,
+				atac_ad_1, model_1 = self.test_metacell_compute_unit_1(adata=atac_ad,normalize=normalize,
+																		n_SEACells=n_SEACells,
+																		obsm_build_kernel=obsm_build_kernel_atac,
+																		pca_compute=0,
+																		num_components=num_components_atac,
+																		n_waypoint_eigs=n_waypoint_eigs,
 																		waypoint_proportion=waypoint_proportion,
-																		plot_convergence=1,select_config=select_config)
+																		plot_convergence=1,
+																		select_config=select_config)
 
-				# output_filename = '%s/adata_atac.%s.1.h5ad'%(output_file_path,data_file_type)
 				output_filename = '%s/%s.copy1.h5ad'%(output_file_path,filename_prefix_save)
 				atac_ad_1.write(output_filename)
 				atac_ad = atac_ad_1
-				print('atac_ad_1\n',atac_ad_1)
+				print('ATAC-seq anndata\n',atac_ad_1)
 				
 				save_filename = '%s/model_atac_%s.h5'%(output_file_path,filename_prefix_save)
 				with open(save_filename,'wb') as output_file:
@@ -739,11 +855,17 @@ class _Base_pre1(BaseEstimator):
 			
 			print('summarize_layer_type_1, summarize_layer_type_2',summarize_layer_type_1,summarize_layer_type_2)
 			
-			atac_meta_ad, rna_meta_ad = self._prepare_multiome_anndata(atac_ad=atac_ad_1, rna_ad=rna_ad_1, SEACells_label='SEACell', summarize_layer_atac=summarize_layer_type_2,summarize_layer_rna=summarize_layer_type_1,type_id_1=type_id_1)
+			atac_meta_ad, rna_meta_ad = self._prepare_multiome_anndata(atac_ad=atac_ad_1, 
+																		rna_ad=rna_ad_1, 
+																		SEACells_label='SEACell', 
+																		summarize_layer_atac=summarize_layer_type_2,
+																		summarize_layer_rna=summarize_layer_type_1,
+																		type_id_1=type_id_1,
+																		select_config=select_config)
 			
 			# select highly variable peaks or highly variable genes
-			highly_variable_feature_query_type = True
-			rna_meta_ad = self.test_query_metacell_high_variable_feature(pre_meta_ad=rna_meta_ad,highly_variable_feature_query_type=highly_variable_feature_query_type,select_config=select_config)
+			highly_variable_feature_query = True
+			rna_meta_ad = self.test_query_metacell_high_variable_feature(pre_meta_ad=rna_meta_ad,highly_variable_feature_query=highly_variable_feature_query,select_config=select_config)
 			print('atac_meta_ad\n', atac_meta_ad)
 			print('rna_meta_ad\n', rna_meta_ad)
 
@@ -762,6 +884,7 @@ class _Base_pre1(BaseEstimator):
 			filename_prefix = 'test_rna_meta_ad.%s'%(filename_save_annot_1)
 			scale_type_id = 2
 			select_config.update({'scale_type_id':scale_type_id})
+			# perform scaling of the metacell data
 			pre_meta_ad_rna, pre_meta_ad_scaled_rna = self.test_metacell_compute_unit_2(pre_meta_ad=rna_meta_ad,
 																						save_mode=1,output_file_path=output_file_path,
 																						filename_prefix=filename_prefix,
@@ -792,9 +915,28 @@ class _Base_pre1(BaseEstimator):
 
 			return atac_meta_ad, rna_meta_ad
 
-	# metacell estimation
-	def test_metacell_compute_pre2(self,feature_id='',feature_type_vec=['rna','atac'],column_vec_query=[],flag_path_query=0,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+	## ====================================================
+	# plot the metacells using the low-dimensional embedding
+	# to update
+	def test_metacell_compute_pre2(self,feature_id='',feature_type_vec=['rna','atac'],column_vec_query=[],flag_path_query=0,
+										save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 		
+		"""
+		plot the metacells using the low-dimensional embedding
+		:param feature_id: (str) layer name in the AnnData object representing the low-dimensional embedding used to plot the metacells
+		:param feature_type_vec: (array or list) the feature type of data: RNA-seq (rna) or ATAC-seq (atac)
+		:param column_vec_query: (array or list) the column name and value in the .obs dataframe of the AnnData object used to select the subset of metacells
+		:param file_path_query: indicator of whether to update the dictionary of parameters
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: True
+		"""
+
 		if flag_path_query>0:
 			select_config = self.test_file_path_query_2(select_config=select_config)
 
@@ -841,180 +983,24 @@ class _Base_pre1(BaseEstimator):
 
 		return True
 
-	# metacell estimation
-	def test_metacell_compute_pre1_query1(self,save_mode=1,output_file_path='',select_config={}):
+	## ====================================================
+	# query metacell annotations and RNA-seq or ATAC-seq count matrix of metacells
+	# to update
+	def test_metacell_compute_pre1_query2(self,run_idvec=[1],file_type_vec_1=['rna','atac'],file_type_vec_2=['rna'],flag_path_query=0,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
-		data_file_type = select_config['data_file_type']
-
-		select_config = self.test_file_path_query_2(select_config=select_config)
-		flag_SEACell_estimate=0
-		if 'flag_SEACell_estimate' in select_config:
-			flag_SEACell_estimate = select_config['flag_SEACell_estimate']
-		flag_summarize=0
-		if ('flag_summarize' in select_config):
-			flag_summarize = select_config['flag_summarize']
-		
-		# print_mode=1
-		data_path = select_config['data_path']
-		run_id = select_config['run_id']
-		type_id_feature = select_config['type_id_feature']
-		feature_type_1 = select_config['feature_type_1']
-		input_file_path = select_config['data_path']
-		data_path_save = '%s/run%d'%(input_file_path,run_id)
-
-		feature_type_vec = ['rna','atac']
-		filename_save_annot = data_file_type
-		if 'run_id_load' in select_config:
-			run_id_load = select_config['run_id_load']
-		else:
-			run_id_load = run_id
-
-		dict_query1 = dict()
-		dict1 = dict()
-		dict_query1.update({run_id_load:dict1})
-		filename_save_annot2 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id_load)
-		for i1 in range(2):
-			feature_type_query = feature_type_vec[i1]
-			
-			# combine the annotation from single cell data and the annotation from the metacell data
-			input_filename_1 = '%s/test_%s_ad.%s.df_obs.txt'%(input_file_path,feature_type_query,data_file_type)
-			
-			# the annotation from metacell data
-			input_filename = '%s/test_%s_meta_ad.%s.h5ad'%(data_path_save,feature_type_query,filename_save_annot2)
-			adata1 = sc.read_h5ad(input_filename)
-			df_obs = adata1.obs
-			sample_id1 = df_obs.index
-			print('feature_type_query: %s, sample_id: %d'%(feature_type_query,len(sample_id1)))
-			print(adata1)
-			print('observation annotation, dataframe of size ',df_obs.shape)
-
-			# the annotation from the single cell data
-			df_annot1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
-			column_query = df_annot1.columns.difference(df_obs.columns,sort=False)
-			df_annot2 = df_annot1.loc[sample_id1,column_query]
-			df_obs_combine = pd.concat([df_obs,df_annot2],axis=1,join='outer',ignore_index=False)
-			
-			output_file_path = data_path_save
-			output_filename = '%s/test_%s_meta_ad.%s.df_obs.1.txt'%(output_file_path,feature_type_query,filename_save_annot2)
-			df_obs_combine.to_csv(output_filename,sep='\t') # the annotations of each metacell including the orignal annotations from the single cell data
-			print('combined observation annotation, dataframe of size ',df_obs_combine.shape)
-
-			output_filename = '%s/test_%s_meta_ad.%s.df_var.1.txt'%(output_file_path,feature_type_query,filename_save_annot2)
-			df_var = adata1.var
-			df_var.to_csv(output_filename,sep='\t')
-			print('variable annotation, dataframe of size ',df_obs.shape)
-
-			if feature_type_query==feature_type_1:
-				input_filename_pre1 = select_config['filename_rna']
-
-				# load single cell data
-				pre_ad = sc.read(input_filename_pre1)
-				df_obs_1 = pre_ad.obs
-				column_id1 = 'celltype'
-				column_id2 = 'SEACell'
-				metacell_id_ori = df_obs_1[column_id2].unique()
-				metacell_id1 = pd.Index(metacell_id_ori).intersection(sample_id1,sort=False)
-				
-				# print(len(metacell_id1),metacell_id1[0:2])
-				celltype_query = df_obs_1[column_id1]
-				metacell_id = sample_id1
-
-				feature_type_query_2 = pd.Index(feature_type_vec).difference([feature_type_query])[0]
-				print('feature type 2 ',feature_type_query_2)
-				
-				input_filename_pre2 = '%s/test_%s_ad.%s.df_obs.txt'%(input_file_path,feature_type_query_2,data_file_type)
-				df_obs_2 = pd.read_csv(input_filename_pre2,index_col=0,sep='\t')
-				
-				sample_id_2 = df_obs_2.index
-				print('observation annotation for feature type 2, dataframe of size ',df_obs_2.shape)
-
-				df_1 = df_obs_1.loc[metacell_id,[column_id1]]
-				df_1['count'] = 1
-				df1 = df_1.groupby(by=[column_id1]).sum()
-				
-				input_filename = '%s/test_%s_ad.%s.celltype_query.1.txt'%(input_file_path,feature_type_1,data_file_type)
-				df1_pre1 = pd.read_csv(input_filename,index_col=0,sep='\t')
-				df1_pre1 = df1_pre1.rename(columns={'count':'count_ori'})
-				df1 = pd.concat([df1,df1_pre1],axis=1,join='outer',ignore_index=False)
-				df1.loc[:,'ratio'] = df1['count']/df1['count_ori']	# the percentage of each cell type
-				
-				output_file_path_1 = output_file_path
-				output_filename = '%s/test_%s_meta_ad.%s.celltype_query.1.txt'%(output_file_path_1,feature_type_1,filename_save_annot2)
-				# df1.to_csv(output_filename,sep='\t')
-
-				metacell_num = len(metacell_id)
-				sample_id_1 = pre_ad.obs_names
-				# field_query = ['num1','num2','ratio_association','celltype']
-				field_query_1 = ['num1','num2','ratio_association']
-				df_query1 = pd.DataFrame(index=metacell_id,columns=field_query_1)
-				
-				for i2 in range(metacell_num):
-					metacell_id_query = metacell_id[i2]
-					celltype_query = pre_ad.obs.loc[metacell_id_query,column_id1]
-					id1 = (pre_ad.obs[column_id2]==metacell_id_query)
-					id2 = (pre_ad.obs.loc[id1,column_id1]==celltype_query)
-					sample_id_query1 = sample_id_1[id1]
-					sample_id_query2 = sample_id_query1[id2]
-					num1, num2 = len(sample_id_query1), len(sample_id_query2)
-					ratio = num2/num1
-					df_query1.loc[metacell_id_query,field_query_1] = [num1,num2,ratio]
-					# df_query1.loc[metacell_id_query,'celltype'] = celltype_query
-				
-				df_obs_combine_2 = pd.concat([df_obs_combine,df_query1],axis=1,join='outer',ignore_index=False)
-
-				df_2 = df_obs_combine_2.loc[:,[column_id1,'num1','num2']]
-				df2 = df_2.groupby(by=[column_id1]).sum()
-				celltype_idvec_ori = df1.index
-				celltype_idvec = celltype_idvec_ori.intersection(df2.index,sort=False)
-				df1.loc[:,'count_recall'] = df2.loc[celltype_idvec,'num2']
-				df1.loc[:,'count_association'] = df2.loc[celltype_idvec,'num1']
-
-				df1.loc[:,'recall'] = df1['count_recall']/df1['count_ori']
-				df1.loc[:,'precision'] = df1['count_recall']/df1['count_association']
-				eps = 1E-12
-				df1.loc[:,'F1'] = 2*df1['precision']*df1['recall']/(df1['precision']+df1['recall']+eps)
-				df1.to_csv(output_filename,sep='\t')
-
-				output_filename = '%s/test_%s_meta_ad.%s.df_obs.1.copy1.txt'%(output_file_path,feature_type_query,filename_save_annot2)
-				df_obs_combine_2 = df_obs_combine_2.sort_values(by=['celltype','ratio_association'],ascending=[True,False])
-				df_obs_combine_2.to_csv(output_filename,sep='\t')
-				print('the combined observation annotation, dataframe of size ',df_obs_combine_2.shape)
-				
-				quantile_vec_1 = [0.1,0.25,0.5,0.75,0.9]
-				t_value_1 = utility_1.test_stat_1(df_obs_combine_2['ratio_association'],quantile_vec=quantile_vec_1)
-				dict1 = dict_query1[run_id_load]
-				field_query_1 = ['max','min','mean','median']+quantile_vec_1
-				# df_value = pd.Series(index=field_query_1,data=t_value_1)
-				df_value = pd.DataFrame(index=[run_id_load],columns=field_query_1,data=np.asarray(t_value_1)[np.newaxis,:])
-				
-				field_id1 = 'cellnum'
-				field_id2 = 'ratio'
-				field_id3 = ['recall','precision','F1']
-				field_query_pre2 = ['max','min','mean','median']
-				field_query_2 = ['%s_%s'%(field_id1,field_id_query) for field_id_query in field_query_pre2]
-				field_query_3 = ['%s_%s'%(field_id2,field_id_query) for field_id_query in field_query_pre2]
-				
-				cell_num2 = df1['count']
-				celltype_ratio = df1['ratio']
-				# celltype_recall = df1['recall']
-				df_value.loc[:,field_query_2] = utility_1.test_stat_1(np.asarray(cell_num2))
-				df_value.loc[:,field_query_3] = utility_1.test_stat_1(np.asarray(celltype_ratio))
-				
-				for field_id in field_id3:
-					field_query_5 = ['%s_%s'%(field_id,field_id_query) for field_id_query in field_query_pre2]
-					query_value = df1[field_id]
-					df_value.loc[:,field_query_5] = utility_1.test_stat_1(np.asarray(query_value))
-				
-				df_value.loc[:,'recall_merge'] = df1['count_recall'].sum()/df1['count_ori'].sum()
-				df_value.loc[:,'precision_merge'] = df1['count_recall'].sum()/df1['count_association'].sum()
-				df_value.loc[:,'F1_merge'] = 2*df_value['precision_merge']*df_value['recall_merge']/(df_value['precision_merge']+df_value['recall_merge']+eps)
-				dict1.update({feature_type_query:df_value})
-				dict_query1.update({run_id_load:dict1})
-
-		return dict_query1
-
-	# query metacell annotation and count matrix of metacells
-	def test_metacell_compute_pre1_query2(self,run_idvec=[1],file_type_vec_1=['rna','atac'],file_type_vec_2=['rna'],save_mode=1,output_file_path='',output_filename='',flag_path_query=0,verbose=0,select_config={}):
+		"""
+		query metacell annotations and RNA-seq or ATAC-seq count matrix of metacells
+		:param run_idvec: (array or list) indices of the computations; each computation correspond to a set of estimated metacells;
+		:param file_type_vec_1: (array or list) the feature types of data (rna or atac) for which to query the metacell annotations and the count matrix
+		:param file_type_vec_2: (array or list) the feature types of data for which to query the count matrix
+		:param flag_path_query: indicator of whether to update the dictionary of parameters
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: True
+		"""
 
 		data_file_type = select_config['data_file_type']
 		if flag_path_query>0:
@@ -1029,32 +1015,10 @@ class _Base_pre1(BaseEstimator):
 		
 		list1 = []
 		type_id_1=1
-		# type_id_1=0
-		df_query1=[]
-		if type_id_1==0:
-			for i1 in range(query_num1):
-				run_id1 = run_idvec[i1]
-				select_config.update({'run_id':run_id1,'run_id_load':run_id1})
-				print('run_id1 ',run_id1)
-				dict_query1 = self.test_metacell_compute_pre1_query1(select_config=select_config)
-
-				dict1 = dict_query1[run_id1]
-				df_value = dict1[feature_type_1]
-				list1.append(df_value)
-
-			df_query1 = pd.concat(list1,axis=0,join='outer',ignore_index=False)
-			if output_filename=='':
-				if output_file_path=='':
-					data_path = select_config['data_path']
-					output_file_path = data_path
-				output_filename = '%s/test_%s_meta_ad_query_basic.%s.1.txt'%(output_file_path,feature_type_1,data_file_type)
-			df_query1.to_csv(output_filename,sep='\t',float_format='%.6f')
-			print('metacell assignment annotation, dataframe of size ',df_query1.shape)
-
-		else:
-			query_num2 = len(run_idvec_pre1)
+		if type_id_1==1:
+			query_num2 = len(run_idvec)
 			for i1 in range(query_num2):
-				run_id1 = run_idvec_pre1[i1]
+				run_id1 = run_idvec[i1]
 				select_config.update({'run_id':run_id1})
 				select_config.update({'run_id_load':run_id1})
 				flag_count=1
@@ -1062,8 +1026,7 @@ class _Base_pre1(BaseEstimator):
 				flag_id_query1 = 0
 				select_config.update({'flag_id_query1':flag_id_query1})
 				
-				file_type_vec=['rna','atac']
-				# file_type_vec=['rna']
+				file_type_vec = file_type_vec_1
 				self.test_feature_mtx_query_pre1(file_type_vec=file_type_vec,
 														flag_count=flag_count,
 														flag_annot=flag_annot,
@@ -1074,20 +1037,37 @@ class _Base_pre1(BaseEstimator):
 				flag_id_query1 = 1
 				select_config.update({'flag_id_query1':flag_id_query1})
 
-				file_type_vec=['rna']
+				file_type_vec = file_type_vec_2
 				self.test_feature_mtx_query_pre1(file_type_vec=file_type_vec,
 														flag_count=flag_count,
 														flag_annot=flag_annot,
 														select_config=select_config)
 
-		return df_query1
+		# return df_query1
+		return True
 
 	## ====================================================
-	# prepare peak accessibility and gene expression matrix
-	# def test_gene_peak_query_correlation_gene_pre1_2_ori(self,gene_query_vec=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],normalize_type_vec=[0,1,2],filename_prefix_save='',output_filename='',save_file_path='',annot_mode=1,save_mode=1,select_config={}):
-	def test_feature_mtx_query_pre1(self,gene_query_vec=[],filename_list=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],normalize_type_vec=[0,1,2],data_path_save='',filename_prefix_save='',output_filename='',save_file_path='',annot_mode=1,save_mode=1,select_config={}):
+	# query and save specific types of ATAC-seq or RNA-seq count matrix
+	# to update
+	def test_feature_mtx_query_pre1(self,gene_query_vec=[],filename_list=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],normalize_type_vec=[0,1,2],data_path_save='',
+										save_mode=1,output_filename='',filename_prefix_save='',select_config={}):
 
-		# file_path1 = self.save_path_1
+		"""
+		query and save specific types of ATAC-seq or RNA-seq count matrix
+		:param gene_query_vec: (array or list) the target genes
+		:param filename_list: (list) paths of the RNA-seq and ATAC-seq data of the metacells
+		:param flag_count: indicator of whether to query the raw or transformed count matrix of the RNA-seq or ATAC-seq data of the metacells
+		:param flag_annot: indicator of whether to query RNA-seq and ATAC-seq observation attribute annotations of the metacells and save to file
+		:param feature_type_vec: (array or list) the feature type of data: RNA-seq (rna) or ATAC-seq (atac) 
+		:param normalize_type_vec: (array or list) the types of count matrices to query (0:raw, 1:normalized and log-transformed, 2:normalized without log-transformaion)
+		:param data_path_save: the directory to retrieve data from and save data
+		:param save_mode: indicator of whether to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param select_config: dictionary containing parameters
+		:return: True
+		"""
+
 		# input_file_path1 = self.save_path_1
 		data_file_type = select_config['data_file_type']
 		data_path = select_config['data_path']
@@ -1110,7 +1090,7 @@ class _Base_pre1(BaseEstimator):
 			input_filename_2 = '%s/test_atac_meta_ad.%s.h5ad'%(data_path_save,filename_save_annot1)
 		
 		output_file_path = data_path_save
-		flag_query_count=flag_count
+		flag_query_count = flag_count
 		
 		# normalize_type=1
 		normalize_type=0
@@ -1135,7 +1115,6 @@ class _Base_pre1(BaseEstimator):
 					print(adata)
 					print('data preview: ')
 					print(adata.X[0:2,0:10])
-					# print(adata.raw)
 					print(adata.raw.X[0:2,0:10])
 					
 					if normalize_type==0:
@@ -1145,16 +1124,16 @@ class _Base_pre1(BaseEstimator):
 						# log-transformed normalized count matrix
 						df_count = pd.DataFrame(index=adata.obs_names,columns=adata.var_names,data=adata.X.toarray(),dtype=np.float32)
 					else:
+						# normalize count matrix
 						pre_meta_ad = sc.AnnData(adata.raw.X)
 						pre_meta_ad.obs_names, pre_meta_ad.var_names = adata.raw.obs_names, adata.raw.var_names
 						# pre_meta_ad.obs['n_counts'] = pre_meta_ad.X.sum(axis=1)
-						print('anndata of metacell raw count matrix, normalize_type: %s'%(normalize_type))
+						print('AnnData of metacell raw count matrix, normalize_type: %s'%(normalize_type))
 						print(pre_meta_ad)
 						# raw_count = adata.raw.X
-						# print('raw count matrix, preview: ',raw_count[0:5,0:10])
+						# print('raw count matrix, preview: ',raw_count[0:2,0:10])
 						# print(pre_meta_ad.obs_names,pre_meta_ad.var_names)
 						
-						# pre_meta_ad = sc.pp.normalize_total(pre_meta_ad,inplace=False,key_added='n_counts')
 						sc.pp.normalize_total(pre_meta_ad,inplace=True,key_added='n_counts')
 						df_count = pd.DataFrame(index=pre_meta_ad.obs_names,columns=pre_meta_ad.var_names,data=pre_meta_ad.X.toarray(),dtype=np.float32)
 
@@ -1220,7 +1199,6 @@ class _Base_pre1(BaseEstimator):
 
 		flag_annot_1=flag_annot
 		if flag_annot_1>0:
-			# feature_type_1, feature_type_2 = 'rna','atac'
 			feature_type_vec = ['rna','atac']
 			feature_type_1 = select_config['feature_type_1']
 			feature_type_2 = pd.Index(feature_type_vec).difference([feature_type_1],sort=False)[0]
@@ -1267,9 +1245,22 @@ class _Base_pre1(BaseEstimator):
 		return True
 
 	## ====================================================
-	# query obs and var attribute
+	# query observation and variable attributes of the ATAC-seq and RNA-seq data of the metacells
+	# to update
 	def test_attribute_query(self,data_vec,feature_type_vec=[],save_mode=1,output_file_path='',filename_save_annot='',select_config={}):
 		
+		"""
+		query observation and variable attributes of the ATAC-seq and RNA-seq data of the metacells
+		:param data_vec: dictionary containing ATAC-seq and RNA-seq AnnData objects of the metacells
+		:param feature_type_vec: (array or list) the feature type of data: RNA-seq (rna) or ATAC-seq (atac)
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing observation and variable attributes of the ATAC-seq and RNA-seq data of the metacells
+		"""
+
 		if len(feature_type_vec)==0:
 			feature_type_vec = list(data_vec.keys())  # feature_type_vec=['atac','rna']
 			
@@ -1294,8 +1285,30 @@ class _Base_pre1(BaseEstimator):
 		return dict_query
 
 	## ====================================================
-	# query data attributes and save plots
-	def test_query_attribute_1(self,data_list=[],input_filename_list=[],feature_type_vec=[],feature_id='',column_id_query='celltype',flag_plot=1,flag_query_1=1,flag_query_2=1,save_mode=1,filename_save_annot='',output_file_path='',print_mode=1,verbose=0,select_config={}):
+	# query observation attributes and the RNA-seq or ATAC-seq raw count matrix
+	# to update
+	def test_attribute_query_2(self,data_list=[],input_filename_list=[],feature_type_vec=[],feature_id='',column_id_query='celltype',
+									flag_plot=1,flag_query_1=1,flag_query_2=1,
+									save_mode=1,output_file_path='',filename_save_annot='',print_mode=1,verbose=0,select_config={}):
+
+		"""
+		query observation attributes and the RNA-seq or ATAC-seq raw count matrix
+		:param data_list: (list) AnnData objects of the corresponding feature types specified in feature_type_vec
+		:param input_filename_list (list) paths of AnnData objects of the corresponding feature types specified in feature_type_vec
+		:param feature_type_vec: (array or list) the feature type of data: RNA-seq (rna) or ATAC-seq (atac)
+		:param feature_id: (str) the plotting tool that computed the coordinates used in the scatter() function in Scanpy
+		:param column_id_query: (str) column in the .obs dataframe of the AnnData object that corresponds to the cell type
+		:param flag_plot: indicator of whether to plot the metacells or cells using low-dimensional feature embeddings
+		:param flag_query_1: indicator of whether to query the raw count matrix
+		:param flag_query_2: indicator of whether to query the number of metacells
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param print_mode: indicator of whether to save the observation and variable annotations to file
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (list) updated AnnData objects of the corresponding feature types specified in feature_type_vec
+		"""
 
 		feature_num = len(feature_type_vec)
 		data_list1 = data_list
@@ -1304,7 +1317,7 @@ class _Base_pre1(BaseEstimator):
 			feature_type_query = feature_type_vec[i1]
 			column_id1 = column_id_query
 			if print_mode>0:
-				# write the obs and var annotations to file
+				# query the cell type annotations of observations and save to file
 				if column_id1 in pre_ad.obs:
 					celltype_query_1 = pre_ad.obs[column_id1]
 					celltype_vec_1= celltype_query_1.unique()
@@ -1334,8 +1347,6 @@ class _Base_pre1(BaseEstimator):
 			if flag_plot>0:
 				if 'celltype_colors' in pre_ad.uns:
 					celltype_color_vec = pre_ad.uns['celltype_colors']
-					# print('celltype_color: ',celltype_color_vec,len(celltype_color_vec))
-					
 				try:
 					sc.pl.scatter(pre_ad, basis=feature_id, color=column_id1, legend_fontsize=10, frameon=False)
 					
@@ -1346,7 +1357,7 @@ class _Base_pre1(BaseEstimator):
 
 			type_id_query = flag_query_1
 			if flag_query_1>0:
-				# prepare for the field raw_data
+				# query the raw count matrix
 				if pre_ad.raw!=None:
 					pre_ad_raw = pre_ad.raw.X
 					read_count1 = pre_ad_raw.sum(axis=1)
@@ -1356,23 +1367,14 @@ class _Base_pre1(BaseEstimator):
 						raw_ad = sc.AnnData(pre_ad.X)
 						raw_ad.obs_names, raw_ad.var_names = pre_ad.obs_names, pre_ad.var_names
 						pre_ad.raw = pre_ad
-						# sample_id1 = atac_ad.obs_names
-						# sample_id2 = sample_id1.str.split('#').str.get(1)
-						# atac_ad.obs_names = sample_id2
 						data_list1[i1] = pre_ad
 						
-						# x0 = pre_ad.X
-						# x1 = pre_ad.raw.X
-						# difference_1=x0-x1
-						# t1 = np.max(np.max(np.abs(difference_1)))
 						if verbose>0:
 							print('pre_ad.raw\n')
 							print(pre_ad.raw)
 							print(pre_ad.raw.X[0:5,0:5])
-							print('difference (1)',t1)
 
 						if save_mode>0:
-							# output_file_path_1 = input_file_path
 							input_filename = input_filename_list[i1]
 							b = input_filename.find('.h5ad')
 		
@@ -1394,37 +1396,27 @@ class _Base_pre1(BaseEstimator):
 					print('SEACell number: %d'%(SEACell_num1))
 
 		return data_list1
-	
-	## ====================================================
-	# query data attributes
-	def test_query_attribute_2(self,adata=[],query_type_vec=['obs','var'],save_mode=1,overwrite=0,output_file_path='',filename_prefix_save='',annot_vec=['df_obs','df_var'],verbose=0,select_config={}):
-
-		adata1 = adata
-		df_obs_1 = adata1.obs
-		df_var_1 = adata1.var
-		query_type_vec_1 = ['obs','var']
-		list_query1 = [df_obs_1,df_var_1]
-		dict_query1 = dict(zip(query_type_vec_1,list_query1))
-
-		query_num2 = len(query_type_vec)
-		for i2 in range(query_num2):
-			query_type_1 = query_type_vec[i2]
-			df_annot_query = dict_query1[query_type_1]
-
-			annot_str = annot_vec[i2]
-			output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix_save,annot_str)
-			if (os.path.exists(output_filename)==True) and (overwrite==0):
-				print('the file exists: %s'%(output_filename))
-				output_filename = '%s/%s.%s.copy1.1.txt'%(output_file_path,filename_prefix_save,annot_str)
-			df_annot_query.to_csv(output_filename,sep='\t')
-
-		data_list1 = list_query1
-		return data_list1
 
 	## ====================================================
-	# query normalized peak read
+	# compute normalized count matrix of ATAC-seq or RNA-seq data
+	# to update
 	def test_read_count_query_normalize(self,adata=[],feature_type_query='atac',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',float_format='%.5f',verbose=0,select_config={}):
 		
+		"""
+		compute normalized count matrix of ATAC-seq or RNA-seq data
+		:param adata: AnnData object of ATAC-seq or RNA-seq data
+		:param feature_type_query: (str) the feature type of data: RNA-seq (rna) or ATAC-seq (atac)
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param float_format: format to keep data precision in saving data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: normalized count matrix of ATAC-seq or RNA-seq data (row:cell or metacell, column:ATAC-seq peak locus or gene)
+		"""
+
 		flag_read_normalize_1=1
 		if flag_read_normalize_1>0:
 			if len(adata)==0:
@@ -1445,12 +1437,12 @@ class _Base_pre1(BaseEstimator):
 						adata1 = adata.raw
 						adata1.obs_names, adata1.var_names = adata.obs_names, adata.var_names
 						type_id_query = 3
-						
+			
 					else:
 						field_id = 'filename_%d_meta_ad'%(feature_type_query)
 						input_filename = select_config[field_id]
 						if os.path.exists(input_filename)==False:
-							print('please provide peak read file ')
+							print('please provide ATAC-seq data of the metacells')
 							return
 
 			if (type_id_query in [1,3]) or ((save_mode==2) and (type_id_query!=2)):
@@ -1502,9 +1494,29 @@ class _Base_pre1(BaseEstimator):
 			return read_count_normalize_1
 
 	## ====================================================
-	# query normalized and log-transformed RNA-seq data
-	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',save_format='tsv.gz',float_format='%.5f',verbose=0,select_config={}):
+	# query normalized and log-transformed ATAc-seq and RNA-seq data
+	# to update
+	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],
+												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
+												save_format='tsv.gz',float_format='%.5f',verbose=0,select_config={}):
 		
+		"""
+		query normalized and log-transformed ATAC-seq and RNA-seq data
+		:param feature_type_vec: (array or list) the feature type of data: RNA-seq (rna) or ATAC-seq (atac)
+		:param peak_read: (dataframe) peak accessibility matrix of the metacells (row:metacell, column:ATAC-seq peak locus)
+		:param rna_unscaled_exprs: (dataframe) log-transformed normalized gene expression matrix of the metacells (row:metacell, column:gene)
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param save_format: the file format used to save data
+		:param float_format: format to keep data precision in saving data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: dictionary containing the normalized and log-transformed ATAC-seq and RNA-seq count matrices of the metacells
+		"""
+
 		flag_read_normalize=1
 		if flag_read_normalize>0:
 			if filename_save_annot=='':
@@ -1530,20 +1542,25 @@ class _Base_pre1(BaseEstimator):
 			return dict_query
 
 	## ====================================================
-	# motif-peak estimate: load meta_exprs and peak_read
-	def test_motif_peak_estimate_control_load_pre1_ori(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,select_config={}):
-
-		input_file_path1 = self.save_path_1
-		data_file_type = select_config['data_file_type']
+	# load the ATAC-seq data and RNA-seq data of the metacells
+	# to update
+	def test_load_data_pre1(self,flag_format=False,select_config={}):
 		
+		"""
+		load the ATAC-seq data and RNA-seq data of the metacells
+		:param select_config: dictionary containing filenames of the ATAC-seq data and RNA-seq data of the metacells
+		:param flag_format: indicator of whether to use uppercase variable names in the RNA-seq data of the metacells
+		:return: 1.(dataframe) log-transformed normalized peak accessibility matrix
+				 2.(dataframe) z-scores of log-transformed normalized gene expression matrix
+				 3.(dataframe) log-transformed normalized gene expression matrix
+		"""
+
 		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
 		print('input_filename_1 ',input_filename_1)
 		print('input_filename_2 ',input_filename_2)
 		rna_meta_ad = sc.read_h5ad(input_filename_1)
 		atac_meta_ad = sc.read_h5ad(input_filename_2)
 
-		# rna_meta_ad = sc.read(input_filename_1)
-		# atac_meta_ad = sc.read(input_filename_2)
 		print(input_filename_1,input_filename_2)
 		print('rna_meta_ad\n', rna_meta_ad)
 		print('atac_meta_ad\n', atac_meta_ad)
@@ -1552,6 +1569,13 @@ class _Base_pre1(BaseEstimator):
 			rna_meta_ad.var_names = rna_meta_ad.var_names.str.upper()
 			rna_meta_ad.var.index = rna_meta_ad.var.index.str.upper()
 		
+		self.rna_meta_ad = rna_meta_ad
+		sample_id = rna_meta_ad.obs_names
+		assert list(sample_id)==list(atac_meta_ad.obs_names)
+
+		atac_meta_ad = atac_meta_ad[sample_id,:]
+		self.atac_meta_ad = atac_meta_ad
+
 		column_1 = 'filename_rna_exprs_1'
 		meta_scaled_exprs = []
 		if column_1 in select_config:
@@ -1563,18 +1587,12 @@ class _Base_pre1(BaseEstimator):
 		
 			meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
 			vec2 = utility_1.test_stat_1(np.mean(meta_scaled_exprs,axis=0))
-			print('meta_scaled_exprs mean values ',meta_scaled_exprs.shape,vec2)
-
-		self.rna_meta_ad = rna_meta_ad
-		sample_id = rna_meta_ad.obs_names
-		assert list(sample_id)==list(atac_meta_ad.obs_names)
+			print('scaled metacell gene expression data, dataframe of size ',meta_scaled_exprs.shape)
+			print('mean values: ',vec2)
 
 		if len(meta_scaled_exprs)>0:
 			sample_id1 = meta_scaled_exprs.index
 			assert list(sample_id)==list(sample_id1)
-
-		atac_meta_ad = atac_meta_ad[sample_id,:]
-		self.atac_meta_ad = atac_meta_ad
 
 		peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
 		meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
@@ -1591,12 +1609,24 @@ class _Base_pre1(BaseEstimator):
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
 	## ====================================================
-	# motif-peak estimate: load meta_exprs and peak_read
-	def test_motif_peak_estimate_control_load_pre1_ori_2(self,meta_exprs=[],peak_read=[],flag_format=False,flag_scale=0,save_mode=1,output_file_path='',select_config={}):
+	# load the ATAC-seq data and RNA-seq data of the metacells
+	# to update
+	def test_load_data_pre2(self,flag_format=False,flag_scale=0,save_mode=1,output_file_path='',verbose=0,select_config={}):
 
-		input_file_path1 = self.save_path_1
-		data_file_type = select_config['data_file_type']
-		
+		"""
+		load the ATAC-seq data and RNA-seq data of the metacells
+		:param select_config: dictionary containing filenames of the ATAC-seq data and RNA-seq data of the metacells
+		:param flag_format: indicator of whether to use uppercase variable names in the RNA-seq data of the metacells
+		:param flag_scale: indicator of whether to perform scaling of the data
+		:param save_mode: verbosity level to print the intermediate information
+		:param output_file_path: the directory to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1.(dataframe) log-transformed normalized peak accessibility matrix
+				 2.(dataframe) z-scores of log-transformed normalized gene expression matrix
+				 3.(dataframe) log-transformed normalized gene expression matrix
+		"""
+
 		input_filename_1, input_filename_2 = select_config['filename_rna_meta'],select_config['filename_atac_meta']
 		print('input_filename_1 ',input_filename_1)
 		print('input_filename_2 ',input_filename_2)
@@ -1615,9 +1645,6 @@ class _Base_pre1(BaseEstimator):
 		if data_type==0:
 			rna_meta_ad = sc.read_h5ad(input_filename_1)
 			atac_meta_ad = sc.read_h5ad(input_filename_2)
-			# print(input_filename_1,input_filename_2)
-			# print('rna_meta_ad\n', rna_meta_ad)
-			# print('atac_meta_ad\n', atac_meta_ad)
 		else:
 			if data_type==1:
 				sep = '\t'
@@ -1657,7 +1684,6 @@ class _Base_pre1(BaseEstimator):
 				meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
 		
 			meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
-			# self.meta_scaled_exprs = meta_scaled_exprs
 		else:
 			if flag_scale>0:
 				scale_type_id = 2
@@ -1668,20 +1694,17 @@ class _Base_pre1(BaseEstimator):
 
 				# save_mode_1 = 2
 				save_mode_1 = 1
+				data_file_type = select_config['data_file_type']
 				filename_prefix = data_file_type
-				# output_filename = select_config['filename_rna_exprs']
 				output_filename = select_config[column_1]
+				# perform scaling of the metacell data
 				pre_meta_ad_rna, pre_meta_ad_scaled_rna = self.test_metacell_compute_unit_2(pre_meta_ad=rna_meta_ad,
 																							save_mode=save_mode_1,output_file_path=output_file_path,
 																							output_filename=output_filename,
 																							filename_prefix=filename_prefix,
 																							select_config=select_config)
-				# self.atac_meta_ad = atac_meta_ad
-				# self.rna_meta_ad = rna_meta_ad
 				# self.select_config = select_config
 
-				# output_filename = input_filename
-				# save_mode1 = 1
 				save_mode1 = save_mode
 				rna_meta_ad_scaled = pre_meta_ad_scaled_rna
 				meta_scaled_exprs = pd.DataFrame(index=rna_meta_ad_scaled.obs_names,columns=rna_meta_ad_scaled.var_names,
@@ -1689,12 +1712,7 @@ class _Base_pre1(BaseEstimator):
 				self.meta_scaled_exprs = meta_scaled_exprs
 				print('meta_scaled_exprs ')
 				print(meta_scaled_exprs[0:2])
-				# self.rna_meta_ad = pre_meta_ad_rna  # add the layer ['scale_%d'%(scale_type_id)]
-
-		# if len(meta_scaled_exprs)>0:
-		# 	sample_id1 = meta_scaled_exprs.index
-		# 	assert list(sample_id)==list(sample_id1)
-
+				
 		peak_read = pd.DataFrame(index=atac_meta_ad.obs_names,columns=atac_meta_ad.var_names,data=atac_meta_ad.X.toarray(),dtype=np.float32)
 		meta_exprs_2 = pd.DataFrame(index=rna_meta_ad.obs_names,columns=rna_meta_ad.var_names,data=rna_meta_ad.X.toarray(),dtype=np.float32)
 		self.peak_read = peak_read
@@ -1714,227 +1732,32 @@ class _Base_pre1(BaseEstimator):
 		return peak_read, meta_scaled_exprs, meta_exprs_2
 
 	## ====================================================
-	# bedGraph file for each metacell or cell type
-	def test_query_bedGraph_1(self,input_filename_annot='',peak_read=[],column_id='',column_annot='CellType',type_id_1=1,save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
-
-		flag_query=1
-		if flag_query>0:
-			file_save_path = output_file_path
-			if os.path.exists(file_save_path)==False:
-				print('the directory does not exist ',file_save_path)
-				os.mkdir(file_save_path)
-
-			sample_id = peak_read.index
-			sample_num = len(sample_id)
-
-			input_filename_1 = input_filename_annot
-			df_annot_1 = pd.read_csv(input_filename_1,index_col=0,sep='\t')
-			sample_id_1 = df_annot_1.index
-			if column_id=='':
-				column_id='Metacell'
-
-			sample_id_2 = df_annot_1[column_id].unique()
-
-			celltype_vec = select_config['celltype_vec']
-			celltype_vec_str = select_config['celltype_vec_str']
-
-			df_query_1 = df_annot_1.loc[sample_id_2,:]
-
-			column_query1 = column_annot
-			celltype_query_vec = df_query_1[column_query1]
-			
-			# print('df_annot_1, df_query_1 ', df_annot_1.shape, df_query_1.shape)
-			print('metacell annotation , dataframe of size ',df_query_1.shape)
-
-			celltype_num = len(celltype_vec)
-			peak_loc_query = peak_read.columns
-			sample_id_2 = pd.Index(sample_id_2)
-			chrom_id, start, stop = utility_1.pyranges_from_strings_1(peak_loc_query,type_id=0)
-			print('peak accessibility matrix of metacells, dataframe of size ',peak_read.shape)
-
-			if filename_prefix_save=='':
-				filename_prefix_save = 'df_peak_read_mean'
-			
-			for i1 in range(celltype_num):
-				celltype_query_1 = celltype_vec[i1]
-				id1 = (df_query_1[column_query1]==celltype_query_1)
-				
-				sample_id_query = sample_id_2[id1]
-				sample_id_num1 = len(sample_id_query)
-				print('celltype: %s, metacell number: %d'%(celltype_query_1,sample_id_num1))
-				
-				if type_id_1>0:
-					peak_read_1 = peak_read.loc[sample_id_query,:].mean(axis=0)
-					df_1 = pd.DataFrame(index=peak_loc_query,columns=['chrom','start','stop','mean_value'],dtype=np.float32)
-
-					df_1['chrom'] = np.asarray(chrom_id)
-					df_1['start'] = np.asarray(start)
-					df_1['stop'] = np.asarray(stop)
-					df_1['mean_value'] = np.asarray(peak_read_1)
-
-					celltype_query_str_1 = celltype_vec_str[i1]
-					output_filename = '%s/%s_%s.1.bedGraph'%(output_file_path,filename_prefix_save,celltype_query_str_1)
-					df_1.to_csv(output_filename,index=False,header=False,sep='\t',float_format='%.6f')
-
-				if type_id_1 in [0,1]:
-					# peak_read_1 = peak_read.loc[sample_id_query,:].mean(axis=0)
-					for i2 in range(sample_id_num1):
-						df_1 = pd.DataFrame(index=peak_loc_query,columns=['chrom','start','stop','mean_value'],dtype=np.float32)
-						sample_id1 = sample_id_query[i2]
-						peak_read_1 = peak_read.loc[sample_id1,:]
-						df_1['chrom'] = np.asarray(chrom_id)
-						df_1['start'] = np.asarray(start)
-						df_1['stop'] = np.asarray(stop)
-						df_1['mean_value'] = np.asarray(peak_read_1)
-
-						celltype_query_str_1 = celltype_vec_str[i1]
-						output_filename = '%s/%s_%s.%d.1.bedGraph'%(output_file_path,filename_prefix_save,celltype_query_str_1,i2+1)		
-						df_1.to_csv(output_filename,index=False,header=False,sep='\t',float_format='%.6f')
-						if i2%10==0:
-							print('sample_id1, celltype_query ',sample_id1,i2,celltype_query_1)
-
-			return True
-
-	## ====================================================
-	# the plot function from plot.py of SEACells
-	def plot_SEACell_sizes(ad,
-							save_as=None,
-							show = True,
-							title='Distribution of Metacell Sizes',
-							bins = None,
-							figsize=(5,5)):
-
-		"""
-		Plot distribution of number of cells contained per metacell.
-		:param ad: annData containing 'Metacells' label in .obs
-		:param save_as: (str) path to which figure is saved. If None, figure is not saved.
-		:param title: (str) title of figure.
-		:param bins: (int) number of bins for histogram
-		:param figsize: (int,int) tuple of integers representing figure size
-		:return: None
-		"""
-
-		assert 'SEACell' in ad.obs, 'AnnData must contain "SEACell" in obs DataFrame.'
-		label_df = ad.obs[['SEACell']].reset_index()
-		plt.figure(figsize=figsize)
-		sns.distplot(label_df.groupby('SEACell').count().iloc[:, 0], bins=bins)
-		sns.despine()
-		plt.xlabel('Number of Cells per SEACell')
-		plt.title(title)
-		
-		if save_as is not None:
-			plt.savefig(save_as)
-		if show:
-			plt.show()
-		plt.close()
-		return pd.DataFrame(label_df.groupby('SEACell').count().iloc[:, 0]).rename(columns={'index':'size'})
-
-	## ====================================================
-	# the plot function from plot.py of SEACells
-	def plot_initialization(ad,model,plot_basis='X_umap',save_as=None,show = True,):
-
-		"""
-		Plot archetype initizlation
-		:param ad: annData containing 'Metacells' label in .obs
-		:param model: Initilized SEACells model
-		:return: None
-		"""
-
-		plt.figure()
-		plt.scatter(ad.obsm[plot_basis][:, 0],
-			ad.obsm[plot_basis][:, 1],
-			s=1, color='lightgrey')
-		init_points = ad.obs_names[model.archetypes]
-		plt.scatter(ad[init_points].obsm[plot_basis][:, 0],
-			ad[init_points].obsm[plot_basis][:, 1],
-			s=20)
-		ax = plt.gca()
-		ax.set_axis_off()
-
-		if save_as is not None:
-			plt.savefig(save_as)
-		if show:
-			plt.show()
-		plt.close()
-
-	## ====================================================
 	# the plot function
-	# plot for given cells or metacells
-	def plot_1(self,ad,plot_basis='X_umap',sample_query_id=[],figsize=(5,5),title='',save_as=None,show = True):
+	# plot for the given cells or metacells
+	# to update
+	def plot_1(self,ad,plot_basis='X_umap',sample_query_id=[],figsize=(5,5),title='',save_as=None,show=True):
 
 		"""
 		Plot for given cells or metacells
-		:param ad: annData containing the given cells or metacells
+		:param ad: AnnData object containing data of the given cells or metacells
+		:param plot_basis: (str) layer name in the AnnData object representing the low-dimensional embedding used to plot the cells
+		:param sample_query_id: (pandas.Series) identifiers of the given set of cells or metacells
+		:param figsize: (int,int) tuplet of integers representing figure size
+		:param title: (str) title of figure.
+		:param save_as: (str) path to which figure is saved. If None, figure is not saved.
 		:return: None
 		"""
 
 		plt.figure(figsize=figsize)
 		plt.scatter(ad.obsm[plot_basis][:, 0],
-			ad.obsm[plot_basis][:, 1],
-			s=1, color='lightgrey')
+					ad.obsm[plot_basis][:, 1],
+					s=1, color='lightgrey')
 		
 		points_1 = sample_query_id
 		plt.scatter(ad[points_1].obsm[plot_basis][:, 0],
-			ad[points_1].obsm[plot_basis][:, 1],
-			s=20)
+					ad[points_1].obsm[plot_basis][:, 1],
+					s=20)
 
-		if 'title'!='':
-			plt.title(title)
-		ax = plt.gca()
-		ax.set_axis_off()
-
-		if save_as is not None:
-			plt.savefig(save_as)
-		if show:
-			plt.show()
-		plt.close()
-
-	## ====================================================
-	# the plot function
-	# plot for given cells or metacells
-	def plot_2(self,ad,plot_basis='X_umap',sample_id_query=[],sample_id_query2=[],column_query=[],figsize=(5,5),title='',cmap='Set2',legend_query=1,size_1=10,size_2=20,save_as=None,show = True):
-
-		"""
-		Plot for given cells or metacells
-		:param ad: annData containing the given cells or metacells
-		:return: None
-		"""
-		if len(figsize)>0:
-			plt.figure(figsize=figsize)
-		else:
-			plt.figure()
-		feature_id1 = str(plot_basis[2:]).upper()
-
-		sample_id1 = ad.obs_names
-		feature_mtx = ad.obsm[plot_basis]
-
-		n_dim1 = feature_mtx.shape[1]
-		column_vec = ['%s%d'%(feature_id1,query_id1) for query_id1 in range(1,n_dim1+1)]
-		column_id1, column_id2 = column_vec[0:2]
-
-		df1 = pd.DataFrame(index=sample_id1,columns=column_vec,data=np.asarray(feature_mtx))
-		df1 = df1.join(ad.obs.loc[:,column_query])
-		column_id_query = column_query[0]
-		df1[column_id_query] = df1[column_id_query].astype('category')
-			
-		if len(sample_id_query)>0:
-			df_query1 = df1.loc[sample_id_query,:]
-		else:
-			df_query1 = df1
-		
-		if legend_query>0:
-			ax = sns.scatterplot(data=df_query1,x=column_id1,y=column_id2,hue=column_id_query,s=size_1,palette=cmap)
-			plt.setp(ax.get_legend().get_texts(), fontsize='5')
-		else:
-			ax = sns.scatterplot(data=df_query1,x=column_id1,y=column_id2,hue=column_id_query,s=size_1,palette=cmap,legend=False)
-		
-		if len(sample_id_query2)>0:
-			df_query2 = df1.loc[sample_id_query2,:]
-			sns.scatterplot(data=df_query2,x=column_id1,y=column_id2,hue=column_id_query,s=size_2,palette=cmap,
-								edgecolor='black',linewidth=1.25,legend=False)
-
-		plt.xlabel(column_id1)
-		plt.ylabel(column_id2)
 		if 'title'!='':
 			plt.title(title)
 		ax = plt.gca()
