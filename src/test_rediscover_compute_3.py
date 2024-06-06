@@ -3027,12 +3027,6 @@ class _Base2_2_pre1(_Base2_2_1):
 						# group_vec_query_1: the group with selected peak loci or enriched with selected peak loci
 						column_id2 = 'peak_id'
 						df_pre1[column_id2] = np.asarray(df_pre1.index)
-						# df_pre1 = self.test_query_binding_clustering_1(data1=df_pre1,data2=df_pred1,dict_group=dict_group,dict_neighbor=dict_neighbor,dict_group_basic_1=dict_group_basic_1,
-						# 												df_overlap_1=df_overlap_1,df_overlap_compare=df_overlap_compare,
-						# 												group_type_vec=group_type_vec,feature_type_vec=feature_type_vec,
-						# 												group_vec_query=group_vec_query_1,input_file_path='',																												
-						# 												save_mode=1,output_file_path=output_file_path,output_filename='',
-						# 												filename_prefix_save='',filename_save_annot=filename_save_annot2_2,verbose=verbose,select_config=select_config)
 						
 						neighbor_num_sel = select_config['neighbor_num_sel']
 						df_pre1 = self.test_query_feature_group_neighbor_pre1(data=df_pre1,dict_group=dict_group,dict_neighbor=dict_neighbor,
@@ -3090,14 +3084,6 @@ class _Base2_2_pre1(_Base2_2_1):
 					flag_query_2=1
 					method_type_feature_link = select_config['method_type_feature_link']
 					if flag_query_2>0:
-						# column_corr_1 = field_id1
-						# column_pval = field_id2
-						# column_corr_1 = 'peak_tf_corr'
-						# column_pval = 'peak_tf_pval_corrected'
-						# thresh_corr_1, thresh_pval_1 = 0.30, 0.05
-						# thresh_corr_2, thresh_pval_2 = 0.1, 0.1
-						# thresh_corr_3, thresh_pval_2 = 0.05, 0.1
-						
 						# training sample selection
 						df_pre1,feature_query_1,dict_peak_query = self.test_query_binding_compute_select_1(data=df_pre1,
 																											feature_type_vec=feature_type_vec,
