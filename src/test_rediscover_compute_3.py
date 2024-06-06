@@ -73,7 +73,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# perform clustering of observations
-	# to update
 	def test_query_feature_clustering_pre1(self,data=[],feature_query_vec=[],feature_type_vec=[],flag_cluster_1=1,flag_cluster_2=0,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -193,7 +192,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# perform clustering of observations
-	# to update
 	def test_query_feature_clustering_1(self,dict_feature=[],feature_type_vec=[],feature_type_query='peak',method_type_vec_dimension=['SVD'],method_type_vec_group=['phenograph'],
 											metric='euclidean',subsample_ratio=-1,flag_iter_1=1,flag_cluster_1=1,flag_cluster_2=0,flag_combine=0,overwrite=False,overwrite_2=False,input_file_path='',
 											save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -327,7 +325,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# parameter configuration for the methods used for clustering
-	# to update
 	def test_cluster_query_config_pre1(self,method_type_vec=[],neighbors_vec=[20,30],column_query='method_type_group_neighbor',n_clusters_vec=[30,50,100],distance_threshold_vec=[20,50,-1],metric='euclidean',linkage_type_idvec=[0],overwrite=False,verbose=0,select_config={}):
 
 		"""
@@ -386,7 +383,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query filename to save SSE with different numbers of clusters
-	# to update
 	def test_query_filename_cluster_num_1(self,feature_type,n_components=-1,method_type_dimension='SVD',method_type_group='MiniBatchKMeans',output_file_path='',filename_prefix_save='',select_config={}):
 
 		"""
@@ -442,7 +438,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# perform clustering of observations
-	# to update
 	def test_query_association_group_1(self,data=[],feature_type_query='peak',field_query=[],method_type_vec_group=[],flag_iter_1=1,flag_cluster_1=1,flag_cluster_2=0,overwrite=True,overwrite_2=False,input_file_path='',
 											save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -578,27 +573,10 @@ class _Base2_2_pre1(_Base2_2_1):
 																		filename_save_annot=filename_save_annot,
 																		verbose=verbose,select_config=select_config)
 
-		# query the average signals of the specific feature type of members in each group
-		# if flag_cluster_2>0:
-		# 	dict_feature_group = self.test_query_association_group_signal_1(data=[],feature_type_query='',
-		# 																		dict_feature=[],
-		# 																		feature_type_vec=[],
-		# 																		method_type='',
-		# 																		method_type_vec_group=method_type_vec_group,
-		# 																		field_query=[],
-		# 																		n_components=50,
-		# 																		config_id_load=-1,
-		# 																		overwrite=True,
-		# 																		scale_type=2,
-		# 																		flag_plot=1,input_file_path='',
-		# 																		save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
-		# 																		verbose=0,select_config=select_config)
-
 		return df_group_query, dict_feature_group, select_config
 
 	## ====================================================
 	# query group assignments of observations (peak loci)
-	# to update
 	def test_query_feature_group_load_pre1(self,data=[],feature_type_vec=[],feature_query_vec=[],column_idvec=[],method_type_vec=[],thresh_size=0,load_mode=0,input_file_path='',
 												save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -698,7 +676,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query group assignment of observations
-	# to update
 	def test_query_feature_group_load_1(self,data=[],feature_type_vec=[],feature_query_vec=[],method_type_group='',thresh_size=0,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -818,7 +795,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query the overlap between members in two groups in the two feature spaces
-	# to update
 	def test_query_group_overlap_1(self,df_list=[],feature_type_vec=[],feature_query_vec=[],column_query='group',query_mode=0,verbose=0,select_config={}):
 
 		"""
@@ -895,7 +871,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute peak enrichment in the groups
-	# to update
 	def test_query_enrichment_pre1(self,df1,df2,column_query='count',stat_chi2_correction=True,stat_fisher_alternative='greater',contingency_table_query=0,save_mode=1,verbose=0,select_config={}):
 		
 		"""
@@ -951,7 +926,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute peak enrichment in each group for the specific feature type
-	# to update
 	def test_query_group_enrichment_pre1(self,df_overlap=[],dict_group_compare={},column_query='count',column_vec_query=[],group_vec=['group1','group2'],
 											flag_annot=1,flag_sort=1,stat_chi2_correction=True,stat_fisher_alternative='greater',contingency_table_query=0,
 											save_mode=1,output_filename='',verbose=0,select_config={}):
@@ -1026,7 +1000,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute enrichment of peaks in the paired groups
-	# to update
 	def test_query_group_overlap_pre1(self,df_group_1=[],df_group_2=[],df_overlap_1=[],df_query_compare=[],
 											feature_query_vec=[],column_query='overlap',column_vec_query=['freq_obs','freq_expect'],
 											flag_shuffle=0,stat_chi2_correction=True,stat_fisher_alternative='greater',contingency_table_query=0,verbose=0,select_config={}):
@@ -1124,7 +1097,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute enrichment of peaks in the paired groups and in the groups in each feature space
-	# to update
 	def test_query_group_overlap_pre2(self,data=[],dict_group_compare=[],df_group_1=[],df_group_2=[],df_overlap_1=[],df_query_compare=[],column_sort=[],
 											flag_sort=1,flag_sort_2=1,flag_annot=1,stat_chi2_correction=True,stat_fisher_alternative='greater',contingency_table_query=0,
 											save_mode=1,output_filename='',output_filename_2='',verbose=0,select_config={}):
@@ -1236,7 +1208,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query enrichment of peaks with detected TF motif in the paired groups
-	# to update
 	def test_query_feature_overlap_1(self,data=[],filename_list=[],motif_id_query='',df_overlap_compare=[],overwrite=False,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1289,7 +1260,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute enrichment of peaks with predicted TF binding in the paired groups
-	# to update
 	def test_query_feature_overlap_2(self,data=[],filename_list=[],motif_id_query='',df_overlap_compare=[],input_file_path='',overwrite=False,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1347,7 +1317,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute enrichment of peaks in paired groups
-	# to update
 	def test_query_feature_overlap_unit1(self,data=[],df_overlap_compare=[],filename_list=[],field_query=[],filename_prefix_1='',filename_prefix_2='',method_type_id=0,overwrite=False,verbose=0,select_config={}):
 
 		"""
@@ -1451,7 +1420,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute feature embeddings of observations
-	# to update
 	def test_query_feature_embedding_pre1(self,feature_type_vec=[],method_type='',n_components=50,flag_config=0,flag_motif_data_load=1,flag_load_1=1,overwrite=False,input_file_path='',
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -1569,7 +1537,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query computed embeddings of observations
-	# to update
 	def test_query_feature_embedding_load_pre1(self,dict_file={},feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=100,n_component_sel=50,reconstruct=1,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -1660,9 +1627,8 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query computed low-dimensional embeddings of observations
-	# to update
 	def test_query_feature_embedding_load_1(self,dict_file={},feature_query_vec=[],feature_type_vec=[],method_type_vec=[],method_type_dimension='SVD',n_components=50,n_component_sel=50,
-													reconstruct=1,flag_combine=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+												reconstruct=1,flag_combine=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
 		query computed low-dimensional embeddings of observations
@@ -1761,7 +1727,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query neighbors of observations in the feature space
-	# to update
 	def test_query_feature_neighbor_pre1(self,data=[],n_neighbors=100,return_distance=True,verbose=0,select_config={}):
 
 		"""
@@ -1798,7 +1763,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query neighbors of observations in each feature space
-	# to update
 	def test_query_feature_neighbor_load_1(self,dict_feature=[],feature_type_vec=[],n_neighbors=100,load_mode=1,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -1876,7 +1840,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# initial TF binding estimation based on feature group assignment and neighbors in the feature space
-	# to update
 	def test_query_feature_group_neighbor_pre1(self,data=[],dict_group=[],dict_neighbor=[],group_type_vec=['group1','group2'],feature_type_vec=[],group_vec_query=[],column_vec_query=[],n_neighbors=30,verbose=0,select_config={}):
 
 		"""
@@ -2011,7 +1974,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# query neighbors of observations in the feature spaces
-	# to update
 	def test_query_feature_neighbor_pre2(self,data=[],column_query='',list_feature=[],column_neighbor='',column_vec_query=[],verbose=0,select_config={}):
 
 		"""
@@ -2083,7 +2045,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# add score annotation of feature associations
-	# to update
 	def test_query_feature_annot_score_1(self,data=[],df_annot=[],feature_query='',column_idvec=[],column_score='',column_name_vec=[],thresh_vec=[],ascending=False,flag_unduplicate=1,flag_sort=0,flag_binary=1,verbose=0,select_config={}):
 
 		"""
@@ -2156,7 +2117,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# compute peak accessibility-TF expression correlation
-	# to update
 	def test_query_compare_peak_tf_corr_1(self,data=[],motif_id_query='',column_value='',motif_data=[],peak_read=[],rna_exprs=[],input_file_path='',
 											save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',output_filename='',verbose=0,select_config={}):
 
@@ -2257,39 +2217,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			return df_pre1
 
 	## ====================================================
-	# load gene annotations
-	# to update
-	def test_query_gene_annot_1(self,input_filename='',verbose=0,select_config={}):
-
-		"""
-		load gene annotations
-		:param input_filename: the filename of gene annotations
-		:param verbose: verbosity level to print the intermediate information
-		:param select_config: dictionary storing the configuration parameters
-		:return: dataframe of gene annotations containing gene name, gene position and TSS information
-		"""
-
-		if input_filename=='':
-			input_filename_annot = select_config['filename_gene_annot']
-		else:
-			input_filename_annot = input_filename
-
-		df_gene_annot_ori = pd.read_csv(input_filename_annot,index_col=False,sep='\t')
-		df_gene_annot_ori = df_gene_annot_ori.sort_values(by=['length'],ascending=False)
-		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
-		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_id'])
-		df_gene_annot_ori.index = np.asarray(df_gene_annot_ori['gene_name'])
-		if verbose>0:
-			print('gene annotation, dataframe of size ',df_gene_annot_ori.shape)
-			print('columns: ',np.asarray(df_gene_annot_ori.columns))
-			print('data preview: ')
-			print(df_gene_annot_ori[0:2])
-
-		return df_gene_annot_ori
-
-	## ====================================================
 	# model training for peak-TF association prediction
-	# to update
 	def test_query_compare_binding_compute_2(self,data=[],dict_feature=[],feature_type_vec=[],method_type_vec=[],
 												method_type_dimension='SVD',n_components=50,peak_read=[],rna_exprs=[],load_mode=0,input_file_path='',
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -2365,7 +2293,8 @@ class _Base2_2_pre1(_Base2_2_1):
 			select_config = self.test_query_load_pre1(method_type_vec=method_type_vec_query1,
 														flag_motif_data_load_1=flag_motif_data_load_1,
 														flag_load_1=flag_load_1,
-														save_mode=1,verbose=verbose,select_config=select_config)
+														save_mode=1,
+														verbose=verbose,select_config=select_config)
 
 		dict_query_1 = dict()
 		feature_type_vec_group = ['latent_peak_tf','latent_peak_motif','latent_peak_motif_ori','latent_peak_tf_link']
@@ -2457,8 +2386,13 @@ class _Base2_2_pre1(_Base2_2_1):
 			start = time.time()
 			
 			method_type_query = method_type_feature_link
-			type_combine = 0
-			select_config.update({'type_combine':type_combine})
+			# type_combine = 0
+			# column_1 = 'type_combine'
+			# # select_config.update({'type_combine':type_combine})
+			# if (column_1 in select_config):
+			# 	type_combine = select_config[column_1]
+			# else:
+			# 	select_config.update({column_1:type_combine})
 			# feature_mode_vec = [1]
 
 			input_file_path = input_file_path_pre1
@@ -2610,6 +2544,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			n_neighbors_query = n_neighbors+1
 
 			# query the neighbors of feature query
+			# query the neighbors of observations (peaks)
 			flag_neighbor_query=1
 			if flag_neighbor_query>0:
 				# list_query1 = [[feature_nbrs_1,dist_nbrs_1],[feature_nbrs_2,dist_nbrs_2]]
@@ -2682,16 +2617,15 @@ class _Base2_2_pre1(_Base2_2_1):
 				motif_idvec_query = motif_query_name_expr
 
 			motif_query_num = len(motif_idvec_query)
-			# print('motif_idvec_query: ',motif_query_num,type_motif_query)
-			# print(motif_idvec_query)
 			query_num_ori = motif_query_num
 			print('the number of TFs with expression: %d'%(motif_query_num))
 
 			columns_1 = select_config['columns_1']
 			t_vec_2 = columns_1.split(',')
 			column_pred1, column_score_1 = t_vec_2[0:2]
-			column_score_query = column_score_1
-			column_score_query1 = column_score_query
+			# column_score_query = column_score_1
+			# column_score_query1 = column_score_query
+			column_score_query1 = column_score_1
 			column_motif = '-1'
 			if len(t_vec_2)>2:
 				column_motif = t_vec_2[2]
@@ -2746,7 +2680,9 @@ class _Base2_2_pre1(_Base2_2_1):
 				start_id2 = np.min([query_id2,query_num_1])
 				iter_vec_1 = np.arange(start_id1,start_id2)
 				interval_save = False
-			
+				print('query_id1, query_id2: ',query_id1,query_id2)
+				print('start_id1, start_id2: ',start_id1,start_id2)
+
 			# run_id_2_ori = 1
 			flag_select_1 = 1  # select pseudo positive training sample;
 			flag_select_2 = 1  # select pseudo negative training sample;
@@ -2850,8 +2786,8 @@ class _Base2_2_pre1(_Base2_2_1):
 				dict_file_load.update({motif_id_query:filename_link_query1})
 			
 			select_config.update({'dict_file_load':dict_file_load})
-			# overwrite_2 = False
-			overwrite_2 = True
+			overwrite_2 = False
+			# overwrite_2 = True
 			verbose_internal = 1
 			# verbose_internal = 0
 			column_1 = 'verbose_mode'
@@ -2876,6 +2812,8 @@ class _Base2_2_pre1(_Base2_2_1):
 					print('the file exists: %s'%(filename_query_pre1))
 					if (overwrite_2==False):
 						continue
+
+				select_config.update({'motif_id_query':motif_id_query})
 
 				flag1=1
 				if flag1>0:
@@ -3177,9 +3115,23 @@ class _Base2_2_pre1(_Base2_2_1):
 						output_filename = filename_save_link_pre1
 						input_file_path = input_file_path_pre1
 						output_file_path_query = output_file_path_pre2
-						type_combine_query = 1
-						select_config.update({'type_combine_query':type_combine_query})
+						type_combine_query = 0
+						column_1 = 'type_combine'
+						if (column_1 in select_config):
+							type_combine_query = select_config[column_1]
+						else:
+							select_config.update({column_1:type_combine_query})
 
+						file_path_query1 = select_config['file_path_save_link']
+						data_path_save = file_path_query1
+						select_config.update({'data_path_save':file_path_query1})
+
+						# type_id_model: 0,regression model; 1,classification model
+						type_id_model = 1
+						select_config.update({'type_id_model':type_id_model})
+
+					flag_train_1 = 1
+					if flag_train_1>0:
 						# model training for peak-TF association prediction
 						dict_file_query_1 = self.test_query_binding_compute_train_1(data=df_pre1,sample_id_train=sample_id_train,
 																					peak_query_vec=peak_loc_pre1,
@@ -3208,7 +3160,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# training sample selection
-	# to update
 	def test_query_binding_compute_select_1(self,data=[],feature_query='',feature_type_vec=[],method_type='',dict_thresh={},thresh_vec=[],
 												flag_select_1=1,flag_select_2=1,input_file_path='',
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -3402,7 +3353,6 @@ class _Base2_2_pre1(_Base2_2_1):
 
 	## ====================================================
 	# model training for peak-TF association prediction
-	# to update
 	def test_query_binding_compute_train_1(self,data=[],sample_id_train=[],peak_query_vec=[],feature_query='',
 												dict_feature={},dict_file_query={},feature_type_vec=[],motif_data=[],flag_shuffle=True,input_file_path='',
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -3503,10 +3453,10 @@ class _Base2_2_pre1(_Base2_2_1):
 			return dict_file_query
 		
 def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,highly_variable=0,
-				input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',
+				input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',file_peak='',
 				method_type_feature_link='',method_type_dimension='',
 				tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',
-				output_dir='',output_filename='',path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=1,
+				output_dir='',output_filename='',path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=1,type_combine=0,
 				method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,
 				n_components=100,n_components_2=50,neighbor_num=100,neighbor_num_sel=30,
 				model_type_id='LogisticRegression',ratio_1=0.25,ratio_2=1.5,thresh_score='0.25,0.75',
@@ -3533,6 +3483,7 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 		type_group = int(type_group)
 		type_group_2 = int(type_group_2)
 		type_group_load_mode = int(type_group_load_mode)
+		type_combine = int(type_combine)
 		method_type_group = str(method_type_group)
 		thresh_size_group = int(thresh_size_group)
 		thresh_score_group_1 = float(thresh_score_group_1)
@@ -3576,8 +3527,9 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 		filename_motif_data = str(filename_motif_data)
 		filename_motif_data_score = str(filename_motif_data_score)
 		file_mapping = str(file_mapping)
+		file_peak = str(file_peak)
 		output_filename = str(output_filename)
-
+		
 		path_id = int(path_id)
 		run_id_save = int(save)
 		if run_id_save<0:
@@ -3615,6 +3567,7 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 								'filename_motif_data':filename_motif_data,
 								'filename_motif_data_score':filename_motif_data_score,
 								'filename_translation':file_mapping,
+								'input_filename_peak':file_peak,
 								'output_filename_link':output_filename,
 								'path_id':path_id,
 								'run_id_save':run_id_save,
@@ -3628,6 +3581,7 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 								'type_id_group':type_group,
 								'type_id_group_2':type_group_2,
 								'type_group_load_mode':type_group_load_mode,
+								'type_combine':type_combine,
 								'method_type_group':method_type_group,
 								'thresh_size_group':thresh_size_group,
 								'thresh_score_group_1':thresh_score_group_1,
@@ -3663,45 +3617,61 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 			
 			flag_1 = flag_group_1
 			if flag_1>0:
-				flag_select_1 = 1
-				flag_select_2 = 1
-				select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
-				flag1=1
-				if flag1>0:
+				if flag_1 in [1,2,3]:
 					# type_query_group = 1
 					type_query_group = 0
 					parallel_group = 0
 					# flag_score_query = 1
 					flag_score_query = 0
-					select_config.update({'type_query_group':type_query_group,'parallel_group':parallel_group})
-
 					flag_select_1 = 1
 					flag_select_2 = 1
-					select_config.update({'flag_select_1':flag_select_1,'flag_select_2':flag_select_2})
+					verbose = 1
+					
+					select_config.update({'type_query_group':type_query_group,
+											'parallel_group':parallel_group,
+											'flag_select_1':flag_select_1,
+											'flag_select_2':flag_select_2})
 
 					file_path_1 = '.'
 					test_estimator1 = _Base2_2_pre1(file_path=file_path_1,select_config=select_config)
+					if flag_1 in [1]:
+						test_estimator1.test_query_compare_binding_compute_2(data=[],dict_feature=[],
+																				feature_type_vec=[],
+																				method_type_vec=[],
+																				method_type_dimension=method_type_dimension,
+																				n_components=n_components,
+																				peak_read=[],
+																				rna_exprs=[],
+																				load_mode=0,
+																				input_file_path='',
+																				save_mode=1,
+																				output_file_path='',
+																				output_filename='',
+																				filename_prefix_save='',
+																				filename_save_annot='',
+																				verbose=verbose,select_config=select_config)
+					else:
+						test_estimator1.test_query_compare_binding_pre1(data=[],dict_signal={},
+																		df_signal=[],
+																		dict_file_pred={},
+																		feature_query_vec=[],
+																		method_type_vec=[],
+																		type_query_format=0,
+																		save_mode=1,
+																		output_file_path='',
+																		output_filename='',
+																		filename_prefix_save='',
+																		filename_save_annot='',
+																		verbose=verbose,select_config=select_config)
 
-					verbose = 1
-					test_estimator1.test_query_compare_binding_compute_2(data=[],dict_feature=[],
-																			feature_type_vec=[],
-																			method_type_vec=[],
-																			method_type_dimension=method_type_dimension,
-																			n_components=n_components,
-																			peak_read=[],
-																			rna_exprs=[],
-																			load_mode=0,input_file_path='',
-																			save_mode=1,output_file_path='',output_filename='',
-																			filename_prefix_save='',filename_save_annot='',
-																			verbose=verbose,select_config=select_config)
 
 def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,
-			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,metacell_num,peak_distance_thresh,
+			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,file_peak,metacell_num,peak_distance_thresh,
 			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,input_link,columns_1,
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-			typeid2,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,train_id1,
+			typeid2,type_combine,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,train_id1,
 			beta_mode,verbose_mode,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
 
 	flag_1=1
@@ -3716,6 +3686,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 					filename_motif_data=filename_motif_data,
 					filename_motif_data_score=filename_motif_data_score,
 					file_mapping=file_mapping,
+					file_peak=file_peak,
 					method_type_feature_link=method_type_feature_link,
 					method_type_dimension=method_type_dimension,
 					tf_name=tf_name,
@@ -3726,6 +3697,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 					output_filename=output_filename,
 					path_id=path_id,save=save,
 					type_group=type_group,type_group_2=type_group_2,type_group_load_mode=type_group_load_mode,
+					type_combine=type_combine,
 					method_type_group=method_type_group,
 					thresh_size_group=thresh_size_group,thresh_score_group_1=thresh_score_group_1,
 					n_components=n_components,n_components_2=n_components_2,
@@ -3759,6 +3731,7 @@ def parse_args():
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
 	parser.add_option("--motif_data_score",default="-1",help="file path of the motif scores by motif scanning")
 	parser.add_option("--file_mapping",default="-1",help="file path of the mapping between TF motif identifier and the TF name")
+	parser.add_option("--file_peak",default="-1",help="file containing the ATAC-seq peak loci annotations")
 	parser.add_option("--metacell",default="500",help="metacell number")
 	parser.add_option("--peak_distance",default="500",help="peak distance")
 	parser.add_option("--highly_variable",default="1",help="highly variable gene")
@@ -3792,6 +3765,7 @@ def parse_args():
 	parser.add_option("--type_group_2",default="0",help="type_id_group_2")
 	parser.add_option("--type_group_load_mode",default="1",help="type_group_load_mode")
 	parser.add_option("--typeid2",default="0",help="type_id_query_2")
+	parser.add_option("--type_combine",default="0",help="type_combine")
 	parser.add_option("--folder_id",default="1",help="folder_id")
 	parser.add_option("--config_id_2",default="1",help="config_id_2")
 	parser.add_option("--config_group_annot",default="1",help="config_group_annot")
@@ -3831,6 +3805,7 @@ if __name__ == '__main__':
 		opts.motif_data,
 		opts.motif_data_score,
 		opts.file_mapping,
+		opts.file_peak,
 		opts.metacell,
 		opts.peak_distance,
 		opts.highly_variable,
@@ -3864,6 +3839,7 @@ if __name__ == '__main__':
 		opts.type_group_2,
 		opts.type_group_load_mode,
 		opts.typeid2,
+		opts.type_combine,
 		opts.folder_id,
 		opts.config_id_2,
 		opts.config_group_annot,

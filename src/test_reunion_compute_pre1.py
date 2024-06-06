@@ -105,7 +105,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# update parameters in the parameter dictionary
-	# to update
 	def test_config_query_1(self,input_filename_1='',input_filename_2='',input_file_path='',save_mode=1,filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -146,7 +145,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# update parameters in the parameter dictionary
-	# to update
 	def test_file_path_query_2(self,input_filename_1='',input_filename_2='',input_file_path='',type_id_feature=0,run_id=1,save_mode=1,filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -179,7 +177,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# perform metacell estimation using SEACells method
-	# to update
 	def test_metacell_compute_unit_1(self,adata,feature_type_id=0,normalize=True,zero_center=True,highly_variable_query=True,use_highly_variable=True,n_SEACells=500,
 										obsm_build_kernel='X_pca',pca_compute=1,num_components=50,n_waypoint_eigs=10,waypoint_proportion=1.0,plot_convergence=1,
 										save_mode=1,select_config={}):
@@ -324,7 +321,6 @@ class _Base_pre1(BaseEstimator):
 	## ====================================================
 	# from SEACells.genescores
 	# add variable annotations to the ATAC-seq AnnData object of the metacells
-	# to update
 	def _add_atac_meta_data(self,atac_meta_ad, atac_ad, n_bins_for_gc):
 
 		"""
@@ -347,7 +343,6 @@ class _Base_pre1(BaseEstimator):
 	## ====================================================
 	# from SEACells.genescores
 	# normlize counts per metacell or cell and perform log-transformation
-	# to update
 	def _normalize_ad(self,meta_ad,target_sum=None,save_raw=True,save_normalize=False):
 
 		"""
@@ -374,7 +369,6 @@ class _Base_pre1(BaseEstimator):
 	## ====================================================
 	# from SEACells.genescores
 	# create metacell AnnData objects from single-cell AnnData objects for multiome data
-	# to update
 	def _prepare_multiome_anndata(self,atac_ad,rna_ad,SEACells_label='SEACell',summarize_layer_atac='X',summarize_layer_rna='X',flag_normalize=1,save_raw_ad_atac=1,save_raw_ad_rna=1,n_bins_for_gc=50,type_id_1=0,select_config={}):
 		
 		"""
@@ -473,9 +467,7 @@ class _Base_pre1(BaseEstimator):
 		return atac_meta_ad, rna_meta_ad
 
 	## ====================================================
-	# highly-variable gene query
 	# query highly variable genes or peaks
-	# to update
 	def test_query_metacell_high_variable_feature(self,pre_meta_ad,highly_variable_feature_query=True,select_config={}):
 		
 		"""
@@ -521,7 +513,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# perform scaling of the metacell data
-	# to update
 	def test_metacell_compute_unit_2(self,pre_meta_ad,save_mode=1,output_file_path='',output_filename='',filename_prefix='',verbose=0,select_config={}):
 
 		"""
@@ -617,7 +608,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# metacell estimation
-	# to update
 	def test_metacell_compute_pre1(self,flag_path_query=0,flag_SEACell_estimate=0,flag_summarize=0,overwrite=0,
 										save_mode=1,output_file_path='',print_mode=1,verbose=0,select_config={}):
 
@@ -917,7 +907,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# plot the metacells using the low-dimensional embedding
-	# to update
 	def test_metacell_compute_pre2(self,feature_id='',feature_type_vec=['rna','atac'],column_vec_query=[],flag_path_query=0,
 										save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 		
@@ -985,7 +974,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# query metacell annotations and RNA-seq or ATAC-seq count matrix of metacells
-	# to update
 	def test_metacell_compute_pre1_query2(self,run_idvec=[1],file_type_vec_1=['rna','atac'],file_type_vec_2=['rna'],flag_path_query=0,save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		"""
@@ -1048,7 +1036,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# query and save specific types of ATAC-seq or RNA-seq count matrix
-	# to update
 	def test_feature_mtx_query_pre1(self,gene_query_vec=[],filename_list=[],flag_count=0,flag_annot=0,file_type_vec=['rna','atac'],normalize_type_vec=[0,1,2],data_path_save='',
 										save_mode=1,output_filename='',filename_prefix_save='',select_config={}):
 
@@ -1246,7 +1233,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# query observation and variable attributes of the ATAC-seq and RNA-seq data of the metacells
-	# to update
 	def test_attribute_query(self,data_vec,feature_type_vec=[],save_mode=1,output_file_path='',filename_save_annot='',select_config={}):
 		
 		"""
@@ -1286,7 +1272,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# query observation attributes and the RNA-seq or ATAC-seq raw count matrix
-	# to update
 	def test_attribute_query_2(self,data_list=[],input_filename_list=[],feature_type_vec=[],feature_id='',column_id_query='celltype',
 									flag_plot=1,flag_query_1=1,flag_query_2=1,
 									save_mode=1,output_file_path='',filename_save_annot='',print_mode=1,verbose=0,select_config={}):
@@ -1399,7 +1384,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# compute normalized count matrix of ATAC-seq or RNA-seq data
-	# to update
 	def test_read_count_query_normalize(self,adata=[],feature_type_query='atac',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',float_format='%.5f',verbose=0,select_config={}):
 		
 		"""
@@ -1494,8 +1478,7 @@ class _Base_pre1(BaseEstimator):
 			return read_count_normalize_1
 
 	## ====================================================
-	# query normalized and log-transformed ATAc-seq and RNA-seq data
-	# to update
+	# query normalized and log-transformed ATAC-seq and RNA-seq data
 	def test_read_count_query_log_normalize(self,feature_type_vec=[],peak_read=[],rna_exprs_unscaled=[],
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',
 												save_format='tsv.gz',float_format='%.5f',verbose=0,select_config={}):
@@ -1543,7 +1526,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# load the ATAC-seq data and RNA-seq data of the metacells
-	# to update
 	def test_load_data_pre1(self,flag_format=False,select_config={}):
 		
 		"""
@@ -1610,7 +1592,6 @@ class _Base_pre1(BaseEstimator):
 
 	## ====================================================
 	# load the ATAC-seq data and RNA-seq data of the metacells
-	# to update
 	def test_load_data_pre2(self,flag_format=False,flag_scale=0,save_mode=1,output_file_path='',verbose=0,select_config={}):
 
 		"""
@@ -1734,7 +1715,6 @@ class _Base_pre1(BaseEstimator):
 	## ====================================================
 	# the plot function
 	# plot for the given cells or metacells
-	# to update
 	def plot_1(self,ad,plot_basis='X_umap',sample_query_id=[],figsize=(5,5),title='',save_as=None,show=True):
 
 		"""

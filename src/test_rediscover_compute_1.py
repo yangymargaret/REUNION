@@ -68,23 +68,10 @@ class _Base2_2(_Base_pre2):
 									select_config=select_config)
 
 		self.test_config_pre1()
-
-	## ====================================================
-	# query the file path
-	# def test_file_path_query_1(self,input_file_path='',run_id=1,select_config={}):
-
-	# 	data_file_type = select_config['data_file_type']
-	# 	type_id_feature = select_config['type_id_feature']
-	# 	filename_save_annot_1 = '%s.%d.%d'%(data_file_type,type_id_feature,run_id)
-
-	# 	select_config_query = {'data_path':input_file_path,
-	# 							'filename_save_annot_1':filename_save_annot_1}
-
-	# 	return select_config_query
+		self.data_pre_dict = {}
 
 	## ====================================================
 	# parameter configuration
-	# to update
 	def test_config_pre1(self,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -108,11 +95,10 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# query feature type annotation
-	# to update
 	def test_query_feature_type_annot_1(self,feature_type_vec=[],feature_type_annot=[],save_mode=1,verbose=0,select_config={}):
 
 		"""
-		feature type annotation
+		query feature type annotation
 		:param feature_type_vec: (array) feature types for feature representations
 		:param feature_type_annot: (array) annotations of the feature types for feature representations
 		:param save_mode: indicator of whether to save data
@@ -140,7 +126,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# query the filename of motif scanning data
-	# to update
 	def test_query_motif_filename_pre1(self,data_file_type='',thresh_motif=5e-05,column_motif='motif_id',format_type=1,retrieve_mode=0,verbose=0,select_config={}):
 
 		"""
@@ -221,7 +206,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# perform feature dimension reduction
-	# to update
 	def test_query_feature_pre2(self,feature_mtx=[],method_type='SVD',n_components=50,sub_sample=-1,verbose=0,select_config={}):
 
 		"""
@@ -260,7 +244,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# compute feature embeddings of observations
-	# to update
 	def test_query_feature_pre1(self,peak_query_vec=[],gene_query_vec=[],method_type_vec=[],motif_data=[],motif_data_score=[],
 								peak_read=[],rna_exprs=[],n_components=50,sub_sample=-1,flag_shuffle=False,float_format='%.6f',input_file_path='',
 								save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -420,7 +403,6 @@ class _Base2_2(_Base_pre2):
 	## ====================================================
 	# query peak-motif matrix and motif scores by motif scanning for peak loci
 	# query TFs with motifs and expressions
-	# to update
 	def test_query_motif_data_annotation_1(self,data=[],gene_query_vec=[],feature_query_vec=[],method_type='',peak_read=[],rna_exprs=[],verbose=0,select_config={}):
 
 		"""
@@ -485,7 +467,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# query TFs with motifs and expressions
-	# to update
 	def test_query_motif_annotation_1(self,data=[],gene_query_vec=[],rna_exprs=[]):
 
 		"""
@@ -513,7 +494,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# compute feature embeddings of observations
-	# to update
 	def test_query_feature_mtx_1(self,feature_query_vec=[],feature_type_vec=[],gene_query_vec=[],method_type_vec_dimension=[],n_components=50,
 										motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],load_mode=0,input_file_path='',
 										save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=1,select_config={}):
@@ -630,7 +610,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select groups for each feature type based on enrichment of peak loci with predicted TF binding and peak number
-	# to update
 	def test_query_enrichment_group_1(self,data=[],dict_group=[],dict_thresh=[],group_type_vec=['group1','group2'],column_vec_query=[],
 										flag_enrichment=1,flag_size=1,type_id_1=1,type_id_2=1,save_mode=0,verbose=0,select_config={}):
 		
@@ -715,7 +694,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select groups for each feature type or paired groups based on enrichment of peak loci with predicted TF binding and peak number
-	# to update
 	def test_query_enrichment_group_2(self,data=[],dict_thresh=[],thresh_overlap=0,thresh_quantile=-1,thresh_pval=0.25,
 										group_type_vec=['group1','group2'],column_vec_query=[],flag_enrichment=1,flag_size=0,
 										type_id_1=1,type_id_2=0,type_group=0,save_mode=0,verbose=0,select_config={}):
@@ -890,7 +868,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select paired groups based on enrichment of peak loci with predicted TF binding and peak number
-	# to update
 	def test_query_training_group_pre1(self,data=[],dict_annot=[],motif_id='',dict_thresh=[],thresh_vec=[],flag_select_2=0,input_file_path='',save_mode=1,output_file_path='',verbose=0,select_config={}):
 
 		"""
@@ -1108,7 +1085,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# compute quantiles of the feature association scores
-	# to update
 	def test_query_feature_quantile_1(self,data=[],query_idvec=[],column_vec_query=[],verbose=0,select_config={}):
 
 		"""
@@ -1179,7 +1155,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseuso postive training sample utilizing peak accessibility-TF expression correlation
-	# to update
 	def test_query_training_select_correlation_1(self,data=[],thresh_vec=[0.1,0.90],verbose=0,select_config={}):
 		
 		"""
@@ -1244,7 +1219,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseudo positive training sample based on peak-TF association score and peak accessibility-TF expression correlation
-	# to update
 	def test_query_training_select_feature_link_score_1(self,data=[],column_vec_query=[],thresh_vec=[],save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1287,10 +1261,10 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseudo positive training sample
-	# to update
 	def test_query_training_select_pre1(self,data=[],column_vec_query=[],flag_corr_1=1,flag_score_1=0,flag_enrichment_sel=1,input_file_path='',save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		"""
+		select pseudo positive training sample
 		:param data: (dataframe) annotations of peak loci with TF binding predicted by the first method
 		:param column_vec_query: (array or list) columns representing peak accessibility-TF expression correlation and estimated peak-TF association score in the peak annotation dataframe
 		:param flag_corr_1: indicating whether to select peak loci using peak accessibility-TF expression correlation
@@ -1372,7 +1346,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseudo positive training sample using different thresholds depending on peak enrichment in paired groups
-	# to update
 	def test_query_training_select_pre2(self,data=[],feature_query_vec=[],column_vec_query=[],thresh_vec_1=[0.25,0.75],thresh_vec_2=[0.95,0.001],save_mode=1,verbose=0,select_config={}):
 		
 		"""
@@ -1453,7 +1426,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# query column names representing the shared paired group assignment and neighbor information of peak loci
-	# to update
 	def test_query_column_method_1(self,feature_type_vec=[],method_type_feature_link='',select_config={}):
 
 		"""
@@ -1494,14 +1466,11 @@ class _Base2_2(_Base_pre2):
 			column_vec_query3 = ['%s.%s'%(method_type_feature_link,field_id) for field_id in field_query]
 
 			column_vec_query_1 = [column_pred2,column_pred_2]+column_vec_query1+column_vec_query2+column_vec_query3
-
-			# dict_annot = dict(zip(field_query_1,column_vec_query_1)) # to update
 			
 			return column_vec_query_1
 
 	## ====================================================
 	# select pseudo negative training sample
-	# to update
 	def test_query_training_select_group2(self,data=[],motif_id='',peak_query_vec_1=[],feature_type_vec=[],save_mode=0,verbose=0,select_config={}):
 
 		"""
@@ -1539,7 +1508,7 @@ class _Base2_2(_Base_pre2):
 				
 			df_pre1 = data
 			df_query1 = data
-			peak_loc_ori = df_query1.index
+			peak_loc_ori = df_query1.index # the ATAC-seq peak loci
 
 			column_motif = select_config['column_motif']
 			column_pred1 = select_config['column_pred1']
@@ -1584,7 +1553,6 @@ class _Base2_2(_Base_pre2):
 			id2_2 = (~id_pred2_group)
 
 			thresh_1, thresh_2 = 5, 5
-			
 			id_neighbor_1 = (df_pre1[column_neighbor_feature1]>=thresh_1)
 			id_neighbor_2 = (df_pre1[column_neighbor_feature2]>=thresh_2)
 
@@ -1610,7 +1578,14 @@ class _Base2_2(_Base_pre2):
 			thresh_corr_1, thresh_pval_1 = 0.30, 0.05
 			thresh_corr_2, thresh_pval_2 = 0.1, 0.1
 			thresh_corr_3, thresh_pval_2 = 0.05, 0.1
-			id_corr_ = (df_pre1[column_corr_1].abs()<thresh_corr_2)
+
+			column_corr_abs_1 = '%s_abs'%(column_corr_1)
+			if not (column_corr_abs_1 in df_pre1.columns):
+				df_pre1[column_corr_abs_1] = df_pre1[column_corr_1].abs()
+			# df_pre1 = df_pre1.sort_values(by=[column_corr_abs_1,column_pval],ascending=[True,False]) # sort the peak-TF links by peak accessibility-TF expr correlation and p-value
+				
+			# id_corr_ = (df_pre1[column_corr_1].abs()<thresh_corr_2)
+			id_corr_ = (df_pre1[column_corr_abs_1]<thresh_corr_2)
 			id_pval = (df_pre1[column_pval]>thresh_pval_2)
 							
 			# id_score_query3_1 = (id_corr_&id_pval)
@@ -1641,13 +1616,15 @@ class _Base2_2(_Base_pre2):
 							
 			list_query2 = [id_pre2_1,id_pre2_2]
 			list_query2_2 = []
-			column_corr_abs_1 = '%s_abs'%(column_corr_1)
+			
 			query_num = len(list_query2)
 			for i2 in range(query_num):
 				id_query = list_query2[i2]
-				df_pre2 = df_pre1.loc[id_query,[column_corr_1,column_pval]].copy()
-				df_pre2[column_corr_abs_1] = df_pre2[column_corr_1].abs()
-				df_pre2 = df_pre2.sort_values(by=[column_corr_abs_1,column_pval],ascending=[True,False])
+				# df_pre2 = df_pre1.loc[id_query,[column_corr_1,column_pval]].copy()
+				df_pre2 = df_pre1.loc[id_query,[column_corr_1,column_corr_abs_1,column_pval]].copy()
+
+				# df_pre2[column_corr_abs_1] = df_pre2[column_corr_1].abs()
+				df_pre2 = df_pre2.sort_values(by=[column_corr_abs_1,column_pval],ascending=[True,False]) # sort the peak-TF links by peak accessibility-TF expr correlation and p-value
 				peak_query_pre2 = df_pre2.index
 				list_query2_2.append(peak_query_pre2)
 
@@ -1657,10 +1634,15 @@ class _Base2_2(_Base_pre2):
 			print('candidate pseudo negative peak loci with the TF motif: ',peak_num_2_1_ori)
 			print('candidate pseudo negative peak loci without the TF motif: ',peak_num_2_2_ori)
 
+			method_type_feature_link = select_config['method_type_feature_link']
+			method_type_query = method_type_feature_link
+			dict1 = {'peak_group2_1':peak_vec_2_1_ori,
+						'peak_group2_2':peak_vec_2_2_ori}
+			self.data_pre_dict['peak_group'].update({method_type_query:dict1})
+
 			peak_query_vec = peak_query_vec_1
 			peak_query_num_1 = len(peak_query_vec)
 
-			# ratio_1, ratio_2 = 0.25, 2
 			ratio_1, ratio_2 = 0.25, 1.5
 			column_1, column_2 = 'ratio_1', 'ratio_2'
 			if column_1 in select_config:
@@ -1680,7 +1662,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# select pseudo negative training sample with base model
-	# to update
 	def test_query_training_select_group2_2(self,data=[],id_query=[],peak_query_vec_1=[],method_type='',flag_sample=1,flag_select=2,save_mode=0,verbose=0,select_config={}):
 
 		"""
@@ -1758,7 +1739,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# parameter configuration for prediction model training
-	# to upate
 	def test_optimize_configure_1(self,model_type_id,Lasso_alpha=0.01,Ridge_alpha=1.0,l1_ratio=0.01,ElasticNet_alpha=1.0,select_config={}):
 
 		"""
@@ -1823,7 +1803,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# prepare training, validation and test sample indices
-	# to update
 	def test_train_idvec_pre1(self,sample_id,num_fold=10,train_valid_mode=1,load=0,input_filename='',save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 		
 		"""
@@ -1894,7 +1873,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# model training for peak-TF association prediction
-	# to update
 	def test_query_association_unit_pre1(self,feature_query_vec=[],dict_feature=[],feature_type_vec=['motif','peak'],model_type_vec=[],model_type_id='LogisticRegression',sample_idvec_train=[],
 											type_id_model=1,num_class=2,num_fold=-1,parallel_mode=0,
 											save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -2078,7 +2056,6 @@ class _Base2_2(_Base_pre2):
 
 	## ====================================================
 	# model training for peak-TF association prediction
-	# to update
 	def test_query_compare_binding_train_unit1(self,data=[],peak_query_vec=[],peak_vec_1=[],motif_id_query='',dict_feature=[],feature_type_vec=[],
 													sample_idvec_query=[],motif_data=[],flag_scale=1,input_file_path='',
 													save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
@@ -2145,9 +2122,12 @@ class _Base2_2(_Base_pre2):
 
 			type_query = 0
 			# type_query = 1
-			column_1 = 'type_combine_query'
+			column_1 = 'type_combine'
 			if column_1 in select_config:
 				type_query = select_config[column_1]
+			else:
+				select_config.update({column_1:type_query})
+
 			if type_query==0:
 				feature_type_vec_2 = select_config['feature_type_vec_2']
 				feature_type_1, feature_type_2 = feature_type_vec_2[0:2]
@@ -2199,18 +2179,30 @@ class _Base2_2(_Base_pre2):
 				flag_model_explain = 1
 				select_config.update({'feature_type_id':feature_type_id1,'flag_model_explain':flag_model_explain})
 
+				column_1 = 'filename_save_annot_local'
+				column_2 = 'data_path_save'
+
 				filename_save_annot_2 = filename_save_annot
-				filename_save_annot_local = '%s.%s_%s'%(filename_save_annot_2,feature_type_query,model_type_id1)
 				data_path_save = file_path_query1
-				select_config.update({'filename_save_annot_local':filename_save_annot_local,'data_path_save':file_path_query1})
+				filename_save_annot_local = '%s.%s_%s.%s'%(filename_save_annot_2,feature_type_query,model_type_id1, motif_id_query)
+				select_config.update({column_1:filename_save_annot_local})
+
+				if not (column_2 in select_config):
+					select_config.update({column_2:data_path_save})
+
+				# data_path_save = file_path_query1
+				# select_config.update({'filename_save_annot_local':filename_save_annot_local,
+				# 						'data_path_save':file_path_query1})
 
 				start = time.time()
 				# classification model training
-				model_type_id_train = 'LogisticRegression'
-				type_id_model=1 # type_id_model: 0,regression model; 1,classification model
-				select_config.update({'model_type_id_train':model_type_id_train,
-											'model_type_id1':model_type_id_train,
-											'type_id_model':type_id_model})
+				model_type_id_train = model_type_id1
+				select_config.update({'model_type_id_train':model_type_id_train})
+				type_id_model = 1
+				if 'type_id_model' in select_config:
+					type_id_model = select_config['type_id_model']
+				else:
+					select_config.update({'type_id_model':type_id_model})
 
 				# model training for peak-TF association prediction
 				df_pred_2, df_proba_2 = self.test_query_association_unit_pre1(feature_query_vec=feature_query_vec_1,
@@ -2223,7 +2215,11 @@ class _Base2_2(_Base_pre2):
 																				num_class=num_class,
 																				num_fold=num_fold,
 																				parallel_mode=0,
-																				save_mode=1,output_file_path=output_file_path,output_filename='',filename_prefix_save=filename_prefix_save,filename_save_annot=filename_save_annot_2,
+																				save_mode=1,
+																				output_file_path=output_file_path,
+																				output_filename='',
+																				filename_prefix_save=filename_prefix_save,
+																				filename_save_annot=filename_save_annot_2,
 																				verbose=verbose,select_config=select_config)
 					
 				stop = time.time()
@@ -2279,7 +2275,6 @@ class _Base2_2(_Base_pre2):
 	
 	## ====================================================
 	# load motif scanning data; load ATAC-seq and RNA-seq data of the metacells
-	# to update
 	def test_query_load_pre1(self,method_type_vec=[],flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=0,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -2345,7 +2340,7 @@ class _Base2_2(_Base_pre2):
 
 	def run_pre1(self,chromosome='1',run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],metacell_num=500,peak_distance_thresh=100,
 						highly_variable=1,upstream=100,downstream=100,type_id_query=1,thresh_fdr_peak_tf=0.2,path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=0,
-						method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,method_type_feature_link='joint_score_pre1.thresh3',neighbor_num=30,model_type_id='XGBClassifier',typeid2=0,folder_id=1,
+						method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,method_type_feature_link='joint_score_pre1.thresh3',neighbor_num=30,model_type_id='XGBClassifier',typeid2=0,type_combine=0,folder_id=1,
 						config_id_2=1,config_group_annot=1,ratio_1=0.25,ratio_2=2,flag_group=-1,train_id1=1,flag_scale_1=1,beta_mode=0,motif_id_1='',query_id1=-1,query_id2=-1,query_id_1=-1,query_id_2=-1,train_mode=0,config_id_load=-1):
 		
 		chromosome = str(chromosome)
@@ -2380,6 +2375,7 @@ class _Base2_2(_Base_pre2):
 		flag_group = int(flag_group)
 		train_id1 = int(train_id1)
 		flag_scale_1 = int(flag_scale_1)
+		type_combine = int(type_combine)
 		beta_mode = int(beta_mode)
 		motif_id_1 = str(motif_id_1)
 
@@ -2460,7 +2456,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,metacell_n
 
 	test_estimator1.run_pre1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,metacell_num,peak_distance_thresh,
 								highly_variable,upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-								method_type_group,thresh_size_group,thresh_score_group_1,method_type_feature_link,neighbor_num,model_type_id,typeid2,folder_id,
+								method_type_group,thresh_size_group,thresh_score_group_1,method_type_feature_link,neighbor_num,model_type_id,typeid2,type_combine,folder_id,
 								config_id_2,config_group_annot,ratio_1,ratio_2,flag_group,train_id1,flag_scale_1,beta_mode,motif_id_1,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load)
 		
 def parse_args():
@@ -2491,6 +2487,7 @@ def parse_args():
 	parser.add_option("--neighbor",default='30',help='neighbor num')
 	parser.add_option("--model_type",default="XGBClassifier",help="model_type")
 	parser.add_option("--typeid2",default="0",help="type_id_query_2")
+	parser.add_option("--type_combine",default="0",help="feature type used for model training")
 	parser.add_option("--folder_id",default="1",help="folder_id")
 	parser.add_option("--config_id_2",default="1",help="config_id_2")
 	parser.add_option("--config_group_annot",default="1",help="config_group_annot")
@@ -2540,6 +2537,7 @@ if __name__ == '__main__':
 		opts.neighbor,
 		opts.model_type,
 		opts.typeid2,
+		opts.type_combine,
 		opts.folder_id,
 		opts.config_id_2,
 		opts.config_group_annot,

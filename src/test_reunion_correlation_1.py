@@ -2,84 +2,31 @@
 # coding: utf-8
 import numpy as np
 import pandas as pd
-import scanpy as sc
-import anndata as ad
-from anndata import AnnData
-import scanpy.external as sce
 
 from copy import deepcopy
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.pylab as pylab
-plt.switch_backend('Agg')
-import matplotlib.ticker as ticker
-import matplotlib.gridspec as gridspec
-import seaborn as sns
-
-import pyranges as pr
 import warnings
-
-# import palantir 
-import phenograph
-
 import sys
-from tqdm.notebook import tqdm
 
-import csv
 import os
 import os.path
-import shutil
 from optparse import OptionParser
 
 import sklearn
-from sklearn.linear_model import LinearRegression, ElasticNet
-from sklearn.base import BaseEstimator, _pprint
-from sklearn.utils import check_array, check_random_state
-from sklearn.utils.validation import check_is_fitted
-from sklearn.neighbors import NearestNeighbors
-
+from sklearn.base import BaseEstimator
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, minmax_scale, scale, quantile_transform, Normalizer
-from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, OneHotEncoder, LabelEncoder, KBinsDiscretizer
-from sklearn.pipeline import make_pipeline
 
 from scipy import stats
-from scipy.stats import multivariate_normal, skew, pearsonr, spearmanr
-from scipy.stats import wilcoxon, mannwhitneyu, kstest, ks_2samp, chisquare, fisher_exact, chi2_contingency
-from scipy.stats.contingency import expected_freq
-from scipy.stats import gaussian_kde, zscore, poisson, multinomial, norm, rankdata
-import scipy.sparse
-from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse, hstack, vstack
-from scipy import signal
-from scipy.optimize import minimize
-from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.stats import pearsonr, spearmanr
 from statsmodels.stats.multitest import multipletests
-import statsmodels.api as sm
-import gc
 from joblib import Parallel, delayed
 
 import time
 from timeit import default_timer as timer
 
 import utility_1
-from utility_1 import pyranges_from_strings, test_file_merge_1
-from utility_1 import spearman_corr, pearson_corr
 import h5py
-import json
 import pickle
-
-import itertools
-from itertools import combinations
-
-# pairwise distance metric: spearmanr
-# from the notebook
-# def spearman_corr(self, x, y):
-# 	return spearmanr(x, y)[0]
-
-# pairwise distance metric: pearsonr
-# from the notebook
-# def pearson_corr(x, y):
-# 	return pearsonr(x, y)[0]
 
 class _Base2_correlation(BaseEstimator):
 	"""Base class for compute correlation
@@ -94,8 +41,6 @@ class _Base2_correlation(BaseEstimator):
 
 	## ====================================================
 	# compute correlation and p-value between features
-	# TODO
-	# to update
 	def test_feature_correlation_1(self,df_feature_query_1=[],df_feature_query_2=[],feature_vec_1=[],feature_vec_2=[],correlation_type_vec=['spearmanr'],
 										symmetry_mode=0,type_id_pval_correction=1,type_id_1=0,thresh_corr_vec=[],
 										save_mode=1,save_symmetry=0,output_file_path='',filename_prefix='',select_config={}):	
@@ -156,10 +101,7 @@ class _Base2_correlation(BaseEstimator):
 		return dict_query_1
 
 	## ====================================================
-	# feature correlation estimation
 	# compute correlation and p-value between features
-	# TODO
-	# to update
 	def test_correlation_pvalues_pre1(self,df_feature_query1,df_feature_query2=[],correlation_type_vec=['spearmanr'],type_id_pval_correction=1,type_id_1=0,
 										save_mode=1,save_symmetry=0,output_file_path='',filename_prefix='',verbose=1,select_config={}):
 
@@ -307,8 +249,6 @@ class _Base2_correlation(BaseEstimator):
 	## ====================================================
 	# correlation and p-value calculation
 	# from the website: https://enterprise-docs.anaconda.com/en/latest/data-science-workflows/data/stats.html
-	# TODO
-	# to update
 	def test_correlation_pvalues_pair(self,df1,df2,correlation_type='spearmanr',float_precision=7):
 		
 		"""
@@ -349,10 +289,7 @@ class _Base2_correlation(BaseEstimator):
 		return corr_values, pvalues
 
 	## ====================================================
-	# p-value correction
 	# compute adjusted p-values for correlations between features
-	# TODO
-	# to update
 	def test_correlation_pvalue_correction_pre1(self,pvalues,alpha=0.05,method_type_correction='fdr_bh',correlation_type_vec=['spearmanr'],
 													type_id_pval_correction=1,type_id_1=0,save_mode=1,output_file_path='',filename_prefix='',select_config={}):
 
@@ -411,13 +348,11 @@ class _Base2_correlation(BaseEstimator):
 		return df_pval_corrected_1
 
 	## ====================================================
-	# p-value correction
-	# compute the adjusted p-value of correlation
-	# TODO
-	# to update
+	# compute adjusted p-values for correlations between features
 	def test_pvalue_correction(self,pvals,alpha=0.05,method_type_id='fdr_bh'):
 
 		"""
+		compute adjusted p-values for correlations between features
 		:param pvalues: (array) the raw p-values
 		:param alpha: (float) family-wise error rate used in p-value correction for multiple tests
 		:param method_type_correction: (str) the method used for p-value correction
@@ -445,8 +380,6 @@ class _Base2_correlation(BaseEstimator):
 
 	## ======================================================
 	# compute peak accessibility-TF expression correlation and p-value
-	# TODO
-	# to update
 	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],correlation_type='spearmanr',
 											pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',flag_load=0,field_load=[],parallel_mode=0,
 											input_file_path='',input_filename_list=[],save_mode=1,output_file_path='',filename_prefix='',verbose=0,select_config={}):
@@ -558,8 +491,6 @@ class _Base2_correlation(BaseEstimator):
 
 	## ====================================================
 	# compute peak accessibility-TF expression correlation and p-value
-	# TODO
-	# to update
 	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
 									peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
 									alpha=0.05,method_type_correction = 'fdr_bh',parallel_mode=0,verbose=1,select_config={}):
@@ -656,8 +587,6 @@ class _Base2_correlation(BaseEstimator):
 
 	## ======================================================
 	# compute peak accessibility-TF expression correlation
-	# TODO
-	# to update
 	def test_peak_tf_correlation_unit1(self,motif_data,peak_query_vec=[],motif_query_vec=[],
 										peak_read=[],rna_exprs=[],correlation_type='spearmanr',pval_correction=1,
 										alpha=0.05,method_type_correction='fdr_bh',parallel_mode=0,verbose=1,select_config={}):
@@ -730,8 +659,6 @@ class _Base2_correlation(BaseEstimator):
 
 	## ======================================================
 	# query correlations with statistical significance above threshold
-	# TODO
-	# to update
 	def test_query_correlation_threshold(self,corr_value,pval_value,thresh_corr_vec,thresh_pval_vec,type_id_1=0,select_config={}):
 
 		"""

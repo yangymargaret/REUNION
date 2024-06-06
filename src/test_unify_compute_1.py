@@ -5,7 +5,6 @@ import pandas as pd
 import scanpy as sc
 import anndata as ad
 from anndata import AnnData
-import scanpy.external as sce
 
 from copy import deepcopy
 import pyranges as pr
@@ -85,9 +84,14 @@ class _Base2_correlation2(_Base_pre2):
 									config=config,
 									select_config=select_config)
 
+		self.gene_query_vec = [] # the target gene set
+		# self.save_mode = 2  # 2:save intermediate files; 1:without saving intermediate files
+		self.save_mode = 1  # 2:save intermediate files; 1:without saving intermediate files
+		flag_pcorr_interval = select_config['flag_pcorr_interval']
+		self.flag_pcorr_interval = flag_pcorr_interval
+
 	## ====================================================
 	# query peak-gene link attributes
-	# to update
 	def test_gene_peak_query_attribute_1(self,df_gene_peak_query=[],df_gene_peak_query_ref=[],column_idvec=[],field_query=[],column_name=[],reset_index=True,verbose=0,select_config={}):
 
 		"""
@@ -122,7 +126,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# load motif data; load ATAC-seq and RNA-seq data of the metacells
-	# to update
 	def test_query_load_pre1(self,method_type_vec=[],flag_motif_data_load_1=1,flag_load_1=1,flag_format=False,flag_scale=1,input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -148,12 +151,6 @@ class _Base2_correlation2(_Base_pre2):
 			if len(method_type_vec_query)==0:
 				method_type_vec_query = [method_type_feature_link]
 
-			# input_dir = select_config['input_dir']
-			# file_path_1 = input_dir
-			# test_estimator1 = _Base2_2(file_path=file_path_1,select_config=select_config)
-			
-			# method_type_feature_link = select_config['method_type_feature_link']
-			# method_type_vec_query = [method_type_feature_link]
 			data_path_save_local = select_config['data_path_save_local']
 			# data_path_save_motif = select_config['data_path_save_motif']
 			
@@ -208,10 +205,7 @@ class _Base2_correlation2(_Base_pre2):
 		return select_config
 
 	## ====================================================
-	# gene-peak association query: search peak-gene associations
-	# for each gene query, search for peaks within the distance threshold
 	# search for peaks within specific distance of the TSS of each target gene to establish peak-gene links
-	# to update
 	def test_gene_peak_query_link_pre1(self,gene_query_vec=[],peak_distance_thresh=2000,df_peak_query=[],
 											input_filename='',peak_loc_query=[],
 											atac_ad=[],rna_exprs=[],highly_variable=False,
@@ -281,7 +275,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# search for peaks within specific distance of each target gene TSS to establish peak-gene links
-	# to update
 	def test_gene_peak_query_distance(self,gene_query_vec=[],df_gene_query=[],peak_loc_query=[],peak_distance_thresh=2000,type_id_1=0,parallel=0,save_mode=1,output_filename='',verbose=0,select_config={}):
 
 		"""
@@ -406,7 +399,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# search for peaks within specific distance of the TSS of the target gene
-	# to update
 	def test_gene_peak_query_distance_unit1(self,gene_query,peaks_pr,df_gene_annot=[],df_annot_2=[],span=2000,query_id=-1,interval=5000,save_mode=1,verbose=0,select_config={}):
 		
 		"""
@@ -449,7 +441,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak-gene TSS distance for peak-gene pairs
-	# to update
 	def test_gene_peak_query_distance_pre1(self,gene_query_vec=[],df_gene_peak_query=[],df_gene_query=[],select_config={}):
 
 		"""
@@ -501,7 +492,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query background peak loci for the given peak loci
-	# to update
 	def test_gene_peak_query_bg_load(self,input_filename_peak='',input_filename_bg='',peak_bg_num=100,verbose=0,select_config={}):
 
 		"""
@@ -527,7 +517,6 @@ class _Base2_correlation2(_Base_pre2):
 		peak_loc_1 = atac_ad.var_names
 		assert list(peak_query.index) == list(peak_loc_1)
 		self.atac_meta_peak_loc = np.asarray(peak_query.index)
-		# print('atac matecell peaks', len(self.atac_meta_peak_loc), self.atac_meta_peak_loc[0:5])
 		print('peak loci in ATAC-seq metacell data: %d'%(len(self.atac_meta_peak_loc)))
 		print('preview: ',self.atac_meta_peak_loc[0:5])
 
@@ -540,7 +529,6 @@ class _Base2_correlation2(_Base_pre2):
 		peak_bg.columns = np.arange(peak_bg_num)
 		peak_bg = peak_bg.astype(np.int64)
 		self.peak_bg = peak_bg
-		# print('background peaks', peak_bg.shape, len(peak_id), peak_bg_num, peak_bg.index[0:10])
 		if verbose>0:
 			print(input_filename_peak)
 			print(input_filename_bg)
@@ -551,7 +539,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query accessibility-related peak attributes
-	# to update
 	def test_peak_access_query_basic_1(self,peak_read=[],rna_exprs=[],df_annot=[],thresh_value=0.1,flag_ratio=1,flag_access=1,
 											save_mode=1,output_file_path='',output_filename='',filename_annot='',verbose=0,select_config={}):
 
@@ -623,7 +610,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query open peaks in the metacells
-	# to update
 	def test_peak_access_query_basic_2(self,atac_meta_ad=[],peak_set=None, low_dim_embedding='X_svd', pval_cutoff=1e-2,read_len=147,n_neighbors=3,bin_size=5000,n_jobs=1,
 											save_mode=1,output_file_path='',output_filename='',filename_save_annot='',select_config={}):
 
@@ -677,7 +663,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query the set of peaks that are open in each metacell (from SEACells)
-	# to update
 	def _determine_metacell_open_peaks(self,atac_meta_ad,peak_set=None,low_dim_embedding='X_svd',
 											pval_cutoff=1e-2,read_len=147,n_neighbors=3,bin_size=5000,n_jobs=1):
 		"""
@@ -740,7 +725,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query open peaks in the metacells
-	# to update
 	def test_peak_access_query_basic_pre1(self,adata=[],n_neighbors=3,low_dim_embedding='X_svd',save_mode=1,output_file_path='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
 		"""
@@ -863,7 +847,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak accessibility-gene expression correlations and select candidate peak-gene links
-	# to update
 	def test_gene_peak_query_correlation_pre1(self,gene_query_vec=[],peak_loc_query=[],df_gene_peak_query=[],df_gene_peak_compute_1=[],df_gene_peak_compute_2=[],atac_ad=[],rna_exprs=[],
 												flag_computation_vec=[1,3],highly_variable=False,recompute=0,
 												save_mode=1,save_file_path='',output_filename='',filename_prefix_save='',verbose=0,select_config={}):
@@ -899,7 +882,8 @@ class _Base2_correlation2(_Base_pre2):
 			# return
 
 		peak_bg_num = 100
-		interval_peak_corr = 10
+		# interval_peak_corr = 10
+		interval_peak_corr = 100
 		interval_local_peak_corr = -1
 
 		list1 = [peak_bg_num,interval_peak_corr,interval_local_peak_corr]
@@ -912,12 +896,11 @@ class _Base2_correlation2(_Base_pre2):
 				list1[i1] = select_config[field_id]
 		peak_bg_num,interval_peak_corr,interval_local_peak_corr = list1
 
-		flag_correlation_1 = select_config['flag_correlation_1']
-
 		save_file_path = select_config['data_path_save_local']
 		input_file_path = save_file_path
 		output_file_path = save_file_path
 
+		flag_correlation_1 = select_config['flag_correlation_1']
 		peak_distance_thresh = select_config['peak_distance_thresh']
 		verbose_internal = self.verbose_internal
 
@@ -943,16 +926,22 @@ class _Base2_correlation2(_Base_pre2):
 			flag_compute_bg = (compute_mode_2 in flag_computation_vec)
 			flag_compute = (flag_compute|flag_compute_bg)
 
+			coherent_mode = 0
+			if (flag_compute_fg>0) and (flag_compute_bg>0):
+				coherent_mode = 1
+
 			flag_thresh1 = 1
 			if 'flag_correlation_thresh1' in select_config:
 				flag_thresh1 = select_config['flag_correlation_thresh1']
 
 			print('flag_thresh1 ',flag_thresh1)
-			interval_peak_corr = -1
-			interval_local_peak_corr = -1
+			# interval_peak_corr = -1
+			# interval_local_peak_corr = -1
 
 			column_idvec = ['peak_id','gene_id']
 			dict_query1 = dict()
+			iter_mode = select_config['iter_mode']
+			print('iter_mode ',iter_mode)
 			if flag_compute>0:
 				df_gene_peak_query_thresh1 = df_gene_peak_compute_2 # pre-selected peak-gene links with peak accessibility-gene expression correlation above thresholds
 				print('flag_computation_vec: ',flag_computation_vec)
@@ -960,32 +949,33 @@ class _Base2_correlation2(_Base_pre2):
 				for flag_computation_1 in flag_computation_vec:
 					select_config.update({'flag_computation_1':flag_computation_1})
 
-					if flag_computation_1==1:
+					compute_mode = flag_computation_1
+					if compute_mode==1:
 						if len(df_gene_peak_query)==0:
 							# compute peak accessibility-gene expression correlation for genome-wide peak-gene links
 							df_gene_peak_query = self.df_gene_peak_distance  
-					
-					elif flag_computation_1==2:
+
+					elif compute_mode==2:
 						if len(df_gene_peak_query)==0:
 							# use the given peak-gene links
 							df_gene_peak_query = df_gene_peak_compute_1
-					
-					elif flag_computation_1==3:
+
+					elif compute_mode==3:
 						# use pre-selected peak-gene links with peak accessibility-gene expression correlation above thresholds
 						if len(df_gene_peak_query_thresh1)==0:
 							df_gene_peak_query = pd.read_csv(input_filename_pre2,index_col=0,sep='\t')
 						else:
 							df_gene_peak_query = df_gene_peak_query_thresh1
 
-					compute_mode = flag_computation_1
-					if flag_computation_1 in [1,3]:
-						if flag_computation_1 in [1]:
+					if compute_mode in [1,3]:
+						if compute_mode in [1]:
 							interval_peak_corr = -1
 							interval_local_peak_corr = -1
 						else:
 							interval_peak_corr = 100
 							# interval_local_peak_corr = 20
-							interval_local_peak_corr = 50
+							# interval_local_peak_corr = 50
+							interval_local_peak_corr = -1
 
 						select_config.update({'interval_peak_corr':interval_peak_corr,'interval_local_peak_corr':interval_local_peak_corr})
 
@@ -1001,7 +991,9 @@ class _Base2_correlation2(_Base_pre2):
 																							highly_variable=highly_variable,
 																							interval_peak_corr=interval_peak_corr,
 																							interval_local_peak_corr=interval_local_peak_corr,
-																							save_mode=1,save_file_path=save_file_path,output_filename='',
+																							save_mode=1,
+																							save_file_path=save_file_path,
+																							output_filename='',
 																							filename_prefix_save='',			
 																							verbose=verbose,select_config=select_config)
 						
@@ -1011,6 +1003,33 @@ class _Base2_correlation2(_Base_pre2):
 						print('peak-gene links, dataframe of size ',df_gene_peak_1.shape)
 						print('preview: ')
 						print(df_gene_peak_1[0:5])
+						
+						iter_mode = select_config['iter_mode']
+						print('iter_mode ',iter_mode)
+
+						if (iter_mode>0) and (coherent_mode>0):
+							input_filename_pre2_ori = select_config['input_filename_pre2']
+							filename_save_thresh2_ori = select_config['filename_save_thresh2']
+							
+							select_config.update({'input_filename_pre2_ori':input_filename_pre2,
+													'filename_save_thresh2_ori':filename_save_thresh2_ori})
+
+							# update the filenames to save data for the batch mode
+							save_file_path = select_config['data_path_save_local']
+							filename_prefix_query = select_config['filename_prefix_local']
+							filename_annot1 = select_config['filename_annot_default']
+
+							# the peak-gene links selected using threshold 1 on the peak-gene correlation
+							input_filename_pre2 = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix_query,filename_annot1)
+
+							# the peak-gene links selected using threshold 2 on the peak-gene correlation
+							filename_save_thresh2 = '%s/%s.combine.thresh2.%s.txt'%(save_file_path,filename_prefix_query,filename_annot1)
+
+							select_config.update({'input_filename_pre2':input_filename_pre2,
+													'filename_save_thresh2':filename_save_thresh2})
+
+							print('updated input_filename_pre2: %s'%(input_filename_pre2))
+							print('updated filename_save_thresh2: %s'%(filename_save_thresh2))
 
 					# load estimated peak-gene correlations and perform pre-selection
 					# compute_mode: 1, calculate peak-gene correlation; 2, perform peak-gene selection by threshold; 3, calculate peak-gene correlation for background peaks
@@ -1021,8 +1040,10 @@ class _Base2_correlation2(_Base_pre2):
 							df_peak_query = self.df_gene_peak_distance
 							# correlation_type = 'spearmanr'
 							correlation_type = select_config['correlation_type_1']
+
 							input_filename_pre2 = select_config['input_filename_pre2']
 							output_filename = input_filename_pre2
+
 							df_gene_peak_query = self.test_gene_peak_query_correlation_thresh1(gene_query_vec=gene_query_vec,
 																								df_gene_peak_query=df_gene_peak_1,
 																								df_peak_annot=df_peak_query,
@@ -1031,14 +1052,19 @@ class _Base2_correlation2(_Base_pre2):
 																								output_filename=output_filename,
 																								select_config=select_config)
 							stop = time.time()
-							print('pre-selection of peak-gene link query used %.5fs'%(stop-start))
+							df_gene_peak_query_thresh1 = df_gene_peak_query
+							print('pre-selection of peak-gene links used %.5fs'%(stop-start))
 
-				if (flag_compute_fg>0) and (flag_compute_bg>0):
-					coherent_mode = 1
+				if coherent_mode>0:
 					column_vec_query = ['pval1']
-					df_gene_peak_pre1 = dict_query1[compute_mode_1]
+					if (flag_thresh1>0) and (len(df_gene_peak_query_thresh1)>0):
+						df_gene_peak_pre1 = df_gene_peak_query_thresh1
+					else:
+						df_gene_peak_pre1 = dict_query1[compute_mode_1]
+					
 					df_gene_peak_bg = dict_query1[compute_mode_2]
 					save_mode_2 = 1
+
 					input_filename_pre2 = select_config['input_filename_pre2']
 					output_filename = input_filename_pre2
 					
@@ -1055,11 +1081,15 @@ class _Base2_correlation2(_Base_pre2):
 																						column_idvec=column_idvec,
 																						column_vec_query=column_vec_query,
 																						flag_combine=1,
-																						coherent_mode=coherent_mode,index_col=0,
-																						save_mode=1,output_file_path='',output_filename=output_filename,
+																						coherent_mode=coherent_mode,
+																						index_col=0,
+																						save_mode=1,
+																						output_file_path='',
+																						output_filename=output_filename,
 																						verbose=verbose,select_config=select_config)
 
-			data_file_type_query = select_config['data_file_type_query']
+			# data_file_type_query = select_config['data_file_type_query']
+			data_file_type_query = select_config['data_file_type']
 			input_filename_pre2 = select_config['input_filename_pre2']
 			file_path_save_local = select_config['data_path_save_local']
 			filename_prefix_default = select_config['filename_prefix_default']
@@ -1106,7 +1136,9 @@ class _Base2_correlation2(_Base_pre2):
 															column_vec_query=column_vec_query,
 															flag_combine=1,
 															coherent_mode=coherent_mode,index_col=0,
-															save_mode=1,output_file_path='',output_filename=output_filename,
+															save_mode=1,
+															output_file_path='',
+															output_filename=output_filename,
 															verbose=verbose,select_config=select_config)
 
 			flag_merge_1=0
@@ -1121,8 +1153,11 @@ class _Base2_correlation2(_Base_pre2):
 				compute_mode_query = 3
 				self.test_query_feature_correlation_merge_1(df_gene_peak_query=[],filename_list=[],
 															flag_combine=1,
-															compute_mode=compute_mode_query,index_col=0,
-															save_mode=1,output_path=output_file_path,output_filename=output_filename,
+															compute_mode=compute_mode_query,
+															index_col=0,
+															save_mode=1,
+															output_path=output_file_path,
+															output_filename=output_filename,
 															verbose=verbose,select_config=select_config)
 	
 		# add columns to the original peak-gene link dataframe: empirical p-values for a subset of the peak-gene links
@@ -1160,7 +1195,9 @@ class _Base2_correlation2(_Base_pre2):
 																																highly_variable_thresh=highly_variable_thresh,
 																																load_mode=load_mode,
 																																input_file_path=input_file_path,
-																																save_mode=1,save_file_path=output_file_path,output_filename=output_filename,
+																																save_mode=1,
+																																save_file_path=output_file_path,
+																																output_filename=output_filename,
 																																filename_prefix_save='',
 																																select_config=select_config)
 
@@ -1191,7 +1228,8 @@ class _Base2_correlation2(_Base_pre2):
 																														input_filename=input_filename,
 																														highly_variable=highly_variable,
 																														peak_distance_thresh=peak_distance_thresh,
-																														save_mode=1,save_file_path=save_file_path,
+																														save_mode=1,
+																														save_file_path=save_file_path,
 																														output_filename_1=output_filename_1,
 																														output_filename_2=output_filename_2,
 																														filename_prefix_save='',
@@ -1210,7 +1248,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak accessibility-gene expression correlation for peak-gene links
-	# to update
 	def test_gene_peak_query_correlation_pre1_compute(self,gene_query_vec=[],gene_query_vec_2=[],peak_distance_thresh=500,
 														df_gene_peak_query=[],df_gene_peak_compute=[],peak_loc_query=[],atac_ad=[],rna_exprs=[],
 														highly_variable=False,interval_peak_corr=50,interval_local_peak_corr=10,
@@ -1262,22 +1299,31 @@ class _Base2_correlation2(_Base_pre2):
 			start_id1 = query_id1
 			start_id2 = np.min([query_id2,gene_query_num_1])
 			gene_query_vec = gene_query_vec_pre1[start_id1:start_id2]
-			filename_prefix_save = '%s_%d_%d'%(filename_prefix_save_1,start_id1,start_id2)
-			filename_prefix_save_bg = '%s_bg_%d_%d'%(filename_prefix_save_1,start_id1,start_id2)
+			# filename_prefix_save = '%s_%d_%d'%(filename_prefix_save_1,start_id1,start_id2)
+			# filename_prefix_save_bg = '%s_bg_%d_%d'%(filename_prefix_save_1,start_id1,start_id2)
+			annot_str1 = '%d_%d'%(query_id1,query_id2)
+			filename_prefix_save = '%s_%s'%(filename_prefix_save_1,annot_str1)
+			filename_prefix_save_bg = '%s_bg_%s'%(filename_prefix_save_1,annot_str1)
+			filename_prefix_2 = '%s.%s'%(filename_prefix_1,annot_str1)
 		elif query_id1<-1:
 			iter_mode = 2  # combine peak-gene estimation from different runs
 		else:
 			gene_query_vec = gene_query_vec_pre1
 			filename_prefix_save = filename_prefix_save_1
 			filename_prefix_save_bg = '%s_bg'%(filename_prefix_save_1)
+			# filename_prefix_2 = filename_prefix_1
 			start_id1 = 0
 			start_id2 = gene_query_num_1
 		select_config.update({'iter_mode':iter_mode})
 
 		filename_prefix = '%s.%s'%(filename_prefix_1,filename_prefix_save_1)
-		filename_prefix_local = '%s.%s'%(filename_prefix_1,filename_prefix_save)
+		filename_prefix_local = '%s.%s'%(filename_prefix_1,filename_prefix_save)	# filename prefix with batch information
+		# filename_prefix_local = '%s.%s'%(filename_prefix_2,filename_prefix_save_1)	# filename prefix with batch information
+
 		filename_prefix_bg = '%s.%s_bg'%(filename_prefix_1,filename_prefix_save_1)
-		filename_prefix_bg_local = '%s.%s'%(filename_prefix_1,filename_prefix_save_bg)
+		filename_prefix_bg_local = '%s.%s'%(filename_prefix_1,filename_prefix_save_bg) # filename prefix with batch information
+		# filename_prefix_bg_local = '%s.%s_bg'%(filename_prefix_2,filename_prefix_save_1) # filename prefix with batch information
+
 		filename_annot1 = select_config['filename_annot_default']
 		input_filename_pre2_bg = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix_bg,filename_annot1)
 		filename_pre2_bg_local = '%s/%s.combine.thresh1.%s.txt'%(save_file_path,filename_prefix_bg_local,filename_annot1)
@@ -1331,12 +1377,15 @@ class _Base2_correlation2(_Base_pre2):
 																				peak_distance_thresh=500,
 																				df_gene_peak_query=df_gene_peak_query,
 																				peak_loc_query=[],
-																				atac_ad=atac_ad,rna_exprs=rna_exprs,
+																				atac_ad=atac_ad,
+																				rna_exprs=rna_exprs,
 																				flag_computation_1=1,
 																				highly_variable=False,
 																				interval_peak_corr=interval_peak_corr,
 																				interval_local_peak_corr=interval_local_peak_corr,
-																				save_mode=1,save_file_path=save_file_path,output_filename='',
+																				save_mode=1,
+																				save_file_path=save_file_path,
+																				output_filename='',
 																				filename_prefix_save='',
 																				verbose=0,select_config=select_config)
 			df_gene_peak_compute_1 = df_gene_peak_query
@@ -1345,7 +1394,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# perform pre-selection of peak-gene links using distance-dependent thresholds on peak accessibility-gene expression correlations
-	# to update
 	def test_gene_peak_query_correlation_thresh1(self,gene_query_vec=[],df_gene_peak_query=[],df_peak_annot=[],correlation_type='spearmanr',
 													save_mode=1,output_filename='',float_format='%.5E',select_config={}):
 
@@ -1399,6 +1447,7 @@ class _Base2_correlation2(_Base_pre2):
 				column_idvec = ['peak_id','gene_id']
 				df_peak_annot = self.df_gene_peak_distance
 				# query peak-gene link attributes
+				# query peak-gene TSS distance
 				df_gene_peak_query = self.test_gene_peak_query_attribute_1(df_gene_peak_query=df_gene_peak_query,
 																			df_gene_peak_query_ref=df_peak_annot,
 																			column_idvec=column_idvec,
@@ -1442,7 +1491,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak accessibility-gene expression correlation for peak-gene links
-	# to update
 	def test_gene_peak_query_correlation_unit1(self,gene_query_vec=[],gene_query_vec_2=[],peak_distance_thresh=2000,
 													df_gene_peak_query=[],peak_loc_query=[],atac_ad=[],rna_exprs=[],flag_computation_1=1,
 													highly_variable=False,interval_peak_corr=50,interval_local_peak_corr=10,
@@ -1629,7 +1677,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak accessibility-gene expression correlation and p-value
-	# to update
 	def test_gene_peak_query_correlation_pre2(self,gene_query_vec=[],gene_query_vec_2=[],df_peak_query=[],peak_dict=[],atac_ad=[],rna_exprs=[],
 												interval_peak_corr=50,interval_local_peak_corr=10,correlation_type='spearmanr',compute_mode=1,recompute=0,
 												save_mode=1,save_file_path='',save_file_path_local='',output_filename='',filename_prefix_save='',
@@ -1750,8 +1797,7 @@ class _Base2_correlation2(_Base_pre2):
 					else:
 						df_gene_peak_query = df_peak_query
 
-					print('peak-gene links, dataframe of size ',df_gene_peak_query.shape)
-
+					# print('peak-gene links, dataframe of size ',df_gene_peak_query.shape)
 					gene_query_idvec_1 = df_gene_peak_query['gene_id'].unique()
 					gene_query_num1 = len(gene_query_idvec_1)
 					gene_query_vec_bg1 = pd.Index(gene_query_vec_bg).intersection(gene_query_idvec_1,sort=False)
@@ -1789,7 +1835,7 @@ class _Base2_correlation2(_Base_pre2):
 					print('save file: %s'%(output_filename))
 
 				df_gene_peak_query_compute1 = df_gene_peak_query
-				print('peak-gene links, dataframe of size ',df_gene_peak_query.shape)
+				# print('peak-gene links, dataframe of size ',df_gene_peak_query.shape)
 				print('compute_mode: %d'%(compute_mode))
 				
 				warnings.filterwarnings('default')
@@ -1798,9 +1844,7 @@ class _Base2_correlation2(_Base_pre2):
 		# return df_gene_peak_query
 
 	## ====================================================
-	# gene-peak association query: peak accessibility correlation with gene expression
 	# query peak accessibility-gene expression correlation and p-value
-	# to update
 	def test_gene_peak_query_correlation_1(self,gene_query_vec=[],peak_dict=[],df_gene_peak_query=[],atac_ad=[],rna_exprs=[],flag_compute=1,
 												interval_peak_corr=50,interval_local_peak_corr=10,peak_bg_num=-1,
 												save_file_path='',save_file_path_local='',filename_prefix_save='',verbose=0,select_config={}):
@@ -1886,11 +1930,7 @@ class _Base2_correlation2(_Base_pre2):
 		return df_gene_peak_query
 
 	## ====================================================
-	# gene-peak association query: peak accessibility correlated with gene expr
-	# peak accessibility-gene expr query with peak set and background peaks
 	# compute peak accessibility-gene expression correlation
-	# type_id_1: 1: spearmanr; 2: pearsonr; 3: spearmanr and pearsonr
-	# to update
 	def test_search_peak_dorc_pre1(self,atac_ad,rna_exprs,gene_query_vec=[],df_gene_peak_query=[],peak_dict=[],flag_corr_=1,method_type=1,type_id_1=1,
 										recompute=1,peak_bg_num=100,save_mode=1,save_file_path='',filename_prefix_save='',verbose=0,select_config={}):
 
@@ -1995,9 +2035,9 @@ class _Base2_correlation2(_Base_pre2):
 				field_query_vec = [['spearmanr'],['pearsonr'],['spearmanr','pearsonr']]
 				df_query = df_gene_peak_query.loc[gene_idvec1,['peak_id']+field_query_vec[type_id_1-1]].fillna(-1)
 				# print('df_query ',df_query.shape,df_query)
-				print('peak-gene links: ',df_query.shape[0])
-				print('preview: ')
-				print(df_query[0:2])
+				# print('peak-gene links: ',df_query.shape[0])
+				# print('preview: ')
+				# print(df_query[0:2])
 
 			# the dorc_func_pre1() function returns (gene_query, df)
 			if iter_mode>0:
@@ -2094,7 +2134,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# compute peak accessibility-gene expression correlation and p-value
-	# to update
 	def dorc_func_pre1(self,peak_loc,gene_query,atac_read,rna_exprs,flag_corr_=1,df_query=[],spearman_cors=[],pearson_cors=[],gene_id_query='',
 							corr_thresh=0.01,method_type=0,type_id_1=0,background_query=0,verbose=0):
 
@@ -2263,7 +2302,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# gene-peak association query: load and combine previously estimated peak accessibility-gene expression correlations
-	# to update
 	def test_gene_peak_query_combine_1(self,save_filename_list=[],verbose=0,select_config={}):
 
 		"""
@@ -2307,7 +2345,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query peak accessibility-gene expression correlations for peak-gene links associated with the specific target genes
-	# to update
 	def test_gene_peak_query_load_unit(self,gene_query_vec,gene_peak_annot,df_gene_peak_query=[],field_query=[],verbose=1,select_config={}):
 		
 		"""
@@ -2358,16 +2395,281 @@ class _Base2_correlation2(_Base_pre2):
 		if len(list1)>0:
 			df_gene_peak_query = pd.concat(list1,axis=0,join='outer',ignore_index=False)
 
-		verbose_internal = self.verbose_internal
-		if verbose_internal==2:
-			print('peak-gene links, dataframe of size ', df_gene_peak_query.shape)
-			print('data preview:\n',df_gene_peak_query[0:2])
+		# verbose_internal = self.verbose_internal
+		# if verbose_internal==2:
+		# 	print('peak-gene links, dataframe of size ', df_gene_peak_query.shape)
+		# 	print('data preview:\n',df_gene_peak_query[0:2])
 
 		return df_gene_peak_query
 
 	## ====================================================
+	# select candidate peak-gene links using thresholds on peak accessibility-gene expression correlation and p-value
+	def test_gene_peak_query_correlation_thresh_pre1(self,df_gene_peak_query=[],column_idvec=['peak_id','gene_id'],column_vec_query=[],thresh_corr_distance=[],verbose=0,select_config={}):
+
+		"""
+		select candidate peak-gene links by thresholds on peak accessibility-gene expression correlation and empirical p-value;
+		thresholds are adjusted for different peak-gene distance ranges;
+		:param df_gene_peak_query: (dataframe) annotations of peak-gene links
+		:param column_idvec: (array or list) columns representing peak and gene indices in the peak-gene link annotation dataframe
+		:param column_vec_query: (array or list) columns which will be added or updated in the peak-gene link annotation dataframe, 
+												 including the column representing which peak-gene links are selected as candidate links
+		:param thresh_corr_distance: (list of list) thresholds on peak accessibility-gene expression correlation and empirical p-value for different peak-gene distance ranges
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) annotations of selected candidate peak-gene links
+				 2. (dataframe) updated annotations of the original peak-gene links, including labels for the selected candidate links 
+		"""
+
+		df_gene_peak_query.index = utility_1.test_query_index(df_gene_peak_query,column_vec=column_idvec)
+		query_idvec = df_gene_peak_query.index
+		column_id1, column_id2 = column_idvec
+		if len(column_vec_query)==0:
+			column_vec_query = ['label_thresh2']
+
+		column_label_1 = column_vec_query[0] # column representing which peak-gene links are selected as candidate links
+
+		column_distance = select_config['column_distance'] # column_distance: 'distance' (peak-gene distance)
+		if not (column_distance in df_gene_peak_query):
+			field_query = ['distance']
+			# column_name = [column_distance]
+			column_idvec_query = ['peak_id','gene_id']
+			df_peak_annot = self.df_gene_peak_distance  # genome-wide peak-gene links with peak-gene distance computed (peaks within +/-2Mb of gene TSS)
+			# query peak-gene link attributes
+			df_gene_peak_query = self.test_gene_peak_query_attribute_1(df_gene_peak_query=df_gene_peak_query,
+																			df_gene_peak_query_ref=df_peak_annot,
+																			column_idvec=column_idvec_query,
+																			field_query=field_query,
+																			column_name=[],
+																			reset_index=False,
+																			select_config=select_config)
+
+		distance_abs = df_gene_peak_query[column_distance].abs()
+
+		column_vec_1 = select_config['column_correlation'] # column_vec_1:['spearmanr','pval1'] (peak accessibility-gene expr correlation and empirical p-value)
+		column_1, column_2 = column_vec_1[0:2]
+		column_2_ori = column_vec_1[2]
+
+		peak_corr, peak_pval = df_gene_peak_query[column_1], df_gene_peak_query[column_2]
+		id1 = (pd.isna(peak_pval)==True)
+		df1 = df_gene_peak_query.loc[id1]
+		print('peak-gene links without estimated empirical p-values of peak accessibility-gene expression correlations: %d'%(np.sum(id1)))
+		
+		# to update
+		# peak_pval[id1] = df_gene_peak_query.loc[id1,column_2_ori] # use the raw p-values for peak-gene link selection
+		
+		list1 = []
+		for thresh_vec in thresh_corr_distance:
+			constrain_1, constrain_2, thresh_peak_corr_vec = thresh_vec
+			id1 = (distance_abs<constrain_2)&(distance_abs>=constrain_1) # constraint by distance
+			
+			df_gene_peak_query_sub1 = df_gene_peak_query.loc[id1]
+			peak_corr, peak_pval = df_gene_peak_query_sub1[column_1], df_gene_peak_query_sub1[column_2]
+			peak_sel_corr_pos = (peak_corr>=1)
+			peak_sel_corr_neg = (peak_corr<=-1)
+
+			# constraint by correlation value
+			for thresh_peak_corr_vec_1 in thresh_peak_corr_vec:
+				thresh_peak_corr_pos, thresh_peak_corr_pval_pos, thresh_peak_corr_neg, thresh_peak_corr_pval_neg = thresh_peak_corr_vec_1
+				
+				peak_sel_corr_pos = ((peak_corr>thresh_peak_corr_pos)&(peak_pval<thresh_peak_corr_pval_pos))|peak_sel_corr_pos
+				peak_sel_corr_neg = ((peak_corr<thresh_peak_corr_neg)&(peak_pval<thresh_peak_corr_pval_neg))|peak_sel_corr_neg
+				if verbose>0:
+					print('distance_thresh1:%d, distance_thresh2:%d'%(constrain_1,constrain_2))
+					print('thresh_sel_corr_pos, thresh_peak_corr_pval_pos, thresh_sel_corr_neg, thresh_peak_corr_pval_neg ', thresh_peak_corr_pos, thresh_peak_corr_pval_pos, thresh_peak_corr_neg, thresh_peak_corr_pval_neg)
+					print('peak_sel_corr_pos, peak_sel_corr_neg ', np.sum(peak_sel_corr_pos), np.sum(peak_sel_corr_neg))
+
+			peak_sel_corr_ = (peak_sel_corr_pos|peak_sel_corr_neg)
+			peak_sel_corr_num1 = np.sum(peak_sel_corr_)
+			if verbose>0:
+				print('peak_sel_corr_num ', peak_sel_corr_num1)
+
+			query_id1 = df_gene_peak_query_sub1.index
+			query_id2 = query_id1[peak_sel_corr_]
+			list1.extend(query_id2)
+		
+		peak_corr, peak_pval = df_gene_peak_query[column_1], df_gene_peak_query[column_2]
+		
+		distance_abs = df_gene_peak_query['distance'].abs()
+		df_gene_peak_query['distance_abs'] = distance_abs
+		peak_distance_thresh_1 = 500
+		
+		if 'thresh_corr_retain' in select_config:
+			thresh_corr_retain = np.asarray(select_config['thresh_corr_retain'])
+			if thresh_corr_retain.ndim==2:
+				for (thresh_corr_1, thresh_pval_1) in thresh_corr_retain:
+					id1 = (peak_corr.abs()>thresh_corr_1)
+					print('threshold on correlation: ',thresh_corr_1)
+					print('selected peak-gene links by the threshold: %d'%(np.sum(id1)))
+					if (thresh_pval_1<1):
+						id2 = (peak_pval<thresh_pval_1) # p-value threshold
+						id3 = (distance_abs<peak_distance_thresh_1) # distance threshold; only use correlation threshold within specific distance
+						id1_1 = id1&(id2|id3)
+						id1_2 = id1&(~id2)
+						id1 = id1_1
+						print('threshold on correlation and p-value: ',np.sum(id1),thresh_corr_1,thresh_pval_1)
+						df1 = df_gene_peak_query.loc[id1_2,:]
+						print('peak-gene links with correlation above threshold but p-value higher than threshold, dataframe of size ',df1.shape)
+						print(df1)
+					query_id3 = query_idvec[id1] # retain gene-peak query with high peak accessibility-gene expression correlation
+					df2 = df_gene_peak_query.loc[query_id3,:]
+					
+					filename_save_thresh2 = select_config['filename_save_thresh2']
+					b = filename_save_thresh2.find('.txt')
+					output_filename = filename_save_thresh2[0:b]+'.%s.2.txt'%(thresh_corr_1)
+					df2.index = np.asarray(df2['gene_id'])
+					df2 = df2.sort_values(by=['gene_id','distance'],ascending=[True,True])
+					df2.to_csv(output_filename,sep='\t')
+
+					# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort1.txt'%(thresh_corr_1)
+					# df2 = df2.sort_values(by=[column_1,'distance_abs'],ascending=[False,True])
+					# df2.to_csv(output_filename,sep='\t')
+
+					# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort2.txt'%(thresh_corr_1)
+					# df2 = df2.sort_values(by=['peak_id',column_1,'distance_abs'],ascending=[True,False,True])
+					# df2.to_csv(output_filename,sep='\t')
+					list1.extend(query_id3)
+			else:
+				thresh_corr_1, thresh_pval_1 = thresh_corr_retain
+				id1 = (peak_corr.abs()>thresh_corr_1)
+				print('thresh correlation: ',np.sum(id1),thresh_corr_1)
+				if (thresh_pval_1<1):
+					id2 = (peak_pval<thresh_pval_1)
+					id3 = (distance_abs<peak_distance_thresh_1)
+					id1 = id1&(id2|id3)
+					sel_num1 = np.sum(id1)
+					print('thresholds on correlation and p-value: ',thresh_corr_1,thresh_pval_1)
+					print('selected peak-gene links by the thresholds: %d'%(sel_num1))
+				
+				query_id3 = query_idvec[id1] # retain gene-peak query with high peak accessibility-gene expression correlation
+				df2 = df_gene_peak_query.loc[query_id3,:]
+				
+				filename_save_thresh2 = select_config['filename_save_thresh2']
+				b = filename_save_thresh2.find('.txt')
+				output_filename = filename_save_thresh2[0:b]+'.%s.2.txt'%(thresh_corr_1)
+				df2.index = np.asarray(df2['gene_id'])
+				df2 = df2.sort_values(by=['gene_id','distance'],ascending=[True,True])
+				df2.to_csv(output_filename,sep='\t')
+
+				# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort1.txt'%(thresh_corr_1)
+				# df2 = df2.sort_values(by=[column_1,'distance_abs'],ascending=[False,True])
+				# df2.to_csv(output_filename,sep='\t')
+
+				# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort2.txt'%(thresh_corr_1)
+				# df2 = df2.sort_values(by=['peak_id',column_1,'distance_abs'],ascending=[True,False,True])
+				# df2.to_csv(output_filename,sep='\t')
+				list1.extend(query_id3)
+
+		query_id_sub1 = pd.Index(list1).unique()
+		t_columns = df_gene_peak_query.columns.difference(['distance_abs'],sort=False)
+		df_gene_peak_query = df_gene_peak_query.loc[:,t_columns]
+		
+		df_gene_peak_query_ori = df_gene_peak_query.copy()
+		df_gene_peak_query = df_gene_peak_query_ori.loc[query_id_sub1]
+		
+		df_gene_peak_query.index = np.asarray(df_gene_peak_query[column_id1])
+		df_gene_peak_query_ori.loc[query_id_sub1,column_label_1] = 1   # annotate selected candidate peak-gene links
+		df_gene_peak_query_ori.index = np.asarray(df_gene_peak_query_ori[column_id1])
+		id_query = (~pd.isna(df_gene_peak_query_ori[column_label_1]))
+		df_gene_peak_query_ori.loc[id_query,column_label_1] = df_gene_peak_query_ori.loc[id_query,column_label_1].astype(int)
+		
+		column_id_1 = select_config['column_highly_variable'] # column representing highly variable genes
+		if column_id_1 in df_gene_peak_query.columns:
+			column_vec_1 = [column_id_1,column_id1,column_distance]
+			df_gene_peak_query = df_gene_peak_query.sort_values(by=column_vec_1,ascending=[False,True,True])
+		else:
+			column_vec_1 = [column_id1,column_distance]
+			df_gene_peak_query = df_gene_peak_query.sort_values(by=column_vec_1,ascending=[True,True])
+
+		return df_gene_peak_query, df_gene_peak_query_ori
+
+	## ====================================================
+	# select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlation and p-value
+	def test_gene_peak_query_correlation_pre1_select_1(self,gene_query_vec=[],df_gene_peak_query=[],peak_loc_query=[],atac_ad=[],rna_exprs=[],input_filename='',
+															index_col=0,highly_variable=False,peak_distance_thresh=2000,
+															save_mode=1,save_file_path='',output_filename_1='',output_filename_2='',filename_prefix_save='',verbose=0,select_config={}):
+
+		"""
+		select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlation and p-value
+		:param gene_query_vec: (array or list) the target genes
+		:param df_gene_peak_query: (dataframe) annotations of peak-gene links
+		:param peak_loc_query: (array) the ATAC-seq peak loci for which to estimate peak-gene links
+		:param atac_ad: (AnnData object) ATAC-seq data of the metacells
+		:param rna_exprs: (dataframe) gene expressions of the metacells
+		:param input_filename: path of the file which saved annotations of peak-gene links
+		:param index_col: column to use as the row label for data in the dataframe
+		:param highly_variable: indicator of whether to only include highly variable genes as the target genes
+		:param peak_distance_thresh: threshold on peak-gene TSS distance to search for peak-gene links
+		:param save_mode: indicator of whether to save data
+		:param save_file_path: the directory to save data
+		:param output_filename: filename to save data
+		:param output_filename_2: filename to save data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: 1. (dataframe) selected candidate peak-gene links using thresholds on peak accessibility-gene expression correlation and p-value;
+				 2. (dataframe) the original peak-gene links from which to select the candidate links
+		"""
+
+		# peak-gene link pre-selection
+		# pre-selection 2: select based on emprical p-value
+		flag_select_thresh2=1
+		if flag_select_thresh2>0:
+			thresh_corr_1, thresh_pval_1 = 0.01,0.05
+			thresh_corr_2, thresh_pval_2 = 0.1,0.1
+			
+			## thresh 2
+			if 'thresh_corr_distance_2' in select_config:
+				thresh_corr_distance = select_config['thresh_corr_distance_2']
+			else:
+				# thresh_distance_1 = 50
+				thresh_distance_1 = 100
+				if 'thresh_distance_default_2' in select_config:
+					thresh_distance_1 = select_config['thresh_distance_default_2'] # the distance threshold with which we retain the peaks without thresholds of correlation and p-value
+
+				thresh_corr_distance = [[0,thresh_distance_1,[[0,1,0,1]]],
+										[thresh_distance_1,500,[[0.01,0.1,-0.01,0.1],[0.15,0.15,-0.15,0.15]]],
+										[500,1000,[[0.1,0.1,-0.1,0.1]]],
+										[1000,2050,[[0.15,0.1,-0.15,0.1]]]]
+
+			print('thresh_corr_distance')
+			print(thresh_corr_distance)
+
+			start = time.time()
+			if len(df_gene_peak_query)==0:
+				df_gene_peak_query = pd.read_csv(input_filename,index_col=index_col,sep='\t')
+				column_id1 = 'gene_id'
+				if not (column_id1 in df_gene_peak_query.columns):
+					df_gene_peak_query[column_id1] = np.asarray(df_gene_peak_query.index)
+				else:
+					# df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
+					df_gene_peak_query.index = np.asarray(df_gene_peak_query[column_id1])
+
+			# gene-peak association selection by thresholds
+			# select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlations and empirical p-values
+			df_gene_peak_query_pre1, df_gene_peak_query = self.test_gene_peak_query_correlation_thresh_pre1(df_gene_peak_query=df_gene_peak_query,
+																											thresh_corr_distance=thresh_corr_distance,
+																											verbose=verbose,
+																											select_config=select_config)
+			
+			print('original peak-gene links, peak-gene links after selection by correlation and p-value thresholds ',df_gene_peak_query.shape,df_gene_peak_query_pre1.shape)
+			
+			stop = time.time()
+			print('the pre-selection used %.5fs'%(stop-start))
+
+			if (save_mode>0):
+				float_format = '%.5E'
+				if (output_filename_2!=''):
+					df_gene_peak_query_pre1.index = np.asarray(df_gene_peak_query_pre1['gene_id'])
+					df_gene_peak_query_pre1.to_csv(output_filename_2,sep='\t',float_format=float_format)
+
+				if (output_filename_1!=''):
+					df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
+					df_gene_peak_query.to_csv(output_filename_1,sep='\t',float_format=float_format)
+
+			return df_gene_peak_query_pre1, df_gene_peak_query
+
+	## ====================================================
 	# combine peak accessibility-gene expression correlations of different subsets of peak-gene links
-	# to update
 	def test_query_feature_correlation_merge_1(self,df_gene_peak_query=[],filename_list=[],flag_combine=1,compute_mode=-1,index_col=0,save_mode=0,output_path='',output_filename='',verbose=0,select_config={}):
 
 		"""
@@ -2405,6 +2707,18 @@ class _Base2_correlation2(_Base_pre2):
 
 				if (save_mode>0) and (output_filename!=''):
 					df_gene_peak_query_1.to_csv(output_filename,sep='\t')
+
+					save_mode_query = self.save_mode
+					file_num1 = len(input_filename_list)
+					if (save_mode_query==1):
+						# without saving the intermediate files
+						for i1 in range(file_num1):
+							filename_query = input_filename_list1[i1]
+							try:
+								os.remove(filename_query)
+							except Exception as error:
+								print('error! ',error)
+
 			else:
 				print('please perform peak accessibility-gene expression correlation estimation or load estimated correlations')
 
@@ -2412,14 +2726,14 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query empirical p-values of peak accessibility-gene expression correlations for candidate peak-gene links
-	# to update
 	def test_query_feature_correlation_merge_2(self,df_gene_peak_query=[],df_gene_peak_bg=[],filename_list=[],column_idvec=['peak_id','gene_id'],column_vec_query=[],
 													flag_combine=1,coherent_mode=1,index_col=0,save_mode=0,output_file_path='',output_filename='',verbose=0,select_config={}):
 
 		"""
 		query empirical p-values of peak accessibility-gene expression correlations for candidate peak-gene links
 		:param df_gene_peak_query: (dataframe) annotations of links between each target gene and the associated candidate peaks (candidate peak-gene links)
-		:param df_gene_peak_bg: (dataframe) annotations of candidate peak-gene links with background peaks sampled for the candidate peaks to compute the empirical p-values of peak-gene correlations
+		:param df_gene_peak_bg: (dataframe) annotations of candidate peak-gene links with background peaks sampled for the candidate peaks 
+											to compute the empirical p-values of peak-gene correlations
 		:param filename_list: (list) paths of two types of files containing candidate peak-gene link annotations: 
 							  1: with raw p-values of peak-gene correlations only; 
 							  2: with empirical p-values computed using background peak loci;
@@ -2432,7 +2746,8 @@ class _Base2_correlation2(_Base_pre2):
 		:param output_file_path: the directory to save data
 		:param verbose: verbosity level to print the intermediate information
 		:param select_config: dictionary containing parameters
-		:return: (dataframe) annotations of candidate peak-gene links including peak accessibility-gene expression correlations and the raw p-values and empirical p-values	
+		:return: (dataframe) annotations of candidate peak-gene links including peak accessibility-gene expression correlations 
+							 and the raw p-values and empirical p-values	
 		"""
 
 		if flag_combine>0:
@@ -2525,7 +2840,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query paths of the files saved for computed peak accessibility-gene expression correlations
-	# to update
 	def test_feature_link_query_correlation_file_pre1(self,type_id_query=0,input_file_path='',select_config={}):
 
 		"""
@@ -2552,7 +2866,6 @@ class _Base2_correlation2(_Base_pre2):
 
 	## ====================================================
 	# query estimated empirical p-values of peak accessibility-gene expression correlations of peak-gene links
-	# to update
 	def test_gene_peak_query_correlation_pre1_combine(self,gene_query_vec=[],peak_distance_thresh=500,df_gene_peak_distance=[],df_peak_query=[],
 														peak_loc_query=[],atac_ad=[],rna_exprs=[],highly_variable=False,highly_variable_thresh=0.5,
 														load_mode=1,input_file_path='',save_mode=1,save_file_path='',output_filename='',filename_prefix_save='',
@@ -2664,271 +2977,7 @@ class _Base2_correlation2(_Base_pre2):
 			return df_gene_peak_query_compute1, df_gene_peak_query
 
 	## ====================================================
-	# select candidate peak-gene links using thresholds on peak accessibility-gene expression correlation and p-value
-	# to update
-	def test_gene_peak_query_correlation_thresh_pre1(self,df_gene_peak_query=[],column_idvec=['peak_id','gene_id'],column_vec_query=[],thresh_corr_distance=[],verbose=0,select_config={}):
-
-		"""
-		select candidate peak-gene links by thresholds on peak accessibility-gene expression correlation and empirical p-value;
-		thresholds are adjusted for different peak-gene distance ranges;
-		:param df_gene_peak_query: (dataframe) annotations of peak-gene links
-		:param column_idvec: (array or list) columns representing peak and gene indices in the peak-gene link annotation dataframe
-		:param column_vec_query: (array or list) columns which will added or updated in the peak-gene link annotation dataframe, including the column representing which peak-gene links are selected as candidate links
-		:param thresh_corr_distance: (list of list) thresholds on peak accessibility-gene expression correlation and empirical p-value for different peak-gene distance ranges
-		:param verbose: verbosity level to print the intermediate information
-		:param select_config: dictionary containing parameters
-		:return: 1. (dataframe) annotations of selected candidate peak-gene links
-				 2. (dataframe) updated annotations of the original peak-gene links, including labels for the selected candidate links 
-		"""
-
-		df_gene_peak_query.index = utility_1.test_query_index(df_gene_peak_query,column_vec=column_idvec)
-		query_idvec = df_gene_peak_query.index
-		column_id1, column_id2 = column_idvec
-		if len(column_vec_query)==0:
-			column_vec_query = ['label_thresh2']
-
-		column_label_1 = column_vec_query[0] # column representing which peak-gene links are selected as candidate links
-
-		column_distance = select_config['column_distance'] # column_distance: 'distance' (peak-gene distance)
-		if not (column_distance in df_gene_peak_query):
-			field_query = ['distance']
-			# column_name = [column_distance]
-			column_idvec_query = ['peak_id','gene_id']
-			df_peak_annot = self.df_gene_peak_distance  # genome-wide peak-gene links with peak-gene distance computed (peaks within +/-2Mb of gene TSS)
-			# query peak-gene link attributes
-			df_gene_peak_query = self.test_gene_peak_query_attribute_1(df_gene_peak_query=df_gene_peak_query,
-																			df_gene_peak_query_ref=df_peak_annot,
-																			column_idvec=column_idvec_query,
-																			field_query=field_query,
-																			column_name=[],
-																			reset_index=False,
-																			select_config=select_config)
-
-		distance_abs = df_gene_peak_query[column_distance].abs()
-
-		column_vec_1 = select_config['column_correlation'] # column_vec_1:['spearmanr','pval1'] (peak accessibility-gene expr correlation and empirical p-value)
-		column_1, column_2 = column_vec_1[0:2]
-		column_2_ori = column_vec_1[2]
-
-		peak_corr, peak_pval = df_gene_peak_query[column_1], df_gene_peak_query[column_2]
-		id1 = (pd.isna(peak_pval)==True)
-		df1 = df_gene_peak_query.loc[id1]
-		print('peak-gene links without estimated empirical p-values of peak accessibility-gene expression correlations: %d'%(np.sum(id1)))
-		
-		peak_pval[id1] = df_gene_peak_query.loc[id1,column_2_ori] # use the raw p-values for peak-gene link selection
-		list1 = []
-		for thresh_vec in thresh_corr_distance:
-			constrain_1, constrain_2, thresh_peak_corr_vec = thresh_vec
-			id1 = (distance_abs<constrain_2)&(distance_abs>=constrain_1) # constraint by distance
-			
-			df_gene_peak_query_sub1 = df_gene_peak_query.loc[id1]
-			peak_corr, peak_pval = df_gene_peak_query_sub1[column_1], df_gene_peak_query_sub1[column_2]
-			peak_sel_corr_pos = (peak_corr>=1)
-			peak_sel_corr_neg = (peak_corr>=1)
-
-			# constraint by correlation value
-			for thresh_peak_corr_vec_1 in thresh_peak_corr_vec:
-				thresh_peak_corr_pos, thresh_peak_corr_pval_pos, thresh_peak_corr_neg, thresh_peak_corr_pval_neg = thresh_peak_corr_vec_1
-				
-				peak_sel_corr_pos = ((peak_corr>thresh_peak_corr_pos)&(peak_pval<thresh_peak_corr_pval_pos))|peak_sel_corr_pos
-				peak_sel_corr_neg = ((peak_corr<thresh_peak_corr_neg)&(peak_pval<thresh_peak_corr_pval_neg))|peak_sel_corr_neg
-				if verbose>0:
-					print('distance_thresh1:%d, distance_thresh2:%d'%(constrain_1,constrain_2))
-					print('thresh_sel_corr_pos, thresh_peak_corr_pval_pos, thresh_sel_corr_neg, thresh_peak_corr_pval_neg ', thresh_peak_corr_pos, thresh_peak_corr_pval_pos, thresh_peak_corr_neg, thresh_peak_corr_pval_neg)
-					print('peak_sel_corr_pos, peak_sel_corr_neg ', np.sum(peak_sel_corr_pos), np.sum(peak_sel_corr_neg))
-
-			peak_sel_corr_ = (peak_sel_corr_pos|peak_sel_corr_neg)
-			peak_sel_corr_num1 = np.sum(peak_sel_corr_)
-			if verbose>0:
-				print('peak_sel_corr_num ', peak_sel_corr_num1)
-
-			query_id1 = df_gene_peak_query_sub1.index
-			query_id2 = query_id1[peak_sel_corr_]
-			list1.extend(query_id2)
-		
-		peak_corr, peak_pval = df_gene_peak_query[column_1], df_gene_peak_query[column_2]
-		
-		distance_abs = df_gene_peak_query['distance'].abs()
-		df_gene_peak_query['distance_abs'] = distance_abs
-		peak_distance_thresh_1 = 500
-		
-		if 'thresh_corr_retain' in select_config:
-			thresh_corr_retain = np.asarray(select_config['thresh_corr_retain'])
-			if thresh_corr_retain.ndim==2:
-				for (thresh_corr_1, thresh_pval_1) in thresh_corr_retain:
-					id1 = (peak_corr.abs()>thresh_corr_1)
-					print('threshold on correlation: ',thresh_corr_1)
-					print('selected peak-gene links by the threshold: %d'%(np.sum(id1)))
-					if (thresh_pval_1<1):
-						id2 = (peak_pval<thresh_pval_1) # p-value threshold
-						id3 = (distance_abs<peak_distance_thresh_1) # distance threshold; only use correlation threshold within specific distance
-						id1_1 = id1&(id2|id3)
-						id1_2 = id1&(~id2)
-						id1 = id1_1
-						print('threshold on correlation and p-value: ',np.sum(id1),thresh_corr_1,thresh_pval_1)
-						df1 = df_gene_peak_query.loc[id1_2,:]
-						print('peak-gene links with correlation above threshold but p-value higher than threshold, dataframe of size ',df1.shape)
-						print(df1)
-					query_id3 = query_idvec[id1] # retain gene-peak query with high peak accessibility-gene expression correlation
-					df2 = df_gene_peak_query.loc[query_id3,:]
-					
-					filename_save_thresh2 = select_config['filename_save_thresh2']
-					b = filename_save_thresh2.find('.txt')
-					output_filename = filename_save_thresh2[0:b]+'.%s.2.txt'%(thresh_corr_1)
-					df2.index = np.asarray(df2['gene_id'])
-					df2 = df2.sort_values(by=['gene_id','distance'],ascending=[True,True])
-					df2.to_csv(output_filename,sep='\t')
-
-					# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort1.txt'%(thresh_corr_1)
-					# df2 = df2.sort_values(by=[column_1,'distance_abs'],ascending=[False,True])
-					# df2.to_csv(output_filename,sep='\t')
-
-					# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort2.txt'%(thresh_corr_1)
-					# df2 = df2.sort_values(by=['peak_id',column_1,'distance_abs'],ascending=[True,False,True])
-					# df2.to_csv(output_filename,sep='\t')
-					list1.extend(query_id3)
-			else:
-				thresh_corr_1, thresh_pval_1 = thresh_corr_retain
-				id1 = (peak_corr.abs()>thresh_corr_1)
-				print('thresh correlation: ',np.sum(id1),thresh_corr_1)
-				if (thresh_pval_1<1):
-					id2 = (peak_pval<thresh_pval_1)
-					id3 = (distance_abs<peak_distance_thresh_1)
-					id1 = id1&(id2|id3)
-					print('thresholds on correlation and p-value: ',thresh_corr_1,thresh_pval_1)
-					print('selected peak-gene links by the thresholds: %d',np.sum(id1))
-				
-				query_id3 = query_idvec[id1] # retain gene-peak query with high peak accessibility-gene expression correlation
-				df2 = df_gene_peak_query.loc[query_id3,:]
-				
-				filename_save_thresh2 = select_config['filename_save_thresh2']
-				b = filename_save_thresh2.find('.txt')
-				output_filename = filename_save_thresh2[0:b]+'.%s.2.txt'%(thresh_corr_1)
-				df2.index = np.asarray(df2['gene_id'])
-				df2 = df2.sort_values(by=['gene_id','distance'],ascending=[True,True])
-				df2.to_csv(output_filename,sep='\t')
-
-				# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort1.txt'%(thresh_corr_1)
-				# df2 = df2.sort_values(by=[column_1,'distance_abs'],ascending=[False,True])
-				# df2.to_csv(output_filename,sep='\t')
-
-				# output_filename = filename_save_thresh2[0:b]+'.%s.2.sort2.txt'%(thresh_corr_1)
-				# df2 = df2.sort_values(by=['peak_id',column_1,'distance_abs'],ascending=[True,False,True])
-				# df2.to_csv(output_filename,sep='\t')
-				list1.extend(query_id3)
-
-		query_id_sub1 = pd.Index(list1).unique()
-		t_columns = df_gene_peak_query.columns.difference(['distance_abs'],sort=False)
-		df_gene_peak_query = df_gene_peak_query.loc[:,t_columns]
-		
-		df_gene_peak_query_ori = df_gene_peak_query.copy()
-		df_gene_peak_query = df_gene_peak_query_ori.loc[query_id_sub1]
-		
-		df_gene_peak_query.index = np.asarray(df_gene_peak_query[column_id1])
-		df_gene_peak_query_ori.loc[query_id_sub1,column_label_1] = 1   # annotate selected candidate peak-gene links
-		df_gene_peak_query_ori.index = np.asarray(df_gene_peak_query_ori[column_id1])
-		
-		column_id_1 = select_config['column_highly_variable'] # column representing highly variable genes
-		if column_id_1 in df_gene_peak_query.columns:
-			column_vec_1 = [column_id_1,column_id1,column_distance]
-			df_gene_peak_query = df_gene_peak_query.sort_values(by=column_vec_1,ascending=[False,True,True])
-		else:
-			column_vec_1 = [column_id1,column_distance]
-			df_gene_peak_query = df_gene_peak_query.sort_values(by=column_vec_1,ascending=[True,True])
-
-		return df_gene_peak_query, df_gene_peak_query_ori
-
-	## ====================================================
-	# pre-selection of peak-gene link query using thresholds of the peak-gene correlations and empirical p-values
-	# select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlation and p-value
-	# to update
-	def test_gene_peak_query_correlation_pre1_select_1(self,gene_query_vec=[],df_gene_peak_query=[],peak_loc_query=[],atac_ad=[],rna_exprs=[],input_filename='',
-															index_col=0,highly_variable=False,peak_distance_thresh=2000,
-															save_mode=1,save_file_path='',output_filename_1='',output_filename_2='',filename_prefix_save='',verbose=0,select_config={}):
-
-		"""
-		select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlation and p-value
-		:param gene_query_vec: (array or list) the target genes
-		:param df_gene_peak_query: (dataframe) annotations of peak-gene links
-		:param peak_loc_query: (array) the ATAC-seq peak loci for which to estimate peak-gene links
-		:param atac_ad: (AnnData object) ATAC-seq data of the metacells
-		:param rna_exprs: (dataframe) gene expressions of the metacells
-		:param input_filename: path of the file which saved annotations of peak-gene links
-		:param index_col: column to use as the row label for data in the dataframe
-		:param highly_variable: indicator of whether to only include highly variable genes as the target genes
-		:param peak_distance_thresh: threshold on peak-gene TSS distance to search for peak-gene links
-		:param save_mode: indicator of whether to save data
-		:param save_file_path: the directory to save data
-		:param output_filename: filename to save data
-		:param output_filename_2: filename to save data
-		:param filename_prefix_save: prefix used in potential filename to save data
-		:param verbose: verbosity level to print the intermediate information
-		:param select_config: dictionary containing parameters
-		:return: 1. (dataframe) selected candidate peak-gene links using thresholds on peak accessibility-gene expression correlation and p-value;
-				 2. (dataframe) the original peak-gene links from which to select the candidate links
-		"""
-
-		## peak-gene query pre-selection
-		# pre-selection 2: select based on emprical p-value
-		flag_select_thresh2=1
-		if flag_select_thresh2>0:
-			thresh_corr_1, thresh_pval_1 = 0.01,0.05
-			thresh_corr_2, thresh_pval_2 = 0.1,0.1
-			
-			## thresh 2
-			if 'thresh_corr_distance_2' in select_config:
-				thresh_corr_distance = select_config['thresh_corr_distance_2']
-			else:
-				# thresh_distance_1 = 50
-				thresh_distance_1 = 100
-				if 'thresh_distance_default_2' in select_config:
-					thresh_distance_1 = select_config['thresh_distance_default_2'] # the distance threshold with which we retain the peaks without thresholds of correlation and p-value
-
-				thresh_corr_distance = [[0,thresh_distance_1,[[0,1,0,1]]],
-										[thresh_distance_1,500,[[0.01,0.1,-0.01,0.1],[0.15,0.15,-0.15,0.15]]],
-										[500,1000,[[0.1,0.1,-0.1,0.1]]],
-										[1000,2050,[[0.15,0.1,-0.15,0.1]]]]
-
-			print('thresh_corr_distance')
-			print(thresh_corr_distance)
-
-			start = time.time()
-			if len(df_gene_peak_query)==0:
-				df_gene_peak_query = pd.read_csv(input_filename,index_col=index_col,sep='\t')
-				column_id1 = 'gene_id'
-				if not (column_id1 in df_gene_peak_query.columns):
-					df_gene_peak_query[column_id1] = np.asarray(df_gene_peak_query.index)
-				else:
-					# df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
-					df_gene_peak_query.index = np.asarray(df_gene_peak_query[column_id1])
-
-			# gene-peak association selection by thresholds
-			# select candidate peak-gene links using thresholds on the peak accessibility-gene expression correlations and empirical p-values
-			df_gene_peak_query_pre1, df_gene_peak_query = self.test_gene_peak_query_correlation_thresh_pre1(df_gene_peak_query=df_gene_peak_query,
-																											thresh_corr_distance=thresh_corr_distance,
-																											verbose=verbose,
-																											select_config=select_config)
-			
-			print('original peak-gene links, peak-gene links after selection by correlation and p-value thresholds ',df_gene_peak_query.shape,df_gene_peak_query_pre1.shape)
-			
-			stop = time.time()
-			print('the pre-selection used %.5fs'%(stop-start))
-
-			if (save_mode>0):
-				float_format = '%.5E'
-				if (output_filename_2!=''):
-					df_gene_peak_query_pre1.index = np.asarray(df_gene_peak_query_pre1['gene_id'])
-					df_gene_peak_query_pre1.to_csv(output_filename_2,sep='\t',float_format=float_format)
-
-				if (output_filename_1!=''):
-					df_gene_peak_query.index = np.asarray(df_gene_peak_query['gene_id'])
-					df_gene_peak_query.to_csv(output_filename_1,sep='\t',float_format=float_format)
-
-			return df_gene_peak_query_pre1, df_gene_peak_query
-
-	## ====================================================
 	# query candidate peak number for each target gene and potential target gene number for each candidate peak and other peak-gene association attributes
-	# to update
 	def test_peak_gene_query_basic_1(self,data=[],input_filename='',save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',verbose=0,select_config={}):
 
 		"""
@@ -2941,8 +2990,10 @@ class _Base2_correlation2(_Base_pre2):
 		:param filename_prefix_save: prefix used in potential filename to save data
 		:param verbose: verbosity level to print the intermediate information
 		:param select_config: dictionary containing parameters
-		:return: 1. (dataframe) peak-gene association attributes for each target gene, including candidate peak number, maximal and minimal peak-gene TSS distances, and maximal and minimal peak accessibility-gene expression correlations;
-				 2. (dataframe) peak-gene association attributes for each candidate peak, including potential target gene number, maximal and minimal peak-gene TSS distances, and maximal and minimal peak accessibility-gene expression correlations;
+		:return: 1. (dataframe) peak-gene association attributes for each target gene, including candidate peak number, 
+								maximal and minimal peak-gene TSS distances, and maximal and minimal peak accessibility-gene expression correlations;
+				 2. (dataframe) peak-gene association attributes for each candidate peak, including potential target gene number, 
+				 				maximal and minimal peak-gene TSS distances, and maximal and minimal peak accessibility-gene expression correlations;
 		"""
 
 		if len(data)==0:

@@ -4,62 +4,41 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import anndata as ad
-import anndata
 from anndata import AnnData
-import scanpy.external as sce
 
 from copy import deepcopy
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.pylab as pylab
 plt.switch_backend('Agg')
 
 import warnings
 import phenograph
 
 import sys
-from tqdm.notebook import tqdm
 
-import csv
 import os
 import os.path
 from optparse import OptionParser
 
 import sklearn
 from sklearn.base import BaseEstimator
-from sklearn.decomposition import PCA,IncrementalPCA,KernelPCA,SparsePCA,TruncatedSVD
+from sklearn.decomposition import PCA,TruncatedSVD
 from sklearn import preprocessing
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
-
-from sklearn.cluster import AffinityPropagation,SpectralClustering,AgglomerativeClustering,DBSCAN,OPTICS,cluster_optics_dbscan
-from sklearn.cluster import MiniBatchKMeans,KMeans,MeanShift
+from sklearn.cluster import AffinityPropagation,SpectralClustering,AgglomerativeClustering
+from sklearn.cluster import MiniBatchKMeans,KMeans
 
 from scipy import stats
 import scipy.sparse
 from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse
 
 import utility_1
-import h5py
 import pickle
 
-# get_ipython().run_line_magic('matplotlib', 'inline')
 sc.settings.verbosity = 3   # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=100, facecolor='white')
-
-# %matplotlib inline
-# matplotlib.rcParams['figure.figsize'] = [5, 5]
-# matplotlib.rcParams['figure.dpi'] = 100
-# matplotlib.rcParams['image.cmap'] = 'Spectral_r'
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
-
-# matplotlib.rc('xtick', labelsize=10)
-# matplotlib.rc('ytick', labelsize=10)
-# plt.rcParams['axes.labelsize'] = 12
-# plt.rcParams['axes.titlesize'] = 15
-# plt.rcParams["figure.autolayout"] = True
-# warnings.filterwarnings(action="ignore", module="matplotlib", message="findfont")
 
 class _Base2_group1(BaseEstimator):
 	"""Base class for group estimation
@@ -78,22 +57,12 @@ class _Base2_group1(BaseEstimator):
 					select_config={}):
 
 		self.run_id = run_id
-		# self.cell = cell
-		# self.generate = generate
-		# self.train_chromvec = chromvec
-		# self.chromosome = chromvec[0]
 
 		# self.path_1 = file_path
+		self.save_path_1 = file_path
 		self.config = config
 		self.run_id = run_id
-
-		self.save_path_1 = file_path
-		self.pre_rna_ad = []
-		self.pre_atac_ad = []
 		self.fdl = []
-		# self.motif_data = []
-		# self.motif_data_score = []
-		# self.motif_query_name_expr = []
 		
 		data_type_id = 1
 		if 'data_type_id' in self.config:
@@ -102,93 +71,16 @@ class _Base2_group1(BaseEstimator):
 		input_file_path1 = self.save_path_1
 
 		self.select_config = select_config
-		# self.gene_name_query_expr_ = []
-		# self.gene_highly_variable = []
-		# self.peak_dict_ = []
-		# self.df_gene_peak_ = []
-		# self.df_gene_peak_list_ = []
-		# self.motif_data = []
-		# self.gene_expr_corr_ = []
-		# self.df_tf_expr_corr_list_pre1 = []	# tf-tf expr correlation
-		# self.df_expr_corr_list_pre1 = []	# gene-tf expr correlation
-		# self.df_gene_query = []
-		# self.df_gene_peak_query = []
-		# self.df_gene_annot_1 = []
-		# self.df_gene_annot_2 = []
-		# self.df_gene_annot_ori = []
-		# self.df_gene_annot_expr = df_gene_annot_expr
-		# self.df_peak_annot = []
 		self.pre_data_dict_1 = dict()
 		self.df_rna_obs = []
 		self.df_atac_obs = []
 		self.df_rna_var = []
 		self.df_atac_var = []
-		# self.df_gene_peak_distance = []
-		# self.df_gene_tf_expr_corr_ = []
-		# self.df_gene_tf_expr_pval_ = []
-		# self.df_gene_expr_corr_ = []
-		# self.df_gene_expr_pval_ = []
 		self.dict_feature_query_1 = dict()
 		self.dict_feature_scale_1 = dict()
-		# self.dict_pre_data = dict()
-
-	## feature matrix query
-	# def test_query_feature_mtx_1(self,feature_type_vec=[],feature_type='peak',dict_feature_query=[],dict_feature_query2=[],dict_scale_type=[],feature_vec=[],type_id_feature=3,verbose=0,select_config={}):
-
-	# 	dict_feature_query_1 = self.dict_feature_query_1
-	# 	type_id_query = 0
-	# 	type_id_scale = 0
-	# 	if len(dict_feature_query2)>0:
-	# 		type_id_query = 1   # query subset of anndata
-
-	# 	if len(dict_scale_type)>0:
-	# 		type_id_scale = 1   # feature scale
-
-	# 	dict_feature_scale_1 = dict()
-	# 	feature_type_vec_2 = ['feature1','feature2','feature3']
-	# 	query_num1 = len(feature_type_vec_2)
-	# 	for feature_type_query in feature_type_vec:
-	# 		dict_query1 = dict_feature_query[feature_type_query]
-	# 		dict_query2 = dict()
-	# 		dict_feature_query_1[feature_type_query] = dict()
-	# 		dict_feature_scale_1[feature_type_query] = dict()
-	# 		# for query_id in feature_type_vec_2[0:2]:
-	# 		for i1 in range(2):
-	# 			query_id = feature_type_vec_2[i1]
-	# 			adata1 = dict_query1[query_id]
-	# 			df_feature = []
-	# 			if len(adata1)>0:
-	# 				if type_id_query>0:
-	# 					feature_vec = dict_feature_query2[feature_type_query]
-	# 					adata1 = adata1[feature_vec,:]	# query subset of anndata
-					
-	# 				try:
-	# 					df_feature = pd.DataFrame(index=adata1.obs_names,columns=adata1.var_names,data=adata1.X.toarray(),dtype=np.float32)
-	# 				except Exception as error:
-	# 					print('error! ',error)
-	# 					df_feature = pd.DataFrame(index=adata1.obs_names,columns=adata1.var_names,data=np.asarray(adata1.X),dtype=np.float32)
-
-	# 				if (type_id_scale>0) and (feature_type_query in dict_scale_type):
-	# 					scale_type_vec = dict_scale_type[feature_type_query]
-	# 					scale_type = scale_type_vec[i1]
-	# 					if scale_type>0:
-	# 						df_feature_pre1 = utility_1.test_motif_peak_estimate_score_scale_1(score=df_feature,feature_query_vec=[],
-	# 																							select_config=select_config,
-	# 																							scale_type_id=scale_type)
-	# 						dict_feature_scale_1[feature_type_query].update({query_id:df_feature_pre1})
-						
-	# 			dict_feature_query_1[feature_type_query].update({query_id:df_feature})
-
-	# 	self.dict_feature_query_1 = dict_feature_query_1
-	# 	self.dict_feature_scale_1 = dict_feature_query_1
-
-	# 	return dict_feature_query_1
 
 	## ======================================================
-	# query the number of components for dimension reduction
 	# query the number of dimensions for dimension reduction
-	# TODO
-	# to update
 	def test_query_component_1(self,feature_mtx,adata=[],type_id_feature=0,type_id_compute=0,normalize_type=0,zero_center=False,thresh_cml_var=0.9,
 									save_mode=1,output_file_path='',output_filename='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -241,7 +133,6 @@ class _Base2_group1(BaseEstimator):
 			df_component_query = pd.DataFrame(index=num_vec,columns=['explained_variance'],data=np.asarray(query_vec_2)[:,np.newaxis])
 			# cml_var_explained = np.cumsum(adata.uns['pca']['variance_ratio'])
 			cml_var_explained = np.cumsum(df_component_query['explained_variance'])
-			# x = range(len(adata.uns['pca']['variance_ratio']))
 
 			feature_mtx_2 = csr_matrix(feature_mtx_2)
 			layer_name_pre1 = 'layer%d'%(type_id_compute)
@@ -261,19 +152,16 @@ class _Base2_group1(BaseEstimator):
 		return df_component_query, n_components_query, adata2
 
 	## ======================================================
-	# query explained variance threshold
 	# query the number of dimensions for dimension reduction
-	# TODO
-	# to update
 	def test_query_component_2(self,df=[],input_filename='',thresh_cml_var=0.90,thresh_cml_var_2=0.80,n_components_default=[50,300],flag_default=1,verbose=0,select_config={}):
 
 		"""
 		:param df: dataframe containing the explained variance of the each principal component using dimension reduction;
-		:param input_filename: (str) path of the file which saved the dataframe containing the explained variance of each principal component using dimension reduction;
+		:param input_filename: (str) file path of the dataframe containing the explained variance of each principal component using dimension reduction
 		:param thresh_cml_var: (float) threshold on the cumulative variance to estimate the number of dimensions to keep
 		:param thresh_cml_var_2: (float) the second threshold on the cumulative variance to estimate the number of dimensions to keep
 		:param n_components_default: (array or list) the default number of principal components to use for dimension reduction;
-		:param flag_default: indicator of whether to utilize the default number of principal components as thresholds on the number of components to use;
+		:param flag_default: indicator of whether to use the default number of principal components as thresholds on the number of components to use
 		:param verbose: verbosity level to print the intermediate information
 		:param select_config: dictionary containing parameters
 		:return: 1. the estimated number of dimensions to keep; 
@@ -313,10 +201,7 @@ class _Base2_group1(BaseEstimator):
 		return n_components_thresh, thresh_cml_var_query
 
 	## ======================================================
-	# dimension reduction
-	# dimension reduction using methods: TruncatedSVD 1, TruncatedSVD 2, PCA (2: from scanpy, 3: from sklearn)
-	# TODO
-	# to update
+	# dimension reduction using methods: TruncatedSVD and PCA
 	def dimension_reduction(self,feature_mtx,ad=[],n_components=100,type_id_compute=0,normalize_type=0,zero_center=False,copy=False,save_mode=1,output_file_path='',output_filename='',select_config={}):
 
 		"""
@@ -414,10 +299,7 @@ class _Base2_group1(BaseEstimator):
 		return feature_mtx_transform, dimension_model, query_vec, ad
 
 	## ======================================================
-	# clustering configuration query
-	# parameter configuration for the methods used for clustering
-	# TODO
-	# to update
+	# parameter configuration for the clustering methods
 	def test_cluster_query_config_1(self,method_type_vec,distance_threshold=-1,linkage_type_id=0,neighbors=20,metric='euclidean',n_clusters=100,select_config={}):
 
 		"""
@@ -477,10 +359,7 @@ class _Base2_group1(BaseEstimator):
 		return list_config
 
 	## ======================================================
-	# query the number of clusters
 	# estimate the number of clusters
-	# TODO
-	# to update
 	def test_query_cluster_pre1(self,adata=[],feature_mtx=[],method_type='MiniBatchKMeans',n_clusters=300,cluster_num_vec=[],neighbors=20,save_mode=0,output_filename='',verbose=0,select_config={}):
 
 		"""
@@ -494,7 +373,7 @@ class _Base2_group1(BaseEstimator):
 		:param output_filename: filename to save data
 		:param verbose: verbosity level to print the intermediate information
 		:param select_config: dictionary containing parameters
-		:return: (dataframe) the SSE of clusters for each number of clusters used (specified in cluster_num_vec) by using the specific method for clustering
+		:return: (dataframe) the SSE of clusters for different numbers of clusters by using the specific method for clustering
 		"""
 
 		flag_query1=1
@@ -548,10 +427,7 @@ class _Base2_group1(BaseEstimator):
 			return df_cluster_query
 
 	## ======================================================
-	# clustering analysis
 	# perform clustering
-	# TODO
-	# to update
 	def test_cluster_query_1(self,feature_mtx,n_clusters,ad=[],method_type_vec=[],neighbors=30,select_config={}):
 
 		"""
@@ -686,10 +562,7 @@ class _Base2_group1(BaseEstimator):
 		return ad, query_vec
 
 	## ======================================================
-	# feature group estimation
 	# perform clustering
-	# TODO
-	# to update
 	def test_query_group_1(self,data=[],adata=[],feature_type_query='peak',list_config=[],flag_iter=1,flag_cluster=1,
 								save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -812,15 +685,12 @@ class _Base2_group1(BaseEstimator):
 				return df_obs
 
 	## ======================================================
-	# query cluster mean value, std value and cluster frequency for each clustering prediction
-	# return: dict_feature: {'mean','std','mean_scale','df_ratio'}
-	# to update: combine different fields into anndata
-	# TODO
-	# to update
+	# query mean and standard deviation values of signals in each cluster and cluster percentages
 	def test_query_cluster_signal_1(self,feature_mtx,cluster_query=[],df_obs=[],method_type='',thresh_group_size=5,scale_type=3,type_id_compute=0,transpose=False,colname_annot=False,
 										flag_ratio=0,save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',verbose=0,select_config={}):
 		
 		"""
+		query mean and std values of signals in each cluster and cluster percentages
 		:param feature_mtx: (dataframe) the feature matrix of the observations (row:observation, column:variable)
 		:param cluster_query: (pandas.Series) group (cluster) assignment of observations by using the specific method for clustering
 		:param df_obs: (dataframe) annotations of observations including the group assigment by using the specific method for clustering
@@ -829,7 +699,7 @@ class _Base2_group1(BaseEstimator):
 		:param scale_type: the type of scaling to perform on the feature matrix of the observations
 		:param type_id_compute: indicator of which method to use to perform dimension reduction
 		:param transpose: indicator of whether to transpose the feature matrix
-		:param colname_annot: indicator of whether to rename the columns of the dataframes of the mean and standard deviation values of observation features in each group
+		:param colname_annot: indicator of whether to rename columns of the dataframes of the mean and standard deviation values of observation features in each group
 		:param flag_ratio:indicator of whether to query the number of members in each group and the percentage each group occupies in the population
 		:param save_mode: indicator of whether to save data
 		:param output_file_path: the directory to save data
@@ -915,119 +785,7 @@ class _Base2_group1(BaseEstimator):
 					output_filename = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix_save,filename_annot)
 					df_feature.to_csv(output_filename,sep='\t',float_format='%.5f')
 
-			# return True
 			return dict_feature
-
-	## ======================================================
-	# cluster plot query
-	# TODO
-	# def test_cluster_query_plot_1(self,adata,column_id,n_pcs=100,n_neighbors=20,layer_name_query='X_svd',palatte_name='tab20',title='Group',flag_umap=1,flag_tsne=1,flag_fdl=1,
-	# 								save_mode=1,filename_prefix_save='',select_config={}):
-
-	# 	"""
-	# 	:param adata:
-	# 	:param column_id:
-	# 	:param n_pcs: (int) the parameter of the number of principal components used in estimating neigbhors in the neighbors() function in Scanpy
-	# 	:param n_neighbors: (int) the parameter of the number of neighbors used in estimating neigbhors in the neighbors() function in Scanpy
-	# 	:param layer_name_query: (str)
-	# 	:param palatte_name: (str)
-	# 	:param title: (str)
-	# 	:param flag_umap: 
-	# 	:param flag_tsne: 
-	# 	:param flag_fdl: 
-	# 	:param save_mode: indicator of whether to save data
-	# 	:param filename_prefix_save: prefix used in potential filename to save data
-	# 	:param select_config: dictionary containing parameters
-	# 	"""
-
-	# 	if (flag_umap>0) or (flag_fdl>0):
-	# 		try:
-	# 			sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs, use_rep=layer_name_query)
-	# 		except Exception as error:
-	# 			print('error! ',error)
-	# 			return
-			
-	# 	matplotlib.rcParams['figure.figsize'] = [3.5,3.5]
-	# 	if flag_umap>0:
-	# 		sc.tl.umap(adata)
-	# 		# 'palette' specifies the colormap to use
-	# 		sc.pl.umap(adata,color=[column_id],palette=palatte_name, title=[title])
-
-	# 		if save_mode>0:
-	# 			output_filename = filename_prefix_save+'.umap.%d.%s.1.png'%(n_pcs,column_id)
-	# 			plt.savefig(output_filename,format='png')
-
-	# 	if flag_tsne>0:
-	# 		sc.tl.tsne(adata,use_rep=layer_name_query)
-	# 		sc.pl.tsne(adata,use_raw=False,color=[column_id],palette=palatte_name,title=[title])
-			
-	# 		if save_mode>0:
-	# 			output_filename = filename_prefix_save+'.tsne.%d.%s.1.png'%(n_pcs,column_id)
-	# 			plt.savefig(output_filename,format='png')
-
-	# 	if flag_fdl>0:
-	# 		sc.tl.draw_graph(adata)
-	# 		sc.pl.draw_graph(adata,color=[column_id],palette=palatte_name, title=[title])
-
-	# 		if save_mode>0:
-	# 			output_filename = filename_prefix_save+'.fdl.%d.%s.1.png'%(n_pcs,column_id)
-	# 			plt.savefig(output_filename,format='png')
-
-	# 	return True
-
-	## ======================================================
-	# cluseter matching
-	# query the overlapping between clusters estimated by different methods
-	# TODO
-	# to update
-	# def test_cluster_query_overlap_1(self,method_type_vec,df_cluster,save_mode=1,output_file_path='',output_filename_1='',output_filename_2='',filename_prefix_save='',verbose=0,select_config={}):
-
-	# 	"""
-	# 	:param method_type_vec: (array or list) the methods used for clustering
-	# 	:param df_cluster: (dataframe) group assignments of the observations using different methods for clustering
-	# 	:param save_mode: indicator of whether to save data
-	# 	:param output_filename_1: filename to save the group overlapping count matrix
-	# 	:param output_filename_2: filename to save the group overlapping ratio matrix
-	# 	:param filename_prefix_save: prefix used in potential filename to save data
-	# 	:param verbose: verbosity level to print the intermediate information
-	# 	:param select_config: dictionary containing parameters
-	# 	:return: dictionary containing the dataframes of the group overlapping count and ratio matrices for each pair of methods used for clustering
-	# 	"""
-
-	# 	flag_query1=1
-	# 	if flag_query1>0:
-	# 		method_type_1 = method_type_vec[0]
-	# 		df_group1 = df_cluster[method_type_1]
-	# 		dict_query = dict()
-	# 		for method_type_2 in method_type_vec[1:]:
-	# 			df_group2 = df_cluster[method_type_2]
-	# 			group_vec_1, group_vec_2 = np.unique(df_group1), np.unique(df_group2)
-	# 			group_num1, group_num2 = len(group_vec_1), len(group_vec_2)
-				
-	# 			if verbose>0:
-	# 				print('number of groups using feature type 1: %d'%(group_num1))
-	# 				print('number of groups using feature type 2: %d'%(group_num2))
-
-	# 			df_count_pre = pd.DataFrame(index=group_vec_2,columns=group_vec_1,data=np.float32)
-	# 			for l1 in range(group_num1):
-	# 				group_id1 = group_vec_1[l1]
-	# 				for l2 in range(group_num2):
-	# 					group_id2 = group_vec_2[l2]
-	# 					count1 = np.sum((df_group1==group_id1)&(df_group2==group_id2))
-	# 					# print('count:%d, %s, %s'%(count1,group_id1,group_id2))
-	# 					df_count_pre.loc[group_id2,group_id1] = count1
-
-	# 			if verbose>0:
-	# 				print(df_count_pre)
-	# 			df_ratio_pre = df_count_pre/np.outer(df_count_pre.sum(axis=1),np.ones(df_count_pre.shape[1]))
-				
-	# 			if save_mode>0:
-	# 				df_count_pre.to_csv(output_filename_1,sep='\t',float_format='%d')
-	# 				df_ratio_pre.to_csv(output_filename_2,sep='\t',float_format='%.5f')
-
-	# 			dict_query.update({(method_type_2,method_type_1):[df_count_pre,df_ratio_pre]})
-
-	# 		return dict_query
 
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
@@ -1037,6 +795,5 @@ def parse_args():
 
 if __name__ == '__main__':
 	opts = parse_args()
-	# run(opts.file_path)
 
 

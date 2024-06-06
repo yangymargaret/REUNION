@@ -63,7 +63,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# load motif scanning data
-	# to update
 	def test_load_motif_data_1(self,method_type_vec=[],input_file_path='',save_mode=1,save_file_path='',verbose=0,select_config={}):
 		
 		"""
@@ -133,12 +132,11 @@ class _Base_pre2(_Base_pre1):
 		return dict_motif_data, select_config
 
 	## ====================================================
-	# query if a method utilizes the motif scanning results using the CIS-BP motif collection
-	# to update
+	# query if a method utilizes motif scanning results using the CIS-BP motif collection
 	def test_query_method_type_motif_1(self,method_type='',method_annot_vec=[],select_config={}):
 		
 		"""
-		query if a method utilizes the motif scanning results using the CIS-BP motif collection
+		query if a method utilizes motif scanning results using the CIS-BP motif collection
 		:param method_type: (str) the method used to initially predict peak-TF links, which requires motif scanning results
 		:param method_annot_vec: (array or list) part of the method name which indicates the method type
 		:param select_config: dictionary containing parameters
@@ -156,7 +154,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# load motif scanning data
-	# to update
 	def test_load_motif_data_pre1(self,input_filename_list1=[],input_filename_list2=[],flag_query=1,overwrite=True,
 									type_id_1=0,input_file_path='',save_mode=1,save_file_path='',select_config={}):
 
@@ -348,6 +345,9 @@ class _Base_pre2(_Base_pre1):
 				if os.path.exists(output_filename1)==True:
 					print('the file exists ', output_filename1)
 
+				column_query = 'motif_data_rewrite'
+				if column_query in select_config:
+					overwrite = select_config[column_query]
 				if (os.path.exists(output_filename1)==False) or (overwrite==True):
 					motif_data_ad.write(output_filename1)
 					print('save motif scanning data ',motif_data_ad)
@@ -373,7 +373,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# prepare the translationTable dataframe which show the mapping between the TF binding motif name and the TF name
-	# to update
 	def test_translationTable_pre1(self,motif_data=[],motif_data_score=[],df_gene_annot=[],rna_exprs=[],flag_cisbp_motif=1,flag_expr=0,
 										save_mode=1,save_file_path='',output_filename='',verbose=0,select_config={}):
 
@@ -484,7 +483,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# merge multiple columns in the motif presence or motif score matrix that correspond to one TF to one column
-	# to update
 	def test_load_motif_data_pre2(self,motif_data,df_annot,column_id='tf',select_config={}):
 
 		"""
@@ -526,7 +524,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# TF motif name conversion for motifs in the used curated CIS-BP motif collection
-	# to update
 	def test_query_motif_name_conversion_1(self,data=[],select_config={}):
 
 		"""
@@ -553,7 +550,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# load motif scanning data
-	# to update
 	def test_load_motif_data_2(self,data=[],dict_motif_data={},method_type='',save_mode=1,verbose=0,select_config={}):
 		
 		"""
@@ -625,7 +621,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# query correlation and mutual information between chromVAR scores and TF expressions
-	# to update
 	def test_chromvar_score_query_1(self,input_filename,motif_query_name_expr,df_query=[],type_id_query=0,input_file_path='',output_file_path='',output_filename='',filename_prefix_save='',select_config={}):
 
 		"""
@@ -728,7 +723,6 @@ class _Base_pre2(_Base_pre1):
 	## ====================================================
 	# query gene annotations
 	# matching gene names between the gene annotations and the gene expression data
-	# to update
 	def test_gene_annotation_query_pre1(self,flag_query1=0,flag_query2=0,flag_query3=0,input_file_path='',select_config={}):
 
 		"""
@@ -872,7 +866,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# query gene annotations
-	# to update
 	def test_gene_annotation_query1(self,select_config={}):
 
 		"""
@@ -930,7 +923,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# query gene annotations for genes with expressions in the data
-	# to update
 	def test_gene_annotation_load_1(self,input_filename='',input_filename_2='',type_id_1=0,flag_query_1=0,verbose=0,select_config={}):
 		
 		"""
@@ -1071,7 +1063,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# query gene annotations for genes with expressions in the data
-	# to update
 	def test_gene_annotation_load_2(self,input_filename='',input_filename_1='',input_file_path='',save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1122,8 +1113,37 @@ class _Base_pre2(_Base_pre1):
 		return df_gene_annot, df_gene_annot_expr
 
 	## ====================================================
+	# load gene annotations
+	def test_query_gene_annot_1(self,input_filename='',verbose=0,select_config={}):
+
+		"""
+		load gene annotations
+		:param input_filename: the filename of gene annotations
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary storing the configuration parameters
+		:return: dataframe of gene annotations containing gene name, gene position and TSS information
+		"""
+
+		if input_filename=='':
+			input_filename_annot = select_config['filename_gene_annot']
+		else:
+			input_filename_annot = input_filename
+
+		df_gene_annot_ori = pd.read_csv(input_filename_annot,index_col=False,sep='\t')
+		df_gene_annot_ori = df_gene_annot_ori.sort_values(by=['length'],ascending=False)
+		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_name'])
+		df_gene_annot_ori = df_gene_annot_ori.drop_duplicates(subset=['gene_id'])
+		df_gene_annot_ori.index = np.asarray(df_gene_annot_ori['gene_name'])
+		if verbose>0:
+			print('gene annotation, dataframe of size ',df_gene_annot_ori.shape)
+			print('columns: ',np.asarray(df_gene_annot_ori.columns))
+			print('data preview: ')
+			print(df_gene_annot_ori[0:2])
+
+		return df_gene_annot_ori
+
+	## ====================================================
 	# compute peak accessibility-TF expression correlation and p-value
-	# to update
 	def test_peak_tf_correlation_1(self,motif_data,peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],
 										correlation_type='spearmanr',pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',verbose=1,select_config={}):
 
@@ -1210,7 +1230,6 @@ class _Base_pre2(_Base_pre1):
 
 	## ====================================================
 	# compute peak accessibility-TF expression correlation and p-value
-	# to update
 	def test_peak_tf_correlation_query_1(self,motif_data=[],peak_query_vec=[],motif_query_vec=[],peak_read=[],rna_exprs=[],
 											correlation_type='spearmanr',pval_correction=1,alpha=0.05,method_type_correction='fdr_bh',
 											flag_load=0,field_load=[],input_file_path='',input_filename_list=[],
@@ -1297,7 +1316,8 @@ class _Base_pre2(_Base_pre1):
 			
 			if save_mode>0:
 				if output_file_path=='':
-					output_file_path = select_config['data_path']
+					# output_file_path = select_config['data_path']
+					output_file_path = select_config['data_path_save']
 				if flag_save_text>0:
 					for i1 in range(query_num1):
 						df_query = list_query1[i1]

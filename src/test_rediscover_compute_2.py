@@ -77,8 +77,7 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# load the ChIP-seq data annotations
-	# to update
-	def test_query_file_annotation_load_1(self,data_file_type='',input_filename='',save_mode=1,verbose=0,select_config={}):
+	def test_query_file_annotation_load_1(self,data_file_type='',input_filename='',celltype_vec=[],save_mode=1,verbose=0,select_config={}):
 
 		"""
 		load the ChIP-seq data annotations
@@ -95,15 +94,45 @@ class _Base2_2_1(_Base2_2):
 		if flag_query1>0:
 			df_annot = pd.read_csv(input_filename,index_col=0,sep='\t')
 			if 'motif_id' in df_annot.columns:
-				motif_idvec_query = np.asarray(df_annot['motif_id'])
+				motif_idvec_query = df_annot['motif_id'].unique()
 			else:
-				motif_idvec_query = df_annot.index
+				df_annot['motif_id'] = np.asarray(df_annot.index)
+				motif_idvec_query = df_annot.index.unique()
 
-			return df_annot, motif_idvec_query
+			if len(celltype_vec)>0:
+				id1 = df_annot['celltype'].isin(celltype_vec)
+				df_annot_motif = df_annot.loc[id1,:]
+			else:
+				df_annot_motif = df_annot
+
+			df_annot_motif = df_annot_motif.drop_duplicates(subset=['filename','celltype','motif_id'])
+
+			filename_vec = np.asarray(df_annot_motif['filename'])
+			query_num1 = len(filename_vec)
+
+			file_path_query2 = select_config['file_path_annot_2']
+			input_filename_list = []
+			list1 = []
+			for i1 in range(query_num1):
+				input_filename = filename_vec[i1]
+				str_vec = input_filename.split('.')
+				filename_prefix = '%s.%s'%(str_vec[0],str_vec[1])
+				input_filename_2 = '%s/%s.overlap.bed'%(file_path_query2,filename_prefix)
+				input_filename_list.append(input_filename_2)
+				list1.append(filename_prefix)
+
+			feature_query_vec = np.asarray(list1)
+			df_annot_motif['motif_id2'] = feature_query_vec
+			df_annot_query = df_annot_motif
+
+			print('df_annot_motif ',df_annot_motif.shape)
+			print('data preview: ')
+			print(df_annot_motif[0:2])
+
+			return df_annot_query, motif_idvec_query, input_filename_list, feature_query_vec
 
 	## ====================================================
 	# query TF binding prediction evaluation metric scores
-	# to update
 	def test_query_pred_score_1(self,data=[],column_vec=[],method_type='',score_type=0,mode_query=2,default_value=1,
 									save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_annot_save='',verbose=0,select_config={}):
 		
@@ -241,8 +270,9 @@ class _Base2_2_1(_Base2_2):
 																					verbose=verbose,select_config=select_config)
 
 		flag_enrichment = (mode_query==2)
+		contingency_table = []
 		if flag_enrichment>0:
-			df_score_query2_1 = self.test_query_enrichment_score_1(data=[],idvec_1=id_signal,
+			df_score_query2_1, contingency_table = self.test_query_enrichment_score_1(data=[],idvec_1=id_signal,
 																	idvec_2=id_pred,
 																	feature_query_vec=peak_loc_1,
 																	save_mode=1,
@@ -259,7 +289,6 @@ class _Base2_2_1(_Base2_2):
 	# query TF binding prediction evaluation metric scores
 	# query precision-recall curves and roc curves
 	# recompute AUPR for methods which rely on motif scanning results
-	# to update
 	def test_query_compare_precision_recall_1(self,y_test=[],y_proba=[],y_depend=[],default_value=None,df_score=[],column_annot=[],dict_annot=[],flag_score=1,
 												save_mode=0,verbose=0,select_config={}):
 
@@ -315,12 +344,6 @@ class _Base2_2_1(_Base2_2):
 			df2 = []
 			verbose_internal = self.verbose_internal
 			if flag_score>0:
-				# if flag_1>0:
-				# 	y_test_ori = y_test.copy()
-				# 	y_proba_ori = y_proba.copy()
-				# 	y_test = y_test_ori[id_1]
-				# 	y_proba = y_proba_ori[id_1]
-
 				precision_vec, recall_vec, thresh_value_vec_1 = precision_recall_curve(y_test,y_proba,pos_label=1,sample_weight=None)
 				fpr_vec, tpr_vec, thresh_value_vec_2 = roc_curve(y_test,y_proba,pos_label=1,sample_weight=None)
 				
@@ -335,13 +358,8 @@ class _Base2_2_1(_Base2_2):
 				if verbose_internal>0:
 					print('precisions with different thresolds: ',len(precision_vec),motif_id_query,method_type_query)
 					print('recalls with different thresolds: ',len(recall_vec),motif_id_query,method_type_query)
-
-					# print(precision_vec)
-					# print(recall_vec)
-					# print(thresh_value_vec_1)
 				
 				dict_1 = dict()
-				# dict_1.update({'precision_recall_curve':query_vec_1,'roc':query_vec_2})
 
 				field_query_1 = ['precision','recall','thresh']
 				df1 = pd.DataFrame(columns=field_query_1)
@@ -375,16 +393,8 @@ class _Base2_2_1(_Base2_2):
 
 			df_score_query1_1 = df_score
 			if flag_depend>0:
-				# aupr_1 = df_score_query1_1['aupr']
-				# df_score_query1_1['aupr_1'] = aupr_1
-				# print('df_score_query1_1: ',df_score_query1_1.shape)
-				# print(df_score_query1_1.columns)
-				# print(df_score_query1_1)
-
 				df_score_query1_1 = df_score_query1_1.rename(index={'aupr':'aupr_1'}) # rename the column of the original AUPR
 				aupr_1 = df_score_query1_1['aupr_1']
-				# value_1 = (recall_vec[0]-recall_vec[1])*precision_vec[0]
-				# aupr_2 = aupr_1-value_1
 				try:
 					average_2 = 'macro'
 					aupr_2 = average_precision_score(y_test,y_proba,average=average_2) # compute AUPR for the peak loci with the TF motif;
@@ -397,18 +407,10 @@ class _Base2_2_1(_Base2_2):
 				list2 = [aupr_2,aupr_query,signal_ratio]
 
 				if verbose_internal>0:
-					# print('aupr_1, aupr_2, signal_ratio: ',aupr_1,aupr_2,signal_ratio,motif_id_query,motif_id_1,motif_id_2,method_type_query)
 					print('aupr_1, aupr_2, aupr_query, signal_ratio: ',aupr_1,aupr_2,aupr_query,signal_ratio,motif_id_query,method_type_query)
 			else:
 				field_query_pre2 = []
 				list2 = []
-
-			# if flag_score>0:
-			# 	precision_1, precision_2 = precision_vec[0], precision_vec[1]
-			# 	recall_1, recall_2 = recall_vec[0], recall_vec[1]
-
-			# 	field_query_pre2 = field_query_pre2 + ['precision_1','recall_1','precision_2','recall_2']
-			# 	list2 = list2 + [precision_1,recall_1,precision_2,recall_2]
 
 			if len(list2)>0:
 				df_score_query1_2 = pd.Series(index=field_query_pre2,data=np.asarray(list2))
@@ -423,7 +425,6 @@ class _Base2_2_1(_Base2_2):
 	## ====================================================
 	# query TF binding prediction evaluation metric scores
 	# compute precision at the given recall and recall at the given precision
-	# to upate
 	def test_query_compare_precision_recall_2(self,data=[],df_score=[],thresh_vec_1=[0.05,0.10],thresh_vec_2=[0.50,0.90],thresh_difference=0.05,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -484,7 +485,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query precision at the given values of recall
-	# to update
 	def test_query_precision_with_recall_1(self,data=[],thresh_vec_query=[],thresh_difference=0.05,type_query=0,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -513,7 +513,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query recall at the given values of precision
-	# to update
 	def test_query_recall_with_precision_1(self,data=[],thresh_vec_query=[],thresh_difference=0.05,type_query=0,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -542,7 +541,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query score 2 at the given values of score 1
-	# to update
 	def test_query_score_unit_1(self,data=[],column_vec_query=['precision','recall'],thresh_vec_query=[],
 									thresh_difference=0.025,direction=1,type_query=0,flag_sort=1,
 									save_mode=1,verbose=0,select_config={}):
@@ -582,12 +580,14 @@ class _Base2_2_1(_Base2_2):
 			thresh_query = thresh_vec_query[i1]
 			if thresh_query<=0.10:
 				thresh_difference_query = np.min([0.01,thresh_difference])
+				thresh_difference_2 = np.min([0.05,thresh_difference])  # to update
 			else:
 				thresh_difference_query = thresh_difference
 
 			diff_query = np.abs(score_vec_1-thresh_query)
 			min_diff_query = np.min(diff_query)
-			print('the minimal difference between score and the threshold: %s, threshold: %s'%(min_diff_query,thresh_quer))
+			print('the minimal difference between score and the threshold: %s, threshold: %s'%(min_diff_query,thresh_query))
+			print('thresh_difference_query: ',thresh_difference_query)
 
 			thresh_2 = 1E-09
 			thresh_value_1 = 1.0
@@ -660,18 +660,19 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query enrichment of true positive peak-TF link predictions
-	# to update
 	def test_query_enrichment_score_1(self,data=[],idvec_1=[],idvec_2=[],feature_query_vec=[],save_mode=0,verbose=0,select_config={}):
 
 		"""
 		query enrichment of true positive peak-TF link predictions in the predictions
-		:param data: (list) each element is a boolean pandas.Series which correponds to the specific type of peak loci based on whether the peaks are overlapping with ChIP-seq peaks and the predicted TF binding labels
+		:param data: (list) each element is a boolean pandas.Series which correponds to the specific type of peak loci based on 
+							whether the peaks are overlapping with ChIP-seq peaks and the predicted TF binding labels
 		:param idvec_1: (boolean pandas.Series) indicators of whethe a ATAC-seq peak locus overlaps with ChIP-seq peak loci
 		:param idvec_2: (boolean pandas.Series) indicators of whethe a ATAC-seq peak locus is predicted to be bound by the given TF
 		:param save_mode: indicator of whether to save data
 		:param verbose: verbosity level to print the intermediate information
 		:param select_config: dictionary containing parameters
-		:return: (dataframe) the statistics and p-values of enrichment of true positive peak-TF link predictions using Fisher's exact test and chi-squared test
+		:return: 1. (dataframe) the statistics and p-values of enrichment of true positive peak-TF link predictions using Fisher's exact test and chi-squared test
+				 2. the contingency table to compute enrichment of true positive peak-TF link predictions using Fisher's exact test and chi-squared test;
 		"""
 
 		list_query1 = data
@@ -712,119 +713,10 @@ class _Base2_2_1(_Base2_2):
 		t_vec_1 = [stat_chi2_, pval_chi2_]+[stat_fisher_exact_, pval_fisher_exact_] + [feature_signal_num1,feature_pred_num1]
 		df_score_query = pd.Series(index=field_query,data=np.asarray(t_vec_1),dtype=np.float32)
 
-		return df_score_query
-
-	## ====================================================
-	# query peak-TF link estimation performance score for performance comparison
-	# performance comparison using the binary prediction and predicted probability
-	# def test_query_compare_binding_basic_unit1_1_ori(self,data1=[],data2=[],motif_id_query='',group_query_vec=[2],df_annot_motif=[],dict_motif=[],dict_method_type=[],column_signal='signal',column_motif='',column_vec_query=[],feature_type_vec=[],method_type_vec=[],method_type_group='',flag_compare_1=0,type_id_1=0,load_mode=0,input_file_path='',save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
-
-	# 	"""
-	# 	query feature link estimation performance score
-	# 	:param data:
-	# 	:param feature_type_vec: (array or list) feature types used for feature representations of the observations
-	# 	:param feature_query_vec: (array) observations; if not specified, all the observations in the dataframe of group assignment will be included
-	# 	:param save_mode: indicator of whether to save data
-	# 	:param output_file_path: the directory to save the estimated feature correlation data
-	# 	:param filename_prefix_save: prefix used in potential filename to save data
-	# 	:param filename_save_annot: annotation used in potential filename to save data
-	# 	:param output_filename: filename to save the data
-	# 	:param verbose: verbosity level to print the intermediate information
-	# 	:param select_config: dictionary containing configuration parameters
-	# 	:return: 
-	# 	"""
-
-	# 	df_signal = data1
-	# 	df_pre1 = data2
-		
-	# 	if flag_compare_1==0:
-	# 		list_group = [df_pre1]
-	# 		group_query_vec_1 = [2]
-	# 		group_query_vec = group_query_vec_1
-	# 		# query_num_1 = 1
-	# 		print('df_pre1: ',df_pre1.shape)
-	# 	else:
-	# 		id1 = (df_pre1[column_motif].abs()>0) # peak loci with motif
-	# 		id2 = (~id1)	# peak loci without motif
-	# 		df_query_group1 = df_pre1.loc[id1,:]
-	# 		df_query_group2 = df_pre1.loc[id2,:]
-	# 		df_query_group_1 = df_pre1
-	# 		print('df_pre1, df_query_group1, df_query_group2: ',df_pre1.shape,df_query_group1.shape,df_query_group2.shape)
-
-	# 		list_group = [df_query_group_1,df_query_group1,df_query_group2]
-	# 		group_query_vec_1 = [2,1,0]
-		
-	# 	dict_group_query = dict(zip(group_query_vec_1,list_group))
-		
-	# 	# query_num_1 = len(list_group)
-	# 	query_num_1 = len(group_query_vec)
-	# 	query_num_2 = len(column_vec_query)
-
-	# 	if method_type_group=='':
-	# 		method_type_group = select_config['method_type_group']
-
-	# 	list_query1 = []
-	# 	# group_query_vec = [2,1,0]
-	# 	for i2 in range(query_num_1):
-	# 		# df_query_group = list_group[i2]
-	# 		group_id_motif = group_query_vec[i2]
-	# 		df_query_group = dict_group_query[group_id_motif]
-
-	# 		# query the ChIP-seq signal
-	# 		peak_loc_pre1 = df_query_group.index
-	# 		df_query_group[column_signal] = df_signal.loc[peak_loc_pre1,:]
-	# 		print('df_query_group, group_motif: ',df_query_group.shape,group_id_motif)
-	# 		print(df_query_group[0:2])
-
-	# 		list_query2 = []
-	# 		list_query3 = []
-	# 		for t_id1 in range(query_num_2):
-	# 			column_query_1 = column_vec_query[t_id1]
-	# 			if isinstance(column_query_1,str):
-	# 				column_pred = column_query_1
-	# 				column_proba = []
-	# 			else:
-	# 				column_pred, column_proba = column_query_1[0:2]
-
-	# 			column_vec = [column_signal,column_pred,column_proba]
-	# 			# query peak-TF link estimation performance score
-	# 			t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,
-	# 													verbose=0,select_config=select_config)
-								
-	# 			df_score_1, df_score_2, contingency_table, dict_query1 = t_vec_1
-	# 			list_query2.append(df_score_1)
-	# 			list_query3.append(column_pred)
-
-	# 		if len(list_query2)>0:
-	# 			df_score_query = pd.concat(list_query2,axis=1,join='outer',ignore_index=False)
-	# 			df_score_query = df_score_query.T
-
-	# 			column_vec_query_1 = np.asarray(list_query3)
-	# 			if len(dict_method_type)==0:
-	# 				method_type_vec_query = column_vec_query_1
-	# 			else:
-	# 				method_type_vec_query = [dict_method_type[column_query] for column_query in column_vec_query_1]
-					
-	# 			field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','method_type','method_type_group']
-				
-	# 			motif_id2 = motif_id_query
-	# 			motif_id_ori = df_annot_motif.loc[motif_id2,'motif_id']
-	# 			motif_id1 = df_annot_motif.loc[motif_id2,'motif_id1']
-
-	# 			list_2 = [motif_id_ori,motif_id1,motif_id2,group_id_motif,method_type_vec_query,method_type_group]
-				
-	# 			for (field_id1,query_value) in zip(field_query_2,list_2):
-	# 				df_score_query[field_id1] = query_value
-	# 			list_query1.append(df_score_query)
-
-	# 	if len(list_query1)>0:
-	# 		df_score_query_1 = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
-
-	# 	return df_score_query_1
+		return df_score_query, contingency_table
 
 	## ====================================================
 	# TF binding prediction performance evaluation
-	# to update
 	def test_query_compare_binding_basic_unit1(self,data1=[],data2=[],motif_id_query='',group_query_vec=[2],df_annot_motif=[],
 													dict_method_type=[],df_method_annot=[],column_signal='signal',column_motif='',column_vec_query=[],
 													method_type_vec=[],method_type_group='',flag_compare_1=0,mode_query=2,input_file_path='',
@@ -842,7 +734,7 @@ class _Base2_2_1(_Base2_2):
 		:param column_motif: (str) column for the motif presence (binary) or motif scores by motif scanning in the ATAC-seq peak loci
 		:param column_vec_query: (list) each element is one of the two types: 
 										1. the name of the column which corresonds to predicted TF binding label or probability in the peak loci;
-										2. a list or array of the names of the columns which corresponds to predicted TF binding label, TF binding probability, and the TF motif presence by motif scanning (optional) in the peak loci;
+										2. a list or array of the column names which corresponds to predicted TF binding label, TF binding probability, and the TF motif presence by motif scanning (optional) in the peak loci;
 		:param method_type_vec: (array or list) the methods used for TF binding prediction
 		:param method_type_group: (str) the method used for peak clustering using peak accessibility features and sequence-based features
 		:param flag_compare_1: indicator of whether to evaluate prediction performance on peak loci with TF motif or without TF motif
@@ -879,7 +771,6 @@ class _Base2_2_1(_Base2_2):
 		else:
 			id1 = (df_pre1[column_motif].abs()>0)	# peak loci with the TF motif
 			id2 = (~id1)	# peak loci without the TF motif
-
 			df_query_group1 = df_pre1.loc[id1,:]
 			df_query_group2 = df_pre1.loc[id2,:]
 			df_query_group_1 = df_pre1
@@ -910,11 +801,11 @@ class _Base2_2_1(_Base2_2):
 		if 'score_type_2' in select_config:
 			score_type_2 = select_config['score_type_2']
 
-		thresh_pred = 0.5
-		direction = 1
+		thresh_pred_1 = 0.5
+		direction_1 = 1
 		if 'thresh_pred' in select_config:
 			thresh_pred_vec = select_config['thresh_pred']
-		thresh_pred, direction = thresh_pred_vec[0:2]
+		thresh_pred_1, direction_1 = thresh_pred_vec[0:2]
 		
 		# binary_mode_1=1: there is only binary prediction without feature link score;
 		binary_mode_1 = -1
@@ -939,6 +830,7 @@ class _Base2_2_1(_Base2_2):
 				df_method_annot.index = np.asarray(df_method_annot[column_1])
 
 		# group_query_vec = [2,1,0]
+		df_annot_motif.index = np.asarray(df_annot_motif['motif_id2'])
 		for i1 in range(query_num_1):
 			# df_query_group = list_group[i2]
 			group_id_motif = group_query_vec[i1]
@@ -977,20 +869,8 @@ class _Base2_2_1(_Base2_2):
 					binary_mode = binary_mode_1
 					score_type_2_query = score_type_2
 				else:
-					# if isinstance(column_query_1,str):
-					# 	column_pred = column_query_1
-					# else:
-					# 	column_pred = column_query_1[0]
-
-					# if column_query in df_method_annot.columns:
-					# 	id1 = (df_method_annot[column_query]==column_pred)
-					# 	method_type_query = np.asarray(df_method_annot.loc[id1,'method_type'])[0]
-					# else:
-					# 	method_type_query = method_type_query1
-					# id1 = (df_method_annot['method_type']==method_type_query)
-
-					column_annot_query = [column_2,column_3,column_depend]
-					list1 = [score_type_query,binary_mode_1,score_type_2] # the default values
+					column_annot_query = [column_2,column_3,column_depend]+['thresh_pred','direction']
+					list1 = [score_type_query,binary_mode_1,score_type_2]+[thresh_pred_1,direction_1] # the default values
 					query_num2 = len(column_annot_query)
 					for i2 in range(query_num2):
 						column_query = column_annot_query[i2]
@@ -1000,7 +880,7 @@ class _Base2_2_1(_Base2_2):
 					# score_type_query: indicator of whether higher link score corresponds to higher association strength;
 					# binary_mode: indicator of whether there is only binary prediction without feature link score;
 					# score_type_2_query: indicator of whether the initial TF binding prediction relies on motif scannnig results;
-					score_type_query,binary_mode,score_type_2_query = list1
+					score_type_query,binary_mode,score_type_2_query,thresh_pred,direction = list1
 
 				# query if column_query_1 is str (for one column) or list (multiple columns)
 				if isinstance(column_query_1,str):
@@ -1026,8 +906,10 @@ class _Base2_2_1(_Base2_2):
 						if (score_type_2_query>0) and (len(column_query_1)>2):
 							column_motif = column_query_1[2]
 
-				print('column_signal, column_pred, column_proba ',column_signal,column_pred,column_proba)
+				print('column_signal, column_pred, column_proba ',column_signal,column_pred,column_proba,t_id1)
 				column_vec = [column_signal,column_pred,column_proba]
+
+				print('score_type: %d, binary: %d, score_type_2: %d, thresh_pred: %s, direction: %d'%(score_type_query,binary_mode,score_type_2_query,thresh_pred,direction))
 
 				if score_type_2_query>0:
 					if column_motif=='':
@@ -1056,6 +938,11 @@ class _Base2_2_1(_Base2_2):
 
 				# query peak-TF link estimation performance score
 				print('method_type: %s, score_type: %d'%(method_type_query,score_type_query))
+
+				column_2 = 'dict_annot_score'
+				dict_annot_score = {'method_type':method_type_query,'motif_id':motif_id_query}
+				select_config.update({column_2:dict_annot_score})
+
 				t_vec_1 = self.test_query_pred_score_1(data=df_query_group,column_vec=column_vec,
 														method_type=method_type_query,
 														score_type=score_type_query,
@@ -1083,19 +970,13 @@ class _Base2_2_1(_Base2_2):
 			if query_num1>0:
 				df_score_query = pd.concat(list_score_query1,axis=1,join='outer',ignore_index=False)
 				df_score_query = df_score_query.T
-
 				column_vec_query_1 = np.asarray(list_column_query1)
 				method_type_vec_query = np.asarray(list_annot_query1)
 				
-				# field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','neighbor_num','method_type','method_type_group']
-				# field_query_2 = ['motif_id','motif_id1','motif_id2','group_motif','method_type','method_type_group']
-				# field_query_2 = ['motif_id','motif_id2','group_motif','method_type','method_type_group']
 				field_query_2 = ['motif_id','motif_id2','group_motif','method_type','method_type_group','query_id']
 				
-				# list_2 = [motif_id_ori,motif_id1,motif_id2,group_id_motif,method_type_vec_query,method_type_group]
-				# list_2 = [motif_id_ori,motif_id2,group_id_motif,method_type_vec_query,method_type_group]
 				list_2 = [motif_id_ori,motif_id2,group_id_motif,method_type_vec_query,method_type_group,column_vec_query_1]
-				
+
 				for (field_id1,query_value) in zip(field_query_2,list_2):
 					df_score_query[field_id1] = query_value
 				list_query1.append(df_score_query)
@@ -1121,7 +1002,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# TF binding prediction performance evaluation
-	# to update
 	def test_query_compare_binding_basic_1(self,data1=[],data2=[],motif_query_vec=[],df_annot_motif=[],dict_method_type=[],df_method_annot=[],
 												column_vec_query=[],column_signal='signal',column_motif='',method_type_vec=[],method_type_group='',
 												flag_compare_1=0,mode_query=2,parallel=0,input_file_path='',
@@ -1129,16 +1009,18 @@ class _Base2_2_1(_Base2_2):
 
 		"""
 		TF binding prediction performance evaluation
-		:param data1: (dataframe) TF ChIP-seq signals in ATAC-seq peak loci by overlaping ATAC-seq peaks with ChIP-seq peaks (row:ATAC-seq peak locus: column:TF ChIP-seq dataset identifier)
+		:param data1: (dataframe) TF ChIP-seq signals in ATAC-seq peak loci by overlaping ATAC-seq peaks with ChIP-seq peaks 
+								  (row:ATAC-seq peak locus: column:TF ChIP-seq dataset identifier)
 		:param data2: (dataframe) TF binding predictions in the ATAC-seq peak loci for each given TF
-		:param motif_id_query: (str) identifier of the TF ChIP-seq dataset with which we perform TF binding prediction performance evaluation
-		:param df_annot_motif: (dataframe) TF annotations including the mapping between the TF ChIP-seq datasets and the TF names and the cell types for which the ChIP-seq experiments were performed;
+		:param motif_query_vec: (array or list) identifiers of the TF ChIP-seq datasets with which we perform TF binding prediction performance evaluation
+		:param df_annot_motif: (dataframe) TF annotations including the mapping between the TF ChIP-seq datasets and the TF names 
+										   and the cell types for which the ChIP-seq experiments were performed;
 		:param dict_method_type: dictionary containing annotations of the methods used for initial TF binding prediction
 		:param df_method_annot: (dataframe) annotations of the methods used for initial TF binding prediction
-		
 		:param column_vec_query: (list) each element is one of the two types: 
 										1. the name of the column which corresonds to predicted TF binding label or probability in the peak loci;
-										2. a list or array of the names of the columns which corresponds to predicted TF binding label, TF binding probability, and the TF motif presence by motif scanning (optional) in the peak loci;
+										2. a list or array of the names of columns which corresponds to predicted TF binding label, TF binding probability, 
+										   and TF motif presence by motif scanning (optional) in the peak loci;
 		:param column_signal: (str) column for ChIP-seq signals
 		:param column_motif: (str) column for the motif presence (binary) or motif scores by motif scanning in the ATAC-seq peak loci
 		:param method_type_vec: (array or list) the methods used for TF binding prediction
@@ -1187,14 +1069,17 @@ class _Base2_2_1(_Base2_2):
 							df_query = data_query_pre1[motif_query]  # query data from dictionary
 						list1.append(df_query)
 					df_signal_query, df_pred_query = list1[0:2]
-
+					print('df_signal_query, ',df_signal_query.shape,motif_query)
+					print(df_signal_query[0:2])
+					print('df_pred_query, ',df_pred_query.shape,motif_query)
+					print(df_pred_query[0:2])
 					t_query_res = self.test_query_compare_binding_basic_unit1(data1=df_signal_query,data2=df_pred_query,
 																				motif_id_query=motif_query,
 																				df_annot_motif=df_annot_motif,
 																				df_method_annot=df_method_annot,
 																				column_vec_query=column_vec_query,
+																				method_type_vec=method_type_vec,
 																				method_type_group=method_type_group,
-																				type_id_1=type_id_1,
 																				mode_query=mode_query,
 																				select_config=select_config)
 
@@ -1231,7 +1116,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query estimated peak-TF associations
-	# to update
 	def test_query_feature_link_2(self,dict_file={},df_annot=[],feature_query_vec=[],type_query=0,append=True,save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 	
 		"""
@@ -1288,7 +1172,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# query estimated peak-TF associations
-	# to update
 	def test_query_feature_link_load_1(self,dict_file={},df_annot=[],feature_query_vec=[],load_mode=1,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1353,7 +1236,6 @@ class _Base2_2_1(_Base2_2):
 
 	## ====================================================
 	# TF binding prediction performance evaluation
-	# to update
 	def test_query_compare_binding_pre1(self,data=[],dict_signal={},df_signal=[],dict_file_pred={},feature_query_vec=[],method_type_vec=[],type_query_format=0,
 											save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -1378,9 +1260,7 @@ class _Base2_2_1(_Base2_2):
 
 		data_file_type_query = select_config['data_file_type']
 		select_config.update({'data_file_type_query':data_file_type_query})
-		# run_id1 = select_config['run_id']
 
-		# method_type_vec = ['insilico_0.1','GRaNIE','Pando','TRIPOD']+['joint_score_pre1.thresh22']
 		method_type_feature_link = select_config['method_type_feature_link']
 		method_type_group = select_config['method_type_group']
 
@@ -1390,45 +1270,216 @@ class _Base2_2_1(_Base2_2):
 		elif len(df_signal)>0:
 			load_mode_signal = 2
 
+		# test_query_file_annotation_load_1(self,data_file_type='',input_filename='',save_mode=1,verbose=0,select_config={}):
+		input_dir = select_config['input_dir']
+		file_path_1 = '%s/bed_file'%(input_dir)
+		file_path_query1 = '%s/folder1'%(file_path_1)
+		file_path_query2 = '%s/folder2'%(file_path_1)
+		select_config.update({'file_path_annot_1':file_path_query1,
+								'file_path_annot_2':file_path_query2})
+
+		input_filename = '%s/df_annotation_pre2.txt'%(file_path_query1)
+		select_config.update({'file_motif_annot':input_filename})
+		celltype_vec = ['B_cell','T_cell','macrophage','monocyte']
+		t_vec_1 = self.test_query_file_annotation_load_1(data_file_type=data_file_type_query,
+															input_filename=input_filename,
+															celltype_vec=celltype_vec,
+															save_mode=1,
+															verbose=0,select_config=select_config)
+
+		df_annot_motif, motif_idvec_query, input_filename_list, feature_query_vec_2 = t_vec_1
+		column_vec = feature_query_vec_2
+
+		output_filename = '%s/df_annotation_pre2.copy1.txt'%(file_path_query1)
+		df_annot_motif.to_csv(output_filename,sep='\t')
+		# print('TF annotations, dataframe of size ',df_annot_motif.shape)
+		# print('data preview: ')
+		# print(df_annot_motif[0:2])
+		
+		input_filename_peak = select_config['input_filename_peak']
+		df_peak_annot = pd.read_csv(input_filename_peak,index_col=False,header=None,sep='\t')
+		column_vec_1 = ['chrom','start','stop','feature','GC','strand']  # six column annotation
+		df_peak_annot.columns = column_vec_1
+		df_peak_annot.index = utility_1.test_query_index(df_peak_annot,column_vec=['chrom','start','stop'],symbol_vec=[':','-'])
+		df_peak_annot = df_peak_annot.loc[(~df_peak_annot.index.duplicated(keep='first')),:]
+		print('ATAC-seq peak loci annotations, dataframe of size ',df_peak_annot.shape)
+		peak_query_vec = df_peak_annot.index  # ATAC-seq peak loci
+
+		output_dir = select_config['output_dir']
+		output_file_path_1 = output_dir
+
+		input_filename = '%s/test_query_signal_1.txt'%(file_path_1)
+		overwrite_query1 = False
 		if load_mode_signal==0:
-			df_signal_query1, dict_signal_query1 = self.test_query_signal_overlap_format_1(input_filename='',input_filename_list=[],
-																							feature_query='',
-																							feature_query_vec=[],
-																							peak_query_vec=[],
-																							column_vec=[],
-																							type_query=type_query_format,
-																							save_mode=1,output_filename='',
-																							filename_prefix_save='',
-																							filename_save_annot='annot',
-																							verbose=0,select_config=select_config)
+			if (os.path.exists(input_filename)==False) or (overwrite_query1==True):
+				print('query TF ChIP-seq data annotations')
+				type_query_format = 0
+				output_filename = input_filename
+				df_signal_query1, dict_signal_query1 = self.test_query_signal_overlap_format_1(input_filename='',
+																								input_filename_list=input_filename_list,
+																								feature_query='',
+																								feature_query_vec=feature_query_vec,
+																								peak_query_vec=peak_query_vec,
+																								column_vec=column_vec,
+																								type_query=type_query_format,
+																								save_mode=1,
+																								output_filename=output_filename,
+																								filename_prefix_save='',
+																								filename_save_annot='annot',
+																								verbose=0,select_config=select_config)
 
-			df_signal = df_signal_query1
-			dict_signal = dict_signal_query1
-			load_mode_signal = 2
+				df_signal = df_signal_query1
+				dict_signal = dict_signal_query1
+				load_mode_signal = 2
+			else:
+				print('the file exists: %s'%(input_filename))
+				df_signal = pd.read_csv(input_filename,index_col=0,sep='\t')
+				dict_signal = dict()
+				peak_loc_ori = df_signal.index
+				peak_num_1 = len(peak_loc_ori)
+				column_vec_query = df_signal.columns
+				feature_vec_2 = column_vec_query
+				column_vec_2 = ['peak_num','ratio','F1']
+				df_annot_2 = pd.DataFrame(index=feature_vec_2,columns=column_vec_2)
+				for column_query in column_vec_query:
+					feature_query = column_query
+					df_query = df_signal[[feature_query]]
+					peak_num = np.sum(df_query[feature_query]>0)
+					ratio_1 = peak_num/peak_num_1
+					precision_1 = ratio_1
+					recall_1 = 1.0
+					f1_score = 2*precision_1*recall_1/(precision_1+recall_1)
+					df_annot_2.loc[feature_query,column_vec_2] = [peak_num,ratio_1,f1_score]
+					dict_signal.update({feature_query:df_query})
+					print('feature_query: %s, peak loci with signal: %d'%(feature_query,peak_num))
 
-		file_save_path_1 = select_config['file_path_peak_tf']
-		if data_file_type_query in ['pbmc']:
-			dict_file_annot1 = select_config['dict_file_annot1']
-			dict_file_annot2 = select_config['dict_file_annot2']
-			dict_config_annot1 = select_config['dict_config_annot1']
+				output_filename = '%s/test_query_signal_1.annot1.txt'%(file_path_1)
+				df_annot_2.to_csv(output_filename,sep='\t')
+			# return
 
-		folder_id_query = 2 # the folder to save annotation files
-		file_path_query1 = dict_file_annot1[folder_id_query]
-		file_path_query2 = dict_file_annot2[folder_id_query]
-		input_file_path_query = file_path_query1
-		input_file_path_query_2 = '%s/vbak1'%(file_path_query1)
+		df_method_annot = []
+		filename_annot_query = '%s/test_query_method_annot.1.txt'%(file_path_1)
+		overwrite_2 = True
+		if (os.path.exists(filename_annot_query)==False) or (overwrite_2==True):
+			score_type_query = 0
+			column_vec_annot = ['method_type','score_type','binary','motif_depend']
+			column_1, column_2, column_3 = column_vec_annot[0:3]
+			column_depend = column_vec_annot[3]
+			method_type_vec_pre1_1 = ['CIS-BP','HOCOMOCO','Pando_motif','JASPAR','insilico_0.1','GRaNIE','Pando','TRIPOD','Unify','TOBIAS','SCENIC+','REUNION']			
+			method_type_vec_pre1_2 = ['CIS-BP','insilico_0.1']
+			method_type_vec_pre1_3 = ['%s + Rediscover'%(method_type) for method_type in method_type_vec_pre1_2]
+			method_type_vec_pre1 = method_type_vec_pre1_1 + method_type_vec_pre1_3
+			# score_type_vec = [0,1,1,1,0,0,0,0]
+			method_type_vec_query2 = ['GRaNIE','Pando','TRIPOD'] # methods by which the lower peak-TF link scores correspond to higher association strength
+			method_type_vec_query3 = ['HOCOMOCO','Pando_motif','JASPAR','SCENIC+'] # methods for which continuous peak-TF link scores were not in the output
+			method_type_vec_query5 = ['CIS-BP','REUNION'] + method_type_vec_pre1_3
+			df_method_annot = pd.DataFrame(index=method_type_vec_pre1,columns=column_vec_annot)
+			df_method_annot[column_1] = np.asarray(method_type_vec_pre1)
+			df_method_annot.loc[:,[column_2,column_3]] = 0
+			df_method_annot[column_depend] = 1
 
-		dict_query_1 = dict()
-		feature_type_vec_group = ['latent_peak_tf','latent_peak_motif','latent_peak_motif_ori']
+			df_method_annot.loc[method_type_vec_query2,column_2] = 1
+			df_method_annot.loc[method_type_vec_query3,column_3] = 1
+			df_method_annot.loc[method_type_vec_query5,column_depend] = 0
 
-		# type_id_group_2 = select_config['type_id_group_2']
-		type_id_group_2 = 1
-		feature_type_query_1 = feature_type_vec_group[type_id_group_2]
-		feature_type_query_2 = 'latent_peak_tf'
-		feature_type_vec_query = [feature_type_query_1,feature_type_query_2]
+			output_filename = '%s/test_query_method_annot.1.txt'%(file_path_query1)
+			df_method_annot.to_csv(output_filename,sep='\t')
+		else:
+			print('the file exists: %s'%(filename_annot_query))
+			df_method_annot = pd.read_csv(filename_annot_query,index_col=0,sep='\t')
+		print('method type annotations, dataframe of size ',df_method_annot.shape)
+		print(df_method_annot)
 
+		# score query for performance comparison
+		start = time.time()
+		flag_compare_1=0
+		parallel = 0
+		# parallel = 1
 		column_signal = 'signal'
 		column_motif = '%s.motif'%(method_type_feature_link)
+		method_type_group = select_config['method_type_group']
+		mode_query = 2
+
+		motif_query_vec = feature_query_vec_2
+		method_type_vec_query1 = [method_type_feature_link]
+		df_score_query_1 = self.test_query_compare_binding_basic_2(motif_query_vec=motif_query_vec,
+																	dict_signal=dict_signal,
+																	dict_file_pred=dict_file_pred,
+																	method_type_vec=method_type_vec_query1,
+																	df_annot_motif=df_annot_motif,
+																	df_method_annot=df_method_annot,
+																	column_signal=column_signal,
+																	column_motif=column_motif,
+																	method_type_group=method_type_group,
+																	flag_compare_1=flag_compare_1,
+																	mode_query=mode_query,
+																	parallel=parallel,
+																	input_file_path='',
+																	save_mode=1,
+																	output_file_path='',
+																	output_filename='',
+																	filename_prefix_save='',
+																	filename_save_annot='',
+																	verbose=verbose,select_config=select_config)
+
+
+		stop = time.time()
+		print('performance comparison used %.2fs'%(stop-start))
+
+		output_file_path = '%s/folder_save_2'%(output_file_path_1)
+		if (os.path.exists(output_file_path)==False):
+			print('the directory does not exist: %s'%(output_file_path))
+			os.makedirs(output_file_path,exist_ok=True)
+		if save_mode>0:
+			if output_file_path=='':
+				output_file_path = file_path_query1
+			
+			run_id2 = '1'
+			filename_save_annot_1 = '%s.%s'%(data_file_type_query,run_id2)
+			float_format = '%.6E'
+			output_filename = '%s/test_query_df_score.beta.%s.1.txt'%(output_file_path,filename_save_annot_1)
+			df_score_query_1.to_csv(output_filename,sep='\t',float_format=float_format)
+			print('save data: ',output_filename)
+
+		return df_score_query_1
+
+
+	## ====================================================
+	# TF binding prediction performance evaluation
+	def test_query_compare_binding_basic_2(self,motif_query_vec=[],dict_signal={},dict_file_pred={},method_type_vec=[],df_annot_motif=[],df_method_annot=[],
+												column_signal='signal',column_motif='',method_type_group='',
+												flag_compare_1=0,mode_query=2,parallel=0,input_file_path='',
+												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
+
+		"""
+		TF binding prediction performance evaluation
+		:param motif_query_vec: (array or list) identifiers of the TF ChIP-seq datasets with which we perform TF binding prediction performance evaluation
+		:param dict_signal: dictionary containing annotation dataframes of ATAC-seq peak loci overlapping with ChIP-seq peak loci for each given TF ChIP-seq dataset
+		:param dict_file_pred: dictionary containing paths of the files or the dataframes of TF binding predictions for each given TF
+		:param method_type_vec: (array or list) the methods used for TF binding prediction
+		:param df_annot_motif: (dataframe) TF annotations including the mapping between the TF ChIP-seq datasets and the TF names 
+										   and the cell types for which the ChIP-seq experiments were performed;
+		:param df_method_annot: (dataframe) annotations of the methods used for initial TF binding prediction
+		:param column_signal: (str) column for ChIP-seq signals
+		:param column_motif: (str) column for the motif presence (binary) or motif scores by motif scanning in the ATAC-seq peak loci
+		:param method_type_group: (str) the method used for peak clustering using peak accessibility features and sequence-based features
+		:param flag_compare_1: indicator of whether to evaluate prediction performance on peak loci with TF motif or without TF motif
+		:param mode_query: indicator of which evaluation metrics to query:
+						   0: basic metrics: accuracy, precision, recall, F1, AUROC, AUPR;
+						   1: basic metrics and recompute AUPR for the methods which rely on motif scanning results;
+						   2: basic metrics with recomputed AUPR, precision at fixed recall, recall at fixed precision,
+						   3: the metrics in 2 and enrichment of true positive peak-TF link predictions;
+		:param parallel: indicator of whether to perform TF binding prediction evaluation for the given TFs in parallel
+		:param input_file_path: the directory to retrieve data from
+		:param save_mode: indicator of whether to save data
+		:param output_file_path: the directory to save data
+		:param output_filename: filename to save the data
+		:param filename_prefix_save: prefix used in potential filename to save data
+		:param filename_save_annot: annotation used in potential filename to save data
+		:param verbose: verbosity level to print the intermediate information
+		:param select_config: dictionary containing parameters
+		:return: (dataframe) TF binding prediction performance evaluation metric scores for the given TFs using the specific methods
+		"""
 
 		# query the column of the prediction
 		model_type_id1 = 'LogisticRegression'
@@ -1436,67 +1487,67 @@ class _Base2_2_1(_Base2_2):
 		if column_1 in select_config:
 			model_type_id1 = select_config[column_1]
 
+		if len(method_type_vec)>0:
+			method_type_feature_link = method_type_vec[0]
+		else:
+			method_type_feature_link = select_config['method_type_feature_link']
+
 		method_type_query1 = method_type_feature_link
-		method_type_query2 = 'latent_peak_motif_peak_gene_combine_%s'%(model_type_id1)
+		method_type_query2 = 'latent_%s_%s_combine_%s'%(feature_type_1_ori,feature_type_2_ori,model_type_id1)
+
+		method_type_annot1 = method_type_query1
+		if method_type_query1 in ['Unify']:
+			method_type_annot2 = 'REUNION'
+		else:
+			method_type_annot2 = '%s + Rediscover'%(method_type_query1)
 
 		annot_str_vec = ['pred','proba_1']
-		t_vec_1 = ['%s.pred'%(method_type_query1),[]]
+		# t_vec_1 = ['%s.pred'%(method_type_query1),[]]
+		t_vec_1 = ['%s.pred'%(method_type_query1),'%s.score'%(method_type_query1)]
 		t_vec_2 = ['%s_%s'%(method_type_query2,annot_str1) for annot_str1 in annot_str_vec]
+		t_vec_1 = t_vec_1 + [column_motif]
 		column_vec_query = [t_vec_1,t_vec_2]
-		column_vec_query1 = [column_motif] + [t_vec_1[0]] + t_vec_2
+
+		query_num1 = len(column_vec_query)
+		for i1 in range(query_num1):
+			t_vec_query = column_vec_query[i1]
+			print('columns for method %d: '%(i1+1),t_vec_query)
 
 		method_type_vec_query1 = [query_vec[0] for query_vec in column_vec_query]
 		method_type_vec_annot1 = [method_type_annot1,method_type_annot2]
+		method_type_vec = method_type_vec_annot1
 		dict_method_type = dict(zip(method_type_vec_query1,method_type_vec_annot1))
 
-		input_filename = select_config['file_motif_annot']
-		df_annot_ori = pd.read_csv(input_filename,index_col=0,sep='\t')
-		df_annot_motif = df_annot_ori.drop_duplicates(subset=['motif_id'])
-
-		# print('df_annot_ori, df_annot_1: ',df_annot_ori.shape,df_annot_1.shape)
-		print('TF annotations, dataframe of size ',df_annot_motif.shape)
-
-		motif_idvec_query = df_annot_1['motif_id'].unique()  # TFs in the annotation file
-
 		verbose_internal = self.verbose_internal
-		if verbose_internal>0:
-			print('annotation file, dataframe of size ',df_annot_motif.shape)
-			print(df_annot_motif)
-			if verbose_internal==2:
-				print('method type annotation: ')
-				# print('dict_method_type: ',dict_method_type)
-				print(dict_method_type)
-
-		if len(feature_query_vec)>0:
-			motif_query_vec_1 = feature_query_vec
-		else:
-			motif_query_vec_1 = motif_idvec_query
-			feature_query_vec = motif_query_vec_1
-
-		motif_query_num1 = len(motif_query_vec_1)
-		list1 = []
-		dict_signal_1 = dict()
-		dict_query_1 = dict()
-
+		if verbose_internal==2:
+			print('method type annotation: ')
+			print(dict_method_type)
+		
 		start = time.time()
 		dict_file_query_1 = dict_file_pred
 
 		# load the peak-TF association estimation
+		output_dir = select_config['output_dir']
 		field_query = ['path_save_link','filename_prefix_pred','filename_annot_pred']
-		path_save_link = ''
-		filename_prefix_pred = ''
-		filename_annot_pred = ''
+		path_save_link = '%s/file_link'%(output_dir)
+
+		filename_prefix = select_config['filename_prefix']
+		filename_annot = select_config['filename_annot']
+
+		filename_prefix_pred = filename_prefix
+		filename_annot_pred = '%s.pred2'%(filename_annot)
 		list_query1 = [path_save_link,filename_prefix_pred,filename_annot_pred]
 
 		from utility_1 import test_query_default_parameter_1
 		overwrite_query = False
-		select_config, list_query1 = test_query_default_parameter_1(field_query=field_query,default_parameter=list_query1,
+		select_config, list_query1 = test_query_default_parameter_1(field_query=field_query,
+																	default_parameter=list_query1,
 																	overwrite=overwrite_query,
 																	select_config=select_config)
 
 		dict_file_query, dict_query_1 = self.test_query_feature_link_2(dict_file=dict_file_query_1,
 																			df_annot=df_annot_motif,
-																			feature_query_vec=feature_query_vec,
+																			feature_query_vec=motif_query_vec_1,
 																			type_query=1,
 																			append=True,
 																			save_mode=1,
@@ -1507,48 +1558,40 @@ class _Base2_2_1(_Base2_2):
 		flag_compare_1=0
 		parallel = 0
 		# parallel = 1
+		list1 = []
+		dict_query_1 = dict()
 		dict_signal_1 = dict_signal
-		df_method_annot = []
 		method_type_group = select_config['method_type_group']
 		mode_query = 2
 
 		thresh_pred = 0.5 # threshold on predicted positive class probablity or link score for binary prediction
 		direction = 1
 		select_config.update({'thresh_pred':[thresh_pred,direction]})
-		
-		df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,data2=dict_query_1,
+		method_type_vec = method_type_vec_annot1
+		df_score_query_1 = self.test_query_compare_binding_basic_1(data1=dict_signal_1,
+																	data2=dict_query_1,
 																	motif_query_vec=motif_query_vec,
 																	df_annot_motif=df_annot_motif,
 																	df_method_annot=df_method_annot,
 																	column_vec_query=column_vec_query,
 																	column_signal=column_signal,
-																	method_type_vec=[],
+																	method_type_vec=method_type_vec,
 																	method_type_group=method_type_group,
 																	flag_compare_1=flag_compare_1,
 																	mode_query=mode_query,
 																	parallel=parallel,
 																	input_file_path='',
-																	save_mode=1,output_file_path='',output_filename='',
+																	save_mode=1,
+																	output_file_path='',
+																	output_filename='',
 																	filename_prefix_save='',
 																	filename_save_annot='',
 																	verbose=verbose,select_config=select_config)
-
-		stop = time.time()
-		print('performance comparison used %.2fs'%(stop-start))
-
-		if save_mode>0:
-			if output_file_path=='':
-				output_file_path = input_file_path_query_2
-			if output_filename=='':
-				output_filename = '%s/test_query_df_score.beta.%s.1.txt'%(output_file_path,filename_save_annot_1)
-				df_score_query_1.to_csv(output_filename,sep='\t')
-			print('save data: ',output_filename)
 
 		return df_score_query_1
 
 	## ====================================================
 	# prepare annotations of ATAC-seq peak loci overlapping with TF ChIP-seq signal peak loci
-	# to update
 	def test_query_signal_overlap_format_1(self,input_filename='',input_filename_list=[],feature_query='',feature_query_vec=[],peak_query_vec=[],column_vec=[],type_query=0,save_mode=1,output_filename='',filename_prefix_save='',filename_save_annot='annot',verbose=0,select_config={}):
 
 		"""
@@ -1601,7 +1644,7 @@ class _Base2_2_1(_Base2_2):
 			df_query_1 = pd.DataFrame(index=peak_query_vec,columns=column_vec,dtype=np.float32)
 			df_query_default = []
 
-			column_vec_1 = ['chrom','start','stop','feature','score','strand']  # six column annotation
+			column_vec_1 = ['chrom','start','stop','feature','GC','strand']  # six column annotation
 			column_vec_2_1 = ['chrom','start','stop','feature']  # basic annotation
 			column_vec_2_1 = ['%s_2'%(column_query) for column_query in column_vec_2_1]
 			column_vec_2_2 = column_vec_2_1 + ['score']  # five column annotation
@@ -1617,15 +1660,16 @@ class _Base2_2_1(_Base2_2):
 			for i1 in range(file_num1):
 				input_filename_query = input_filename_list[i1]
 				feature_query1 = feature_query_vec[i1]
+				column_query1 = column_vec[i1]
 
 				if os.path.exists(input_filename_query)==False:
 					print('the file does not exist: %s'%(input_filename))
 					return df_query_default
 
-				df1 = pd.read_csv(input_filename,index_col=False,header=None,sep='\t')
+				df1 = pd.read_csv(input_filename_query,index_col=False,header=None,sep='\t')
 				column_vec_query1 = df1.columns
 				query_num1 = len(column_vec_query1)
-				print('load data from %s'%(input_filename))
+				print('load data from %s'%(input_filename_query))
 				print('annotation of ATAC-seq peaks overlapping with ChIP-seq peaks for TF %s, dataframe of size '%(feature_query1),df1.shape)
 				
 				if (query_num1==query_num_1):
@@ -1650,28 +1694,28 @@ class _Base2_2_1(_Base2_2):
 
 				# rename the columns
 				df1 = df1.rename(columns=dict1)
-				print('annotation data, dataframe of size ',df1.shape)
+				print('annotation data, dataframe of size ',df1.shape,column_query1)
 				print('data preview: ')
 				print(df1[0:2])
 
 				column_score = 'score'
 				column_1, column_2 = 'name', 'name_2'
-				df1[column_1] = utility_1.test_query_index(column_vec=['chrom','start','stop'],symbol_vec=[':','-'])
+				df1[column_1] = utility_1.test_query_index(df1,column_vec=['chrom','start','stop'],symbol_vec=[':','-'])
 				# df1[column_2] = utility_1.test_query_index(column_vec=['chrom_2','start_2','stop_2'],symbol_vec=[':','-'])
 				df1 = df1.sort_values(by=[column_1,column_score],ascending=[True,False])
 				# df1.index = np.asarray(df1[column_1])
 				# df2 = df1.loc[~df1.index.duplicated(keep='first'),:] 
 				df2 = df1.drop_duplicates(subset=[column_1])
 
-				print('unduplicated annotation data, dataframe of size ',df2.shape)
-				print('data preview: ')
-				print(df2[0:2])
-
 				df2.index = np.asarray(df2[column_1])
 				peak_vec = df2.index
-				column_query1 = column_vec[i1]
 				df_query_1.loc[peak_vec,column_query1] = df2[column_score]
-				dict_signal_1.update({feature_query1:df2})
+				# dict_signal_1.update({feature_query1:df2})
+				dict_signal_1.update({feature_query1:df_query_1[[column_query1]]})
+
+				print('unduplicated annotation data, dataframe of size ',df2.shape,column_query1)
+				print('data preview: ')
+				print(df2[0:2])
 
 			print('annotation of ATAC-seq peaks overlapping with ChIP-seq peaks for the given TFs, dataframe of size ',df_query_1.shape)
 			print('data preview:')

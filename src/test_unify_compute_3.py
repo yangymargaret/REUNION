@@ -7,17 +7,7 @@ from anndata import AnnData
 import scanpy.external as sce
 
 from copy import deepcopy
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.pylab as pylab
-plt.switch_backend('Agg')
-import matplotlib.ticker as ticker
-import matplotlib.gridspec as gridspec
-import seaborn as sns
-
-import pyranges as pr
 import warnings
-
 import sys
 from tqdm.notebook import tqdm
 
@@ -52,7 +42,6 @@ from test_unify_compute_2 import _Base2_correlation3
 import test_reunion_correlation_1
 from test_reunion_correlation_1 import _Base2_correlation
 
-# get_ipython().run_line_magic('matplotlib', 'inline')
 sc.settings.verbosity = 3 # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=80, facecolor='white')
@@ -94,7 +83,6 @@ class _Base2_correlation5(_Base2_correlation3):
 	## ====================================================
 	# the in silico ChIP-seq library method
 	# compute TF binding score using the in silico ChIP-seq library method
-	# to update
 	def test_peak_tf_score_normalization_1(self,peak_query_vec=[],motif_query_vec=[],motif_data=[],motif_data_score=[],
 												df_peak_tf_expr_corr_=[],input_filename='',peak_read=[],rna_exprs=[],peak_read_celltype=[],
 												df_peak_annot=[],correlation_type='spearmanr',overwrite=False,beta_mode=0,
@@ -136,7 +124,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		verbose_internal = self.verbose_internal
 		if verbose_internal>0:
-			print('motif scanning data, dataframe of size ',motif_data.shape)
+			print('motif scanning data (binary), dataframe of size ',motif_data.shape)
 			print('motif scores, dataframe of size ',motif_data_score.shape)
 
 		df_pre1 = []
@@ -170,8 +158,10 @@ class _Base2_correlation5(_Base2_correlation3):
 																			filename_prefix=filename_prefix,
 																			select_config=select_config)
 				df_peak_tf_expr_corr_ = dict_peak_tf_corr_[column_id1]
-		print('df_peak_tf_expr_corr_ ',df_peak_tf_expr_corr_.shape)
-		print(df_peak_tf_expr_corr_[0:2])
+		# print('df_peak_tf_expr_corr_ ',df_peak_tf_expr_corr_.shape)
+		# print(df_peak_tf_expr_corr_[0:2])
+		print('peak accessibility-TF expr correlation, dataframe of size ',df_peak_tf_expr_corr_.shape)
+		print('data preview:\n', df_peak_tf_expr_corr_[0:2])
 
 		peak_loc_ori = motif_data.index
 		peak_loc_num = len(peak_loc_ori)
@@ -255,7 +245,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ======================================================
 	# select peak-TF links using thresholds on the TF binding scores estimated by the in silico ChIP-seq library method
-	# to update
 	def test_peak_tf_score_normalization_query_1(self,data=[],peak_query_vec=[],motif_query_vec=[],input_filename='',thresh_score=0.1,
 													save_mode=1,output_filename='',filename_annot='',select_config={}):
 
@@ -289,8 +278,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			df_pre1 = pd.read_csv(input_filename_1,index_col=0,sep='\t') # load TF binding scores computed by the in silico ChIP-seq library method
 
 		df_pre2 = df_pre1.loc[df_pre1['score_pred1']>thresh_score]
-		print('peak-TF link annotations including estimated TF binding scores, dataframe of size ',df_pre1.shape)
-		print('selected peak-TF links with TF binding scores above %s, dataframe of size '%(thresh_score),df_pre2.shape)
+		print('peak-TF link annotations including TF binding scores estimated by in silico ChIP-seq, dataframe of size ',df_pre1.shape)
+		print('peak-TF links with TF binding score above %s, dataframe of size '%(thresh_score),df_pre2.shape)
 
 		if save_mode>0:
 			if output_filename=='':
@@ -302,7 +291,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute regularization scores of peak-TF links
-	# to update
 	def test_peak_tf_score_normalization_pre_compute(self,gene_query_vec=[],peak_query_vec=[],motif_query_vec=[],df_gene_peak_query=[],
 														motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],peak_read_celltype=[],df_peak_annot=[],
 														flag_motif_score_quantile=0,flag_motif_score_basic=1,overwrite=False,beta_mode=0,
@@ -415,7 +403,9 @@ class _Base2_correlation5(_Base2_correlation3):
 				if flag_motif_score_quantile>0:
 					t_vec_1 = np.asarray(motif_score)[:,np.newaxis]
 					normalize_type = 'uniform'
-					score_mtx = quantile_transform(t_vec_1,n_quantiles=1000,output_distribution=normalize_type)
+					query_num1 = t_vec_1.shape[0]
+					num_quantiles = np.min([query_num1,1000])
+					score_mtx = quantile_transform(t_vec_1,n_quantiles=num_quantiles,output_distribution=normalize_type)
 					motif_score_quantile = score_mtx[:,0]
 
 					field_query = field_query_1+['motif_score_quantile']
@@ -496,7 +486,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# initiate peak-TF-gene links and compute association scores
-	# to update
 	def test_query_feature_link_pre2(self,gene_query_vec=[],motif_query_vec=[],df_gene_peak_query=[],peak_distance_thresh=2000,
 										df_peak_query=[],peak_loc_query=[],df_gene_tf_corr_peak=[],
 										atac_ad=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
@@ -552,7 +541,8 @@ class _Base2_correlation5(_Base2_correlation3):
 		verbose_internal = self.verbose_internal
 
 		if output_file_path=='':
-			output_file_path_ori = file_save_path
+			output_file_path = file_save_path
+
 		output_file_path_ori = output_file_path
 		
 		if (flag_load_pre1==0):
@@ -720,16 +710,6 @@ class _Base2_correlation5(_Base2_correlation3):
 		type_id_query = 2
 		type_id_compute = 1
 		if flag_gene_tf_corr_peak_combine>0:
-			# self.test_gene_peak_query_correlation_pre1_combine_1(gene_query_vec=[],df_peak_query=[],
-			# 														type_id_query=type_id_query,
-			# 														type_id_compute=type_id_compute,
-			# 														flag_combine=1,
-			# 														input_file_path='',
-			# 														save_mode=save_mode,
-			# 														output_file_path=output_file_path,output_filename='',
-			# 														filename_prefix_save=filename_prefix_save,
-			# 														verbose=verbose,select_config=select_config)
-
 			df_combine, df_ratio = self.test_partial_correlation_gene_tf_cond_peak_combine_pre1(input_file_path=input_file_path,
 																								type_id_query=type_id_query,
 																								type_id_compute=type_id_compute,
@@ -750,7 +730,14 @@ class _Base2_correlation5(_Base2_correlation3):
 		else:			
 			file_path_motif_score = select_config['file_path_motif_score']
 			input_file_path_query = file_path_motif_score
-			input_filename = '%s/pre2.pcorr_query1.1.txt'%(input_file_path_query) # TODO: to update
+			# input_filename = '%s/pre2.pcorr_query1.1.txt'%(input_file_path_query) # TODO: to update
+			filename_prefix_cond = select_config['filename_prefix_cond']
+			column_1 = 'filename_annot_interval'
+			if column_1 in select_config:
+				filename_annot_interval = select_config[column_1]
+			else:
+				filename_annot_interval = '1'
+			input_filename = '%s/%s.pcorr_query1.%s'%(input_file_path_query,filename_prefix_cond,filename_annot_interval)
 			if os.path.exists(input_filename)==True:
 				print('load gene-TF expression partial correlation estimation')
 				df_gene_tf_corr_peak_pre1 = pd.read_csv(input_filename,index_col=0,sep='\t')
@@ -762,7 +749,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		flag_init_score = (flag_score_pre1 in [2,3])
 
 		if len(df_gene_tf_corr_peak_pre1)>0:
-			print('initial peak-TF-gene link query, dataframe of size ',df_gene_tf_corr_peak_pre1.shape)
+			print('initial peak-TF-gene links, dataframe of size ',df_gene_tf_corr_peak_pre1.shape)
 			print('data preview ')
 			print(df_gene_tf_corr_peak_pre1[0:2])
 		else:
@@ -778,7 +765,9 @@ class _Base2_correlation5(_Base2_correlation3):
 																							flag_save_ori=0,
 																							flag_save_interval=flag_save_interval,
 																							parallel_mode=parallel_mode,
-																							save_mode=1,output_file_path=output_file_path,output_filename='',
+																							save_mode=1,
+																							output_file_path=output_file_path,
+																							output_filename='',
 																							filename_prefix_save=filename_prefix_save,
 																							verbose=verbose,select_config=select_config)
 
@@ -786,13 +775,12 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# initiate peak-TF-gene links and compute the scores used in calculating the peak-TF-gene association scores
-	# to update
 	def test_gene_peak_query_correlation_compute_1(self,gene_query_vec=[],motif_query_vec=[],df_gene_peak_query=[],peak_distance_thresh=2000,
 														df_peak_query=[],peak_loc_query=[],atac_ad=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
 														motif_data=[],motif_data_score=[],flag_query_peak_basic=0,flag_peak_tf_corr=0,
 														flag_gene_tf_corr=0,flag_motif_score_normalize_1=0,flag_motif_score_normalize_thresh1=0,
 														flag_motif_score_normalize_2=0,flag_gene_tf_corr_peak_compute=0,
-														interval_peak_corr=50,interval_local_peak_corr=10,overwrite_1=False,overwrite_2=False,
+														interval_peak_corr=50,interval_local_peak_corr=10,overwrite_1=False,overwrite_2=False,overwrite_3=False,
 														save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',verbose=0,select_config={}):
 
 		"""
@@ -818,8 +806,9 @@ class _Base2_correlation5(_Base2_correlation3):
 		:param flag_gene_tf_corr_peak_compute: indicator of whether to compute gene-TF expression partial correlation conditioned on the peak accessibility
 		:param interval_peak_corr: the number of genes in a batch for which to compute gene-TF expression partial correlation given peak accessibility in the batch mode
 		:param interval_local_peak_corr: the number of genes in a sub-batch for which to compute gene-TF expression partial correlation given peak accessibility in the batch mode
-		:param overwrite_1: indicator of whether to overwrite the current file of computed in silico ChIP-seq TF binding scores
-		:param overwrite_2: indicator of whether to overwrite the current file of computed peak-TF link regularization scores
+		:param overwrite_1: indicator of whether to overwrite the current file of in silico ChIP-seq TF binding scores
+		:param overwrite_2: indicator of whether to overwrite the current file of peak-TF link regularization scores
+		:param overwrite_3: indicator of whether to overwrite the current file of gene-TF expr correlation given peak accessibility
 		:param save_mode: indicator of whether to save data
 		:param output_file_path: the directory to save data
 		:param output_filename: filename to save data
@@ -857,7 +846,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		file_save_path2 = file_path_motif_score
 		input_file_path = file_save_path2
-		input_file_path2 = file_save_path2
+		# input_file_path2 = file_save_path2
 		output_file_path = file_save_path2
 		
 		# query the maximum accessibility of peak loci in the metacells
@@ -892,7 +881,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 				# query open peaks in the metacells
 				atac_meta_ad = self.test_peak_access_query_basic_pre1(adata=atac_meta_ad,low_dim_embedding=low_dim_embedding,
-																		n_neighbors=n_neighbors,select_config=select_config)
+																		n_neighbors=n_neighbors,
+																		select_config=select_config)
 				self.atac_meta_ad = atac_meta_ad
 
 		self.dict_peak_tf_corr_ = dict()
@@ -903,11 +893,17 @@ class _Base2_correlation5(_Base2_correlation3):
 		else:
 			filename_annot_motif_score = filename_annot_default
 			select_config.update({column_1:filename_annot_motif_score})
-
 		filename_annot = filename_annot_motif_score
+
+		if 'file_path_peak_tf' in select_config:
+			file_path_peak_tf = select_config['file_path_peak_tf']
+		else:
+			file_path_peak_tf = file_save_path
 		
-		filename_motif_score_1 = '%s/test_motif_score_normalize_insilico.%s.txt'%(input_file_path,filename_annot)
-		filename_motif_score_2 = '%s/test_motif_score_normalize.pre_compute.%s.txt'%(input_file_path,filename_annot)
+		input_file_path_2 = file_path_peak_tf
+		output_file_path_2 = input_file_path_2
+		filename_motif_score_1 = '%s/test_motif_score_normalize_insilico.%s.txt'%(input_file_path_2,filename_annot)
+		filename_motif_score_2 = '%s/test_motif_score_normalize.pre_compute.%s.txt'%(input_file_path_2,filename_annot)
 		select_config.update({'filename_motif_score_normalize_1':filename_motif_score_1,
 								'filename_motif_score_normalize_2':filename_motif_score_2})
 
@@ -919,6 +915,8 @@ class _Base2_correlation5(_Base2_correlation3):
 		if 'filename_prefix_peak_tf' in select_config:
 			filename_prefix_peak_tf = select_config['filename_prefix_peak_tf']
 			filename_prefix = filename_prefix_peak_tf
+		else:
+			select_config.update({'filename_prefix_peak_tf':filename_prefix})
 
 		field_load = ['peak_tf_corr','peak_tf_pval','peak_tf_pval_corrected']
 		filename_annot_vec = [correlation_type,'pval','pval_corrected','motif_basic']
@@ -928,7 +926,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			if 'flag_load_peak_tf' in select_config:
 				flag_load_1 = select_config['flag_load_peak_tf']
 
-			input_filename_list1 = ['%s/%s.%s.1.txt'%(file_save_path,filename_prefix,filename_annot1) for filename_annot1 in filename_annot_vec[0:3]]
+			input_filename_list1 = ['%s/%s.%s.1.txt'%(file_path_peak_tf,filename_prefix,filename_annot1) for filename_annot1 in filename_annot_vec[0:3]]
 			dict_peak_tf_corr_ = self.test_peak_tf_correlation_query_1(motif_data=motif_data,
 																		peak_query_vec=[],
 																		motif_query_vec=motif_query_vec,
@@ -939,15 +937,10 @@ class _Base2_correlation5(_Base2_correlation3):
 																		field_load=field_load,
 																		save_mode=save_mode,
 																		input_filename_list=input_filename_list1,
-																		output_file_path=output_file_path_default,
+																		output_file_path=file_path_peak_tf,
 																		filename_prefix=filename_prefix,
 																		select_config=select_config)
 			self.dict_peak_tf_corr_ = dict_peak_tf_corr_
-		
-		if not ('filename_peak_tf_corr' in select_config):
-			print('please provide peak accessibility-TF expression correlation file')
-		else:
-			input_filename_1 = select_config['filename_peak_tf_corr']
 		
 		df_peak_annot = self.df_peak_annot
 		beta_mode = 0
@@ -955,45 +948,54 @@ class _Base2_correlation5(_Base2_correlation3):
 			beta_mode = select_config['beta_mode']
 
 		df_binding_score_1 = []
+		filename_annot = filename_annot_motif_score
 		if flag_motif_score_normalize_1>0:
-			print('normalization of TF motif score using in silico ChIP-seq')
+			# Unify does not use the estimates from in silico ChIP-seq;
+			# running in silico ChIP-seq is only to query peak accessiblty-TF expression correlation and p-value;
+			# we can also compare the TF binding predictions by in silico ChIP-seq and Unify;
+			print('estimating TF binding scores using in silico ChIP-seq')
 			start = time.time()
 			output_filename = filename_motif_score_1
 			dict_peak_tf_corr_ = self.dict_peak_tf_corr_
 			df_peak_tf_expr_corr_ = []
+			input_filename_1 = ''
 			if len(dict_peak_tf_corr_)>0:
 				df_peak_tf_expr_corr_ = dict_peak_tf_corr_['peak_tf_corr']
+			else:
+				column_1 = 'filename_peak_tf_corr'
+				if column_1 in select_config:
+					input_filename_1 = select_config[column_1]
+				else:
+					print('please provide peak accessibility-TF expression correlation file')
+					return
 
 			# the in silico ChIP-seq library method
 			# compute TF binding score with normalization
 			df_binding_score_1 = self.test_peak_tf_score_normalization_1(peak_query_vec=[],motif_query_vec=motif_query_vec,
-																		motif_data=motif_data,
-																		motif_data_score=motif_data_score,
-																		df_peak_tf_expr_corr_=df_peak_tf_expr_corr_,
-																		input_filename=input_filename_1,
-																		peak_read=peak_read,
-																		rna_exprs=rna_exprs,
-																		peak_read_celltype=[],
-																		df_peak_annot=df_peak_annot,
-																		filename_annot=filename_annot_default,
-																		overwrite=overwrite_1,
-																		output_file_path=output_file_path,
-																		output_filename=output_filename,
-																		beta_mode=beta_mode,
-																		verbose=verbose,
-																		select_config=select_config)
+																			motif_data=motif_data,
+																			motif_data_score=motif_data_score,
+																			df_peak_tf_expr_corr_=df_peak_tf_expr_corr_,
+																			input_filename=input_filename_1,
+																			peak_read=peak_read,
+																			rna_exprs=rna_exprs,
+																			peak_read_celltype=[],
+																			df_peak_annot=df_peak_annot,
+																			overwrite=overwrite_1,
+																			beta_mode=beta_mode,
+																			output_file_path=file_path_peak_tf,
+																			output_filename=output_filename,
+																			filename_annot=filename_annot_motif_score,
+																			verbose=verbose,
+																			select_config=select_config)
 
 			stop = time.time()
 			if len(df_binding_score_1)>0:
-				print('normalization of TF motif score used: %.5fs'%(stop-start))
-			else:
-				print('please provide the information for normalization of TF motif scores')
-
+				print('estimating TF binding score using in silico ChIP-seq used: %.5fs'%(stop-start))
+			
 		# TF binding prediction by the in silico ChIP-seq library method
 		flag_motif_score_normalize_1_query = flag_motif_score_normalize_thresh1
 		quantile_vec_1 = [0.05,0.1,0.25,0.5,0.75,0.9,0.95]
 		field_query_1 = ['max','min','mean','median']+quantile_vec_1
-		output_file_path = file_save_path2
 	
 		if flag_motif_score_normalize_1_query>0:
 			thresh_score_1 = 0.10
@@ -1004,32 +1006,27 @@ class _Base2_correlation5(_Base2_correlation3):
 			b = input_filename.find('.txt')
 			output_filename = '%s.thresh%s.txt'%(input_filename[0:b],thresh_score_1)
 			select_config.update({'filename_motif_score_normalize_1_thresh1':output_filename})
-			# peak-TF link selection by threshold using the TF binding score estimated using the in silico ChIP-seq library method
+			# peak-TF link selection by threshold using TF binding scores estimated by in silico ChIP-seq library method
 			df_link_query_1 = self.test_peak_tf_score_normalization_query_1(data=df_binding_score_1,peak_query_vec=[],
 																			motif_query_vec=motif_query_vec,
 																			input_filename=input_filename,
 																			thresh_score=thresh_score_1,
 																			output_filename=output_filename,
-																			filename_annot=filename_annot_default,
+																			filename_annot=filename_annot_motif_score,
 																			select_config=select_config)
 				
-		# regularization score (scaling score) estimation (the modified approach)
+		# regularization score (scaling coefficient) estimation (the modified approach)
 		if flag_motif_score_normalize_2>0:
-			if 'filename_annot_motif_score' in select_config:
-				filename_annot = select_config['filename_annot_motif_score']
-			else:
-				filename_annot = filename_annot_default
-
-			print('normalization of TF motif score')
+			print('compute regularization scores of peak-TF links')
 			start = time.time()
-			input_file_path_query = output_file_path
+			# input_file_path_query = output_file_path
 			input_filename = filename_motif_score_2
 			
 			if (os.path.exists(input_filename)==True) and (overwrite_2==False):
 				print('the file exists: %s'%(input_filename))
 				df_motif_score_query = pd.read_csv(input_filename,index_col=0,sep='\t')
 			else:
-				# TF motif score normalization
+				# compute regularization scores of peak-TF links
 				df_motif_score_query = self.test_peak_tf_score_normalization_pre_compute(motif_query_vec=motif_query_vec,
 																							motif_data=motif_data,
 																							motif_data_score=motif_data_score,
@@ -1038,66 +1035,113 @@ class _Base2_correlation5(_Base2_correlation3):
 																							peak_read_celltype=[],
 																							df_peak_annot=df_peak_annot,
 																							overwrite=overwrite_2,
-																							output_file_path=output_file_path,
-																							filename_annot=filename_annot,
+																							output_file_path=file_path_peak_tf,
+																							filename_annot=filename_annot_motif_score,
+																							verbose=0,
 																							select_config=select_config)
 			self.df_motif_score_query = df_motif_score_query
 			stop = time.time()
-			print('normalization of TF motif score used: %.5fs'%(stop-start))
+			print('computing regularization scores of peak-TF links used: %.5fs'%(stop-start))
 			
 		df_gene_peak = df_gene_peak_query
 		column_idvec = ['gene_id','peak_id']
 		column_id1, column_id2 = column_idvec[0:2]
+		output_file_path = file_save_path2
 
 		df_gene_tf_corr_peak = []
+
+		query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+		print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
+		start_id1, start_id2 = -1, -1
+		iter_mode = 0
+		if (query_id1>=0) and (query_id2>query_id1):
+			iter_mode = 1
+			start_id1, start_id2 = query_id1, query_id2
+
+		# if start_id1>=0:
+		if iter_mode>0:
+			# filename_annot_save = '%d_%d'%(start_id1,start_id2)
+			filename_annot_save = '%d_%d'%(query_id1,query_id2)
+		else:
+			filename_annot_save = '1'
+		filename_annot_interval = filename_annot_save	
+		select_config.update({'filename_annot_interval':filename_annot_interval})
+
 		if flag_gene_tf_corr_peak_compute>0:
 			if len(gene_query_vec)==0:
 				# gene_query_vec = df_gene_peak['gene_id'].unique()
 				gene_query_vec = df_gene_peak[column_id1].unique()
-
-			query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
-
 			gene_query_num_1 = len(gene_query_vec)
-			start_id1, start_id2 = -1, -1
-			if (query_id1>=0) and (query_id2>query_id1):
-				start_id1, start_id2 = query_id1, np.min([query_id2,gene_query_num_1])
-				if start_id1>start_id2:
-					print('start_id1, start_id2: ',start_id1,start_id2)
-					return
-			if start_id1>=0:
-				filename_annot_save = '%d_%d'%(start_id1,start_id2)
-			else:
-				filename_annot_save = '1'
-			
-			filename_prefix_save_1 = select_config['filename_prefix_default_1']
-			if 'filename_prefix_save_2' in select_config:
-				filename_prefix_save_2 = select_config['filename_prefix_save_2']
-				filename_prefix_save_pre1 = filename_prefix_save_2
-			else:
-				filename_prefix_save_pre1 = filename_prefix_save_1
 
+			# query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+			# if (query_id1>=0) and (query_id2>query_id1):
+				# start_id1, start_id2 = query_id1, np.min([query_id2,gene_query_num_1])
+				# if start_id1>start_id2:
+				# 	print('start_id1, start_id2: ',start_id1,start_id2)
+				# 	return
+
+				# start_id1, start_id2 = query_id1, query_id2
+			# if start_id1>=0:
+			# 	# filename_annot_save = '%d_%d'%(start_id1,start_id2)
+			# 	filename_annot_save = '%d_%d'%(query_id1,query_id2)
+			# else:
+			# 	filename_annot_save = '1'
+			
+			# select_config.update({'filename_annot_interval':filename_annot_save})
+			# filename_prefix_save_1 = select_config['filename_prefix_default_1']
+			# filename_prefix_save_1 = select_config['filename_prefix_cond']
+			# if 'filename_prefix_save_2' in select_config:
+			# 	filename_prefix_save_2 = select_config['filename_prefix_save_2']
+			# 	filename_prefix_save_pre1 = filename_prefix_save_2
+			# else:
+			# 	filename_prefix_save_pre1 = filename_prefix_save_1
+			filename_prefix_default_1 = select_config['filename_prefix_default_1']
+			filename_prefix_cond = select_config['filename_prefix_cond']
+			# filename_prefix_save_pre1 = filename_prefix_save_1
+			filename_prefix_save_pre1 = filename_prefix_cond
+
+			# to update
 			output_filename = '%s/%s.pcorr_query1.%s.txt'%(output_file_path,filename_prefix_save_pre1,filename_annot_save)
-			self.select_config = select_config
+			
+			 #self.select_config = select_config
 			filename_query = output_filename
-			self.select_config.update({'filename_gene_tf_cond':filename_query})
+			# self.select_config.update({'filename_gene_tf_cond':filename_query})
+			select_config.update({'filename_gene_tf_cond':filename_query})
+			self.select_config = select_config
 
 			filename_list_pcorr_1 = []
-			if 'filename_list_pcorr_1' in select_config:
-				filename_list_pcorr_1 = select_config['filename_pcorr_1']
+			column_1 = 'filename_list_pcorr_1'
+			if column_1 in select_config:
+				filename_list_pcorr_1 = select_config[column_1]
 			filename_list_pcorr_1.append(output_filename)
-			select_config.update({'filename_list_pcorr_1':filename_list_pcorr_1})
+			select_config.update({column_1:filename_list_pcorr_1})
 
 			gene_query_vec_pre1 = gene_query_vec
-			gene_query_vec = gene_query_vec_pre1[start_id1:start_id2]
+			# compute gene-TF expr partial correlation given peak accessibility in batch mode
+			flag_pcorr_interval = self.flag_pcorr_interval
+			if flag_pcorr_interval>0:
+				if (start_id1>=0) and (start_id2>start_id1):
+					start_id2 = np.min([query_id2,gene_query_num_1])
+					gene_query_vec = gene_query_vec_pre1[start_id1:start_id2]
+				else:
+					gene_query_vec = gene_query_vec_pre1
 			gene_query_num = len(gene_query_vec)
 			print('gene_query_vec_pre1, gene_query_vec ',gene_query_num_1,gene_query_num,start_id1,start_id2)
 			
 			flag_gene_tf_corr_peak_1=1
 			flag_gene_tf_corr_peak_pval=0
 
+			df_gene_tf_corr_peak = []
+			if (os.path.exists(filename_query)==True) and (overwrite_3==False):
+				print('the file exists: %s'%(filename_query))
+				# return
+
+				flag_gene_tf_corr_peak_1 = 0
+				df_gene_tf_corr_peak = pd.read_csv(filename_query,index_col=0,sep='\t')
+
 			# compute gene-TF expresssion partial correlation given peak accessibility
 			if flag_gene_tf_corr_peak_1>0:
-				print('estimate gene-TF expression partial correlation given peak accessibility')
+				# print('estimate gene-TF expression partial correlation given peak accessibility')
 				start = time.time()
 				peak_query_vec, motif_query_vec = [], []
 				type_id_query_2 = 2
@@ -1120,14 +1164,19 @@ class _Base2_correlation5(_Base2_correlation3):
 																		flag_gene_tf_corr_peak=flag_gene_tf_corr_peak_1,
 																		flag_pval_1=0,
 																		flag_pval_2=flag_gene_tf_corr_peak_pval,
-																		save_mode=1,output_file_path=output_file_path,output_filename=output_filename,
+																		save_mode=1,
+																		output_file_path=output_file_path,
+																		output_filename=output_filename,
 																		verbose=verbose,select_config=select_config)
 
+			if len(df_gene_tf_corr_peak)>0:
 				# df_gene_tf_corr_peak.index = np.asarray(df_gene_tf_corr_peak['gene_id'])
 				self.df_gene_tf_corr_peak = df_gene_tf_corr_peak
 
-				print('df_gene_tf_corr_peak ',df_gene_tf_corr_peak.shape)
-				print(df_gene_tf_corr_peak[0:5])
+				# print('df_gene_tf_corr_peak ',df_gene_tf_corr_peak.shape)
+				print('peak-TF-gene links with gene-TF expr partial correlation estimated, dataframe of size ',df_gene_tf_corr_peak.shape)
+				print('data preview:')
+				print(df_gene_tf_corr_peak[0:2])
 
 		flag_gene_tf_corr_1 = flag_gene_tf_corr
 		if 'flag_gene_tf_corr' in select_config:
@@ -1135,46 +1184,65 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		# estimate gene-TF expression correlation
 		if flag_gene_tf_corr_1>0:
-			gene_query_vec_pre1 = rna_exprs.columns
+			gene_query_vec_pre1 = self.gene_query_vec
+			if len(gene_query_vec_pre1)==0:
+				gene_query_vec_pre1 = rna_exprs.columns
+
 			feature_vec_1 = gene_query_vec_pre1
 			motif_query_name_expr = self.motif_query_name_expr
 			# motif_data = self.motif_data
 			motif_query_vec_pre1 = motif_query_name_expr
 			feature_vec_2 = motif_query_vec_pre1
 
-			input_file_path = select_config['file_path_motif_score']
-			data_file_type_query = select_config['data_file_type_query']
+			column_1 = 'file_path_gene_tf'
+			if column_1 in select_config:
+				input_file_path_query = select_config[column_1]
+			else:
+				input_file_path_query = select_config['file_path_motif_score']
+			
+			output_file_path_query = input_file_path_query
+			
+			# data_file_type_query = select_config['data_file_type']
 			filename_prefix_pre1 = data_file_type_query
-			filename_prefix_1 = select_config['filename_prefix_default']
+			# filename_prefix_1 = select_config['filename_prefix_default']
 			filename_prefix_default_1 = select_config['filename_prefix_default_1']
+			# filename_prefix_cond = select_config['filename_prefix_cond']
 
 			correlation_type = 'spearmanr'
 			correlation_type_vec = [correlation_type]
 
-			query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
-			print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
+			# query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+			# print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
 			
-			if (query_id1>=0) and (query_id2>query_id1):
-				if 'feature_query_num_1' in select_config:
-					feature_query_num_1 = select_config['feature_query_num_1']
-					if query_id1>feature_query_num_1:
-						print('query_id1, feature_query_num_1: ',query_id1,feature_query_num_1)
-						return
-					else:
-						query_id2 = np.min([query_id2,feature_query_num_1])
+			# if (query_id1>=0) and (query_id2>query_id1):
+			if iter_mode>0:
+				column_query = 'feature_query_num_1'
+				if column_query in select_config:
+					feature_query_num_1 = select_config[column_query]
+				# 	if query_id1>feature_query_num_1:
+				# 		print('query_id1, feature_query_num_1: ',query_id1,feature_query_num_1)
+				# 		return
+				# 	else:
+				# 		query_id2 = np.min([query_id2,feature_query_num_1])
 
-				input_filename = '%s/%s.pcorr_query1.%d_%d.txt'%(input_file_path,filename_prefix_default_1,query_id1,query_id2)
+				# input_filename = '%s/%s.pcorr_query1.%d_%d.txt'%(input_file_path,filename_prefix_default_1,query_id1,query_id2)
+				# input_filename = '%s/%s.pcorr_query1.%d_%d.txt'%(input_file_path,filename_prefix_cond,query_id1,query_id2)
+				input_filename = '%s/%s.pcorr_query1.%s.txt'%(input_file_path,filename_prefix_cond,filename_annot_interval)
 				df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t')
 				feature_vec_1 = df_query_1[column_id1].unique()
-				filename_prefix_save_1 = 'test_gene_tf_correlation.%s.%d_%d'%(filename_prefix_pre1,query_id1,query_id2)
+				
+				# filename_prefix_save_1 = 'test_gene_tf_correlation.%s.%d_%d'%(filename_prefix_pre1,query_id1,query_id2)
+				filename_prefix_save_1 = 'test_gene_tf_correlation.%s.%s'%(filename_prefix_pre1,filename_annot_interval)
 			else:
 				filename_prefix_save_1 = 'test_gene_tf_correlation.%s'%(filename_prefix_pre1)
 
 			print('compute gene-TF expression correlation')
-			print('feature_vec_1, feature_vec_2: ',len(feature_vec_1),len(feature_vec_2))
+			feature_num_1 = len(feature_vec_1)
+			feature_num_2 = len(feature_vec_2)
+			print('feature_vec_1, feature_vec_2: ',feature_num_1,feature_num_2)
 			start = time.time()
 
-			filename_save_1 = '%s/%s.%s.1.txt'%(output_file_path,filename_prefix_save_1,correlation_type)
+			filename_save_1 = '%s/%s.%s.1.txt'%(output_file_path_query,filename_prefix_save_1,correlation_type)
 			overwrite_2 = False
 			if (os.path.exists(filename_save_1)==True) and (overwrite_2==False):
 				print('the file exists: %s'%(filename_save_1))
@@ -1188,32 +1256,31 @@ class _Base2_correlation5(_Base2_correlation3):
 													thresh_corr_vec=[],
 													save_mode=1,
 													save_symmetry=0,
-													output_file_path=output_file_path,
+													output_file_path=output_file_path_query,
 													filename_prefix=filename_prefix_save_1,
-													verbose=verbose,select_config=select_config)
+													verbose=0,select_config=select_config)
 
 			stop = time.time()
-			print('compute gene-TF expression correlation used: %.2fs'%(stop-start))
+			print('computing gene-TF expression correlation for %d target genes and %d TFs used %.2fs'%(feature_num_1,feature_num_2,stop-start))
 
-		filename_annot2 = select_config['filename_save_annot_pre1']
-		filename_prefix_query1 = 'test_gene_tf_expr_correlation.%s'%(filename_annot2)
-		filename_prefix_query2 = 'test_gene_expr_correlation.%s'%(filename_annot2)
+			# filename_annot2 = select_config['filename_save_annot_pre1']
+			# filename_prefix_query1 = '%s/test_gene_tf_expr_correlation.%s'%(input_file_path_query,filename_annot2)
+			# filename_prefix_query2 = '%s/test_gene_expr_correlation.%s'%(input_file_path_query,filename_annot2)
 
-		input_filename_pre1 = '%s/%s.%s.1.txt'%(input_file_path2,filename_prefix_query1,correlation_type)
-		input_filename_pre2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path2,filename_prefix_query1,correlation_type)
-		input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path2,filename_prefix_query2,correlation_type)
-		input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path2,filename_prefix_query2,correlation_type)
-		
-		select_config.update({'filename_gene_tf_expr_correlation':input_filename_pre1,
-								'filename_gene_tf_expr_pval_corrected':input_filename_pre2,
-								'filename_gene_expr_correlation':input_filename_1,
-								'filename_gene_expr_pval_corrected':input_filename_2})
-		
+			# input_filename_pre1 = '%s.%s.1.txt'%(filename_prefix_query1,correlation_type)
+			# input_filename_pre2 = '%s.%s.pval_corrected.1.txt'%(filename_prefix_query1,correlation_type)
+			# input_filename_1 = '%s.%s.1.txt'%(filename_prefix_query2,correlation_type)
+			# input_filename_2 = '%s.%s.pval_corrected.1.txt'%(filename_prefix_query2,correlation_type)
+			
+			# select_config.update({'filename_gene_tf_expr_correlation':input_filename_pre1,
+			# 						'filename_gene_tf_expr_pval_corrected':input_filename_pre2,
+			# 						'filename_gene_expr_correlation':input_filename_1,
+			# 						'filename_gene_expr_pval_corrected':input_filename_2})
+			
 		return df_gene_tf_corr_peak
 																
 	## ====================================================
 	# calculate peak-TF-gene association scores
-	# to update
 	def test_gene_peak_query_correlation_gene_pre2_compute_3(self,gene_query_vec=[],df_gene_peak_query=[],peak_distance_thresh=2000,
 																df_peak_query=[],peak_loc_query=[],df_gene_tf_corr_peak=[],
 																flag_save_ori=0,flag_save_interval=0,parallel_mode=1,
@@ -1284,7 +1351,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			if flag_load_2>0:
 				data_file_type_query = select_config['data_file_type']
 				filename_annot = select_config['filename_annot_motif_score']
-				input_file_path2 = select_config['file_path_motif_score']
+				# input_file_path2 = select_config['file_path_motif_score']
+				input_file_path2 = select_config['file_path_peak_tf']
 
 				filename_motif_score_1 = '%s/test_motif_score_normalize_insilico.%s.txt'%(input_file_path2,filename_annot)
 				filename_motif_score_2 = '%s/test_motif_score_normalize.pre_compute.%s.txt'%(input_file_path2,filename_annot)
@@ -1301,7 +1369,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				self.df_peak_tf_1 = df_peak_tf_1
 				self.df_peak_tf_2 = df_peak_tf_2
 
-			# gene_tf_corr_peak p-value query
+			# compute p-value of gene-TF expression partial correlation given peak accessibility
 			column_pval_cond = select_config['column_pval_cond']
 			print('column_pval_cond ',column_pval_cond)
 			flag_gene_tf_corr_peak_pval = 0
@@ -1349,7 +1417,9 @@ class _Base2_correlation5(_Base2_correlation3):
 															flag_save_interval=flag_save_interval,
 															feature_type='gene_id',
 															query_mode=0,
-															save_mode=save_mode_2,output_file_path='',output_filename='',
+															save_mode=save_mode_2,
+															output_file_path='',
+															output_filename='',
 															filename_prefix_save=filename_prefix_save,
 															float_format='%.5f',
 															select_config=select_config)
@@ -1357,7 +1427,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute gene expression correlation
-	# to update
 	def test_gene_expr_correlation_1(self,feature_vec_1=[],feature_vec_2=[],rna_exprs=[],correlation_type_vec=['spearmanr'],
 										symmetry_mode=0,type_id_1=0,type_id_pval_correction=1,thresh_corr_vec=[],
 										save_mode=1,save_symmetry=0,output_file_path='',filename_prefix='',verbose=0,select_config={}):
@@ -1404,10 +1473,12 @@ class _Base2_correlation5(_Base2_correlation3):
 				symmetry_mode=1
 
 		print('df_feature_query1, df_feature_query2, symmetry_mode ',df_feature_query1.shape,len(df_feature_query2),symmetry_mode)
+		if verbose>0:
+			print('compute gene-TF expression correlation for %d genes'%(gene_num))
+		
 		start = time.time()
 		feature_num1 = len(feature_vec_1)
 		gene_num = feature_num1
-		print('estimate gene expression correlation for %d genes'%(gene_num))
 
 		file_path1 = self.save_path_1
 		test_estimator_correlation = _Base2_correlation(file_path=file_path1)
@@ -1428,13 +1499,13 @@ class _Base2_correlation5(_Base2_correlation3):
 																				select_config=select_config)
 
 		stop = time.time()
-		print('estimating gene expression correlation for %d genes used %.5fs'%(gene_num,stop-start))
+		if verbose>0:
+			print('computing gene-TF expression correlation for %d genes used %.5fs'%(gene_num,stop-start))
 			
 		return dict_query_1
 
 	## ====================================================
 	# initiate peak-TF-gene links and compute gene expression-TF expression partial correlation conditioned on peak accessibility
-	# to update
 	def test_partial_correlation_gene_tf_cond_peak_1(self,motif_data=[],gene_query_vec=[],peak_query_vec=[],motif_query_vec=[],
 														df_gene_peak_query=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
 														type_id_query=2,type_id_compute=1,parallel_mode=0,
@@ -1510,10 +1581,12 @@ class _Base2_correlation5(_Base2_correlation3):
 		field_query = select_config['column_gene_tf_corr_peak']
 		field_id1, field_id2, field_id3 = field_query
 		
-		print('field_id1:%s,field_id2:%s,field_id3:%s'%(field_id1,field_id2,field_id3))
+		print('field_id1:%s; field_id2:%s; field_id3:%s'%(field_id1,field_id2,field_id3))
 		flag_1 = 0
 		# field_query = ['motif_id','peak_id','gene_id']
 		field_query = column_idvec
+
+		warnings.filterwarnings('ignore')
 		for i1 in range(gene_query_num):
 			gene_query_id = gene_query_vec[i1]
 			# peak_loc_query = df_gene_peak_query.loc[[gene_query_id],'peak_id'].unique() # candidate peaks linked with gene;
@@ -1568,8 +1641,9 @@ class _Base2_correlation5(_Base2_correlation3):
 
 							mtx_1 = np.hstack((np.asarray(X.loc[sample_id_query,:]),np.asarray(Y_peak[sample_id_query])[:,np.newaxis],np.asarray(Y_expr[sample_id_query])[:,np.newaxis]))
 							df_query1 = pd.DataFrame(index=sample_id_query,columns=list(motif_idvec)+[peak_id]+[gene_query_id_2],data=mtx_1,dtype=np.float32)
-							if i2%100==0:
-								print('df_query1: ',df_query1.shape,i1,i2,len(sample_id_query),len(sample_query_peak),len(motif_idvec),peak_id,gene_query_id_2)
+							# if (i2%100==0) and (i1%100==0):
+								# print('df_query1: ',df_query1.shape,i1,i2,len(sample_id_query),len(sample_query_peak),len(motif_idvec),peak_id,gene_query_id_2)
+								# print('df_query1: ',df_query1.shape,len(sample_query_peak),len(motif_idvec),peak_id,gene_query_id_2)
 							
 							# flag_query_2 = 1
 							flag_query_2 = 0
@@ -1599,8 +1673,9 @@ class _Base2_correlation5(_Base2_correlation3):
 										motif_num = len(motif_idvec)
 										print('gene_id: %s, %d, peak_id: %s, %d, motif_idvec: %d'%(gene_query_id_2,i1,peak_id,i2,motif_num))
 							
-							if (verbose>0) and (i1%100==0) and (i2%100==0):
+							if (i1%100==0) and (i2%100==0):
 								print('gene_id: %s, %d, peak_id: %s, %d, motif_idvec: %d'%(gene_query_id_2,i1,peak_id,i2,motif_num))
+								print('df_query1, number of metacells where peak is open: ',df_query1.shape,len(sample_query_peak))
 							
 							if type_id_compute==0:
 								# only estimate raw p-value
@@ -1647,8 +1722,9 @@ class _Base2_correlation5(_Base2_correlation3):
 							df_pre2[field_id1] = np.asarray(gene_tf_corr_peak_1)
 							df_pre2[field_id2] = np.asarray(gene_tf_corr_peak_pval_1)
 					except Exception as error:
-						print('error! ',error)
-						print('gene_query_id_2, peak_id, motif_idvec, df_query1',gene_query_id_2,i1,peak_id,i2,motif_num,motif_idvec,df_query1.shape)
+						if verbose>0:
+							print('error! ',error)
+							# print('gene_id, peak_id, motif_idvec, df_query1',gene_query_id_2,i1,peak_id,i2,motif_num,motif_idvec,df_query1.shape)
 						# return
 						continue
 
@@ -1670,8 +1746,8 @@ class _Base2_correlation5(_Base2_correlation3):
 					df_query1.to_csv(output_filename,header=False,mode='a',sep='\t',float_format='%.5f')
 				list_query1 = []
 
+		warnings.filterwarnings('default')
 		load_mode_2 = 1
-		
 		if load_mode_2>0:
 			df_query1 = pd.concat(list_query2,axis=0,join='outer',ignore_index=False)
 			df_query1.to_csv(output_filename,sep='\t',float_format='%.5f')
@@ -1680,7 +1756,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute adjusted p-value for gene-TF expression partial correlation given peak accessibility
-	# to update
 	def test_gene_tf_corr_peak_pval_corrected_query_1(self,df_gene_peak_query=[],gene_query_vec=[],motif_query_vec=[],alpha=0.05,
 														method_type_correction='fdr_bh',type_id_1=1,parallel_mode=0,save_mode=1,verbose=0,select_config={}):
 
@@ -1792,7 +1867,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute adjusted p-value for gene-TF expression partial correlation given peak accessibility
-	# to update
 	def test_gene_tf_corr_peak_pval_corrected_unit1(self,data=[],feature_query_vec=[],feature_id='',column_id_query='',field_query=[],alpha=0.05,method_type_correction='fdr_bh',type_id_1=0,interval=1000,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -1869,7 +1943,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ==================================================================
 	# compute the components for score function 1 (peak-TF-gene association score 1)
-	# to update
 	def test_query_score_function1(self,df_peak_tf_corr=[],df_gene_peak_query=[],gene_query_vec=[],peak_query_vec=[],motif_query_vec=[],
 										motif_data=[],motif_data_score=[],peak_read=[],rna_exprs=[],rna_exprs_unscaled=[],
 										type_id_query=2,type_id_compute=1,flag_peak_tf_corr=0,flag_gene_tf_corr_peak=1,
@@ -1979,6 +2052,7 @@ class _Base2_correlation5(_Base2_correlation3):
 																						parallel_mode=parallel_mode,
 																						save_mode=save_mode,
 																						output_filename=output_filename,
+																						verbose=verbose,
 																						select_config=select_config)
 			stop = time.time()
 			print('computing gene-TF expression partial correlation given peak accessibility for %d genes used %.5fs'%(gene_query_num,stop-start))
@@ -2001,7 +2075,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			print('estimating p-value corrected for gene-TF expression partial correlation used %.5fs'%(stop-start))
 			verbose_internal = self.verbose_internal
 			if verbose_internal==2:
-				print('data preview:\n',df_gene_tf_corr_peak[0:5])
+				print('data preview:\n',df_gene_tf_corr_peak[0:2])
 			if (save_mode>0) and (output_filename!=''):
 				df_gene_tf_corr_peak.to_csv(output_filename,sep='\t',float_format='%.5f')
 
@@ -2011,7 +2085,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# combine gene expression-TF expression partial correlations conditioned on peak accessibility of different subsets of peak-TF-gene links
-	# to update
 	def test_partial_correlation_gene_tf_cond_peak_combine_pre1(self,input_file_path='',type_id_query=0,type_id_compute=0,overwrite=0,
 																	save_mode=1,output_file_path='',output_filename='',output_filename_list=[],
 																	filename_prefix_vec=[],filename_prefix_save='',verbose=0,select_config={}):
@@ -2086,17 +2159,16 @@ class _Base2_correlation5(_Base2_correlation3):
 		stop = time.time()
 		print('combining gene-TF expresssion partial correlations of peak-TF-gene links used %.5fs'%(stop-start))
 				
-		flag_save_subset_1=1
-		if flag_save_subset_1>0:
-			df1_1 = df1[0:10000]	# save subset of data for preview
-			output_filename = '%s/%s.subset1.txt'%(output_file_path,filename_prefix_save_pre1)
-			df1_1.to_csv(output_filename,sep='\t',float_format='%.5f')
+		# flag_save_subset_1=1
+		# if flag_save_subset_1>0:
+		# 	df1_1 = df1[0:10000]	# save subset of data for preview
+		# 	output_filename = '%s/%s.subset1.txt'%(output_file_path,filename_prefix_save_pre1)
+		# 	df1_1.to_csv(output_filename,sep='\t',float_format='%.5f')
 
 		return df1, df1_ratio
 
 	## ====================================================
 	# combine gene expression-TF expression partial correlations conditioned on peak accessibility of different subsets of peak-TF-gene links
-	# to update
 	def test_partial_correlation_gene_tf_cond_peak_combine_1(self,input_file_path='',idvec=[],interval=1000,save_mode=0,output_filename_list=[],filename_prefix_vec=[],verbose=0,select_config={}):
 		
 		"""
@@ -2129,6 +2201,7 @@ class _Base2_correlation5(_Base2_correlation3):
 				list_1, list_ratio_1 = [], []
 				file_num1 = len(input_filename_list1)
 				column_idvec = ['motif_id','peak_id','gene_id']
+				column_id3, column_id2, column_id1 = column_idvec
 				verbose_internal = self.verbose_internal
 				# query gene-TF expression partial correlation given peak accessibility and percentage of metacells included in computation
 				for i1 in range(file_num1):
@@ -2142,44 +2215,66 @@ class _Base2_correlation5(_Base2_correlation3):
 					df_query1.index = test_query_index(df_query1,column_vec=column_idvec)
 					t_columns = df_query1.columns.difference(['ratio_1','ratio_cond1'],sort=False)
 					df_query_1 = df_query1.loc[:,t_columns]
-					df_query2 = df_query1.loc[:,['peak_id','gene_id','ratio_1','ratio_cond1']]
-					df_query2.index = test_query_index(df_query2,column_vec=['peak_id','gene_id'])
-					df_query_2 = df_query2.loc[~df_query2.index.duplicated(keep='first')]
+					
 					if verbose_internal==2:
 						print('gene-TF expression partial correlation given peak accessibility, dataframe of size ',df_query1.shape)
 						print('data loaded from %s'%(input_filename),i1)
 						print('preview:\n',df_query1[0:5])
-						print('percentage of metacells included in computation, preview:\n' ,df_query2[0:5])
 					list_1.append(df_query_1)
-					list_ratio_1.append(df_query_2)
 
-				df1_pre1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)
-				df1_ratio_pre1 = pd.concat(list_ratio_1,axis=0,join='outer',ignore_index=False)
-				df1 = df1_pre1.loc[~df1_pre1.index.duplicated(keep='first')]
-				df1_ratio = df1_ratio_pre1.loc[~df1_ratio_pre1.index.duplicated(keep='first')]
+					column_1, column_2 = 'ratio_1', 'ratio_cond1'
+					column_vec = df_query1.columns
+					if (column_1 in column_vec) and (column_2 in column_vec):
+						df_query2 = df_query1.loc[:,['peak_id','gene_id','ratio_1','ratio_cond1']]
+						df_query2.index = test_query_index(df_query2,column_vec=['peak_id','gene_id'])
+						df_query_2 = df_query2.loc[~df_query2.index.duplicated(keep='first')]
+						list_ratio_1.append(df_query_2)
+						if verbose_internal==2:
+							print('percentage of metacells included in computation, preview:\n' ,df_query2[0:5])
+					
+				df1_pre1 = pd.concat(list_1,axis=0,join='outer',ignore_index=False)			
+				df1 = df1_pre1.loc[~df1_pre1.index.duplicated(keep='first')] # unduplicated dataframe
 				df1 = df1.sort_values(by=['gene_id','peak_id','gene_tf_corr_peak'],ascending=[True,True,False])
 				df1.index = np.asarray(df1['motif_id'])
-				df1_ratio = df1_ratio.sort_values(by=['gene_id','peak_id'],ascending=True)
-				# df1_ratio.index = np.asarray(df1_ratio['peak_id'])
-				df1_ratio.index = np.asarray(df1_ratio['gene_id'])
+				df1_ratio = []
+				
+				file_save = 0
 				if (save_mode>0) and (len(output_filename_list)>0):
 					output_filename_1, output_filename_2 = output_filename_list
 					if os.path.exists(output_filename_1)==True:
 						print('the file exists ',output_filename_1)
 					else:
 						df1.to_csv(output_filename_1,sep='\t',float_format='%.5f')
-					# output_filename_2 = '%s/%s.%s.%s.peak_ratio.%d_%d.txt'%(output_file_path,filename_prefix_1,filename_prefix_2,filename_annot2,start_id1,start_id2)
-					if os.path.exists(output_filename_2)==True:
-						print('the file exists ',output_filename_2)
-					else:
-						df1_ratio.to_csv(output_filename_2,sep='\t',float_format='%.5f')
-					print('df1, df1_ratio ',df1.shape,df1_ratio.shape)
+						file_save = 1
+				
+					if len(list_ratio_1)>0:
+						df1_ratio_pre1 = pd.concat(list_ratio_1,axis=0,join='outer',ignore_index=False)
+						df1_ratio = df1_ratio_pre1.loc[~df1_ratio_pre1.index.duplicated(keep='first')]	# unduplicated dataframe;
+						df1_ratio = df1_ratio.sort_values(by=['gene_id','peak_id'],ascending=True)
+						column_query = 'gene_id'
+						df1_ratio.index = np.asarray(df1_ratio[column_query])
+
+						# output_filename_2 = '%s/%s.%s.%s.peak_ratio.%d_%d.txt'%(output_file_path,filename_prefix_1,filename_prefix_2,filename_annot2,start_id1,start_id2)
+						if os.path.exists(output_filename_2)==True:
+							print('the file exists ',output_filename_2)
+						else:
+							df1_ratio.to_csv(output_filename_2,sep='\t',float_format='%.5f')
+						print('df1, df1_ratio ',df1.shape,df1_ratio.shape)
+
+					save_mode_query = self.save_mode
+					if (save_mode_query==1) and (file_save>0):
+						# without saving the intermediate files
+						for i1 in range(file_num1):
+							filename_query = input_filename_list1[i1]
+							try:
+								os.remove(filename_query)
+							except Exception as error:
+								print('error! ',error)
 
 				return df1, df1_ratio
 
 	## ====================================================
 	# convert wide format dataframe to long format and combine dataframes
-	# to update
 	def test_query_feature_combine_format_1(self,df_list,column_idvec=[],field_query=[],dropna=False,select_config={}):
 
 		"""
@@ -2211,7 +2306,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# query gene-TF expression correlations and peak accessibilility-TF expression correlations
-	# to update
 	def test_gene_peak_tf_query_score_init_pre1_1(self,gene_query_vec=[],peak_query_vec=[],motif_query_vec=[],load_mode=0,input_file_path='',
 													save_mode=0,output_file_path='',output_filename='',verbose=0,select_config={}):
 
@@ -2242,39 +2336,38 @@ class _Base2_correlation5(_Base2_correlation3):
 		flag_load_1 = (load_mode in [1,2])
 		input_filename_list = []
 		field_list = []
+
+		data_file_type_query = select_config['data_file_type']
 		correlation_type = 'spearmanr'
 		if 'correlation_type' in select_config:
 			correlation_type = select_config['correlation_type']
-			
 		filename_annot_vec = [correlation_type,'pval_corrected']
-		input_file_path2 = select_config['file_path_motif_score']
-		file_path_gene_tf = select_config['file_path_gene_tf']
-		input_file_path_query2 = file_path_gene_tf
 
-		data_file_type_query = select_config['data_file_type']
-		if flag_load_1>0:		
+		if flag_load_1>0:
+			column_1 = 'file_path_gene_tf'
+			file_path_gene_tf = select_config[column_1]
+			input_file_path_query = file_path_gene_tf
+
 			# filename_prefix_1 = 'test_gene_tf_correlation.%s'%(data_file_type_query)
-			filename_prefix_gene_tf = select_config['filename_prefix_gene_tf']
-			filename_prefix_1 = filename_prefix_gene_tf
+			filename_prefix_1 = select_config['filename_prefix_gene_tf']
 
-			input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
-			input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
+			input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path_query,filename_prefix_1,correlation_type)
+			input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path_query,filename_prefix_1,correlation_type)
 
 			if os.path.exists(input_filename_1)==False:
 				print('the file does not exist: %s'%(input_filename_1))
 				query_id1 = select_config['query_id1']
 				query_id2 = select_config['query_id2']
 				iter_mode = 0
+				# gene-TF expression correlation was computed in batch mode
 				if (query_id1>=0) and (query_id2>query_id1):
 					iter_mode = 1
-
-				if iter_mode>0:
 					feature_query_num_1 = select_config['feature_query_num_1']
 					query_id2_pre = np.min([query_id2,feature_query_num_1])
-					filename_prefix_1 = '%s.%d_%d'%(filename_prefix_gene_tf,query_id1,query_id2)
+					filename_prefix_2 = '%s.%d_%d'%(filename_prefix_1,query_id1,query_id2)
 
-				input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
-				input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path_query2,filename_prefix_1,correlation_type)
+				input_filename_1 = '%s/%s.%s.1.txt'%(input_file_path_query,filename_prefix_2,correlation_type)
+				input_filename_2 = '%s/%s.%s.pval_corrected.1.txt'%(input_file_path_query,filename_prefix_2,correlation_type)
 			
 			# filename_gene_expr_corr = input_filename_list1
 			filename_gene_expr_corr = [input_filename_1,input_filename_2]
@@ -2286,26 +2379,26 @@ class _Base2_correlation5(_Base2_correlation3):
 		
 		flag_load_2 = (load_mode in [0,2])
 		if flag_load_2>0:
-			if 'file_path_peak_tf' in select_config:
-				file_save_path_2 = select_config['file_path_peak_tf']
-				print('file_path_peak_tf: ',file_save_path_2)
+			column_2 = 'file_path_peak_tf'
+			if column_2 in select_config:
+				file_path_peak_tf = select_config[column_2]
+				print('%s: %s'%(column_2,file_path_peak_tf))
+				input_file_path_query2 = file_path_peak_tf
 			else:
-				# file_save_path = select_config['data_path_save_local']
-				file_save_path = select_config['file_path_motif_score']
-				file_save_path_2 = file_save_path
+				input_file_path_query2 = select_config['file_path_motif_score']
 
 			if 'filename_prefix_peak_tf' in select_config:
 				filename_prefix_peak_tf = select_config['filename_prefix_peak_tf']
 			else:
-				data_file_type_query = select_config['data_file_type']
 				filename_prefix_peak_tf = 'test_peak_tf_correlation.%s'%(data_file_type_query)
 				
 			filename_save_annot_peak_tf = '1'
 			if 'filename_save_annot_peak_tf' in select_config:
 				filename_save_annot_peak_tf = select_config['filename_save_annot_peak_tf']
 
-			# query path of the file saving the peak accessibility-TF expression correlation data
+			# query file paths of the peak accessibility-TF expression correlation and p-value
 			filename_prefix = filename_prefix_peak_tf
+			file_save_path_2 = input_file_path_query2
 			input_filename_list2 = ['%s/%s.%s.%s.txt'%(file_save_path_2,filename_prefix,filename_annot1,filename_save_annot_peak_tf) for filename_annot1 in filename_annot_vec[0:2]]
 			filename_peak_tf_corr = input_filename_list2
 			select_config.update({'filename_peak_tf_corr':filename_peak_tf_corr})
@@ -2314,7 +2407,6 @@ class _Base2_correlation5(_Base2_correlation3):
 			feature_type_annot2 = 'peak_tf_corr'
 			field_list.append([field_query1,feature_type_annot2])
 
-		list_query_1 = []
 		dict_query_pre1 = dict()
 		feature_type_vec = ['gene_tf_corr','peak_tf_corr']
 		for feature_type_annot in feature_type_vec:
@@ -2322,8 +2414,8 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		query_num1 = len(input_filename_list)
 		for i1 in range(query_num1):
-			filename_query_1 = input_filename_list[i1]
-			input_filename = filename_query_1[0]
+			filename_list_query = input_filename_list[i1]
+			input_filename = filename_list_query[0]
 			t_vec_1 = field_list[i1]
 			field_query, feature_type_annot = t_vec_1[0:2]
 			print('input_filename: ',input_filename,field_query,feature_type_annot)
@@ -2343,24 +2435,32 @@ class _Base2_correlation5(_Base2_correlation3):
 				field_id1 = field_query[1]
 				df_query = adata.obsm[field_id1]
 				df_query_2 = pd.DataFrame(index=feature_query1,columns=feature_query2,data=df_query.toarray(),dtype=np.float32)
+				
+				list1 = [df_query_1,df_query_2]
 			else:
 				df_query_1 = pd.read_csv(input_filename,index_col=0,sep='\t') # the correlation value
-				input_filename_2 = filename_query_1[1]
+				input_filename_2 = filename_list_query[1]
 				df_query_2 = pd.read_csv(input_filename_2,index_col=0,sep='\t') # the p-value corrected
-
-				print('correlation value, dataframe of size ',df_query_1.shape)
-				print('p-value corrected, dataframe of size ',df_query_2.shape)
 
 				if len(motif_query_vec)>0:
 					df_query_1 = df_query_1.loc[:,motif_query_vec]
 					df_query_2 = df_query_2.loc[:,motif_query_vec]
 
-					print('correlation value, dataframe of size ',df_query_1.shape)
-					print('p-value corrected, dataframe of size ',df_query_2.shape)
+				print('correlation value, dataframe of size ',df_query_1.shape)
+				print('p-value corrected, dataframe of size ',df_query_2.shape)
 
-			list1 = [df_query_1,df_query_2]
+				annot_vec_query = ['correlation value','p-value corrected']
+
+				list1 = []
+				for (input_filename,annot_str) in zip(filename_list_query,annot_vec_query):
+					df_query = pd.read_csv(input_filename,index_col=0,sep='\t') # the correlation value or p-value
+					if len(motif_query_vec)>0:
+						df_query = df_query.loc[:,motif_query_vec]
+
+					print('%s, dataframe of size '%(annot_str),df_query.shape)
+					list1.append(df_query)
+
 			dict_query_1 = dict(zip(field_query,list1))
-			# list_query_1.append(dict_query_1)
 			dict_query_pre1.update({feature_type_annot:dict_query_1})
 
 		list1 = [dict_query_pre1[feature_type_annot] for feature_type_annot in feature_type_vec]
@@ -2370,7 +2470,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# query correlations or partial correlations and p-values of different types of links, and the regularization scores of peak-TF links
-	# to update
 	def test_gene_peak_tf_query_score_init_pre1_2(self,df_gene_peak_query=[],df_peak_tf_1=[],df_peak_tf_2=[],dict_peak_tf_query={},dict_gene_tf_query={},df_gene_tf_corr_peak=[],
 														input_file_path='',save_mode=0,output_file_path='',output_filename='',verbose=0,select_config={}):
 
@@ -2558,7 +2657,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# calculate peak-TF-gene association scores
-	# to update
 	def test_gene_peak_tf_query_score_init_pre1(self,df_gene_peak_query=[],df_gene_tf_corr_peak=[],lambda1=0.5,lambda2=0.5,column_id1=-1,
 													flag_init_score_pre1=0,flag_link_type_query=0,flag_init_score_1=0,
 													flag_save_1=1,flag_save_2=1,flag_save_3=1,input_file_path='',
@@ -2571,12 +2669,15 @@ class _Base2_correlation5(_Base2_correlation3):
 		:param lambda1: (float) weight of score 1 (TF-(peak,gene) association score)
 		:param lambda2: (float) weight of score 2 ((peak,TF)-gene association score)
 		:param column_id1: (str) column representing the maximal score possible for a given peak-TF-gene link using the associated regularization score
-		:param flag_init_score_pre1: indicator of whether to query correlations or partial correlations and p-values of different types of links, and the regularization scores of peak-TF links
+		:param flag_init_score_pre1: indicator of whether to query correlations or partial correlations and p-values of different types of links, 
+									 and the regularization scores of peak-TF links
 		:param flag_link_type_query: indicator of whether to estimate the type of peak-TF link, peak-gene link, and gene-TF link
 		:param flag_init_score_1: indicator of whether to calculate peak-TF-gene association scores
-		:param flag_save_1: indicator of whether to save peak-TF-gene link annotations including correlation or partial correlation and p-value of different types of links, motif scores, peak accessibility scores, conditioned peak percentage, and regularization scores of peak-TF links
+		:param flag_save_1: indicator of whether to save peak-TF-gene link annotations including correlation or partial correlation and p-value of different types of links, 
+							motif scores, peak accessibility scores, conditioned metacell percentage, and regularization scores of peak-TF links
 		:param flag_save_2: indicator of whether to save peak-TF-gene link annotations including peak-TF, peak-gene, and gene-TF link types and the score weights
-		:param flag_save_3: indicator of whether to save peak-TF-gene link annotations including peak-TF-gene association scores, correlation or partial correlation of different types of links, and selected associated scores
+		:param flag_save_3: indicator of whether to save peak-TF-gene link annotations including peak-TF-gene association scores, 
+							correlation or partial correlation of different types of links, and other types of associated scores
 		:param input_file_path: the directory to retrieve data from
 		:param save_mode: indicator of whether to save data
 		:param output_file_path: the directory to save data
@@ -2605,6 +2706,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		filename_prefix_pre1 = data_file_type_query
 		filename_prefix_default = select_config['filename_prefix_default']
 		filename_prefix_default_1 = select_config['filename_prefix_default_1']
+		filename_prefix_cond = select_config['filename_prefix_cond']
 
 		query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
 		iter_mode = 0
@@ -2614,10 +2716,10 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		output_file_path = file_save_path2
 		if iter_mode==0:
-			filename_prefix_save_pre2 = '%s.pcorr_query1'%(filename_prefix_default_1)
+			filename_prefix_save_pre2 = '%s.pcorr_query1'%(filename_prefix_cond)
 		else:
-			filename_prefix_save_pre2 = '%s.pcorr_query1.%d_%d'%(filename_prefix_default_1,query_id1,query_id2)
-
+			filename_prefix_save_pre2 = '%s.pcorr_query1.%d_%d'%(filename_prefix_cond,query_id1,query_id2)
+			
 		if flag_init_score_pre1>0:
 			# combine the different scores
 			filename_peak_tf_corr = []
@@ -2656,7 +2758,7 @@ class _Base2_correlation5(_Base2_correlation3):
 
 				# peak and peak-gene link attributes
 				field_query1 = ['ratio_1','ratio_cond1'] 
-				# peak-tf attributes
+				# peak-TF association attributes
 				field_query2 = ['motif_score_minmax','motif_score_log_normalize_bound','score_accessibility','score_1','motif_score','score_normalize_1','score_normalize_pred']
 				
 				field_query3 = ['peak_tf_corr','peak_tf_pval_corrected',
@@ -2673,21 +2775,23 @@ class _Base2_correlation5(_Base2_correlation3):
 				for i2 in range(query_num1):
 					field_query_pre1 = list_1[i2]
 					field_query = pd.Index(field_query_pre1).intersection(column_vec_1,sort=False)
-					field_query_2 = list(column_idvec)+list(field_query)
-					df_link_query_2 = df_link_query_1.loc[:,field_query_2]
-					if i2==1:
-						df_link_query_2 = df_link_query_2.drop_duplicates(subset=[column_id1,column_id2])	# peak-gene associations
-					elif i2==2:
-						df_link_query_2 = df_link_query_2.drop_duplicates(subset=[column_id2,column_id3])	# peak-TF associations
-					
-					if i2==0:
-						extension = 'txt.gz'
-						compression = 'gzip'
-					else:
-						extension = 'txt'
-						compression = None
-					output_filename = '%s/%s.annot1_%d.1.%s'%(output_file_path,filename_prefix_save_pre2,i2+1,extension)
-					df_link_query_2.to_csv(output_filename,index=False,sep='\t',float_format='%.5f',compression=compression)
+
+					if len(field_query)>0:
+						field_query_2 = list(column_idvec)+list(field_query)
+						df_link_query_2 = df_link_query_1.loc[:,field_query_2]
+						if i2==1:
+							df_link_query_2 = df_link_query_2.drop_duplicates(subset=[column_id1,column_id2])	# peak-gene associations
+						elif i2==2:
+							df_link_query_2 = df_link_query_2.drop_duplicates(subset=[column_id2,column_id3])	# peak-TF associations
+						
+						if i2==0:
+							extension = 'txt.gz'
+							compression = 'gzip'
+						else:
+							extension = 'txt'
+							compression = None
+						output_filename = '%s/%s.annot1_%d.1.%s'%(output_file_path,filename_prefix_save_pre2,i2+1,extension)
+						df_link_query_2.to_csv(output_filename,index=False,sep='\t',float_format='%.5f',compression=compression)
 
 		# flag_link_type_query=0
 		flag_link_type_query=1
@@ -2822,7 +2926,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute peak-TF-gene association scores
-	# to update
 	def test_gene_peak_tf_query_score_compute_unit_1(self,df_feature_link=[],flag_link_type=1,flag_compute=1,flag_annot_1=0,retrieve_mode=0,
 														save_mode=0,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -2904,7 +3007,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# calculate peak-TF-gene association scores
-	# to update
 	def test_gene_peak_tf_query_score_init_1(self,df_gene_peak_query=[],lambda1=0.5,lambda2=0.5,column_id1=-1,verbose=0,select_config={}):
 
 		"""
@@ -2989,7 +3091,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# save peak-TF-gene link annotations
-	# to update
 	def test_gene_peak_tf_query_score_init_save(self,df_gene_peak_query=[],lambda1=0.5,lambda2=0.5,
 													flag_init_score=1,flag_save_interval=1,
 													feature_type='gene_id',query_mode=0,
@@ -3047,7 +3148,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# save peak-TF-gene link annotations by subsets
-	# to update
 	def test_gene_peak_tf_query_save_interval_1(self,df_gene_peak_query=[],interval=5000,feature_type=0,query_mode=0,
 													save_mode=1,output_file_path='',filename_prefix_save='',float_format='%.5f',select_config={}):
 
@@ -3099,7 +3199,6 @@ class _Base2_correlation5(_Base2_correlation3):
 	## ====================================================
 	# estimate the type of peak-TF link, peak-gene link, and gene-TF link in peak-TF-gene associations
 	# adjust the weights of score 1 and score 2 based on the link types
-	# to update
 	def test_query_tf_peak_gene_pair_link_type(self,gene_query_vec=[],peak_query_vec=[],motif_query_vec=[],df_gene_peak_query=[],df_gene_peak_tf_query=[],column_idvec=[],
 												motif_data=[],peak_read=[],rna_exprs=[],reset_index=True,flag_annot_1=1,type_query=0,
 												save_mode=1,output_file_path='',output_filename='',filename_annot='',verbose=0,select_config={}):
@@ -3331,8 +3430,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			list_pre2 = [id_gene_tf_corr_neg_thresh2, id_gene_tf_corr_neg_thresh1]
 			id_gene_tf_corr_pos_thresh_query = list_pre1[type_query]
 			id_gene_tf_corr_neg_thresh_query = list_pre2[type_query]
-			print('id_gene_tf_corr_pos_thresh, id_gene_tf_corr_neg_thresh: ',id_gene_tf_corr_pos_thresh_query,id_gene_tf_corr_neg_thresh_query)
-
+			# print('id_gene_tf_corr_pos_thresh, id_gene_tf_corr_neg_thresh: ',id_gene_tf_corr_pos_thresh_query,id_gene_tf_corr_neg_thresh_query)
+			
 			# repression with peak-TF correlation above zero
 			id1 = (peak_tf_link>0)&(peak_gene_link<0)&(gene_tf_link<0)	# neg-pos: repression (negative peak, positive peak-tf correlation); the previous threshold
 			id1 = (id1&id_gene_tf_corr_neg_thresh_query)	# change the threshold to be stricter
@@ -3393,7 +3492,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# find the peak-TF-gene links with discrepancy between the gene-TF expression partial correlation given peak accessibility and the gene-TF expression correlation
-	# to update
 	def test_gene_peak_tf_query_compare_1(self,input_filename='',df_gene_peak_query=[],thresh_corr_1=0.30,thresh_corr_2=0.05,
 											save_mode=0,output_file_path='',filename_prefix_save='',verbose=0,select_config={}):
 
@@ -3462,7 +3560,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# parameter configuration for calculating peak-TF-gene association scores and selecting peak-TF-gene links
-	# to update
 	def test_query_score_config_1(self,column_pval_cond='',thresh_corr_1=0.1,thresh_pval_1=0.1,overwrite=False,flag_config_1=1,flag_config_2=1,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -3481,7 +3578,9 @@ class _Base2_correlation5(_Base2_correlation3):
 
 		if flag_config_1>0:
 			filename_prefix_default_1 = select_config['filename_prefix_default_1']
-			filename_prefix_score = '%s.pcorr_query1'%(filename_prefix_default_1)
+			filename_prefix_cond = select_config['filename_prefix_cond']
+			# filename_prefix_score = '%s.pcorr_query1'%(filename_prefix_default_1)
+			filename_prefix_score = '%s.pcorr_query1'%(filename_prefix_cond)
 			filename_annot_score_1 = 'annot2.init.1'
 			filename_annot_score_2 = 'annot2.init.query1'
 			select_config.update({'filename_prefix_score':filename_prefix_score,'filename_annot_score_1':filename_annot_score_1,'filename_annot_score_2':filename_annot_score_2})
@@ -3601,7 +3700,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# parameter configuration for estimating the feature link type
-	# to update
 	def test_query_score_config_2(self,thresh_query_1=[],thresh_query_2=[],overwrite=False,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -3643,7 +3741,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute peak-TF-gene association scores
-	# to update
 	def test_query_feature_score_compute_1(self,df_feature_link=[],input_filename='',overwrite=False,iter_mode=1,
 												save_mode=1,output_file_path='',output_filename='',filename_prefix_save='',filename_save_annot='',verbose=0,select_config={}):
 
@@ -3766,8 +3863,7 @@ class _Base2_correlation5(_Base2_correlation3):
 							column_vec_2 = list(column_idvec) + field_link_1 + field_link_2 + ['group']
 							df_link_query_pre3 = df_link_query_pre1.loc[:,column_vec_2]
 
-					df_feature_link = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)
-				
+					df_feature_link = pd.concat(list_query1,axis=0,join='outer',ignore_index=False)	
 				else:
 					df_feature_link = pd.read_csv(input_filename,index_col=0,sep='\t')
 			
@@ -3783,7 +3879,6 @@ class _Base2_correlation5(_Base2_correlation3):
 	## ====================================================
 	# query peak-TF-gene link annotations
 	# compute peak-TF-gene association scores
-	# to update
 	def test_query_feature_score_init_pre1_1(self,data=[],input_filename_list=[],recompute=0,iter_mode=1,load_mode=1,save_mode=1,verbose=0,select_config={}):
 
 		"""
@@ -3808,7 +3903,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			file_path_motif_score = select_config['file_path_motif_score']
 			input_file_path = file_path_motif_score
 			filename_prefix_save_1 = select_config['filename_prefix_score']
-			filename_prefix_save_1_ori = filename_prefix_save_1
+			# filename_prefix_save_1_ori = filename_prefix_save_1
 			filename_annot_1_ori = select_config['filename_annot_score_1']
 			filename_annot_1 = filename_annot_1_ori
 			
@@ -3825,28 +3920,42 @@ class _Base2_correlation5(_Base2_correlation3):
 				if extension in ['txt.gz']:
 					compression = 'gzip'
 
-				if iter_mode>0:
-					interval = select_config['feature_score_interval']
-					feature_query_num_1 = select_config['feature_query_num']
+				# if iter_mode>0:
+				# 	interval = select_config['feature_score_interval']
+				# 	feature_query_num_1 = select_config['feature_query_num']
+				# 	iter_num = int(np.ceil(feature_query_num_1/interval))
+				# else:
+				# 	iter_num = 1
+
+				query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+				interval_query = query_id2-query_id1
+
+				column_1, column_2 = 'feature_score_interval', 'feature_query_num'
+				iter_mode_query = 0
+				if (column_1 in select_config) and (column_2 in select_config):
+					interval = select_config[column_1]
+					feature_query_num_1 = select_config[column_2]
 					iter_num = int(np.ceil(feature_query_num_1/interval))
-				else:
-					iter_num = 1
-				
-				print('iter_mode, iter_num ',iter_mode,iter_num)
+					print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+					if iter_num>1:
+						iter_mode_query = 1
+
+				print('iter_mode_query, iter_num ',iter_mode_query,iter_num)
 				for i1 in range(iter_num):
-					if iter_mode>0:
+					if iter_mode_query>0:
 						query_id_1 = i1*interval
 						query_id_2= (i1+1)*interval
-						query_id_2_ori = query_id_2
-
-						query_id_2_pre = np.min([feature_query_num_1,query_id_2])
-						query_id_2 = query_id_2_pre
-
+						# query_id_2_ori = query_id_2
+						# query_id_2_pre = np.min([feature_query_num_1,query_id_2])
+						# query_id_2 = query_id_2_pre
 						filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id_1,query_id_2)
-						filename_prefix_save_pre2 = '%s.%d_%d'%(filename_prefix_save_1_ori,query_id_1,query_id_2)
+						# filename_prefix_save_pre2 = '%s.%d_%d'%(filename_prefix_save_1_ori,query_id_1,query_id_2)
 					else:
-						filename_prefix_save_pre1 = filename_prefix_save_1
-						filename_prefix_save_pre2 = filename_prefix_save_1_ori
+						if (query_id1>=0) and (query_id2>query_id1):
+							filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id1,query_id2)
+						else:
+							filename_prefix_save_pre1 = filename_prefix_save_1
+							# filename_prefix_save_pre2 = filename_prefix_save_1_ori
 
 					# input_filename = '%s/%s.%s.txt'%(input_file_path,filename_prefix_save_pre1,filename_annot_1) # prepare for the file
 					input_filename = '%s/%s.%s.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,extension) # prepare for the file
@@ -3861,11 +3970,12 @@ class _Base2_correlation5(_Base2_correlation3):
 						# recompute = 0
 
 					# the computed gene-TF expression partial correlation given peak accessibility
-					input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
+					#input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre2)
 					# input_filename_2 = '%s/%s.%s'%(input_file_path,filename_prefix_save_pre2,extension)
+					input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre1)
 					input_filename_list2.append(input_filename_2)
 					print(input_filename_2)
-					print('filename of the partial correlation values: %s'%(input_filename_2))
+					print('filename of gene-TF expr partial correlation given peak accessibility: %s'%(input_filename_2))
 						
 					# the annotation file with the correlation and p-value estimation
 					input_filename_3 = '%s/%s.annot1_1.1.%s'%(input_file_path,filename_prefix_save_pre1,extension)
@@ -3942,9 +4052,12 @@ class _Base2_correlation5(_Base2_correlation3):
 															save_mode=1,verbose=verbose,select_config=select_config)
 
 			# compute feature link score
-			df_feature_link = self.test_query_feature_score_compute_1(df_feature_link=[],input_filename='',overwrite=False,
+			df_feature_link = self.test_query_feature_score_compute_1(df_feature_link=[],input_filename='',
+																		overwrite=False,
 																		iter_mode=iter_mode,
-																		save_mode=1,output_file_path='',output_filename='',
+																		save_mode=1,
+																		output_file_path='',
+																		output_filename='',
 																		filename_prefix_save='',
 																		filename_save_annot='',
 																		verbose=verbose,select_config=select_config)
@@ -3953,7 +4066,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# perform selection of peak-TF-gene associations
-	# to update
 	def test_query_feature_score_init_pre1(self,df_feature_link=[],input_filename_list=[],input_filename='',index_col=0,iter_mode=0,recompute=0,
 												flag_score_quantile_1=1,flag_score_query_1=1,flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=0,flag_select_feature_2=0,
 												flag_select_local=1,flag_select_link_type=0,overwrite=False,input_file_path='',
@@ -4021,8 +4133,6 @@ class _Base2_correlation5(_Base2_correlation3):
 		# filename_annot_score_1 = 'annot2.init.1'
 		# filename_annot_score_2 = 'annot2.init.query1'
 		field_query_pre1 = ['column_peak_tf_corr','column_peak_gene_corr','column_query_cond','column_gene_tf_corr']
-
-		field_query_1 = []
 		field_num1 = len(field_query_pre1)
 		field_query_1 = [select_config[field_id] for field_id in field_query_pre1]
 
@@ -4078,7 +4188,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				select_config.update({'thresh_score_query_1':thresh_vec_1})
 			else:
 				thresh_vec_1 = select_config['thresh_score_query_1']
-
 			print('thresholds for the feature link selection ',thresh_vec_1)
 
 			thresh_gene_tf_corr_peak = 0.30
@@ -4199,6 +4308,7 @@ class _Base2_correlation5(_Base2_correlation3):
 					float_format = '%.5f'
 					df_link_query2 = df_link_query2.sort_values(by=[column_id1,column_id2,column_score_1],ascending=[True,True,False])
 					df_link_query2.to_csv(output_filename,index=False,sep='\t',float_format=float_format,compression=compression)
+					
 					list_1.append(df_link_query_pre2)
 					list_2.append(df_link_query2)
 
@@ -4209,7 +4319,7 @@ class _Base2_correlation5(_Base2_correlation3):
 					df_feature_link_pre1 = list_1[0]
 					df_feature_link_pre2 = list_2[0]
 
-				if save_mode>0:
+				if (save_mode>0) and (query_num1>1):
 					float_format = '%.5E'
 					# extension = 'txt.gz'
 					extension = 'txt'
@@ -4232,7 +4342,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute peak-TF-gene association score quantiles
-	# to update
 	def test_query_feature_score_quantile_compute_1(self,df_feature_link=[],input_filename_list=[],index_col=0,column_idvec=[],iter_mode=1,overwrite=False,
 															save_mode=1,output_file_path='',output_filename='',verbose=0,select_config={}):
 
@@ -4331,7 +4440,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute quantiles of feature assciation scores
-	# to update
 	def test_query_feature_score_quantile_1(self,df_feature_link=[],input_filename_list=[],index_col=0,column_idvec=['peak_id','gene_id','motif_id'],column_vec_query=[],column_score_vec=[],column_label_vec=[],
 												column_id_query='motif_id',iter_mode=0,flag_unduplicate=0,
 												save_mode=0,output_file_path='',output_filename_1='',output_filename_2='',filename_prefix_save='',compression='gzip',float_format='%.5E',verbose=0,select_config={}):
@@ -4400,8 +4508,10 @@ class _Base2_correlation5(_Base2_correlation3):
 															column_idvec=column_idvec,
 															column_query_vec=column_score_vec,
 															column_label_vec=column_label_vec,
-															flag_annot=1,reset_index=0,
-															parallel_mode=0,interval=100,
+															flag_annot=1,
+															reset_index=0,
+															parallel_mode=0,
+															interval=100,
 															verbose=verbose,select_config=select_config)
 
 			if (save_mode>0) and (output_filename_2!=''):
@@ -4415,7 +4525,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute quantiles of scores
-	# to update
 	def test_score_quantile_1(self,data=[],feature_query_vec=[],column_id_query='',column_idvec=[],column_query_vec=[],column_label_vec=[],
 								flag_annot=1,reset_index=1,parallel_mode=0,interval=100,verbose=0,select_config={}):
 
@@ -4539,7 +4648,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# compute quantiles of scores
-	# to update
 	def test_score_quantile_pre1(self,data=[],feature_query='',feature_query_id=0,column_id_query='',column_query_vec=[],column_label_vec=[],verbose=0,select_config={}):
 
 		"""
@@ -4575,7 +4683,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# select peak-TF-gene links with specific association scores above thresholds
-	# to update
 	def test_gene_peak_tf_query_select_1(self,df_gene_peak_query=[],df_annot_query=[],df_score_annot=[],lambda1=0.5,lambda2=0.5,type_id_1=0,column_id1=-1,
 											flag_compare_thresh1=1,flag_select_pair_1=1,flag_select_feature_1=0,flag_select_feature_2=0,
 											flag_select_local=1,flag_select_link_type=1,iter_mode=0,
@@ -4826,7 +4933,6 @@ class _Base2_correlation5(_Base2_correlation3):
 
 	## ====================================================
 	# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
-	# to update
 	def test_feature_link_query_combine_pre1(self,feature_query_num,feature_query_vec=[],column_vec_score=[],column_vec_query=[],interval=3000,flag_quantile=0,
 													save_mode=1,save_file_path='',output_filename='',verbose=0,select_config={}):
 
@@ -4913,22 +5019,7 @@ class _Base2_correlation5(_Base2_correlation3):
 					column_label_1 = 'feature2_score1_quantile'
 					column_label_vec_2 = [column_label_1]
 					column_id_query = 'motif_id'
-					# if len(feature_query_vec)>0:
-					# 	query_id_ori_1 = df_link_query_pre1.index.copy()
-					# 	df_link_query_pre1_ori = df_link_query_pre1
-					# 	df_link_query_pre1.index = np.asarray(df_link_query_pre1[column_id_query])
-					# 	df_link_query_pre1 = df_link_query_pre1.loc[feature_query_vec,:]
 
-					# score query by quantile
-					# df_link_query_pre2 = self.test_score_query_2(data=df_link_query_pre1,
-					# 												feature_query_vec=[],
-					# 												column_id_query=column_id_query,
-					# 												column_idvec=column_idvec,
-					# 												column_query_vec=column_query_vec_2,
-					# 												column_label_vec=column_label_vec_2,
-					# 												flag_annot=1,
-					# 												verbose=verbose,select_config=select_config)
-					
 					# estimate score quantiles
 					df_link_query_pre2 = self.test_score_quantile_1(data=df_link_query_pre1,
 																	feature_query_vec=[],
