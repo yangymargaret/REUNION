@@ -17,6 +17,7 @@ setuptools.setup(
 					  "pyranges",
 					  "phenograph",
 					  "pingouin",
+					  "shap",
 					],
 	classifiers=[
 		"Programming Language :: Python :: 3",
