@@ -3,7 +3,7 @@ import setuptools
 setuptools.setup(
 	name='REUNION',
 	version="0.1.0",
-	author="Maggie",
+	author="Yang",
 	author_email="yangy4@mskcc.org",
 	description="Python package for regulatory association inference",
 	url="https://github.com/yangymargaret/REUNION",
