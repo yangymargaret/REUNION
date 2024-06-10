@@ -177,6 +177,7 @@ Unify additionally requires the following packages to be installed:
 - Scanpy
 - pyranges
 - pingouin
+- shap
 
 Rediscover additionally requires the following packages to be installed:
 - PhenoGraph
