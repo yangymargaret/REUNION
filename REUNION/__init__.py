@@ -12,5 +12,5 @@ from . import test_reunion_compute_pre1
 from . import test_reunion_compute_pre2
 
 __version__ = "0.1.0"
-__author__ = "Maggie"
+__author__ = "Yang"
 
