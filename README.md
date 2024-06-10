@@ -8,6 +8,20 @@ REUNION unites two functionally cooperative methods Unify and Rediscover.
 Unify performs regulatory association estimation utilizing the single-cell multi-omics data.
 Rediscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and Rediscover supports each other within one framework.
 
+## Installation
+To install REUNION, please use the following commands:
+
+conda create -n reunion python=3.8
+
+source activate reunion
+
+git clone https://github.com/yangymargaret/REUNION.git
+
+cd REUNION
+
+pip install .
+
+## Usage
 Unify
 
 The command to use Unify to infer peak-TF-gene associations is as follows:
