@@ -5,7 +5,7 @@ setuptools.setup(
 	version="0.1.0",
 	author="Yang",
 	author_email="yangy4@mskcc.org",
-	description="Python package for regulatory association inference",
+	description="Python package for transcription factor binding prediction and regulatory association inference",
 	url="https://github.com/yangymargaret/REUNION",
 	packages=['REUNION'],
 	install_requires=["scanpy",
