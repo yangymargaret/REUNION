@@ -18,6 +18,7 @@ setuptools.setup(
 					  "phenograph",
 					  "pingouin",
 					  "shap",
+					  "ipywidgets",
 					],
 	classifiers=[
 		"Programming Language :: Python :: 3",
