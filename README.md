@@ -47,7 +47,7 @@ The options:
 
   Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format:
 
-  single cells: atac_$data_file_type.extension, atac_$data_file_type.extension;
+  single cells: atac_$data_file_type.extension, rna_$data_file_type.extension;
 
   metacells: atac_meta_$data_file_type.extension, rna_meta_$data_file_type.extension;
 
