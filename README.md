@@ -1,5 +1,5 @@
 # REUNION
-REUNION: transcription factor binding prediction
+REUNION: Transcription factor binding prediction
 and regulatory association inference from single-cell
 multi-omics data
 
