@@ -10,7 +10,7 @@ setuptools.setup(
 	packages=['REUNION'],
 	install_requires=["scanpy",
 					  "anndata",
-					  "scikit-learn",
+					  "scikit-learn==1.1.3",
 					  "numpy",
 					  "scipy",
 					  "pandas",
