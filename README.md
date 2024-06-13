@@ -11,7 +11,7 @@ Rediscover takes the regulatory associations estimated by Unify as input to perf
 ## Installation
 To install REUNION, please use the following commands:
 
-conda create -n reunion python=3.8.15
+conda create -n reunion python=3.8
 
 source activate reunion
 
