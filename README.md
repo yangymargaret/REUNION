@@ -21,6 +21,8 @@ cd REUNION
 
 pip install .
 
+The virtual environment name can be changed to other preferred names.
+
 ## Usage
 Unify
 
