@@ -69,6 +69,7 @@ class _Base2_2(_Base_pre2):
 
 		self.test_config_pre1()
 		self.data_pre_dict = {}
+		self.data_pre_dict['peak_group'] = {}
 
 	## ====================================================
 	# parameter configuration
@@ -235,7 +236,7 @@ class _Base2_2(_Base_pre2):
 			print('feature_mtx, method_type_query: ',feature_mtx_1.shape,method_type_query)
 			print(feature_mtx_1[0:2])
 
-		from utility_1 import dimension_reduction
+		from .utility_1 import dimension_reduction
 		feature_mtx_pre, dimension_model = dimension_reduction(x_ori=feature_mtx_1,feature_dim=n_components,type_id=type_id_reduction,shuffle=False,sub_sample=sub_sample)
 		df_latent = feature_mtx_pre
 		df_component = dimension_model.components_  # shape: (n_components,n_features)
@@ -1121,7 +1122,7 @@ class _Base2_2(_Base_pre2):
 
 		column_quantile_pre1 = '%s_quantile'%(column_corr_1)
 		normalize_type = 'uniform'	# normalize_type: 'uniform', 'normal'
-		score_mtx = quantile_transform(query_value_1[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
+		score_mtx = quantile_transform(np.asarray(query_value_1)[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
 		df_query1[column_quantile_pre1] = score_mtx[:,0]
 
 		if len(query_idvec)>0:
@@ -1137,7 +1138,7 @@ class _Base2_2(_Base_pre2):
 
 		column_quantile_1 = '%s_quantile_2'%(column_corr_1)
 		normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
-		score_mtx = quantile_transform(query_value[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
+		score_mtx = quantile_transform(np.asarray(query_value)[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
 		df_query1.loc[query_idvec,column_quantile_1] = score_mtx[:,0]
 							
 		query_value_2 = df_pre2[column_score_query1]
@@ -1145,7 +1146,7 @@ class _Base2_2(_Base_pre2):
 
 		column_quantile_2 = '%s_quantile'%(column_score_query1)
 		normalize_type = 'uniform'   # normalize_type: 'uniform', 'normal'
-		score_mtx_2 = quantile_transform(query_value_2[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
+		score_mtx_2 = quantile_transform(np.asarray(query_value_2)[:,np.newaxis],n_quantiles=1000,output_distribution=normalize_type)
 		df_query1.loc[query_idvec,column_quantile_2] = score_mtx_2[:,0]
 
 		column_vec_quantile = [column_quantile_pre1,column_quantile_1,column_quantile_2]
@@ -1638,7 +1639,11 @@ class _Base2_2(_Base_pre2):
 			method_type_query = method_type_feature_link
 			dict1 = {'peak_group2_1':peak_vec_2_1_ori,
 						'peak_group2_2':peak_vec_2_2_ori}
-			self.data_pre_dict['peak_group'].update({method_type_query:dict1})
+
+			column_query = 'peak_group'
+			if not (column_query in self.data_pre_dict):
+				self.data_pre_dict[column_query] = dict()
+			self.data_pre_dict[column_query].update({method_type_query:dict1})
 
 			peak_query_vec = peak_query_vec_1
 			peak_query_num_1 = len(peak_query_vec)
@@ -1978,7 +1983,7 @@ class _Base2_2(_Base_pre2):
 		
 		field_query = ['train_valid_mode_1','train_valid_mode_2']
 		query_num1 = len(list_param)
-		from utility_1 import test_query_default_parameter_1
+		from .utility_1 import test_query_default_parameter_1
 		select_config, list_param = test_query_default_parameter_1(field_query=field_query,default_parameter=list_param,overwrite=False,select_config=select_config)
 		train_valid_mode_1,train_valid_mode_2 = list_param[0:2]
 		

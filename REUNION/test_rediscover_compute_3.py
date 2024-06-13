@@ -2172,7 +2172,7 @@ class _Base2_2_pre1(_Base2_2_1):
 				save_mode_2 = 1
 				field_load = [correlation_type,'pval','pval_corrected']
 
-				from test_reunion_correlation_1 import _Base2_correlation
+				from .test_reunion_correlation_1 import _Base2_correlation
 				file_path1 = self.save_path_1
 				test_estimator_correlation = _Base2_correlation(file_path=file_path1)
 				# compute peak accessibility-TF expression correlation

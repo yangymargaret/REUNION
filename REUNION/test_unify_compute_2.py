@@ -861,7 +861,7 @@ class _Base2_correlation3(_Base2_correlation2):
 			list_query1 = [idvec_1,query_id2]
 
 			query_num = len(list_query1)
-			from utility_1 import test_column_query_2
+			from .utility_1 import test_column_query_2
 			annot_vec_query1 = [['in the smallest distance bin','with the highest %s'%(score_type_annot)],
 								['with the smallest distance','without the highest %s'%(score_type_annot)]]
 
@@ -976,7 +976,7 @@ class _Base2_correlation3(_Base2_correlation2):
 		column_vec_query2 = ['%s_max_%s2'%(field2,field1),'%s_max_2'%(field2)]	# smallest distance in the highest score bin and the score with the distance
 		list_column = [column_vec_query1,column_vec_query2]
 
-		# from utility_1 import test_query_index
+		# from .utility_1 import test_query_index
 		df_feature_link.index = test_query_index(df_feature_link,column_vec=column_idvec)
 		df_link_query = df_feature_link
 

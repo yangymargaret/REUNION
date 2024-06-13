@@ -2542,7 +2542,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		df_list1 = [df_gene_tf_corr_peak,df_gene_peak_query]
 
 		print('query peak accessibility-gene expression correlation')
-		from utility_1 import test_column_query_1
+		from .utility_1 import test_column_query_1
 		# copy specified columns from the other dataframes to the first dataframe
 		df_query1 = test_column_query_1(input_filename_list=[],
 										id_column=column_idvec_1,
@@ -2812,7 +2812,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			if len(df_link_query_1)==0:
 				if 'filename_gene_tf_peak_query_1' in select_config:
 					filename_query_1 = select_config['filename_gene_tf_peak_query_1']
-					from utility_1 import test_file_merge_column
+					from .utility_1 import test_file_merge_column
 					df_link_query_1 = test_file_merge_column(filename_query_1,column_idvec=column_idvec,index_col=False,select_config=select_config)
 					df_gene_peak_query_pre1_1 = df_link_query_1
 				else:
@@ -2887,7 +2887,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		if flag_init_score_1>0:
 			if len(df_gene_peak_query_pre2)==0:
 				filename_query_1 = select_config['filename_gene_tf_peak_query_2']
-				from utility_1 import test_file_merge_column
+				from .utility_1 import test_file_merge_column
 				df_gene_peak_query_pre2 = test_file_merge_column(filename_query_1,column_idvec=column_idvec,index_col=False,select_config=select_config)
 
 			print('peak-TF-gene links, dataframe of size ',df_gene_peak_query_pre2.shape)
@@ -3231,7 +3231,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		"""
 
 		df_query_1 = df_gene_peak_tf_query
-		# from utility_1 import test_query_index
+		# from .utility_1 import test_query_index
 		if len(column_idvec)==0:
 			column_idvec = ['motif_id','peak_id','gene_id']
 		if reset_index==True:
@@ -3522,7 +3522,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		else:
 			df_gene_peak_query_pre1 = df_gene_peak_query
 
-		# from utility_1 import test_query_index
+		# from .utility_1 import test_query_index
 		column_idvec = ['motif_id','peak_id','gene_id']
 		df_gene_peak_query_pre1.index = test_query_index(df_gene_peak_query_pre1,column_vec=column_idvec)
 		print('peak-TF-gene links, dataframe of size ',df_gene_peak_query_pre1.shape)
@@ -3795,8 +3795,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			list_query1 = []
 			flag_link_type = 1
 			flag_compute = 1
-			# from utility_1 import test_query_index, test_column_query_1
-			from utility_1 import test_column_query_1
+			# from .utility_1 import test_query_index, test_column_query_1
+			from .utility_1 import test_column_query_1
 			if len(df_feature_link)==0:
 				id1 = 0
 				if input_filename!='':
@@ -4146,7 +4146,7 @@ class _Base2_correlation5(_Base2_correlation3):
 		field_query_2 = [select_config[field_id] for field_id in field_query_pre2]
 		select_config.update({'field_link_query1':field_query_1,'field_link_query2':field_query_2})
 
-		from utility_1 import test_column_query_1
+		from .utility_1 import test_column_query_1
 		load_mode_2 = 0
 		input_filename_feature_link = input_filename
 		if len(df_feature_link)==0:
