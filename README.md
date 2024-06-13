@@ -192,6 +192,7 @@ Unify additionally requires the following packages to be installed:
 - pyranges
 - pingouin
 - shap
+- ipywidgets
 
 Rediscover additionally requires the following packages to be installed:
 - PhenoGraph
