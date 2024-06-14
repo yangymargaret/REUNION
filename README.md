@@ -51,13 +51,9 @@ The options:
 
   RNA-seq data: rna_meta_$data_file_type.extension;
 
-  $data_file_type was specified using the 'data_file_type' parameter. 'extension' represents the file format.
+  $data_file_type was specified using the 'data_file_type' parameter, and 'extension' represents the file format;
 
-  For the count matrices of the metacells, Unify supports the following file formats:
-
-  (1) AnnData, extension=h5ad;
-
-  (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz.
+  Unify supports the format AnnData for the metacell data, extension=h5ad;
 
 - --atac_meta
 
