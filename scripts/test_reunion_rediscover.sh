@@ -87,5 +87,7 @@ for i2 in {0..0}; do
 										--output_dir $output_dir
 done
 
+# for example, the script can be run as: test_reunion_redicover.sh 0 2
+# the command above represents using Rediscover for TF binding prediction for the first two given TFs;
 
 

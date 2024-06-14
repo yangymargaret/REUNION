@@ -82,5 +82,7 @@ for i1 in {0..0}; do
 									--output_dir $output_dir
 done
 
+# for example, the script can be run as: test_reunion_unify.sh 0 50
+# the command above represents using Unify for peak-TF-gene association inference for the first 50 most highly variable genes;
 
 
