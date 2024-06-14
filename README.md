@@ -105,9 +105,9 @@ The options:
   
 - --output_dir
 
-  the directory where the output of Unify will be saved, including the predicted peak-TF-gene associations and other associated files, default = 'output_file'
+  the directory where the output of Unify will be saved, including the predicted peak-TF-gene associations and other associated files, default = 'output_file_1'
 
-  By default Unify creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it. Unify will then create a sub-folder named 'file_link_1' within the folder $output_dir to save the pre-selected peak-gene associations and a sub-folder named 'file_link_2' to save the estimated peak-TF-gene associations. 
+  By default Unify creates a file folder named 'output_file_1' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Unify will try to create it. Unify will then create a sub-folder named 'file_link_1' within the folder $output_dir to save the pre-selected peak-gene associations and a sub-folder named 'file_link_2' to save the estimated peak-TF-gene associations. 
 
 The output:
 
@@ -204,9 +204,9 @@ The options:
   
 - --output_dir
 
-  the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TFs and other associated files, default = 'output_file'
+  the directory where the output of Rediscover will be saved, including the predicted peak-TF associations for the given TFs and other associated files, default = 'output_file_2'
 
-  By default Rediscover creates a file folder named 'output_file' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Rediscover will try to create it. Rediscover will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF associations. 
+  By default Rediscover creates a file folder named 'output_file_2' in the current directory. Please change the parameter to the specific output directory. If the directory does not exist, Rediscover will try to create it. Rediscover will then create a sub-folder named 'file_link' within the folder $output_dir to save the estimated peak-TF associations. 
 
 - --output_filename
 
