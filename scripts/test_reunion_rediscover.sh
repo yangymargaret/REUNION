@@ -1,20 +1,20 @@
 #!/bin/bash -e
 
-input_dir=data1
-output_dir=output_folder_2
+input_dir='.'
+output_dir='output_file_2'
 
 data_file_type=pbmc
 echo $data_file_type
 
 PATH1=$input_dir
-atac_meta=$PATH1/atac_meta_pbmc.h5ad
-rna_meta=$PATH1/rna_meta_pbmc.h5ad
-filename_motif_1=test_peak_read.pbmc.normalize.motif.thresh5e-05.csv
-filename_motif_2=test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv
+atac_meta=$PATH1/atac_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:ATAC-seq peak locus)
+rna_meta=$PATH1/rna_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:genei)
+filename_motif_1=test_peak_read.pbmc.normalize.motif.thresh5e-05.csv # format: (row:ATAC-seq peak locus, column:TF motif)
+filename_motif_2=test_peak_read.pbmc.normalize.motif_scores.thresh5e-05.csv # format: (row:ATAC-seq peak locus, column:TF motif)
 filename_motif_data=$PATH1/$filename_motif_1
 filename_motif_data_score=$PATH1/$filename_motif_2
-file_mapping=$PATH1/translationTable.csv
-file_peak=$PATH1/test_peak_GC.bed
+file_mapping=$PATH1/translationTable.csv  # mapping between each TF motif to the corresponding TF; including column 'motif_id' (TF motif identifier) and column 'tf_id' (TF name);
+file_peak=$PATH1/test_peak_GC.bed  # BED file of ATAC-seq peak loci; the first three columns correspond to peak position (chromosome,start,stop); the fifth column corresponds to the GC content of each peak locus;
 
 method_type_group=phenograph.20
 tf_name='ATF2,EBF1'
