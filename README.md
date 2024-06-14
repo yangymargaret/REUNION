@@ -26,7 +26,7 @@ The virtual environment name can be changed to other preferred names.
 ## Usage
 ### Unify
 
-The command to use Unify to infer peak-TF-gene associations is as follows (please find test_reunion_unify_1.py in the folder scripts):
+The command to use Unify to infer peak-TF-gene associations is as follows (please find test_reunion_unify_1.py in the folder scripts). We provide a script named test_reunion_unify.bash in the folder scripts, which shows an example to run the following command to use Unify for regulatory association inference. 
 
 python test_reunion_unify_1.py [Options]
 
@@ -41,15 +41,15 @@ The options:
 
 - --input_dir
 
-  the directory where the ATAC-seq and RNA-seq data of the single cells, or the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
+  the directory where the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
 
   The default parameter represents the data are saved in the same directory of the code. Please change this parameter to the directory of the data.
 
-  Please name the ATAC-seq and RNA-seq data of the single cells or metacells in the following format:
+  Please name the ATAC-seq and RNA-seq data of the metacells in the following format:
 
-  single cells: atac_$data_file_type.extension, rna_$data_file_type.extension;
+  ATAC-seq data: atac_meta_$data_file_type.extension;
 
-  metacells: atac_meta_$data_file_type.extension, rna_meta_$data_file_type.extension;
+  RNA-seq data: rna_meta_$data_file_type.extension;
 
   $data_file_type was specified using the 'data_file_type' parameter. 'extension' represents the file format.
 
@@ -59,47 +59,49 @@ The options:
 
   (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz.
 
-  For the data of single cells, Unify supports the AnnData format.
-
-- --atac_data
-
-  the file path of the ATAC-seq data of the single cells, default = -1
-
-- --rna_data
-
-  the file path of the RNA-seq data of the single cells, default = -1
-
-  If atac_data or rna_data is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the single cells, respectively.
-
 - --atac_meta
 
-  the file path of the ATAC-seq read count matrix of the metacells, default = -1
+  the file path of the ATAC-seq read count matrix of the metacells, default = -1;
+
+  data matrix format: (row: metacell, column: ATAC-seq peak locus);
 
 - --rna_meta
 
-  the file path of the RNA-seq read count matrix of the metacells, default = -1
+  the file path of the RNA-seq read count matrix of the metacells, default = -1;
+
+  data matrix format: (row: metacell, column: gene);
   
   If atac_meta or rna_meta is specified, Unify will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
 - --motif_data
 
-  the filename of peak-motif matrix from the motif scanning results, default = -1
+  the filename of peak-motif matrix from the motif scanning results, default = -1;
+
+  data matrix format: (row: ATAC-seq peak locus, column: TF motif);
 
 - --motif_data_score
 
-  the filename of the motif scores from the motif scanning results, default = -1
+  the filename of the motif scores from the motif scanning results, default = -1;
+
+  data matrix format: (row: ATAC-seq peak locus, column: TF motif);
 
 - --file_mapping
 
-  the filename of the mapping between TF motif identifier and the TF name, default = -1
+  the filename of the mapping between the TF motif identifier and the TF name, default = -1;
+
+  the dataframe in the file includes the column 'motif_id' (TF motif identifier) and the column 'tf_id' (TF name);
 
 - --file_peak
 
-  the file containing the ATAC-seq peak loci annotations, default = -1
+  the file containing the ATAC-seq peak loci annotations, default = -1;
+
+  the file is of BED format, with the first three columns representing peak position (chromosome,start,stop) and the fifth column representing GC content of each peak locus;
  
 - --file_bg
 
-  the file containing the estimated background peak loci which match the ATAC-seq peak loci by GC content and average chromatin accessibility across the metacells, default = -1
+  the file containing the sampled background ATAC-seq peak loci which match the corresponding ATAC-seq peak locus by GC content and average chromatin accessibility across the metacells, default = -1;
+
+  data matrix format: (row: integer index of ATAC-seq peak locus, column: integer index of each background peak sampled for the given ATAC-seq peak);
   
 - --output_dir
 
@@ -114,7 +116,7 @@ The output of Unify includes a file containing the estimated peak-TF-gene associ
 
 ### Rediscover
 
-The command to use Rediscover to perform TF binding prediction is as follows (please find test_reunion_rediscover_1.py in the folder scripts):
+The command to use Rediscover to perform TF binding prediction is as follows (please find test_reunion_rediscover_1.py in the folder scripts). We provide a script named test_reunion_rediscover.bash in the folder scripts, which shows an example to run the following command to use Rediscover for TF binding prediction.
 
 python test_reunion_rediscover_1.py [Options]
 
@@ -140,21 +142,29 @@ The options:
 
 - --atac_meta
 
-  the file path of the ATAC-seq read count matrix of the metacells, default = -1
+  the file path of the ATAC-seq read count matrix of the metacells, default = -1;
+
+  data matrix format: (row:metacell, column:ATAC-seq peak locus)
 
 - --rna_meta
 
-  the file path of the RNA-seq read count matrix of the metacells, default = -1
+  the file path of the RNA-seq read count matrix of the metacells, default = -1;
+
+  data matrix format: (row: metacell, column: ATAC-seq peak locus);
 
   If atac_meta or rna_meta is specified, Rediscover will not use the 'input_dir' parameter to locate the ATAC-seq data or RNA-seq data of the metacells, respectively.
 
 - --motif_data
 
-  the filename of peak-motif matrix from the motif scanning results, default = -1
+  the filename of peak-motif matrix from the motif scanning results, default = -1;
+
+  data matrix format: (row: metacell, column: ATAC-seq peak locus);
 
 - --motif_data_score
 
-  the filename of the motif scores from the motif scanning results, default = -1
+  the filename of the motif scores from the motif scanning results, default = -1;
+
+  data matrix format: (row: metacell, column: ATAC-seq peak locus);
   
 - --method_type_feature_link
 
