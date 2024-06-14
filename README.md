@@ -55,7 +55,7 @@ The options:
 
   For the count matrices of the metacells, Unify supports the following file formats:
 
-  (1) AnnData, extension=ad or h5ad;
+  (1) AnnData, extension=h5ad;
 
   (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz.
 
