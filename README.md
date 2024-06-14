@@ -28,7 +28,7 @@ The virtual environment name can be changed to other preferred names.
 
 The command to use Unify to infer peak-TF-gene associations is as follows:
 
-python test_unify_compute_group_1.py [Options]
+python test_reunion_unify_1.py [Options]
 
 The options:
 - --data_file_type
@@ -116,7 +116,7 @@ The output of Unify includes a file containing the estimated peak-TF-gene associ
 
 The command to use Rediscover to perform TF binding prediction is as follows:
 
-python test_rediscover_compute_3.py [Options]
+python test_reunion_rediscover_1.py [Options]
 
 The options:
 
