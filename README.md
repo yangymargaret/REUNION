@@ -26,7 +26,7 @@ The virtual environment name can be changed to other preferred names.
 ## Usage
 ### Unify
 
-The command to use Unify to infer peak-TF-gene associations is as follows (please find test_reunion_unify_1.py in the folder scripts). We provide a script named test_reunion_unify.bash in the folder scripts, which shows an example to run the following command to use Unify for regulatory association inference. 
+The command to use Unify to infer peak-TF-gene associations is as follows. Please find test_reunion_unify_1.py in the folder scripts. We provide a script named test_reunion_unify.bash in the folder scripts, which shows an example to run the following command to use Unify for regulatory association inference. 
 
 python test_reunion_unify_1.py [Options]
 
@@ -116,7 +116,7 @@ The output of Unify includes a file containing the estimated peak-TF-gene associ
 
 ### Rediscover
 
-The command to use Rediscover to perform TF binding prediction is as follows (please find test_reunion_rediscover_1.py in the folder scripts). We provide a script named test_reunion_rediscover.bash in the folder scripts, which shows an example to run the following command to use Rediscover for TF binding prediction.
+The command to use Rediscover to perform TF binding prediction is as follows. Please find test_reunion_rediscover_1.py in the folder scripts. We provide a script named test_reunion_rediscover.bash in the folder scripts, which shows an example to run the following command to use Rediscover for TF binding prediction.
 
 python test_reunion_rediscover_1.py [Options]
 
