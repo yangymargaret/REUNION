@@ -5439,8 +5439,8 @@ class _Base2_correlation5(_Base2_correlation3):
 			extension_vec_query = ['npy','txt']
 			query_num2 = len(extension_vec_query)
 			filename_prefix_vec = [filename_prefix_save_query]*query_num2
-			print('list_query_1')
-			print(list_query_1)
+			# print('list_query_1')
+			# print(list_query_1)
 			for i2 in range(query_num2):
 				filename_prefix_query = filename_prefix_vec[i2]
 				extension_query = extension_vec_query[i2]
@@ -5451,8 +5451,8 @@ class _Base2_correlation5(_Base2_correlation3):
 					list_query1 = glob.glob('%s/*%s*.%s'%(path_query_1,annot_str_iter,extension_query))
 
 				file_num_query1 = len(list_query1)
-				print('list_query1: ',file_num_query1)
-				print(list_query1)
+				# print('list_query1: ',file_num_query1)
+				# print(list_query1)
 				list_query1 = pd.Index(list_query1).difference(list_query_1,sort=False)
 				list_query_2.append(list_query1)
 			
@@ -5575,7 +5575,6 @@ class _Base2_correlation5(_Base2_correlation3):
 				list_query_2 = self.test_file_reduce_1(data=list_query_2,select_config=select_config)
 			
 		return dict_query1
-
 
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)

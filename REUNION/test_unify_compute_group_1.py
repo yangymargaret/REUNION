@@ -1206,7 +1206,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			self.test_file_combine_1(feature_query_num=feature_query_num1,interval=interval,
 												type_query=type_query,
 												flag_reduce=flag_reduce,
-												save_mode=1,verbose=verbose,select_config=select_config)
+												save_mode=1,
+												verbose=0,select_config=select_config)
 
 		flag_combine = 0
 		# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
