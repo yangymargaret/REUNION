@@ -264,6 +264,6 @@ The options:
 
 The output:
 
-The output of Rediscover includes a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in $output_dir/file_link. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['pred','proba']. 'pred': the predicted binary peak-TF link: 1, with binding site; 0, without binding site. 'proba': predicted TF binding probability of the give TF in the corresponding peak locus.
+The output of Rediscover includes a file containing the peak-TF associations between the genome-wide peaks and the given TF predicted by Rediscover, with the filename specified by $output_filename and saved in $output_dir/file_link. The rownames are the genome-wide peaks as present in the columns of the normalized ATAC-seq read count matrix of the metacells. The file contains at least two columns: ['label_pred', 'proba_pred']. 'label_pred': the predicted binary label of peak-TF link: 1, with binding site; 0, without binding site. 'proba_pred': the predicted TF binding probability of the give TF in the corresponding peak locus.
 
 
