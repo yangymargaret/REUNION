@@ -138,8 +138,8 @@ The options:
 
   Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
 
-  'extension' represents the file format. Rediscover supports the following file formats: (1) anndata, extension=ad or h5ad; (2) the original or compressed tab-delimited tsv, txt files or csv files, extension=tsv, txt, csv, or tsv.gz, txt.gz, csv.gz.
-
+  'extension' represents the file format. Rediscover supports the format AnnData for the metacell data, extension=h5ad;
+  
 - --atac_meta
 
   the file path of the ATAC-seq read count matrix of the metacells, default = -1
@@ -190,7 +190,7 @@ The options:
 
   the directory where the file containing the peak-TF associations predicted by Unify (or other methods) for a given TF is saved
 
-  Please provide the file for the given TF as a tab-delmited .txt file named $filename_prefix.$TF_name.$filename_annot.txt containing at least two columns: ['pred','score'] (the column names can be specified by the parameter 'columns_1' as shown below), with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the specific method. 'pred' represents binary prediction: 1: peak contains the TF binding site, 0: without with TF binding site; 'score' represents the association score of the peak-TF link estimated by the method. If the association scores are unavailable, please leave this column blank.
+  Please provide the file for the given TF as a tab-delmited .txt file named $filename_prefix.$TF_name.$filename_annot.txt containing at least two columns: ['pred', 'score'] (the column names can be specified by the parameter 'columns_1' as shown below), with the peak positions as rownames. Each row represents the predicted association between the corresponding peak and the given TF by the specific method. 'pred' represents binary prediction: 1: peak contains the TF binding site, 0: without with TF binding site; 'score' represents the association score of the peak-TF link estimated by the method. If the association scores are unavailable, please leave this column blank.
 
   Optionally, if the motif scores of the given TF in each peak locus based on motif scanning are available, please include them using an additional column named 'motif_score' or $column_motif_score as specified by part of $columns_1 as shown below.
 
