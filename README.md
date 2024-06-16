@@ -41,9 +41,9 @@ The options:
 
 - --input_dir
 
-  the directory where the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = '.'
+  the directory where the ATAC-seq and RNA-seq normalized read count matrices of the metacells are saved, default = 'data1'
 
-  The default parameter represents the data are saved in the same directory of the code. Please change this parameter to the directory of the data.
+  The default parameter represents the data are saved in the folder named 'data1' in the current directory. Please change this parameter to the directory of the data.
 
   Please name the ATAC-seq and RNA-seq data of the metacells in the following format:
 
@@ -132,9 +132,9 @@ The options:
 
 - --input_dir
 
-  the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = '.'
+  the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = 'data1'
 
-  The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the current directory. Please change this parameter to the directory of the data.
+  The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the folder named 'data1' in the current directory. Please change this parameter to the directory of the data.
 
   Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
 
