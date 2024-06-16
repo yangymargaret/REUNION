@@ -1,12 +1,13 @@
 #!/bin/bash -e
 
-input_dir='.'
+input_dir='data1'
 output_dir='output_file_2'
 
 data_file_type=pbmc
 echo $data_file_type
 
 PATH1=$input_dir
+filename_gene_annot=$PATH1/test_gene_annot.Homo_sapiens.GRCh38.108.combine.2.pbmc.txt
 atac_meta=$PATH1/atac_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:ATAC-seq peak locus)
 rna_meta=$PATH1/rna_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:genei)
 filename_motif_1=test_peak_read.pbmc.normalize.motif.thresh5e-05.csv # format: (row:ATAC-seq peak locus, column:TF motif)
@@ -57,6 +58,7 @@ for i2 in {0..0}; do
 										-b $b1 \
 										--data_file_type $data_file_type \
 										--input_dir $input_dir \
+										--gene_annot $filename_gene_annot \
 										--atac_meta $atac_meta \
 										--rna_meta $rna_meta \
 										--motif_data $filename_motif_data \

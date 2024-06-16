@@ -25,6 +25,7 @@ def parse_args():
 	parser.add_option("--data_file_type",default="pbmc",help="the cell type or dataset annotation")
 	parser.add_option("--data_file_query",default="0",help="data_file_type_id")
 	parser.add_option("--input_dir",default=".",help="the directory where the ATAC-seq and RNA-seq data of the metacells are saved")
+	parser.add_option("--gene_annot",default="-1",help="file path of gene position annotation file")
 	parser.add_option("--atac_data",default="-1",help="file path of ATAC-seq data of the single cells")
 	parser.add_option("--rna_data",default="-1",help="file path of RNA-seq data of the single cells")
 	parser.add_option("--atac_meta",default="-1",help="file path of ATAC-seq data of the single cells")
@@ -94,6 +95,7 @@ def parse_args():
 	parser.add_option("--flag_pred_2",default="0",help="flag_pred_2")
 	parser.add_option("--flag_group_1",default="0",help="flag_group_1")
 	parser.add_option("--flag_pcorr_interval",default="0",help="flag_pcorr_interval")
+	parser.add_option("--flag_reduce",default="1",help="reduce intermediate files")
 	parser.add_option("--flag_combine_1",default="0",help="basic_filter_combine_1")
 	parser.add_option("--flag_combine_2",default="0",help="basic_filter_combine_2")
 	parser.add_option("--flag_cond_query_1",default="0",help="flag_cond_query_1")
@@ -116,6 +118,7 @@ if __name__ == '__main__':
 		opts.data_file_type,
 		opts.data_file_query,
 		opts.input_dir,
+		opts.gene_annot,
 		opts.atac_data,
 		opts.rna_data,
 		opts.atac_meta,
@@ -185,6 +188,7 @@ if __name__ == '__main__':
 		opts.flag_pred_2,
 		opts.flag_group_1,
 		opts.flag_pcorr_interval,
+		opts.flag_reduce,
 		opts.flag_combine_1,
 		opts.flag_combine_2,
 		opts.flag_cond_query_1)

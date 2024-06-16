@@ -9,13 +9,13 @@ import REUNION
 from REUNION import test_rediscover_compute_3
 from REUNION.test_rediscover_compute_3 import run
 
-def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,
+def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,filename_gene_annot,
 			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,file_peak,metacell_num,peak_distance_thresh,
 			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,input_link,columns_1,
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-			typeid2,type_combine,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,train_id1,
+			typeid2,type_combine,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,flag_reduce,train_id1,
 			beta_mode,verbose_mode,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
 
 	flag_1=1
@@ -25,6 +25,7 @@ def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_fil
 					peak_distance_thresh=peak_distance_thresh,
 					highly_variable=highly_variable,
 					input_dir=input_dir,
+					filename_gene_annot=filename_gene_annot,
 					filename_atac_meta=filename_atac_meta,
 					filename_rna_meta=filename_rna_meta,
 					filename_motif_data=filename_motif_data,
@@ -54,6 +55,7 @@ def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_fil
 					flag_clustering=flag_clustering,
 					flag_group_load=flag_group_load,
 					flag_scale_1=flag_scale_1,
+					flag_reduce=flag_reduce,
 					upstream=upstream,
 					downstream=downstream,
 					type_id_query=type_id_query,
@@ -80,6 +82,7 @@ def parse_args():
 	parser.add_option("-b","--cell",default="0",help="cell type")
 	parser.add_option("--data_file_type",default="pbmc",help="the cell type or dataset annotation")
 	parser.add_option("--input_dir",default=".",help="the directory where the ATAC-seq and RNA-seq data of the metacells are saved")
+	parser.add_option("--gene_annot",default="-1",help="file path of gene position annotation file")
 	parser.add_option("--atac_meta",default="-1",help="file path of ATAC-seq data of the metacells")
 	parser.add_option("--rna_meta",default="-1",help="file path of RNA-seq data of the metacells")
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
@@ -129,6 +132,7 @@ def parse_args():
 	parser.add_option("--flag_group_load",default="1",help="load group annotation")
 	parser.add_option("--train_id1",default="1",help="train_id1")
 	parser.add_option("--flag_scale_1",default="0",help="flag_scale_1")
+	parser.add_option("--flag_reduce",default="1",help="reduce intermediate files")
 	parser.add_option("--beta_mode",default="0",help="beta_mode")
 	parser.add_option("--motif_id_1",default="1",help="motif_id_1")
 	parser.add_option("--verbose_mode",default="1",help="verbose mode")
@@ -154,6 +158,7 @@ if __name__ == '__main__':
 		opts.testchromvec,
 		opts.data_file_type,
 		opts.input_dir,
+		opts.gene_annot,
 		opts.atac_meta,
 		opts.rna_meta,
 		opts.motif_data,
@@ -202,6 +207,7 @@ if __name__ == '__main__':
 		opts.flag_clustering,
 		opts.flag_group_load,
 		opts.flag_scale_1,
+		opts.flag_reduce,
 		opts.train_id1,
 		opts.beta_mode,
 		opts.verbose_mode,
