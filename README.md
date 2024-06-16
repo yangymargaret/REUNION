@@ -57,7 +57,7 @@ The options:
 
 - --gene_annot
 
-  the file path of the gene position annotations, default = -1;
+  the file path of the gene annotations (including gene names and gene positions), default = -1;
 
 - --atac_meta
 
