@@ -55,6 +55,10 @@ The options:
 
   Unify supports the format AnnData for the metacell data, extension=h5ad;
 
+- --gene_annot
+
+  the file path of the gene position annotations, default = -1;
+
 - --atac_meta
 
   the file path of the ATAC-seq read count matrix of the metacells, default = -1;
