@@ -1192,7 +1192,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			self.test_feature_link_query_cond_pre1(atac_ad=atac_ad,rna_exprs=rna_exprs,flag_compute=flag_compute,
 													save_mode=1,save_file_path='',verbose=0,select_config=select_config)
 
-			type_query = 1
+			type_query = 0
 			flag_reduce = select_config['flag_reduce']
 			if iter_mode>0:
 				feature_query_num1 = query_id2-query_id1
