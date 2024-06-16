@@ -13,7 +13,7 @@ To install REUNION, please use the following commands:
 
 conda create -n reunion python=3.8
 
-source activate reunion
+conda activate reunion
 
 git clone https://github.com/yangymargaret/REUNION.git
 
