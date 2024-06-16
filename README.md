@@ -51,9 +51,9 @@ The options:
 
   RNA-seq data: rna_meta_$data_file_type.extension;
 
-  $data_file_type was specified using the 'data_file_type' parameter, and 'extension' represents the file format;
+  $data_file_type was specified using the 'data_file_type' parameter, and 'extension' represents the file format.
 
-  Unify supports the format AnnData for the metacell data, extension=h5ad;
+  Unify supports the format AnnData for the metacell data, extension=h5ad.
 
 - --gene_annot
 
@@ -135,10 +135,16 @@ The options:
   the directory where the ATAC-seq and RNA-seq normalized read count matrix of the metacells are saved, default = 'data1'
 
   The default parameter represents the ATAC-seq and RNA-seq metacell data are saved in the folder named 'data1' in the current directory. Please change this parameter to the directory of the data.
+  
+  Please name the ATAC-seq and RNA-seq data of the metacells in the following format:
 
-  Please name the ATAC-seq and RNA-seq data of the metacells in the following format: atac_meta_$data_file_type.extension, rna_meta_$data_file_type, where $data_file_type was specified using the 'data_file_type' parameter.
+  ATAC-seq data: atac_meta_$data_file_type.extension;
 
-  'extension' represents the file format. Rediscover supports the format AnnData for the metacell data, extension=h5ad;
+  RNA-seq data: rna_meta_$data_file_type.extension;
+
+  $data_file_type was specified using the 'data_file_type' parameter, and 'extension' represents the file format.
+
+  Rediscover supports the format AnnData for the metacell data, extension=h5ad.
   
 - --atac_meta
 
