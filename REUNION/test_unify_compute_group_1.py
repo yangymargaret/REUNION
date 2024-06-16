@@ -188,14 +188,12 @@ class _Base2_pre_2(_Base2_correlation5):
 		human_cell_type = ['pbmc']
 		if data_file_type in human_cell_type:
 			self.species_id = 'hg38'
+			filename_prefix_1 = 'Homo_sapiens.GRCh38.108' # to update
+			# input_filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path) # gene annotation data
+			# select_config.update({'filename_gene_annot':input_filename_gene_annot})
 		else:
 			self.species_id = 'mm10'
-
-		# gene annotation data
-		if self.species_id=='hg38':
-			filename_prefix_1 = 'Homo_sapiens.GRCh38.108' # to update
-			input_filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path)
-			select_config.update({'filename_gene_annot':input_filename_gene_annot})
+			filename_prefix_1 =  'Mus_musculus.GRCm38.102'
 
 		# prepare filename_prefix and filename_annot_save
 		# filename_prefix_save_pre2 = 'test_query.%s'%(data_file_type_query)
@@ -210,6 +208,14 @@ class _Base2_pre_2(_Base2_correlation5):
 
 		filename_prefix_cond = filename_prefix_save_pre2
 		select_config.update({'filename_prefix_cond':filename_prefix_cond})
+
+		filename_prefix_score = '%s.pcorr_query1'%(filename_prefix_cond)
+		filename_annot_score_1 = 'annot2.init.1'
+		# filename_annot_score_2 = 'annot2.init.query1'
+		filename_annot_score_2 = 'annot2.init.1.query1'
+		select_config.update({'filename_prefix_score':filename_prefix_score,
+								'filename_annot_score_1':filename_annot_score_1,
+								'filename_annot_score_2':filename_annot_score_2})
 		
 		filename_save_annot_1 = data_file_type_query
 		print('filename_save_annot_1: ',filename_save_annot_1)
@@ -696,12 +702,14 @@ class _Base2_pre_2(_Base2_correlation5):
 		flag_gene_annot_query=1
 		if flag_gene_annot_query>0:
 			print('load gene annotations')
-			filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path_pre1)
-			select_config.update({'filename_gene_annot':filename_gene_annot})
+			# filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path_pre1)
+			# select_config.update({'filename_gene_annot':filename_gene_annot})
+			filename_gene_annot = select_config['filename_gene_annot']
 			
 			df_gene_annot_ori = self.test_query_gene_annot_1(filename_gene_annot,verbose=verbose,select_config=select_config)
 			self.df_gene_annot_ori = df_gene_annot_ori
 			self.df_gene_annot_expr = df_gene_annot_ori
+			print('gene annotations loaded from: %s'%(filename_gene_annot))
 
 		# load motif data
 		# load ATAC-seq and RNA-seq data of the metacells
@@ -845,7 +853,6 @@ class _Base2_pre_2(_Base2_correlation5):
 			iter_mode = 2  # combine peak-gene estimation from different runs
 		else:
 			iter_mode = 0
-		
 		select_config.update({'iter_mode':iter_mode})
 
 		if flag_distance>0:
@@ -1184,6 +1191,22 @@ class _Base2_pre_2(_Base2_correlation5):
 			# compute score 1 and score 2
 			self.test_feature_link_query_cond_pre1(atac_ad=atac_ad,rna_exprs=rna_exprs,flag_compute=flag_compute,
 													save_mode=1,save_file_path='',verbose=0,select_config=select_config)
+
+			type_query = 1
+			flag_reduce = select_config['flag_reduce']
+			if iter_mode>0:
+				feature_query_num1 = query_id2-query_id1
+				# interval = query_id2-query_id1
+				interval = -1
+			else:
+				feature_query_num1 = gene_query_num
+				interval = -1
+			print('feature_query_num: %d, interval: %d'%(feature_query_num1,interval))
+			print(type_query,flag_reduce)
+			self.test_file_combine_1(feature_query_num=feature_query_num1,interval=interval,
+												type_query=type_query,
+												flag_reduce=flag_reduce,
+												save_mode=1,verbose=verbose,select_config=select_config)
 
 		flag_combine = 0
 		# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
@@ -2511,7 +2534,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			return dict_query_1
 
 def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,celltype,file_path,path_id,
-		flag_distance,data_file_type,data_file_type_id,input_dir,filename_atac,filename_rna,filename_atac_meta,filename_rna_meta,
+		flag_distance,data_file_type,data_file_type_id,input_dir,filename_gene_annot,filename_atac,filename_rna,filename_atac_meta,filename_rna_meta,
 		filename_motif_data,filename_motif_data_score,file_mapping,file_peak,file_bg,metacell_num,peak_distance_thresh,highly_variable,gene_num_query,
 		method_type_feature_link,output_dir,output_filename,
 		beta_mode,recompute,interval_save,query_id1,query_id2,fold_id,n_iter_init,n_iter,
@@ -2522,7 +2545,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 		flag_peak_tf_corr,flag_gene_tf_corr,flag_gene_expr_corr,flag_compute_1,flag_score_pre1,feature_score_interval,flag_group_query,
 		flag_feature_query1,flag_feature_query2,flag_feature_query3,
 		flag_basic_query,flag_basic_query_2,type_query_compare,flag_basic_filter_1,flag_basic_filter_combine_1,flag_basic_filter_2,Lasso_alpha,
-		peak_distance_thresh1,peak_distance_thresh2,flag_pred_1,flag_pred_2,flag_group_1,flag_pcorr_interval,flag_combine_1,flag_combine_2,flag_cond_query_1):
+		peak_distance_thresh1,peak_distance_thresh2,flag_pred_1,flag_pred_2,flag_group_1,flag_pcorr_interval,flag_reduce,flag_combine_1,flag_combine_2,flag_cond_query_1):
 
 	data_file_type = str(data_file_type)
 	data_timepoint = data_file_type
@@ -2543,6 +2566,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	peak_distance_thresh = int(peak_distance_thresh)
 	highly_variable = int(highly_variable)
 
+	filename_gene_annot = str(filename_gene_annot)
 	filename_atac = str(filename_atac)
 	filename_rna = str(filename_rna)
 	filename_atac_meta = str(filename_atac_meta)
@@ -2628,6 +2652,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 	flag_feature_query2 = int(flag_feature_query2)
 	flag_feature_query3 = int(flag_feature_query3)
 	flag_pcorr_interval = int(flag_pcorr_interval)
+	flag_reduce = int(flag_reduce)
 	# flag_normalize_2 = 1
 	flag_normalize_2 = 0
 
@@ -2637,6 +2662,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 						'run_id':run_id,'run_id_load':run_id_load,
 						'data_file_type_query':data_file_type_query,
 						'data_file_type_id':data_file_type_id,
+						'filename_gene_annot':filename_gene_annot,
 						'filename_rna':filename_rna,
 						'filename_atac':filename_atac,
 						'filename_atac_meta':filename_atac_meta,
@@ -2703,6 +2729,7 @@ def run(run_id,chromsome,generate,chromvec,test_chromvec,species_id,featureid,ce
 							'flag_pcorr_interval':flag_pcorr_interval,
 							'feature_score_interval':feature_score_interval,
 							'flag_normalize_2':flag_normalize_2,
+							'flag_reduce':flag_reduce,
 							'flag_group_query':flag_group_query,
 							'flag_cond_query_1':flag_cond_query_1})
 
@@ -2740,10 +2767,12 @@ def parse_args():
 	parser.add_option("--data_file_type",default="pbmc",help="the cell type or dataset annotation")
 	parser.add_option("--data_file_query",default="0",help="data_file_type_id")
 	parser.add_option("--input_dir",default=".",help="the directory where the ATAC-seq and RNA-seq data of the metacells are saved")
+	parser.add_option("--gene_annot",default="-1",help="file path of gene position annotation file")
 	parser.add_option("--atac_data",default="-1",help="file path of ATAC-seq data of the single cells")
 	parser.add_option("--rna_data",default="-1",help="file path of RNA-seq data of the single cells")
 	parser.add_option("--atac_meta",default="-1",help="file path of ATAC-seq data of the single cells")
 	parser.add_option("--rna_meta",default="-1",help="file path of RNA-seq data of the metacells")
+	parser.add_option("--gene_annot",default="-1",help="file path of gene position annotation file")
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
 	parser.add_option("--motif_data_score",default="-1",help="file path of the motif scores by motif scanning")
 	parser.add_option("--file_mapping",default="-1",help="file path of the mapping between TF motif identifier and the TF name")
@@ -2809,6 +2838,7 @@ def parse_args():
 	parser.add_option("--flag_pred_2",default="0",help="flag_pred_2")
 	parser.add_option("--flag_group_1",default="0",help="flag_group_1")
 	parser.add_option("--flag_pcorr_interval",default="0",help="flag_pcorr_interval")
+	parser.add_option("--flag_reduce",default="1",help="reduce intermediate files")
 	parser.add_option("--flag_combine_1",default="0",help="basic_filter_combine_1")
 	parser.add_option("--flag_combine_2",default="0",help="basic_filter_combine_2")
 	parser.add_option("--flag_cond_query_1",default="0",help="flag_cond_query_1")
@@ -2831,6 +2861,7 @@ if __name__ == '__main__':
 		opts.data_file_type,
 		opts.data_file_query,
 		opts.input_dir,
+		opts.gene_annot,
 		opts.atac_data,
 		opts.rna_data,
 		opts.atac_meta,
@@ -2900,6 +2931,7 @@ if __name__ == '__main__':
 		opts.flag_pred_2,
 		opts.flag_group_1,
 		opts.flag_pcorr_interval,
+		opts.flag_reduce,
 		opts.flag_combine_1,
 		opts.flag_combine_2,
 		opts.flag_cond_query_1)

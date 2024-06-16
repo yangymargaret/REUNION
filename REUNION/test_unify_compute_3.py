@@ -5073,6 +5073,510 @@ class _Base2_correlation5(_Base2_correlation3):
 
 			return df_link_query_pre2, df_link_query_pre2_1
 
+	## ====================================================
+	# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
+	# reduce intermediate files
+	def test_file_combine_1(self,feature_query_num=-1,interval=-1,type_query=0,flag_reduce=1,save_mode=1,save_file_path='',output_filename='',verbose=0,select_config={}):
+
+		column_1, column_2 = 'feature_score_interval', 'feature_query_num'
+		feature_score_interval = interval
+		select_config.update({column_1:feature_score_interval,column_2:feature_query_num})
+
+		thresh_str_compare = '100_0.15.500_-0.05'
+		column_1 = 'thresh_str_compare'
+		if not (column_1 in select_config):
+			select_config.update({column_1:thresh_str_compare})
+
+		# test_feature_link_query_file_pre2_1(self,data=[],extension='txt',iter_mode=0,flag_reduce=1,save_mode=1,verbose=0,select_config={}):
+		extension = 'txt'
+		self.test_feature_link_file_pre2_1(iter_mode=0,extension=extension,
+											flag_reduce=flag_reduce,
+											save_mode=1,
+											verbose=verbose,select_config=select_config)
+
+		# type_query = 1
+		self.test_feature_link_file_pre2_2(type_query=type_query,iter_mode=0,
+											extension=extension,
+											flag_reduce=flag_reduce,
+											save_mode=1,
+											verbose=verbose,select_config=select_config)
+
+		self.test_feature_link_query_combine_pre2(feature_query_num=feature_query_num,
+													flag_combine=2,
+													flag_reduce=flag_reduce,
+													save_mode=1,
+													save_file_path='',
+													output_filename='',
+													verbose=verbose,select_config=select_config)
+
+	## ====================================================
+	# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
+	def test_feature_link_query_combine_pre2(self,feature_query_num,flag_combine=2,flag_reduce=1,
+													save_mode=1,save_file_path='',output_filename='',verbose=0,select_config={}):
+
+		file_save_path2 = select_config['file_path_motif_score']
+		path_query_1 = file_save_path2
+		input_file_path = file_save_path2
+		filename_prefix_default_1 = select_config['filename_prefix_cond']
+		filename_prefix_score = select_config['filename_prefix_score']
+		filename_annot_score_1 = select_config['filename_annot_score_1']
+		
+		column_score_vec_1 = ['score_1','score_pred1','score_pred2','score_pred_combine']
+		column_score_vec_2 = ['peak_tf_corr','gene_tf_corr_peak','peak_gene_corr_','gene_tf_corr',
+								'peak_tf_pval_corrected','gene_tf_corr_peak_pval_corrected1',
+								'peak_gene_corr_pval','gene_tf_pval_corrected']
+
+		column_score_vec_query = column_score_vec_1 + column_score_vec_2
+		
+		input_filename_list_1, input_filename_list_2 = [], []
+		input_filename_list_pre2 = []
+		df_list_1, df_list_2 = [], []
+		df_list_pre2 = []
+		df_feature_link_pre1, df_feature_link_pre2 = [], []
+
+		column_1, column_2 = 'feature_score_interval', 'feature_query_num'
+		iter_mode_query = 0
+		iter_num = 1
+		if (column_1 in select_config) and (column_2 in select_config):
+			interval = select_config[column_1]
+			feature_query_num_1 = select_config[column_2]
+			print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+			if interval>0:
+				iter_num = int(np.ceil(feature_query_num_1/interval))
+				# print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+				iter_mode_query = 1
+		
+		filename_prefix_save_1 = filename_prefix_score
+		list_query_1 = []
+		list_query_2 = []
+		print('iter_mode_query, iter_num ',iter_mode_query,iter_num)
+		if flag_combine>0:
+			for i1 in range(iter_num):
+				if iter_mode_query>0:
+					query_id_1 = i1*interval
+					query_id_2= (i1+1)*interval
+					filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id_1,query_id_2)
+				else:
+					filename_prefix_save_pre1 = filename_prefix_save_1
+					query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+					print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
+					if (query_id1>=0) and (query_id2>query_id1):
+						filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id1,query_id2)
+
+				filename_annot_1 = filename_annot_score_1
+				extension = 'txt.gz'
+				input_filename_1 = '%s/%s.%s.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,extension) # peak-TF-gene link score
+				input_filename_2 = '%s/%s.txt'%(input_file_path,filename_prefix_save_pre1) # gene-TF expression partial correlation given peak accessibility
+				
+				df_query1 = []
+				df_query2 = []
+				# peak-TF-gene link score
+				if os.path.exists(input_filename_1)==True:
+					df_query1 = pd.read_csv(input_filename_1,index_col=False,sep='\t')
+					# df_list_1.append(df_query1)
+					input_filename_list_1.append(input_filename_1)
+					print(input_filename_1)
+				else:
+					print('the file does not exist: %s'%(input_filename_1))
+
+				if flag_combine>1:
+					# gene-TF expression partial correlation given peak accessibility
+					if os.path.exists(input_filename_2)==True:
+						df_query2 = pd.read_csv(input_filename_2,index_col=0,sep='\t')
+						# df_list_2.append(df_query2)
+						input_filename_list_2.append(input_filename_2)
+						print(input_filename_2)
+					else:
+						print('the file does not exist: %s'%(input_filename_2))
+
+					df_list1 = [df_query1,df_query2]
+					column_pval_cond = 'gene_tf_corr_peak_pval_corrected1'
+					column_vec_1 = [[column_pval_cond]]
+					column_idvec = ['gene_id','peak_id','motif_id']
+					
+					# copy specified columns from the other dataframes to the first dataframe
+					df_link_query_1 = utility_1.test_column_query_1(input_filename_list=[],id_column=column_idvec,
+																		column_vec=column_vec_1,
+																		df_list=df_list1,
+																		type_id_1=0,type_id_2=0,
+																		reset_index=False,
+																		select_config=select_config)
+				else:
+					df_link_query_1 = df_query1
+
+				df_list_1.append(df_link_query_1)
+				input_filename_pre2 = '%s/%s.%s.query1.%s'%(input_file_path,filename_prefix_save_pre1,filename_annot_1,extension) # prepare for the file
+				if os.path.exists(input_filename_pre2)==True:
+					df_query_pre2 = pd.read_csv(input_filename_pre2,index_col=False,sep='\t')
+					df_list_pre2.append(df_query_pre2)
+					input_filename_list_pre2.append(input_filename_pre2)
+					print(input_filename_pre2)
+
+			query_num1 = len(df_list_1)
+			if query_num1>1:
+				df_feature_link_pre1 = pd.concat(df_list_1,axis=0,join='outer',ignore_index=False)
+				df_feature_link_pre2 = pd.concat(df_list_pre2,axis=0,join='outer',ignore_index=False)
+			else:
+				df_feature_link_pre1 = df_list_1[0]
+				df_feature_link_pre2 = df_list_pre2[0]
+
+			if query_num1>1:
+				column_id1 = 'gene_id'
+				extension = 'txt.gz'
+				compression = 'gzip'
+
+				output_file_path = path_query_1
+				output_filename_1 = '%s/%s.%s.%s'%(output_file_path,filename_prefix_score,filename_annot_1,extension)
+				df_feature_link_pre1.index = np.asarray(df_feature_link_pre1[column_id1])
+				float_format = '%.6E'
+				df_feature_link_pre1.to_csv(output_filename_1,sep='\t',float_format=float_format,compression=compression)
+				print('the initial peak-TF-gene links with scores, dataframe of size ',df_feature_link_pre1.shape)
+				print('columns ',np.asarray(df_feature_link_pre1.shape))
+				
+				extension_query = 'txt'
+				output_filename_2 = '%s/%s.%s.query1.%s'%(output_file_path,filename_prefix_score,filename_annot_1,extension_query)
+				
+				df_feature_link_pre2.index = np.asarray(df_feature_link_pre2[column_id1])
+				df_feature_link_pre2.to_csv(output_filename_2,sep='\t',float_format=float_format)
+				print('the selected peak-TF-gene links, dataframe of size ',df_feature_link_pre2.shape)
+				print('columns ',np.asarray(df_feature_link_pre2.columns))
+				
+				list_query_1 = [output_filename_1,output_filename_2]
+				list_query_2 = [input_filename_list_1,input_filename_list_2,input_filename_list_pre2]
+			else:
+				list_query_1 = input_filename_list_1 + input_filename_list_2 + input_filename_list_pre2
+
+			import glob
+			extension_1 = 'txt.gz'
+			extension_2 = 'txt'
+			# extension_vec_query1 = ['annot1_1.1','annot2_1.1','annot2.1']
+			# extension_vec_query1 = ['%s.%s'%(annot_str1,extension_1) for annot_str1 in extension_vec_query1]
+			# extension_vec_query2 = ['annot1_2.1','annot1_3.1','annot2.init.1.1']
+			# extension_vec_query2 = ['%s.%s'%(annot_str2,extension_2) for annot_str2 in extension_vec_query2]
+			# extension_vec_query = extension_vec_query1 + extension_vec_query2
+
+			extension_vec_query = [extension_1,extension_2]
+			query_num2 = len(extension_vec_query)
+			if iter_mode_query>0:
+				filename_prefix_save_query = filename_prefix_save_1
+			else:
+				filename_prefix_save_query = filename_prefix_save_pre1
+			filename_prefix_vec = [filename_prefix_save_query]*query_num2
+			for i2 in range(query_num2):
+				filename_prefix_query = filename_prefix_vec[i2]
+				extension_query = extension_vec_query[i2]
+				list_query1 = glob.glob('%s/%s.*.%s'%(path_query_1,filename_prefix_query,extension_query))
+				list_query1 = pd.Index(list_query1).difference(list_query_1,sort=False)
+				list_query_2.append(list_query1)
+			
+			if (flag_reduce>0) and (len(list_query_2)>0):
+				list_query_pre2 = self.test_file_reduce_1(data=list_query_2,select_config=select_config)
+
+	## ====================================================
+	# remove the temporary files
+	def test_file_reduce_1(self,data=[],save_mode=0,verbose=0,select_config={}):
+
+		list_query_1 = data
+		query_num_1 = len(list_query_1)
+		list_query_2 = []
+		for i1 in range(query_num_1):
+			list_query = list_query_1[i1]
+			file_num_query= len(list_query)
+			if verbose>0:
+				print('file number: %d'%(file_num_query))
+			for i2 in range(file_num_query):
+				filename_query = list_query[i2]
+				if os.path.exists(filename_query)==True:
+					# print('filename ',filename_query)
+					os.remove(filename_query)
+					list_query_2.append(filename_query)
+				
+		return list_query_2
+
+	## ====================================================
+	# merge files, save data, and remove files
+	def test_query_file_merge_1(self,data=[],field_query=[],index_col=0,header=0,float_format=-1,flag_unduplicate=0,filename_save_vec=[],filename_prefix_vec=[],filename_annot_vec=[],extension='txt',flag_reduce=0,overwrite=False,save_mode=1,output_file_path='',verbose=0,select_config={}):
+
+		field_num = len(field_query)
+		dict_query1 = data
+		list_query_1 = []
+		list_query_2 = []
+
+		flag_query1 = (len(filename_save_vec)>0)
+		for i1 in range(field_num):
+			field_id = field_query[i1]
+			list_query1 = dict_query1[field_id]
+			input_filename_list = list_query1
+
+			if flag_query1>0:
+				output_filename = filename_save_vec[i1]
+			else:
+				filename_prefix_save_query = filename_prefix_vec[i1]
+				filename_annot_query = filename_annot_vec[i1]
+				output_filename = '%s/%s.%s'%(output_file_path,filename_prefix_save_query,filename_annot_query)
+
+			# merge the files for different subsets of peak-gene links
+			if len(input_filename_list)>0:
+				df_link_query1 = utility_1.test_file_merge_1(input_filename_list,
+																column_vec_query=[],
+																index_col=index_col,header=header,float_format=float_format,
+																flag_unduplicate=flag_unduplicate,
+																axis_join=0,
+																save_mode=0,
+																output_filename=output_filename,
+																verbose=verbose)
+
+				if os.path.exists(output_filename)==True:
+					print('the file exists: %s'%(output_filename))
+					if overwrite==False:
+						b = output_filename.find('.%s'%(extension))
+						output_filename = output_filename[0:b] + '.copy1.%s'%(extension)
+					
+				df_link_query1.to_csv(output_filename,sep='\t')
+				print('save data: %s'%(output_filename))
+				list_query_1.append(output_filename)
+				list_query_2.append(input_filename_list)
+
+		if (flag_reduce>0) and (len(list_query_2)>0):	
+			list_query_pre2 = self.test_file_reduce_1(data=list_query_2,select_config=select_config)
+
+		return list_query_1, list_query_2
+
+	## ====================================================
+	# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
+	def test_feature_link_file_pre2_1(self,iter_mode=0,extension='txt',flag_reduce=1,save_mode=1,verbose=0,select_config={}):
+
+		flag_query_1 = 1
+		if flag_query_1>0:
+			data_path_save_local = select_config['data_path_save_local']
+			path_query_1 = data_path_save_local
+			input_file_path = data_path_save_local
+
+			filename_prefix_save_1 = select_config['filename_prefix_default_1']
+			
+			column_1, column_2 = 'feature_score_interval', 'feature_query_num'
+			iter_mode_query = 0
+			iter_num = 1
+			if (column_1 in select_config) and (column_2 in select_config):
+				interval = select_config[column_1]
+				feature_query_num_1 = select_config[column_2]
+				print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+				if interval>0:
+					iter_num = int(np.ceil(feature_query_num_1/interval))
+					# print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+					iter_mode_query = 1
+			
+			dict_query1 = dict()
+			# field_query = ['peak_thresh1','peak_thresh2','peak_bg_thresh1','peak_basic','gene_basic']
+			# field_num = len(field_query)
+			field_query = ['peak_thresh1','peak_thresh2','peak_basic','gene_basic']
+			field_num = len(field_query)
+			filename_annot_vec = ['combine.thresh1.1','combine.thresh2.1','peak_basic','gene_basic']
+			filename_annot_vec = ['%s.%s'%(filename_annot1,extension) for filename_annot1 in filename_annot_vec]
+			for field_id in field_query:
+				dict_query1[field_id] = []
+
+			annot_str_iter = ''
+			for i1 in range(iter_num):
+				# t_vec_1 = ['pre1','pre1_bg','pre1']
+				t_vec_1 = ['pre1']*2
+				if iter_mode_query>0:
+					query_id_1 = i1*interval
+					query_id_2= (i1+1)*interval
+					
+					annot_str_1 = '%d_%d'%(query_id_1,query_id_2)
+					# t_vec_1 = ['pre1_%s'%(annot_str_1),'pre1_bg_%s'%(annot_str_1),'%s.pre1'%(annot_str_1)]
+					t_vec_1 = ['pre1_%s'%(annot_str_1),'%s.pre1'%(annot_str_1)]
+				else:
+					query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+					print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
+					if (query_id1>=0) and (query_id2>query_id1):
+						annot_str_1 = '%d_%d'%(query_id1,query_id2)
+						annot_str_iter = annot_str_1
+						# t_vec_1 = ['pre1_%s'%(annot_str_1),'pre1_bg_%s'%(annot_str_1),'%s.pre1'%(annot_str_1)]
+						t_vec_1 = ['pre1_%s'%(annot_str_1),'%s.pre1'%(annot_str_1)]
+
+				query_vec = ['%s.%s'%(filename_prefix_save_1,annot_str_query) for annot_str_query in t_vec_1]
+				# filename_prefix_save_pre1, filename_prefix_save_pre2, filename_prefix_save_pre3 = query_vec[0:3]
+				filename_prefix_save_pre1, filename_prefix_save_pre2 = query_vec[0:2]
+				filename_prefix_vec = [filename_prefix_save_pre1]*2 + [filename_prefix_save_pre2]*2
+				
+				for i2 in range(field_num):
+					field_id = field_query[i2]
+					filename_prefix_query = filename_prefix_vec[i2]
+					filename_annot_query = filename_annot_vec[i2]
+					input_filename_query = '%s/%s.%s'%(input_file_path,filename_prefix_query,filename_annot_query)
+					dict_query1[field_id].append(input_filename_query)
+					if verbose>0:
+						print('input_filename ',input_filename_query)
+
+			output_file_path = input_file_path
+			list_query_1 = [] # paths of the files to retain
+			list_query_2 = [] # paths of the files to reduce
+			if iter_mode_query>0:
+				filename_prefix_save_query = '%s.pre1'%(filename_prefix_save_1)
+				filename_prefix_vec = [filename_prefix_save_query]*field_num
+				list_query_1, list_query_2 = self.test_query_file_merge_1(data=dict_query1,
+															field_query=field_query,
+															index_col=0,
+															flag_unduplicate=0,
+															filename_save_vec=[],
+															filename_prefix_vec=filename_prefix_vec,
+															filename_annot_vec=filename_annot_vec,
+															extension='txt',
+															flag_reduce=0,
+															save_mode=1,
+															output_file_path=output_file_path,
+															verbose=0,select_config=select_config)
+
+			else:
+				filename_prefix_save_query = filename_prefix_save_pre1
+				for field_id in field_query:
+					list_query_1 = list_query_1 + dict_query1[field_id]
+
+			import glob
+			# extension_vec_query = ['npy','combine.1.txt']
+			extension_vec_query = ['npy','txt']
+			query_num2 = len(extension_vec_query)
+			filename_prefix_vec = [filename_prefix_save_query]*query_num2
+			print('list_query_1')
+			print(list_query_1)
+			for i2 in range(query_num2):
+				filename_prefix_query = filename_prefix_vec[i2]
+				extension_query = extension_vec_query[i2]
+				if (iter_mode_query>0) or (annot_str_iter==''):
+					# list_query1 = glob.glob('%s/%s_*.%s'%(path_query_1,filename_prefix_query,extension_query))
+					list_query1 = glob.glob('%s/%s.*.%s'%(path_query_1,filename_prefix_query,extension_query))
+				else:
+					list_query1 = glob.glob('%s/*%s*.%s'%(path_query_1,annot_str_iter,extension_query))
+
+				file_num_query1 = len(list_query1)
+				print('list_query1: ',file_num_query1)
+				print(list_query1)
+				list_query1 = pd.Index(list_query1).difference(list_query_1,sort=False)
+				list_query_2.append(list_query1)
+			
+			if (flag_reduce>0) and (len(list_query_2)>0):
+				list_query_pre2 = self.test_file_reduce_1(data=list_query_2,select_config=select_config)
+
+			return dict_query1
+
+	## ====================================================
+	# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
+	def test_feature_link_file_pre2_2(self,type_query=0,iter_mode=0,extension='txt',flag_reduce=1,save_mode=1,filename_prefix='',filename_annot='',verbose=0,select_config={}):
+		
+		flag_query_1=1
+		if flag_query_1>0:
+			data_path_save_local = select_config['data_path_save_local']
+			path_query_1 = data_path_save_local
+			path_query_2 = '%s/temp1'%(data_path_save_local)
+			input_file_path = path_query_2
+			filename_prefix_save_1= select_config['filename_prefix_default_1']
+
+			column_1, column_2 = 'feature_score_interval', 'feature_query_num'
+			iter_mode_query = 0
+			iter_num = 1
+			if (column_1 in select_config) and (column_2 in select_config):
+				interval = select_config[column_1]
+				feature_query_num_1 = select_config[column_2]
+				print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+				if interval>0:
+					iter_num = int(np.ceil(feature_query_num_1/interval))
+					# print('feature_query_num: %d, interval: %d'%(feature_query_num_1,interval))
+					iter_mode_query = 1
+
+			thresh_str_compare = '100_0.15.500_-0.05'
+			column_1 = 'thresh_str_compare'
+			if column_1 in select_config:
+				thresh_str_compare = select_config[column_1]
+
+			filename_annot_compare = 'df_link_query'
+			column_2 = 'filename_annot_compare'
+			if column_2 in select_config:
+				filename_annot_compare = select_config[column_2]
+
+			filename_annot_2 = '%s2.1.combine.%s'%(filename_annot_compare,thresh_str_compare)
+			filename_annot_query2 = '%s.2.0_2.2.%s'%(filename_annot_2,extension)
+			if type_query==0:
+				# only keep the retained pre-selected peak-gene links after comparison
+				field_query = ['combine']
+				filename_annot_vec = [filename_annot_query2] 
+			elif type_query==1:
+				# keep retained peak-gene links using positive peak-gene correlations and absolute peak-gene correlations after comparison
+				field_query = ['compare_group1','combine']
+				annot_str_vec = ['2.0.2']
+				filename_annot_vec = ['%s.%s.%s'%(filename_annot_2,annot_str1,extension) for annot_str1 in annot_str_vec] + [filename_annot_query2]
+			elif type_query==2:
+				# keep retained and filtered peak-gene links after comparison
+				field_query = ['compare_group1_1','compare_group2_1','compare_group1_2','compare_group2_2','combine']
+				annot_str_vec = ['1.2.0','2.2.0','1.2.2','2.2.2']
+				filename_annot_vec = ['%s.%s.%s'%(filename_annot_compare,annot_str1,extension) for annot_str1 in annot_str_vec] + [filename_annot_query2]
+
+			dict_query1 = dict() # the dictionary to keep the filename list of specific annotations
+			field_num = len(field_query)
+			for field_id in field_query:
+				dict_query1[field_id] = []
+
+			for i1 in range(iter_num):
+				if iter_mode_query>0:
+					query_id_1 = i1*interval
+					query_id_2= (i1+1)*interval
+					filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id_1,query_id_2)
+				else:
+					filename_prefix_save_pre1 = filename_prefix_save_1
+					query_id1, query_id2 = select_config['query_id1'], select_config['query_id2']
+					print('query_id1:%d, query_id2:%d'%(query_id1,query_id2))
+					if (query_id1>=0) and (query_id2>query_id1):
+						filename_prefix_save_pre1 = '%s.%d_%d'%(filename_prefix_save_1,query_id1,query_id2)
+
+				filename_prefix_vec = [filename_prefix_save_pre1]*field_num
+				for i2 in range(field_num):
+					field_id = field_query[i2]
+					filename_prefix_query = filename_prefix_vec[i2]
+					filename_annot_query = filename_annot_vec[i2]
+					input_filename_query = '%s/%s.%s'%(input_file_path,filename_prefix_query,filename_annot_query)
+					dict_query1[field_id].append(input_filename_query)
+
+			output_file_path = path_query_2
+			list_query_1 = [] # paths of the files to retain
+			list_query_2 = [] # paths of the files to reduce
+			if iter_mode_query>0:
+				filename_prefix_save_query = filename_prefix_save_1
+				filename_prefix_vec = [filename_prefix_save_query]*field_num
+				list_query_1, list_query_2 = self.test_query_file_merge_1(data=dict_query1,
+															field_query=field_query,
+															index_col=0,
+															flag_unduplicate=0,
+															filename_save_vec=[],
+															filename_prefix_vec=filename_prefix_vec,
+															filename_annot_vec=filename_annot_vec,
+															extension='txt',
+															flag_reduce=0,
+															save_mode=1,
+															output_file_path=output_file_path,
+															verbose=0,select_config=select_config)
+			else:
+				filename_prefix_save_query = filename_prefix_save_pre1
+				for field_id in field_query:
+					list_query_1 = list_query_1 + dict_query1[field_id]
+
+			import glob
+			extension_vec_query = ['txt','npy']
+			query_num2 = len(extension_vec_query)
+			filename_prefix_vec = [filename_prefix_save_query]*query_num2
+			for i2 in range(query_num2):
+				filename_prefix_query = filename_prefix_vec[i2]
+				extension_query = extension_vec_query[i2]
+				list_query1 = glob.glob('%s/%s.*.%s'%(input_file_path,filename_prefix_query,extension_query)) 
+				list_query1 = pd.Index(list_query1).difference(list_query_1,sort=False)
+				list_query_2.append(list_query1)
+
+			if (flag_reduce>0) and (len(list_query_2)>0):
+				list_query_2 = self.test_file_reduce_1(data=list_query_2,select_config=select_config)
+			
+		return dict_query1
+
+
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
 

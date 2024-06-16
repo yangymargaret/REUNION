@@ -2244,13 +2244,21 @@ class _Base2_2(_Base_pre2):
 				assert list(peak_loc_query1)==list(peak_loc_ori)
 				assert list(peak_loc_query2)==list(peak_loc_ori)
 					
-				column_1 = '%s_%s_pred'%(feature_type_query,model_type_id1)
-				column_vec_2 = ['%s_%s_proba_%d'%(feature_type_query,model_type_id1,i2) for i2 in range(1,num_class)]
+				# column_1 = '%s_%s_pred'%(feature_type_query,model_type_id1)
+				# column_vec_2 = ['%s_%s_proba_%d'%(feature_type_query,model_type_id1,i2) for i2 in range(1,num_class)]
+				# column_2 = column_vec_2[0]
+				b1 = feature_type_query.find('combine')
+				if b1>=0:
+					column_1 = 'label_pred'
+					column_2 = 'proba_pred'
+				else:
+					column_1 = '%s_label_pred'%(feature_type_query)
+					column_2 = '%s_proba_pred'%(feature_type_query)
+				
 				df_pre1.loc[peak_loc_query1,column_1] = np.asarray(df_pred_2[motif_id_query])
-				column_2 = column_vec_2[0]
 				df_proba_2 = df_proba_2.round(6)
 				df_pre1.loc[peak_loc_query2,column_2] = np.asarray(df_proba_2)[:,1]
-				select_config.update({'column_pred_%s'%(feature_type_query):column_1,'colum_proba_%s'%(feature_type_query):column_vec_2})
+				select_config.update({'column_pred_%s'%(feature_type_query):column_1,'colum_proba_%s'%(feature_type_query):column_2})
 
 			column_signal = 'signal'
 			if column_signal in df_pre1.columns:
@@ -2260,21 +2268,41 @@ class _Base2_2(_Base_pre2):
 					
 			df_pre1 = df_pre1.sort_values(by=column_vec_sort,ascending=False)
 			if (save_mode>0) and (output_filename!=''):
+				method_type_query = method_type_feature_link
 				column_vec = df_pre1.columns
-				column_vec_query2 = ['peak_id',motif_id_query]
-				t_columns = pd.Index(column_vec).difference(column_vec_query2,sort=False)
-				df_pre1 = df_pre1.loc[:,t_columns]
-				df_pre1.to_csv(output_filename,sep='\t')
 
-				# save the selected pseudo-labeled training sample
-				# column_1 = 'class'
-				# id1 = (df_pre1[column_1].abs()>0)
-				# df_query = df_pre1.loc[id1,:]
-				# df_query = df_query.sort_values(by=[column_1],ascending=False)
-				# b = output_filename.find('.txt')
-				# filename_prefix = output_filename[0:b]
-				# output_filename_2 = '%s.2.txt'%(filename_prefix)
-				# df_query.to_csv(output_filename_2,sep='\t')
+				column_pred1 = '%s.pred'%(method_type_query)
+				column_motif = '%s.motif'%(method_type_query)
+				
+				column_corr_1 = 'peak_tf_corr'
+				column_corr_abs_1 = '%s_abs'%(column_corr_1)
+				column_pval_1 = 'peak_tf_pval_corrected'
+
+				column_vec_query = [column_motif,column_pval_1]
+				column_vec_query = pd.Index(column_vec_query).intersection(column_vec,sort=False)
+				for column_query in column_vec_query:
+					id1 = (~pd.isna(df_pre1[column_query]))
+					df_pre1.loc[id1,column_query] = df_pre1.loc[id1,column_query].round(6)
+				
+				column_vec_pre2 = [column_pred1,'%s_group_2'%(column_pred1),'%s_group_neighbor'%(column_pred1),'class']+['%s_label_pred'%(feature_type_query) for feature_type_query in feature_type_vec_query[0:2]] + ['label_pred']
+				column_vec_pre2 = pd.Index(column_vec_pre2).intersection(column_vec,sort=False)
+				for column_query in column_vec_pre2:
+					id2 = (~pd.isna(df_pre1[column_query]))
+					df_pre1.loc[id1,column_query] = df_pre1.loc[id2,column_query].astype(int)
+				
+				column_vec_query2_1 = ['peak_id',motif_id_query,'group_id2',column_corr_abs_1,'group_overlap']
+				column_vec_query2_2 = ['group_neighbor_1','neighbor_2_group','neighbor_1']
+				column_vec_query2_2 = ['%s_%s'%(column_pred1,column_query) for column_query in column_vec_query2_2]
+				column_vec_query2_3 = ['%s_group_neighbor'%(feature_type_query) for feature_type_query in feature_type_vec_query[0:2]]
+				column_vec_query2 = column_vec_query2_1 + column_vec_query2_2 + column_vec_query2_3
+				t_columns = pd.Index(column_vec).difference(column_vec_query2,sort=False)
+
+				df_pre1 = df_pre1.loc[:,t_columns]
+				column_vec = df_pre1.columns
+				column_vec = pd.Index(column_vec).str.replace('latent_peak_tf','latent_accessibility')
+				df_pre1.columns = column_vec
+
+				df_pre1.to_csv(output_filename,sep='\t')
 
 			return df_pre1
 	

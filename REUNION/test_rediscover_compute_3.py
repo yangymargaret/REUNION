@@ -2281,10 +2281,13 @@ class _Base2_2_pre1(_Base2_2_1):
 		# load gene annotation data
 		if flag_gene_annot_1>0:
 			print('load gene annotations')
-			filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path_pre1)
-			select_config.update({'filename_gene_annot':filename_gene_annot})
+			# filename_gene_annot = '%s/test_gene_annot_expr.Homo_sapiens.GRCh38.108.combine.2.txt'%(input_file_path_pre1)
+			# select_config.update({'filename_gene_annot':filename_gene_annot})
+			filename_gene_annot = select_config['filename_gene_annot']
+			
 			df_gene_annot_ori = self.test_query_gene_annot_1(filename_gene_annot,verbose=verbose,select_config=select_config)
 			self.df_gene_annot_ori = df_gene_annot_ori
+			print('gene annotations loaded from: %s'%(filename_gene_annot))
 
 		# load motif scanning data
 		# load ATAC-seq and RNA-seq data of the metacells
@@ -3439,14 +3442,14 @@ class _Base2_2_pre1(_Base2_2_1):
 			return dict_file_query
 		
 def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,highly_variable=0,
-				input_dir='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',file_peak='',
+				input_dir='',filename_gene_annot='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',file_peak='',
 				method_type_feature_link='',method_type_dimension='',
 				tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',
 				output_dir='',output_filename='',path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=1,type_combine=0,
 				method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,
 				n_components=100,n_components_2=50,neighbor_num=100,neighbor_num_sel=30,
 				model_type_id='LogisticRegression',ratio_1=0.25,ratio_2=1.5,thresh_score='0.25,0.75',
-				flag_group=-1,flag_embedding_compute=0,flag_clustering=0,flag_group_load=1,flag_scale_1=0,
+				flag_group=-1,flag_embedding_compute=0,flag_clustering=0,flag_group_load=1,flag_scale_1=0,flag_reduce=1,
 				beta_mode=0,verbose_mode=1,query_id1=-1,query_id2=-1,query_id_1=-1,query_id_2=-1,train_mode=0,config_id_load=-1):
 	
 	flag_query_1=1
@@ -3503,11 +3506,13 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 		flag_group_load = int(flag_group_load)
 
 		flag_scale_1 = int(flag_scale_1)
+		flag_reduce = int(flag_reduce)
 		beta_mode = int(beta_mode)
 		verbose_mode = int(verbose_mode)
 
 		input_dir = str(input_dir)
 		output_dir = str(output_dir)
+		filename_gene_annot = str(filename_gene_annot)
 		filename_atac_meta = str(filename_atac_meta)
 		filename_rna_meta = str(filename_rna_meta)
 		filename_motif_data = str(filename_motif_data)
@@ -3548,6 +3553,7 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 								'type_id_feature':type_id_feature,
 								'metacell_num':metacell_num,
 								'run_id':run_id,
+								'filename_gene_annot':filename_gene_annot,
 								'filename_atac_meta':filename_atac_meta,
 								'filename_rna_meta':filename_rna_meta,
 								'filename_motif_data':filename_motif_data,
@@ -3651,13 +3657,13 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 																		verbose=verbose,select_config=select_config)
 
 
-def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,
+def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,filename_gene_annot,
 			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,file_peak,metacell_num,peak_distance_thresh,
 			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,input_link,columns_1,
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
-			typeid2,type_combine,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,train_id1,
+			typeid2,type_combine,folder_id,config_id_2,config_group_annot,flag_group,flag_embedding_compute,flag_clustering,flag_group_load,flag_scale_1,flag_reduce,train_id1,
 			beta_mode,verbose_mode,query_id1,query_id2,query_id_1,query_id_2,train_mode,config_id_load):
 
 	flag_1=1
@@ -3667,6 +3673,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 					peak_distance_thresh=peak_distance_thresh,
 					highly_variable=highly_variable,
 					input_dir=input_dir,
+					filename_gene_annot=filename_gene_annot,
 					filename_atac_meta=filename_atac_meta,
 					filename_rna_meta=filename_rna_meta,
 					filename_motif_data=filename_motif_data,
@@ -3696,6 +3703,7 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 					flag_clustering=flag_clustering,
 					flag_group_load=flag_group_load,
 					flag_scale_1=flag_scale_1,
+					flag_reduce=flag_reduce,
 					beta_mode=beta_mode,
 					verbose_mode=verbose_mode,
 					query_id1=query_id1,query_id2=query_id2,query_id_1=query_id_1,query_id_2=query_id_2,
@@ -3712,6 +3720,7 @@ def parse_args():
 	parser.add_option("-b","--cell",default="0",help="cell type")
 	parser.add_option("--data_file_type",default="pbmc",help="the cell type or dataset annotation")
 	parser.add_option("--input_dir",default=".",help="the directory where the ATAC-seq and RNA-seq data of the metacells are saved")
+	parser.add_option("--gene_annot",default="-1",help="file path of gene position annotation file")
 	parser.add_option("--atac_meta",default="-1",help="file path of ATAC-seq data of the metacells")
 	parser.add_option("--rna_meta",default="-1",help="file path of RNA-seq data of the metacells")
 	parser.add_option("--motif_data",default="-1",help="file path of binary motif scannning results")
@@ -3761,6 +3770,7 @@ def parse_args():
 	parser.add_option("--flag_group_load",default="1",help="load group annotation")
 	parser.add_option("--train_id1",default="1",help="train_id1")
 	parser.add_option("--flag_scale_1",default="0",help="flag_scale_1")
+	parser.add_option("--flag_reduce",default="1",help="reduce intermediate files")
 	parser.add_option("--beta_mode",default="0",help="beta_mode")
 	parser.add_option("--motif_id_1",default="1",help="motif_id_1")
 	parser.add_option("--verbose_mode",default="1",help="verbose mode")
@@ -3786,6 +3796,7 @@ if __name__ == '__main__':
 		opts.testchromvec,
 		opts.data_file_type,
 		opts.input_dir,
+		opts.gene_annot,
 		opts.atac_meta,
 		opts.rna_meta,
 		opts.motif_data,
@@ -3834,6 +3845,7 @@ if __name__ == '__main__':
 		opts.flag_clustering,
 		opts.flag_group_load,
 		opts.flag_scale_1,
+		opts.flag_reduce,
 		opts.train_id1,
 		opts.beta_mode,
 		opts.verbose_mode,
