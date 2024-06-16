@@ -7,7 +7,7 @@ data_file_type=pbmc
 echo $data_file_type
 
 PATH1=$input_dir
-filename_gene_annot=$PATH1/test_gene_annot.Homo_sapiens.GRCh38.108.combine.2.pbmc.txt
+filename_gene_annot=$PATH1/test_gene_annot.Homo_sapiens.GRCh38.108.combine.2.pbmc.txt  # gene annotation file
 atac_meta=$PATH1/atac_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:ATAC-seq peak locus)
 rna_meta=$PATH1/rna_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:genei)
 filename_motif_1=test_peak_read.pbmc.normalize.motif.thresh5e-05.csv  # format: (row:ATAC-seq peak locus, column:TF motif)
