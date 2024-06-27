@@ -5576,6 +5576,7 @@ class _Base2_correlation5(_Base2_correlation3):
 			
 		return dict_query1
 
+
 def parse_args():
 	parser = OptionParser(usage="training2", add_help_option=False)
 

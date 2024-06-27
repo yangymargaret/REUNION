@@ -33,7 +33,9 @@ from scipy import stats
 import scipy.sparse
 from scipy.sparse import spmatrix, csr_matrix, csc_matrix, issparse
 
-# import utility_1
+import time
+from timeit import default_timer as timer
+
 from . import utility_1
 import pickle
 

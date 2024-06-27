@@ -326,7 +326,7 @@ class _Base2_2(_Base_pre2):
 
 			query_id_1 = feature_mtx_query.index.copy()
 			if verbose_internal>0:
-				print('feature matrix (feature type: %s), dataframe of size ',feature_mtx_query.shape,feature_type_annot_query,i1)
+				print('feature matrix (feature type: %s), dataframe of size '%(feature_type_annot_query),feature_mtx_query.shape,i1)
 
 			if (flag_shuffle>0):
 				query_num = len(query_id_1)

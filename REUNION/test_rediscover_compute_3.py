@@ -167,11 +167,12 @@ class _Base2_2_pre1(_Base2_2_1):
 			filename_prefix_save_pre2 = filename_prefix_save
 			filename_save_annot_2 = '%s_%d.1'%(method_type_dimension,n_component_sel)
 			feature_type_vec_pre1 = ['gene','peak']  #  the first level feature type, which may include peak, gene, and motif (associated with TF)
+			
+			method_type_dimension = select_config['method_type_dimension']
 			dict_group_query1, dict_group_query2 = self.test_query_feature_clustering_1(dict_feature=dict_latent_query1,
 																							feature_type_vec=feature_type_vec,
+																							method_type_vec_dimension=[method_type_dimension],
 																							method_type_vec_group=method_type_vec_group,
-																							type_id_group=type_id_group,
-																							n_components=n_components,
 																							metric=metric,
 																							subsample_ratio=-1,
 																							flag_cluster_1=flag_cluster_1,
@@ -1469,19 +1470,17 @@ class _Base2_2_pre1(_Base2_2_1):
 		peak_read = self.peak_read  # peak accessibility matrix (normalized and log-transformed) 
 		peak_loc_ori = peak_read.columns
 		
-		rna_exprs = self.meta_exps_2  # gene expression matrix (normalized and log-transformed)
+		rna_exprs = self.meta_exprs_2  # gene expression matrix (normalized and log-transformed)
 		feature_type_vec = ['peak_tf','peak_motif','peak_motif_ori']
 		
 		# query motif scanning data and motif scores of given peak loci
 		# query TFs with motifs and expressions
 		motif_data, motif_data_score, motif_query_vec_1 = self.test_query_motif_data_annotation_1(data=dict_motif_data,
-																									data_file_type=data_file_type_query,
 																									gene_query_vec=[],
 																									feature_query_vec=peak_loc_ori,
 																									method_type=method_type_query,
 																									peak_read=peak_read,
 																									rna_exprs=rna_exprs,
-																									save_mode=save_mode,
 																									verbose=verbose,select_config=select_config)
 
 		method_type_dimension = select_config['method_type_dimension']
@@ -1809,9 +1808,12 @@ class _Base2_2_pre1(_Base2_2_1):
 							print('data loaded from %s'%(input_filename))
 							list1.append(df_query)
 						else:
+							print('the file does not exist: %s'%(input_filename))
 							load_mode = 0
 					list_query1.append(list1)
-			else:
+
+			if load_mode==0:
+				list_query1 = []
 				for i2 in range(feature_type_num):
 					feature_type_query = feature_type_vec[i2]		
 					print('find nearest neighbors of peak loci, neighbor number: %d'%(n_neighbors))
@@ -2409,8 +2411,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			dict_query_1, select_config = self.test_query_feature_embedding_pre1(feature_type_vec=[],
 																					method_type=method_type_query,
 																					n_components=n_components,
-																					iter_id=-1,
-																					config_id_load=-1,
 																					flag_config=1,
 																					flag_motif_data_load=0,
 																					flag_load_1=0,
@@ -2421,6 +2421,15 @@ class _Base2_2_pre1(_Base2_2_1):
 																					verbose=verbose,select_config=select_config)
 			stop = time.time()
 			print('computing feature embeddings used %.2fs'%(stop-start))
+
+			for feature_type_query in feature_type_vec_query[0:2]:
+				df_latent_query_1 = dict_query_1[feature_type_query]
+				if (n_component_sel!=n_components):
+					column_vec = df_latent_query_1.columns
+					column_vec_query1 = column_vec[0:n_component_sel]
+					df_latent_query = df_latent_query_1.loc[:,column_vec_query1]
+					print('feature embeddings, dataframe of size ',df_latent_query.shape,feature_type_query)
+					dict_query_1.update({feature_type_query:df_latent_query})
 
 		dict_file_feature = dict()
 		feature_type_vec_2 = feature_type_vec_2_ori
@@ -2439,7 +2448,7 @@ class _Base2_2_pre1(_Base2_2_1):
 			dict_file_feature.update({feature_type_query:dict1})
 
 		self.dict_file_feature = dict_file_feature
-		
+
 		if flag_clustering_1>0:
 			# feature_type_vec = feature_type_vec_query
 			dict_latent_query1 = self.test_query_feature_clustering_pre1(data=dict_query_1,feature_query_vec=peak_loc_ori,
@@ -2455,7 +2464,6 @@ class _Base2_2_pre1(_Base2_2_1):
 			if 'thresh_size_group' in select_config:
 				thresh_size_group = select_config['thresh_size_group']
 				thresh_size_1 = thresh_size_group
-
 			thresh_size_group_query = thresh_size_1
 
 			# for selecting the peak loci predicted with TF binding
@@ -2717,7 +2725,14 @@ class _Base2_2_pre1(_Base2_2_1):
 			iter_vec_query = iter_vec_1
 			file_path_query_pre1 = output_file_path_pre1 # the first output directory
 			
-			output_file_path_pre2 = '%s/file_link'%(output_file_path_pre1) # the second output directory
+			column_1 = 'output_link'
+			output_file_path_pre2 = ''
+			if column_1 in select_config:
+				output_file_path_pre2 = select_config[column_1]
+			
+			if (output_file_path_pre2=='') or (output_file_path_pre2=='-1'):
+				output_file_path_pre2 = '%s/file_link'%(output_file_path_pre1) # the second output directory
+			
 			if os.path.exists(output_file_path_pre2)==False:
 				print('the directory does not exist: %s'%(output_file_path_pre2))
 				os.makedirs(output_file_path_pre2,exist_ok=True)
@@ -2769,8 +2784,8 @@ class _Base2_2_pre1(_Base2_2_1):
 			print('thresholds for selecting positive samples: ',thresh_vec_sel_1)
 			select_config.update({'thresh_vec_sel_1':thresh_vec_sel_1})
 
-			column_query = 'output_filename_link'
-			filename_save_link = select_config[column_query]
+			# column_query = 'output_filename_link'
+			# filename_save_link = select_config[column_query]
 			filename_link_prefix = select_config['filename_prefix']
 			filename_link_annot = select_config['filename_annot']
 
@@ -2800,13 +2815,21 @@ class _Base2_2_pre1(_Base2_2_1):
 				select_config.update({column_1:verbose_internal})
 			self.verbose_internal = verbose_internal
 
+			column_1 = 'filename_annot_link_2'
+			if column_1 in select_config:
+				filename_annot_link_2 = select_config[column_1]
+				
+			if (filename_annot_link_2=='') or (filename_annot_link_2=='-1'):
+				filename_annot_link_2 = '%s.pred2'%(filename_link_annot)
+
 			save_mode_pre2 = 1
 			dict_file_query_1 = dict()
 			for i1 in iter_vec_query:
 				motif_id_query = motif_idvec_query[i1]
 				motif_id1, motif_id2 = motif_id_query, motif_id_query
 				
-				filename_query_pre1 = '%s/%s.%s.%s.pred2.txt'%(output_file_path_pre2,filename_link_prefix,motif_id_query,filename_link_annot)
+				# filename_query_pre1 = '%s/%s.%s.%s.pred2.txt'%(output_file_path_pre2,filename_link_prefix,motif_id_query,filename_link_annot)
+				filename_query_pre1 = '%s/%s.%s.%s.txt'%(output_file_path_pre2,filename_link_prefix,motif_id_query,filename_annot_link_2)
 				filename_save_link_pre1 = filename_query_pre1
 				
 				if (os.path.exists(filename_query_pre1)==False):
@@ -3444,7 +3467,7 @@ class _Base2_2_pre1(_Base2_2_1):
 def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec=[],data_file_type='',metacell_num=500,peak_distance_thresh=100,highly_variable=0,
 				input_dir='',filename_gene_annot='',filename_atac_meta='',filename_rna_meta='',filename_motif_data='',filename_motif_data_score='',file_mapping='',file_peak='',
 				method_type_feature_link='',method_type_dimension='',
-				tf_name='',filename_prefix='',filename_annot='',input_link='',columns_1='',
+				tf_name='',filename_prefix='',filename_annot='',filename_annot_link_2='',input_link='',output_link='',columns_1='',
 				output_dir='',output_filename='',path_id=2,save=1,type_group=0,type_group_2=0,type_group_load_mode=1,type_combine=0,
 				method_type_group='phenograph.20',thresh_size_group=50,thresh_score_group_1=0.15,
 				n_components=100,n_components_2=50,neighbor_num=100,neighbor_num_sel=30,
@@ -3489,9 +3512,11 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 		model_type_id1 = str(model_type_id)
 
 		input_link = str(input_link)
+		output_link = str(output_link)
 		columns_1 = str(columns_1)
 		filename_prefix = str(filename_prefix)
 		filename_annot = str(filename_annot)
+		filename_annot_link_2 = str(filename_annot_link_2)
 		tf_name = str(tf_name)
 
 		if filename_prefix=='':
@@ -3564,9 +3589,11 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 								'path_id':path_id,
 								'run_id_save':run_id_save,
 								'input_link':input_link,
+								'output_link':output_link,
 								'columns_1':columns_1,
 								'filename_prefix':filename_prefix,
 								'filename_annot':filename_annot,
+								'filename_annot_link_2':filename_annot_link_2,
 								'tf_name':tf_name,
 								'n_components':n_components,
 								'n_component_sel':n_component_sel,
@@ -3659,7 +3686,7 @@ def run_pre1(run_id=1,species='human',cell=0,generate=1,chromvec=[],testchromvec
 
 def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,filename_gene_annot,
 			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,file_peak,metacell_num,peak_distance_thresh,
-			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,input_link,columns_1,
+			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,filename_annot_link_2,input_link,output_link,columns_1,
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
@@ -3683,8 +3710,11 @@ def run(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_
 					method_type_feature_link=method_type_feature_link,
 					method_type_dimension=method_type_dimension,
 					tf_name=tf_name,
-					filename_prefix=filename_prefix,filename_annot=filename_annot,
+					filename_prefix=filename_prefix,
+					filename_annot=filename_annot,
+					filename_annot_link_2=filename_annot_link_2,
 					input_link=input_link,
+					output_link=output_link,
 					columns_1=columns_1,
 					output_dir=output_dir,
 					output_filename=output_filename,
@@ -3735,7 +3765,9 @@ def parse_args():
 	parser.add_option("--tf",default='-1',help='the TF for which to predict peak-TF associations')
 	parser.add_option("--filename_prefix",default='-1',help='prefix as part of the filenname of the initially predicted peak-TF assocations')
 	parser.add_option("--filename_annot",default='1',help='annotation as part of the filename of the initially predicted peak-TF assocations')
+	parser.add_option("--filename_annot_link_2",default='-1',help='annotation as part of the filename of the second set of predicted peak-TF associations')
 	parser.add_option("--input_link",default='-1',help=' the directory where initially predicted peak-TF associations are saved')
+	parser.add_option("--output_link",default='-1',help=' the directory where the second set of predicted peak-TF associations are saved')
 	parser.add_option("--columns_1",default='pred,score',help='the columns corresponding to binary prediction and peak-TF association score')
 	parser.add_option("--output_dir",default='output_file',help='the directory to save the output')
 	parser.add_option("--output_filename",default='-1',help='filename of the predicted peak-TF assocations')
@@ -3811,7 +3843,9 @@ if __name__ == '__main__':
 		opts.tf,
 		opts.filename_prefix,
 		opts.filename_annot,
+		opts.filename_annot_link_2,
 		opts.input_link,
+		opts.output_link,
 		opts.columns_1,
 		opts.output_dir,
 		opts.output_filename,
