@@ -7,7 +7,7 @@ data_file_type=pbmc
 echo $data_file_type
 
 PATH1=$input_dir
-filename_gene_annot=$PATH1/test_gene_annot.Homo_sapiens.GRCh38.108.combine.2.pbmc.txt	# gene annotation file
+filename_gene_annot=$PATH1/test_gene_annot.Homo_sapiens.GRCh38.108.combine.2.pbmc.txt # the gene annotation file
 atac_meta=$PATH1/atac_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:ATAC-seq peak locus)
 rna_meta=$PATH1/rna_meta_pbmc.h5ad	# data matrix format: (row:metacell, column:genei)
 filename_motif_1=test_peak_read.pbmc.normalize.motif.thresh5e-05.csv # format: (row:ATAC-seq peak locus, column:TF motif)
@@ -22,9 +22,12 @@ tf_name='ATF2,EBF1'
 model_type_id1=LogisticRegression
 method_type_feature_link=Unify
 
-path_input_link_2=$PATH1/folder_1 # the folder which saves the peak-TF link predictions by the first method
+# path_input_link_2=$PATH1/folder_1 # the folder which saves the peak-TF link predictions by the first method
+path_input_link_2=$PATH1_2/data2/folder_save_3/vbak1 # the folder to save the peak-TF link predictions by the first method
+path_output_link_2=$output_dir/file_link # the folder which saves the peak-TF link predictions by the first method
 filename_prefix='test_query_binding'
 filename_annot='1'
+filename_annot_link_2=$filename_annot.pred2
 columns_1='Unify.pred,Unify.score,Unify.motif'
 
 echo $method_type_feature_link
@@ -34,7 +37,10 @@ component=100
 component2=50
 neighbor_num=100
 neighbor_num_sel=30
-flag_group_load=1
+flag_embedding_compute=1
+flag_clustering=1
+# flag_group_load=1
+flag_group_load=0
 ratio_1=0.25
 ratio_2=1.5
 type_combine=1
@@ -69,14 +75,18 @@ for i2 in {0..0}; do
 										--method_type_feature_link $method_type_feature_link \
 										--tf $tf_name \
 										--input_link $path_input_link_2 \
+										--output_link $path_output_link_2 \
 										--model_type $model_type_id1 \
 										--filename_prefix $filename_prefix \
 										--filename_annot $filename_annot \
+										--filename_annot_link_2 $filename_annot_link_2 \
 										--columns_1 $columns_1 \
 										--component $component \
 										--component2 $component2 \
 										--neighbor $neighbor_num \
 										--neighbor_sel $neighbor_num_sel \
+										--flag_embedding_compute $flag_embedding_compute \
+										--flag_clustering $flag_clustering \
 										--flag_group_load $flag_group_load \
 										--ratio_1 $ratio_1 \
 										--ratio_2 $ratio_2 \

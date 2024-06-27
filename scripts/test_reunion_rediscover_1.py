@@ -11,7 +11,7 @@ from REUNION.test_rediscover_compute_3 import run
 
 def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_file_type,input_dir,filename_gene_annot,
 			filename_atac_meta,filename_rna_meta,filename_motif_data,filename_motif_data_score,file_mapping,file_peak,metacell_num,peak_distance_thresh,
-			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,input_link,columns_1,
+			highly_variable,method_type_feature_link,method_type_dimension,tf_name,filename_prefix,filename_annot,filename_annot_link_2,input_link,output_link,columns_1,
 			output_dir,output_filename,method_type_group,thresh_size_group,thresh_score_group_1,
 			n_components,n_components_2,neighbor_num,neighbor_num_sel,model_type_id,ratio_1,ratio_2,thresh_score,
 			upstream,downstream,type_id_query,thresh_fdr_peak_tf,path_id,save,type_group,type_group_2,type_group_load_mode,
@@ -35,8 +35,11 @@ def run_1(chromosome,run_id,species,cell,generate,chromvec,testchromvec,data_fil
 					method_type_feature_link=method_type_feature_link,
 					method_type_dimension=method_type_dimension,
 					tf_name=tf_name,
-					filename_prefix=filename_prefix,filename_annot=filename_annot,
+					filename_prefix=filename_prefix,
+					filename_annot=filename_annot,
+					filename_annot_link_2=filename_annot_link_2,
 					input_link=input_link,
+					output_link=output_link,
 					columns_1=columns_1,
 					output_dir=output_dir,
 					output_filename=output_filename,
@@ -97,7 +100,9 @@ def parse_args():
 	parser.add_option("--tf",default='-1',help='the TF for which to predict peak-TF associations')
 	parser.add_option("--filename_prefix",default='-1',help='prefix as part of the filenname of the initially predicted peak-TF assocations')
 	parser.add_option("--filename_annot",default='1',help='annotation as part of the filename of the initially predicted peak-TF assocations')
+	parser.add_option("--filename_annot_link_2",default='-1',help='annotation as part of the filename of the second set of predicted peak-TF associations')
 	parser.add_option("--input_link",default='-1',help=' the directory where initially predicted peak-TF associations are saved')
+	parser.add_option("--output_link",default='-1',help=' the directory where the second set of predicted peak-TF associations are saved')
 	parser.add_option("--columns_1",default='pred,score',help='the columns corresponding to binary prediction and peak-TF association score')
 	parser.add_option("--output_dir",default='output_file',help='the directory to save the output')
 	parser.add_option("--output_filename",default='-1',help='filename of the predicted peak-TF assocations')
@@ -173,7 +178,9 @@ if __name__ == '__main__':
 		opts.tf,
 		opts.filename_prefix,
 		opts.filename_annot,
+		opts.filename_annot_link_2,
 		opts.input_link,
+		opts.output_link,
 		opts.columns_1,
 		opts.output_dir,
 		opts.output_filename,
