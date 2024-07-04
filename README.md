@@ -3,7 +3,7 @@ REUNION: Transcription factor binding prediction
 and regulatory association inference from single-cell
 multi-omics data
 
-REUNION is an integrative computational framework which utilizes the single cell multi-omics data as input to infer peak-transcription factor (TF)-gene triplet regulatory associations and predict genome-wide TF binding activities in the peaks with or without TF motifs detected. 
+REUNION is an integrative computational framework which utilizes the single cell multi-omics data as input to infer peak-transcription factor (TF)-gene triplet regulatory associations and predict genome-wide TF binding activities in the peak loci with or without TF binding motifs detected. 
 REUNION unites two functionally cooperative methods Unify and Rediscover. 
 Unify performs regulatory association estimation utilizing the single-cell multi-omics data.
 Rediscover takes the regulatory associations estimated by Unify as input to perform TF binding prediction. Unify and Rediscover supports each other within one framework.
