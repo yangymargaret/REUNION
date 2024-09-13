@@ -1658,21 +1658,28 @@ class _Base_pre1(BaseEstimator):
 		
 		column_1 = 'filename_rna_exprs'
 		meta_scaled_exprs = []
+		load = 1
 		if column_1 in select_config:
 			input_filename_3 = select_config[column_1]
-			meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
-
-			if flag_format==True:
-				meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
-		
-			meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
-		else:
+			
+			if os.path.exists(input_filename_3)==False:
+				print('the file does not exist: ',input_filename_3)
+				load = 0
+			else:
+				meta_scaled_exprs = pd.read_csv(input_filename_3,index_col=0,sep='\t')
+				if flag_format==True:
+					meta_scaled_exprs.columns = meta_scaled_exprs.columns.str.upper()
+			
+				meta_scaled_exprs = meta_scaled_exprs.loc[sample_id,:]
+			
+		if load==0:
 			if flag_scale>0:
 				scale_type_id = 2
-				if 'scale_type_id' in select_config:
-					scale_type_id = select_config['scale_type_id']
-				else:
-					select_config.update({'scale_type_id':scale_type_id})
+				# if 'scale_type_id' in select_config:
+				# 	scale_type_id = select_config['scale_type_id']
+				# else:
+				# 	select_config.update({'scale_type_id':scale_type_id})
+				select_config.update({'scale_type_id':scale_type_id})
 
 				# save_mode_1 = 2
 				save_mode_1 = 1

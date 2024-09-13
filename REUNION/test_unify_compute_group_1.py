@@ -737,6 +737,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			select_config = self.test_query_load_pre1(method_type_vec=method_type_vec_query1,
 														flag_motif_data_load_1=flag_motif_data_load,
 														flag_load_1=flag_load_1,
+														flag_format=flag_format,
+														flag_scale=flag_scale,
 														save_mode=1,
 														verbose=verbose,select_config=select_config)
 
@@ -1192,7 +1194,7 @@ class _Base2_pre_2(_Base2_correlation5):
 			self.test_feature_link_query_cond_pre1(atac_ad=atac_ad,rna_exprs=rna_exprs,flag_compute=flag_compute,
 													save_mode=1,save_file_path='',verbose=0,select_config=select_config)
 
-			type_query = 1
+			type_query = 0
 			flag_reduce = select_config['flag_reduce']
 			if iter_mode>0:
 				feature_query_num1 = query_id2-query_id1
@@ -1206,7 +1208,8 @@ class _Base2_pre_2(_Base2_correlation5):
 			self.test_file_combine_1(feature_query_num=feature_query_num1,interval=interval,
 												type_query=type_query,
 												flag_reduce=flag_reduce,
-												save_mode=1,verbose=verbose,select_config=select_config)
+												save_mode=1,
+												verbose=0,select_config=select_config)
 
 		flag_combine = 0
 		# combine peak-TF-gene association scores of different subsets of peak-TF-gene links
